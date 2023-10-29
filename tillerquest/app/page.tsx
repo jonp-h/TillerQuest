@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import TQ from "./TQ.png";
 
 export default function Home() {
+  const TQ = require("./TQ.png");
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-gradient-to-br from-purple-950 to-gray-950">
