@@ -9,7 +9,8 @@
 <h4 align="center">A humble remake of the popular Heimdallsquest</h4>
 
 <p align="center">
-  <!-- PACKAGE ICONS -->
+  <img src="https://img.shields.io/badge/Made_By-JonPH-blue" />
+ 
 </p>
 
 <p align="center">
@@ -27,13 +28,15 @@
 
 ## How To Use
 
-<!-- 
+This project uses [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
+
+<!--
 
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
 ```bash
 # Clone this repository
-$ git clone 
+$ git clone
 
 # Go into the repository
 
@@ -48,12 +51,12 @@ $ npm start
 
 ## Credits
 
+- Based on [Heimdallsquest](https://heimdallsquest.biz/)
+
 This software uses the following open source packages:
 
 - [Node.js](https://nodejs.org/)
 
-
 ## License
 
 MIT
-
