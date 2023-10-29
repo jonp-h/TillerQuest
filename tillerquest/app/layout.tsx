@@ -4,10 +4,10 @@ import "./globals.css";
 import localFont from "next/font/local";
 
 // Optional dyslexic font, should be implemented to trigger on user request
-const dyslexic = localFont({
-  src: "./opendyslexic-regular.otf",
-  display: "swap",
-});
+// const dyslexic = localFont({
+//   src: "./OpenDyslexic-Regular.otf",
+//   display: "swap",
+// });
 
 const julius_Sans_One = Julius_Sans_One({
   subsets: ["latin"],
