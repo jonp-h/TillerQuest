@@ -73,7 +73,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center justify-between mb-10">
-            <p className="mr-4">Don't have an account?</p>
+            <p className="mr-4">Dont have an account?</p>
             <Link href="/apply">
               <button
                 type="button"
