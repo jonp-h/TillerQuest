@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  const TQ = require("./TQ.png");
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-gradient-to-br from-purple-950 to-gray-950">
@@ -10,7 +9,7 @@ export default function Home() {
         {/* The React image component, width and height in RENDERED pixels*/}
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
-          src={TQ}
+          src="/logo/TQ.png"
           alt="Tiller Quest logo"
           width={280}
           height={150}

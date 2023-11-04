@@ -9,7 +9,7 @@ export default function Home() {
         {/* The React image component, width and height in RENDERED pixels*/}
         <Image
           className="relative drop-shadow-[0_0_10rem_#ffffff70]"
-          src="../TQ.png"
+          src="/logo/TQ.png"
           alt="Tiller Quest logo"
           width={280}
           height={150}
