@@ -30,6 +30,19 @@
 
 This project uses [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
 
+```bash
+# Clone this repository
+$ git clone
+
+# Go into the repository
+
+# Install dependencies
+$ npm install
+
+# Run the app
+$ npm run dev
+```
+
 <!--
 
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
