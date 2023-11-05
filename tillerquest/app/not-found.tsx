@@ -18,7 +18,7 @@ export default function NotFound() {
           className="bg-slate-800 rounded-xl shadow-lg shadow-black p-5"
           href="/"
         >
-          Return to earth
+          Return to Midgard
         </Link>
       </div>
     </div>
