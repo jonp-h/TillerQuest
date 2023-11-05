@@ -4,8 +4,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     //Main container with gradient background
-    <main className="flex min-h-screen flex-col items-center justify-between md:p-24 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="grid justify-items-center w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
+    <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
+      <div className="grid justify-items-center justify-center w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
         {/* The React image component, width and height in RENDERED pixels*/}
         <Image
           src="/logo/TQ.png"
@@ -14,8 +14,8 @@ export default function Home() {
           height={150}
           priority
         />
-        <h1 className="text-3xl md:text-6xl">Tiller Quest</h1>
-        <p className=" pt-10 mb-4">Please login to enter Valhalla</p>
+        <h1 className="text-6xl md:text-6xl">Tiller Quest</h1>
+        <p className="pt-6 md:pt-8 mb-4">Please login to enter Valhalla</p>
         <form>
           {/* Username login */}
           <div className="flex flex-col items-start mb-6">
@@ -41,7 +41,7 @@ export default function Home() {
           {/* Password input */}
           <div className="flex flex-col items-start mb-6">
             <input
-              type="text"
+              type="password"
               id="password"
               placeholder="password"
               className="peer px-4 py-2.5 w-full 
@@ -61,7 +61,7 @@ export default function Home() {
 
           <div className="mb-12 pb-1 pt-1 text-center">
             <button
-              className="mb-4 w-full rounded px-6 pb-2 pt-2.5 text-sm font-medium uppercase shadow-xl transition duration-200 ease-in-out bg-gradient-to-r from-purple-950 to-purple-900 hover:bg-purple-900 active:bg-purple-900"
+              className="mb-4 w-full rounded px-6 pb-2 pt-2.5 text-sm font-medium uppercase shadow-xl transition duration-200 ease-in-out bg-gradient-to-r from-purple-950 to-purple-900 hover:from-purple-900 hover:to-purple-800 active:bg-purple-900"
               type="button"
               data-te-ripple-init
               data-te-ripple-color="light"
@@ -78,8 +78,6 @@ export default function Home() {
               <button
                 type="button"
                 className="inline-block rounded px-6 pb-2 pt-2 text-xs font-medium uppercase transition duration-200 ease-in-out hover:animate-pulse bg-purple-950 dark:hover:bg-purple-900"
-                data-te-ripple-init
-                data-te-ripple-color="light"
               >
                 Apply
               </button>
