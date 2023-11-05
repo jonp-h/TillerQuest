@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Julius_Sans_One } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
+import NavBar from "./ui/NavBar";
+import Footer from "./ui/Footer";
 
 // Optional dyslexic font, should be implemented to trigger on user request
 // const dyslexic = localFont({
@@ -26,7 +28,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={julius_Sans_One.className}>{children}</body>
+      <body className={julius_Sans_One.className}>
+        <NavBar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

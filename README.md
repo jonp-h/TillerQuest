@@ -28,7 +28,10 @@
 
 ## How To Use
 
-This project uses [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
+This project uses:
+
+- [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
+- [CLSX](https://www.npmjs.com/package/clsx) for conditional CSS
 
 ```bash
 # Clone this repository
