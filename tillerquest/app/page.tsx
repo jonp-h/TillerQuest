@@ -16,9 +16,7 @@ export default function Home() {
           priority
         />
       </div>
-      <h1 className="text-6xl font-extrabold transition-transform hover:-translate-y-1 motion-reduce:transform-none">
-        Tiller Quest
-      </h1>
+      <h1 className="text-4xl py-5 font-extrabold lg:text-6xl">Tiller Quest</h1>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <Link

@@ -21,6 +21,11 @@ const links = [
     //icon: UserGroupIcon
   },
   {
+    name: "Profile",
+    href: "/profile",
+    //icon: UserGroupIcon
+  },
+  {
     name: "Login",
     href: "/login",
     //icon: UserGroupIcon
