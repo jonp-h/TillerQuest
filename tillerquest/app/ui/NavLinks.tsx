@@ -10,6 +10,7 @@ import {
   faUser,
   faRightToBracket,
   faPaperPlane,
+  faStore,
 } from "@fortawesome/free-solid-svg-icons";
 
 const links = [
@@ -17,6 +18,11 @@ const links = [
     name: "Action",
     href: "/action",
     icon: faBolt,
+  },
+  {
+    name: "Shop",
+    href: "/shop",
+    icon: faStore,
   },
   {
     name: "Explore",
@@ -40,12 +46,15 @@ const links = [
   },
 ];
 
-export default function NavLinks() {
+interface NavLinksProps {
+  onClick?: (event: React.MouseEvent) => void;
+}
+
+export default function NavLinks({ onClick }: NavLinksProps) {
   const pathname = usePathname();
 
   return (
     <>
-      {/* The following code can be exanded to include icons */}
       {links.map((link) => {
         const icon = link.icon;
         return (
@@ -55,6 +64,7 @@ export default function NavLinks() {
             className={clsx("flex gap-1.5 items-center", {
               "flex text-purple-400": pathname === link.href,
             })}
+            onClick={onClick}
           >
             <FontAwesomeIcon icon={icon} className="w-6 " />
             <p className="">{link.name}</p>

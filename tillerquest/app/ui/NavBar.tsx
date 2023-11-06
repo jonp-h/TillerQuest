@@ -32,7 +32,7 @@ export default function NavBar() {
           </div>
         </Link>
 
-        <div className="hidden md:flex gap-20 text-lg justify-between pr-10">
+        <div className="hidden md:sticky md:flex gap-20 text-lg justify-between pr-10">
           <NavLinks />
         </div>
         {/* Visible hamburger menu on small screen sizes */}
@@ -43,9 +43,9 @@ export default function NavBar() {
       <div
         className={`${
           isMobileMenuOpen ? "block" : "hidden" // Conditional class based on state
-        } absolute z-10 md:hidden pr-5 flex flex-col items-center pt-10 gap-20 text-4xl min-w-full min-h-screen bg-slate-900`}
+        } sticky z-10 md:hidden pr-5 flex flex-col items-center pt-10 gap-20 text-4xl min-w-full min-h-screen bg-slate-900`}
       >
-        <NavLinks />
+        <NavLinks onClick={() => isMobileMenuOpen && toggleMobileMenu()} />
       </div>
     </>
   );
