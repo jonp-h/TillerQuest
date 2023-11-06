@@ -56,8 +56,8 @@ export default function NavLinks() {
               "flex text-purple-400": pathname === link.href,
             })}
           >
-            <FontAwesomeIcon icon={icon} className="w-6" />
-            <p className="hidden md:block">{link.name}</p>
+            <FontAwesomeIcon icon={icon} className="w-6 " />
+            <p className="">{link.name}</p>
           </Link>
         );
       })}

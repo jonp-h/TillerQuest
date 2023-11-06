@@ -54,14 +54,14 @@ export default function Home() {
           </div>
 
           <h1 className="font-extrabold text-2xl">Username</h1>
-          <div className="flex gap-5">
+          <div className="flex gap-5 text-orange-300">
             <h2>Class</h2>
             <h3>Level</h3>
             <h3>XP</h3>
           </div>
 
-          <h3>HP</h3>
-          <h3>Mana</h3>
+          <h3 className="text-green-500">HP</h3>
+          <h3 className="text-blue-500">Mana</h3>
         </div>
         <div className="flex flex-col items-center gap-10 p-10">
           <h2 className="font-extrabold text-2xl">Abilites</h2>
