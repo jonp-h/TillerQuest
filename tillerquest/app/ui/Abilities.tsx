@@ -12,7 +12,7 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 
-const abilities = [
+const placeholderAbilities = [
   {
     name: "Thunder",
     href: "/thunder",
@@ -64,7 +64,7 @@ export default function Abilities() {
   return (
     <>
       {/* The following code can be exanded to include icons */}
-      {abilities.map((abilities) => {
+      {placeholderAbilities.map((abilities) => {
         const icon = abilities.icon;
         return (
           <Link
