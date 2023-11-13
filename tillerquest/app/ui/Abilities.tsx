@@ -8,7 +8,6 @@ import {
   faBolt,
   faMagnifyingGlass,
   faUser,
-  faRightToBracket,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 

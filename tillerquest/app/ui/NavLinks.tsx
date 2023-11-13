@@ -11,12 +11,13 @@ import {
   faRightToBracket,
   faPaperPlane,
   faStore,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 
 const links = [
   {
-    name: "Action",
-    href: "/action",
+    name: "Åsgard",
+    href: "/asgard",
     icon: faBolt,
   },
   {
@@ -38,6 +39,10 @@ const links = [
     name: "Profile",
     href: "/profile",
     icon: faUser,
+  },
+  {
+    href: "/notifications",
+    icon: faBell,
   },
   {
     name: "Login",
