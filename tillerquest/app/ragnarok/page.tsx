@@ -1,13 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
+import axe from "../../public/ragnarok/axe.png";
+import bow from "../../public/ragnarok/bow.png";
+import shield from "../../public/ragnarok/shield.png";
+import spear from "../../public/ragnarok/spear.png";
+import sword from "../../public/ragnarok/sword.png";
+import viking from "../../public/ragnarok/viking.png";
+import blank from "../../public/ragnarok/blank.png";
+import { StaticImageData } from "next/image";
 
 const width = 8;
-// const runes = ["sword", "shield", "spear", "axe", "helmet", "bow"];
-const candyColor = ["green", "blue", "purple", "red", "yellow", "orange"];
+const runes = [sword, shield, spear, axe, viking, bow];
+// const runes = ["green", "blue", "purple", "red", "yellow", "orange"];
 
 export default function Profile() {
   const [currentRuneArrangement, setCurrentRuneArrangement] = useState<
-    string[]
+    StaticImageData[]
   >([]);
   const [squareBeingDragged, setSquareBeingDragged] = useState(Object);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(Object);
@@ -25,7 +33,7 @@ export default function Profile() {
       ) {
         columnOfFour.forEach(
           // replaces the indexes of the runes with an empty string
-          (index) => (currentRuneArrangement[index] = "")
+          (index) => (currentRuneArrangement[index] = blank)
         );
         return true;
       }
@@ -50,7 +58,7 @@ export default function Profile() {
           (index) => currentRuneArrangement[index] === decidedRune
         )
       ) {
-        rowOfFour.forEach((index) => (currentRuneArrangement[index] = ""));
+        rowOfFour.forEach((index) => (currentRuneArrangement[index] = blank));
         return true;
       }
     }
@@ -69,7 +77,7 @@ export default function Profile() {
       ) {
         columnOfThree.forEach(
           // replaces the indexes of the runes with an empty string
-          (index) => (currentRuneArrangement[index] = "")
+          (index) => (currentRuneArrangement[index] = blank)
         );
         return true;
       }
@@ -93,7 +101,7 @@ export default function Profile() {
           (index) => currentRuneArrangement[index] === decidedRune
         )
       ) {
-        rowOfThree.forEach((index) => (currentRuneArrangement[index] = ""));
+        rowOfThree.forEach((index) => (currentRuneArrangement[index] = blank));
         return true;
       }
     }
@@ -104,14 +112,14 @@ export default function Profile() {
       const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
       const isFirstRow = firstRow.includes(i);
 
-      if (isFirstRow && currentRuneArrangement[i] === "") {
-        let randomNumber = Math.floor(Math.random() * candyColor.length);
-        currentRuneArrangement[i] = candyColor[randomNumber];
+      if (isFirstRow && currentRuneArrangement[i] === blank) {
+        let randomNumber = Math.floor(Math.random() * runes.length);
+        currentRuneArrangement[i] = runes[randomNumber];
       }
 
-      if (currentRuneArrangement[i + width] === "") {
+      if (currentRuneArrangement[i + width] === blank) {
         currentRuneArrangement[i + width] = currentRuneArrangement[i];
-        currentRuneArrangement[i] = "";
+        currentRuneArrangement[i] = blank;
       }
     }
   };
@@ -149,9 +157,9 @@ export default function Profile() {
     );
 
     currentRuneArrangement[squareBeingReplacedId] =
-      squareBeingDragged.style.backgroundColor;
+      squareBeingDragged.getAttribute("src");
     currentRuneArrangement[squareBeingDraggedId] =
-      squareBeingReplaced.style.backgroundColor;
+      squareBeingReplaced.getAttribute("src");
 
     const validMoves = [
       squareBeingDraggedId - 1,
@@ -175,9 +183,9 @@ export default function Profile() {
       setSquareBeingReplaced(null);
     } else {
       currentRuneArrangement[squareBeingReplacedId] =
-        squareBeingReplaced.style.backgroundColor;
+        squareBeingReplaced.getAttribute("src");
       currentRuneArrangement[squareBeingDraggedId] =
-        squareBeingDragged.style.backgroundColor;
+        squareBeingDragged.getAttribute("src");
       setCurrentRuneArrangement([...currentRuneArrangement]);
     }
   };
@@ -186,8 +194,7 @@ export default function Profile() {
     const randomRuneArrangement = [];
     for (let i = 0; i < width * width; i++) {
       // Pickes random rune from 0 to 5
-      const randomRune =
-        candyColor[Math.floor(Math.random() * candyColor.length)];
+      const randomRune = runes[Math.floor(Math.random() * runes.length)];
       randomRuneArrangement.push(randomRune);
     }
     setCurrentRuneArrangement(randomRuneArrangement);
@@ -227,12 +234,12 @@ export default function Profile() {
         className="flex flex-wrap justify-center bg-slate-800 p-10 rounded-lg"
         style={{ width: "560px" }}
       >
-        {currentRuneArrangement.map((rune: string, index: number) => (
+        {currentRuneArrangement.map((rune: StaticImageData, index: number) => (
           <img
             className="p-7"
             key={index}
-            // alt={rune}
-            style={{ backgroundColor: rune }}
+            // style={{ backgroundColor: rune }}
+            src={rune}
             data-Id={index}
             onDragStart={dragStart}
             // stop browser from refreshing when dragging image
