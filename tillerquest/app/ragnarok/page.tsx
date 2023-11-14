@@ -186,15 +186,13 @@ export default function Ragnarok() {
   };
 
   // e is the event
-  const dragStart = (e: Event) => {
-    console.log("drag start");
+  const dragStart = (e: React.DragEvent<HTMLImageElement>) => {
     setSquareBeingDragged(e.target);
   };
-  const dragDrop = (e: Event) => {
-    console.log("drag drop", e.target, typeof e.target);
+  const dragDrop = (e: React.DragEvent<HTMLImageElement>) => {
     setSquareBeingReplaced(e.target);
   };
-  const dragEnd = (e: Event) => {
+  const dragEnd = () => {
     console.log("drag end");
 
     const squareBeingDraggedId = parseInt(
