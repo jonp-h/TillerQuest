@@ -1,27 +1,81 @@
 "use client";
 import { useEffect, useState } from "react";
-import axe from "../../public/ragnarok/axe.png";
-import bow from "../../public/ragnarok/bow.png";
-import shield from "../../public/ragnarok/shield.png";
-import spear from "../../public/ragnarok/spear.png";
-import sword from "../../public/ragnarok/sword.png";
-import viking from "../../public/ragnarok/viking.png";
-import blank from "../../public/ragnarok/blank.png";
-import { StaticImageData } from "next/image";
 
 const width = 8;
-const runes = [sword, shield, spear, axe, viking, bow];
-// const runes = ["green", "blue", "purple", "red", "yellow", "orange"];
+const runes = [
+  "/ragnarok/sword.png",
+  "/ragnarok/shield.png",
+  "/ragnarok/spear.png",
+  "/ragnarok/axe.png",
+  "/ragnarok/viking.png",
+  "/ragnarok/bow.png",
+];
 
 export default function Profile() {
   const [currentRuneArrangement, setCurrentRuneArrangement] = useState<
-    StaticImageData[]
+    string[]
   >([]);
   const [squareBeingDragged, setSquareBeingDragged] = useState(Object);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(Object);
+  const [score, setScore] = useState(0);
+
+  const checkForColumnOfFive = () => {
+    // only need to check until the 5th bottom row
+    for (let i = 0; i <= 31; i++) {
+      // the indexes in columnOfFour are the indexes of the rows below
+      const columnOfFive = [
+        i,
+        i + width,
+        i + width * 2,
+        i + width * 3,
+        i + width * 4,
+      ];
+      const decidedRune = currentRuneArrangement[i];
+      if (
+        columnOfFive.every(
+          (index) => currentRuneArrangement[index] === decidedRune
+        )
+      ) {
+        columnOfFive.forEach(
+          // replaces the indexes of the runes with an empty string
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
+        );
+        console.log("column of five");
+        setScore(score + 12);
+        return true;
+      }
+    }
+  };
+
+  const checkForRowOfFive = () => {
+    for (let i = 0; i < 64; i++) {
+      // the indexes in rowOfFive are the indexes to the right
+      const rowOfFive = [i, i + 1, i + 2, i + 3, i + 4];
+      const decidedRune = currentRuneArrangement[i];
+      const notValid = [
+        4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38,
+        39, 44, 45, 46, 47, 52, 53, 54, 55, 61, 62, 63, 64,
+      ];
+
+      if (notValid.includes(i)) continue;
+
+      if (
+        rowOfFive.every(
+          (index) => currentRuneArrangement[index] === decidedRune
+        )
+      ) {
+        rowOfFive.forEach(
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
+        );
+        console.log("row of five");
+        setScore(score + 12);
+        return true;
+      }
+    }
+  };
 
   const checkForColumnOfFour = () => {
-    // only need to check until the 4rd bottom row
+    // only need to check until the 4th bottom row
     for (let i = 0; i <= 39; i++) {
       // the indexes in columnOfFour are the indexes of the rows below
       const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
@@ -33,15 +87,15 @@ export default function Profile() {
       ) {
         columnOfFour.forEach(
           // replaces the indexes of the runes with an empty string
-          (index) => (currentRuneArrangement[index] = blank)
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
         );
+        setScore(score + 6);
         return true;
       }
     }
   };
 
   const checkForRowOfFour = () => {
-    // only need to check until the 3rd bottom row
     for (let i = 0; i < 64; i++) {
       // the indexes in rowOfFour are the indexes to the right
       const rowOfFour = [i, i + 1, i + 2, i + 3];
@@ -58,14 +112,17 @@ export default function Profile() {
           (index) => currentRuneArrangement[index] === decidedRune
         )
       ) {
-        rowOfFour.forEach((index) => (currentRuneArrangement[index] = blank));
+        rowOfFour.forEach(
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
+        );
+        setScore(score + 6);
         return true;
       }
     }
   };
 
   const checkForColumnOfThree = () => {
-    // only need to check until the 3rd bottom row
+    // only need to check until the 3th bottom row
     for (let i = 0; i <= 47; i++) {
       // the indexes in columnOfThree are the indexes of the rows below
       const columnOfThree = [i, i + width, i + width * 2];
@@ -77,8 +134,9 @@ export default function Profile() {
       ) {
         columnOfThree.forEach(
           // replaces the indexes of the runes with an empty string
-          (index) => (currentRuneArrangement[index] = blank)
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
         );
+        setScore(score + 3);
         return true;
       }
     }
@@ -101,7 +159,10 @@ export default function Profile() {
           (index) => currentRuneArrangement[index] === decidedRune
         )
       ) {
-        rowOfThree.forEach((index) => (currentRuneArrangement[index] = blank));
+        rowOfThree.forEach(
+          (index) => (currentRuneArrangement[index] = "/ragnarok/blank.png")
+        );
+        setScore(score + 3);
         return true;
       }
     }
@@ -112,30 +173,17 @@ export default function Profile() {
       const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
       const isFirstRow = firstRow.includes(i);
 
-      if (isFirstRow && currentRuneArrangement[i] === blank) {
+      if (isFirstRow && currentRuneArrangement[i] === "/ragnarok/blank.png") {
         let randomNumber = Math.floor(Math.random() * runes.length);
         currentRuneArrangement[i] = runes[randomNumber];
       }
 
-      if (currentRuneArrangement[i + width] === blank) {
+      if (currentRuneArrangement[i + width] === "/ragnarok/blank.png") {
         currentRuneArrangement[i + width] = currentRuneArrangement[i];
-        currentRuneArrangement[i] = blank;
+        currentRuneArrangement[i] = "/ragnarok/blank.png";
       }
     }
   };
-
-  //   const [currentRuneArrangement, setCurrentRuneArrangement] = useState<
-  //     string[]
-  //   >([]);
-  //   const createBoard = () => {
-  //     const randomRuneArrangement = [];
-  //     for (let i = 0; i < width * width; i++) {
-  //       // Pickes random rune from 0 to 5
-  //       const randomRune = runes[Math.floor(Math.random() * runes.length)];
-  //       randomRuneArrangement.push(randomRune);
-  //     }
-  //     setCurrentRuneArrangement(randomRuneArrangement);
-  //   };
 
   // e is the event
   const dragStart = (e: Event) => {
@@ -156,11 +204,6 @@ export default function Profile() {
       squareBeingReplaced.getAttribute("data-id")
     );
 
-    currentRuneArrangement[squareBeingReplacedId] =
-      squareBeingDragged.getAttribute("src");
-    currentRuneArrangement[squareBeingDraggedId] =
-      squareBeingReplaced.getAttribute("src");
-
     const validMoves = [
       squareBeingDraggedId - 1,
       squareBeingDraggedId - width,
@@ -169,16 +212,33 @@ export default function Profile() {
     ];
     const validMove = validMoves.includes(squareBeingReplacedId);
 
+    if (validMove == true) {
+      currentRuneArrangement[squareBeingReplacedId] =
+        squareBeingDragged.getAttribute("src");
+      currentRuneArrangement[squareBeingDraggedId] =
+        squareBeingReplaced.getAttribute("src");
+    }
+    const isAColumnOfFive = checkForColumnOfFive();
+    const isARowOfFive = checkForRowOfFive();
     const isAColumnOfFour = checkForColumnOfFour();
     const isARowOfFour = checkForRowOfFour();
     const isAColumnOfThree = checkForColumnOfThree();
     const isARowOfThree = checkForRowOfThree();
 
     if (
-      squareBeingReplacedId &&
       validMove &&
-      (isARowOfThree || isARowOfFour || isAColumnOfFour || isAColumnOfThree)
+      (isARowOfThree ||
+        isARowOfFour ||
+        isARowOfFive ||
+        isAColumnOfFive ||
+        isAColumnOfFour ||
+        isAColumnOfThree)
     ) {
+      console.log(
+        "valid move",
+        validMove,
+        isARowOfThree || isARowOfFour || isAColumnOfFour || isAColumnOfThree
+      );
       setSquareBeingDragged(null);
       setSquareBeingReplaced(null);
     } else {
@@ -209,8 +269,10 @@ export default function Profile() {
   useEffect(() => {
     // checks for matches every 100ms
     const timer = setInterval(() => {
+      checkForColumnOfFive();
       checkForColumnOfFour();
       checkForColumnOfThree();
+      checkForRowOfFive();
       checkForRowOfFour();
       checkForRowOfThree();
       moveIntoSquareBelow();
@@ -219,8 +281,10 @@ export default function Profile() {
     }, 100);
     return () => clearInterval(timer);
   }, [
+    checkForColumnOfFive,
     checkForColumnOfFour,
     checkForColumnOfThree,
+    checkForRowOfFive,
     checkForRowOfFour,
     checkForRowOfThree,
     moveIntoSquareBelow,
@@ -230,26 +294,30 @@ export default function Profile() {
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div
-        className="flex flex-wrap justify-center bg-slate-800 p-10 rounded-lg"
-        style={{ width: "560px" }}
-      >
-        {currentRuneArrangement.map((rune: StaticImageData, index: number) => (
-          <img
-            className="p-7"
-            key={index}
-            // style={{ backgroundColor: rune }}
-            src={rune}
-            data-Id={index}
-            onDragStart={dragStart}
-            // stop browser from refreshing when dragging image
-            onDragOver={(e) => e.preventDefault()}
-            onDragEnter={(e) => e.preventDefault()}
-            onDragLeave={(e) => e.preventDefault()}
-            onDrop={dragDrop}
-            onDragEnd={dragEnd}
-          />
-        ))}
+      <div className="bg-slate-800 rounded-lg text-center">
+        <div
+          className="flex flex-wrap justify-center p-10 "
+          style={{ width: "560px" }}
+        >
+          {currentRuneArrangement.map((rune: string, index: number) => (
+            <img
+              className="w-14"
+              key={index}
+              // style={{ backgroundColor: rune }}
+              // alt
+              src={rune}
+              data-id={index}
+              onDragStart={dragStart}
+              // stop browser from refreshing when dragging image
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnter={(e) => e.preventDefault()}
+              onDragLeave={(e) => e.preventDefault()}
+              onDrop={dragDrop}
+              onDragEnd={dragEnd}
+            />
+          ))}
+        </div>
+        <h1 className="p-10 font-semibold text-5xl">{score}</h1>
       </div>
     </main>
   );
