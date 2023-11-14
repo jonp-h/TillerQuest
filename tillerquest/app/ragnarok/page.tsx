@@ -31,9 +31,10 @@ export default function Ragnarok() {
         i + width * 4,
       ];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       if (
         columnOfFive.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         columnOfFive.forEach(
@@ -52,6 +53,7 @@ export default function Ragnarok() {
       // the indexes in rowOfFive are the indexes to the right
       const rowOfFive = [i, i + 1, i + 2, i + 3, i + 4];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       const notValid = [
         4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38,
         39, 44, 45, 46, 47, 52, 53, 54, 55, 61, 62, 63, 64,
@@ -61,7 +63,7 @@ export default function Ragnarok() {
 
       if (
         rowOfFive.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         rowOfFive.forEach(
@@ -80,9 +82,10 @@ export default function Ragnarok() {
       // the indexes in columnOfFour are the indexes of the rows below
       const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       if (
         columnOfFour.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         columnOfFour.forEach(
@@ -100,6 +103,7 @@ export default function Ragnarok() {
       // the indexes in rowOfFour are the indexes to the right
       const rowOfFour = [i, i + 1, i + 2, i + 3];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       const notValid = [
         5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53,
         54, 55, 62, 63, 64,
@@ -109,7 +113,7 @@ export default function Ragnarok() {
 
       if (
         rowOfFour.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         rowOfFour.forEach(
@@ -127,9 +131,10 @@ export default function Ragnarok() {
       // the indexes in columnOfThree are the indexes of the rows below
       const columnOfThree = [i, i + width, i + width * 2];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       if (
         columnOfThree.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         columnOfThree.forEach(
@@ -148,6 +153,7 @@ export default function Ragnarok() {
       // the indexes in rowOfThree are the indexes to the right
       const rowOfThree = [i, i + 1, i + 2];
       const decidedRune = currentRuneArrangement[i];
+      const isBlank = currentRuneArrangement[i] === "/ragnarok/blank.png";
       const notValid = [
         6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55, 63, 64,
       ];
@@ -156,7 +162,7 @@ export default function Ragnarok() {
 
       if (
         rowOfThree.every(
-          (index) => currentRuneArrangement[index] === decidedRune
+          (index) => currentRuneArrangement[index] === decidedRune && !isBlank
         )
       ) {
         rowOfThree.forEach(
@@ -291,10 +297,10 @@ export default function Ragnarok() {
 
   return (
     //Main container with gradient background
-    <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="bg-slate-800 rounded-lg text-center">
+    <main className="flex  flex-col  items-center min-h-screen justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
+      <div className="bg-slate-800 min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
         <div
-          className="flex flex-wrap justify-center p-10 "
+          className="flex flex-wrap justify-center md:p-10 "
           style={{ width: "560px" }}
         >
           {currentRuneArrangement.map((rune: string, index: number) => (
