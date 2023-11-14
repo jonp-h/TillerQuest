@@ -11,7 +11,7 @@ const runes = [
   "/ragnarok/bow.png",
 ];
 
-export default function Profile() {
+export default function Ragnarok() {
   const [currentRuneArrangement, setCurrentRuneArrangement] = useState<
     string[]
   >([]);
