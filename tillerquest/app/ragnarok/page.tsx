@@ -44,6 +44,7 @@ export default function Ragnarok() {
         );
         console.log("column of five");
         setScore(score + 12);
+        setMaxMoves(maxMoves + 1);
         return true;
       }
     }
@@ -72,6 +73,7 @@ export default function Ragnarok() {
         );
         console.log("row of five");
         setScore(score + 12);
+        setMaxMoves(maxMoves + 1);
         return true;
       }
     }
@@ -217,6 +219,7 @@ export default function Ragnarok() {
     ];
     const validMove = validMoves.includes(squareBeingReplacedId);
 
+    // Make a move only if there are moves left and it is a valid move
     if (validMove == true && maxMoves > 0) {
       currentRuneArrangement[squareBeingReplacedId] =
         squareBeingDragged.getAttribute("src");
@@ -300,10 +303,9 @@ export default function Ragnarok() {
   return (
     //Main container with gradient background
     <main className="flex  flex-col  items-center min-h-screen justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <h1 className=" text-6xl pt-10">RAGNAROK</h1>
-      <div className="bg-slate-800 flex min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
+      <div className="bg-slate-800 md:flex min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
         <div
-          className="flex flex-wrap justify-center md:p-10 "
+          className="grid grid-cols-8 justify-center md:p-10 "
           style={{ width: "560px" }}
         >
           {currentRuneArrangement.map((rune: string, index: number) => (
@@ -324,19 +326,31 @@ export default function Ragnarok() {
             />
           ))}
         </div>
-        <div className=" pt-44">
+        <div className="">
+          <h1 className=" text-6xl p-10">RAGNAROK</h1>
           {maxMoves !== 0 && (
-            <h1 className="font-semibold text-xl">Moves left: {maxMoves}</h1>
+            <h1 className="font-semibold text-xl text-orange-600">
+              Moves left: {maxMoves}
+            </h1>
           )}
           {maxMoves !== 0 && (
-            <h1 className="p-5 font-semibold text-5xl">Score: {score}</h1>
+            <h1 className="p-5 font-semibold text-5xl text-yellow-400">
+              Score: {score}
+            </h1>
           )}
           {maxMoves === 0 && (
-            <h1 className="p-5 font-semibold text-5xl">Game over</h1>
+            <h1 className="font-semibold text-xl text-orange-600">Game over</h1>
           )}
           {maxMoves === 0 && (
-            <h1 className="p-5 font-semibold text-5xl">Final score: {score}</h1>
+            <h1 className="p-5 font-semibold text-5xl text-yellow-400">
+              Final score: {score}
+            </h1>
           )}
+          <p className=" flex flex-col py-6 gap-3">
+            <strong>3 matches:</strong> 3 points
+            <br /> <strong>4 matches:</strong> 9 points <br />{" "}
+            <strong>5 matches:</strong> 12 points + 1 extra move
+          </p>
         </div>
       </div>
     </main>
