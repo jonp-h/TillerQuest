@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 
 const width = 8;
 const runes = [
-  "/ragnarok/sword.png",
+  "/ragnarok/redrune.png",
   "/ragnarok/shield.png",
-  "/ragnarok/spear.png",
-  "/ragnarok/axe.png",
-  "/ragnarok/viking.png",
-  "/ragnarok/bow.png",
+  "/ragnarok/greenrune.png",
+  "/ragnarok/hammer.png",
+  "/ragnarok/coin.png",
+  "/ragnarok/mjolnir.png",
 ];
 
 export default function Ragnarok() {
@@ -18,6 +18,7 @@ export default function Ragnarok() {
   const [squareBeingDragged, setSquareBeingDragged] = useState(Object);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(Object);
   const [score, setScore] = useState(0);
+  const [maxMoves, setMaxMoves] = useState(3);
 
   const checkForColumnOfFive = () => {
     // only need to check until the 5th bottom row
@@ -216,11 +217,12 @@ export default function Ragnarok() {
     ];
     const validMove = validMoves.includes(squareBeingReplacedId);
 
-    if (validMove == true) {
+    if (validMove == true && maxMoves > 0) {
       currentRuneArrangement[squareBeingReplacedId] =
         squareBeingDragged.getAttribute("src");
       currentRuneArrangement[squareBeingDraggedId] =
         squareBeingReplaced.getAttribute("src");
+      setMaxMoves(maxMoves - 1);
     }
     const isAColumnOfFive = checkForColumnOfFive();
     const isARowOfFive = checkForRowOfFive();
@@ -298,7 +300,8 @@ export default function Ragnarok() {
   return (
     //Main container with gradient background
     <main className="flex  flex-col  items-center min-h-screen justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="bg-slate-800 min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
+      <h1 className=" text-6xl pt-10">RAGNAROK</h1>
+      <div className="bg-slate-800 flex min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
         <div
           className="flex flex-wrap justify-center md:p-10 "
           style={{ width: "560px" }}
@@ -321,7 +324,20 @@ export default function Ragnarok() {
             />
           ))}
         </div>
-        <h1 className="p-10 font-semibold text-5xl">{score}</h1>
+        <div className=" pt-44">
+          {maxMoves !== 0 && (
+            <h1 className="font-semibold text-xl">Moves left: {maxMoves}</h1>
+          )}
+          {maxMoves !== 0 && (
+            <h1 className="p-5 font-semibold text-5xl">Score: {score}</h1>
+          )}
+          {maxMoves === 0 && (
+            <h1 className="p-5 font-semibold text-5xl">Game over</h1>
+          )}
+          {maxMoves === 0 && (
+            <h1 className="p-5 font-semibold text-5xl">Final score: {score}</h1>
+          )}
+        </div>
       </div>
     </main>
   );

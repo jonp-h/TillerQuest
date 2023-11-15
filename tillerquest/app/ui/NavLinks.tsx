@@ -12,6 +12,7 @@ import {
   faPaperPlane,
   faStore,
   faBell,
+  faFire,
 } from "@fortawesome/free-solid-svg-icons";
 
 const links = [
@@ -24,6 +25,11 @@ const links = [
     name: "Shop",
     href: "/shop",
     icon: faStore,
+  },
+  {
+    name: "Ragnarok",
+    href: "/ragnarok",
+    icon: faFire,
   },
   {
     name: "Explore",
