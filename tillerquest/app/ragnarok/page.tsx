@@ -316,6 +316,7 @@ export default function Ragnarok() {
               // alt
               src={rune}
               data-id={index}
+              draggable="true"
               onDragStart={dragStart}
               // stop browser from refreshing when dragging image
               onDragOver={(e) => e.preventDefault()}
@@ -342,7 +343,7 @@ export default function Ragnarok() {
             <h1 className="font-semibold text-xl text-orange-600">Game over</h1>
           )}
           {maxMoves === 0 && (
-            <h1 className="p-5 font-semibold text-5xl text-yellow-400">
+            <h1 className="p-5 font-semibold text-5xl text-red-600">
               Final score: {score}
             </h1>
           )}
