@@ -21,6 +21,10 @@ const classes = [
     src: "/classes/fighter1.jpg",
   },
   {
+    name: "fighter2",
+    src: "/classes/fighter2.jpg",
+  },
+  {
     name: "paladin1",
     src: "/classes/paladin1.jpg",
   },
@@ -33,8 +37,20 @@ const classes = [
     src: "/classes/rogue2.jpg",
   },
   {
+    name: "rogue3",
+    src: "/classes/rogue3.jpg",
+  },
+  {
     name: "warrior1",
     src: "/classes/warrior1.jpg",
+  },
+  {
+    name: "warrior2",
+    src: "/classes/warrior2.jpg",
+  },
+  {
+    name: "warrior3",
+    src: "/classes/warrior3.jpg",
   },
   {
     name: "wizard1",
@@ -44,12 +60,16 @@ const classes = [
     name: "wizard2",
     src: "/classes/wizard2.jpg",
   },
+  {
+    name: "mage1",
+    src: "/classes/mage1.jpg",
+  },
 ];
 
 export default function Abilities() {
   const [chosenClass, setChosenClass] = useState("cleric2");
   return (
-    <main className="grid grid-cols-4 gap-7">
+    <main className="grid grid-cols-2 md:grid-cols-5 gap-7">
       {classes.map((classType: any) => {
         const className = classType.name;
         const src = classType.src;
@@ -61,15 +81,22 @@ export default function Abilities() {
               alt={className}
               onClick={() => setChosenClass(className)}
               className={clsx(
-                "rounded-full",
+                "rounded-full p-2 shadow-inner shadow-black",
                 className === chosenClass &&
-                  "border-2 drop-shadow-2xl animate-bounce border-purple-600"
+                  "p-0 border-2 shadow-inner shadow-black border-purple-600 "
               )}
-              width={150}
+              width={200}
               height={150}
               draggable="false"
             />
-            <h1>{className}</h1>
+            <h1
+              className={clsx(
+                "text-2xl pt-1",
+                className === chosenClass && "text-purple-400 font-bold"
+              )}
+            >
+              {className}
+            </h1>
           </div>
         );
       })}
