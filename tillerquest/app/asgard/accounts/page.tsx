@@ -25,6 +25,7 @@ export default function Accounts() {
               <div className="flex flex-col items-start mb-6">
                 <input
                   type="text"
+                  required
                   id="Name"
                   placeholder="Name"
                   className="peer px-4 py-2.5 w-full 
@@ -46,6 +47,7 @@ export default function Accounts() {
               <div className="flex flex-col items-start mb-6">
                 <input
                   type="text"
+                  required
                   id="Lastname"
                   placeholder="Lastname"
                   className="peer px-4 py-2.5 w-full 
@@ -67,6 +69,7 @@ export default function Accounts() {
               <div className="flex flex-col items-start mb-6">
                 <input
                   type="text"
+                  required
                   id="username"
                   placeholder="username"
                   className="peer px-4 py-2.5 w-full 
@@ -88,6 +91,7 @@ export default function Accounts() {
               <div className="flex flex-col items-start mb-6">
                 <input
                   type="password"
+                  required
                   id="password"
                   placeholder="password"
                   className="peer px-4 py-2.5 w-full 
@@ -109,6 +113,7 @@ export default function Accounts() {
               <div className="flex flex-col items-start mb-6">
                 <input
                   type="password"
+                  required
                   id="passwordagain"
                   placeholder="Password again"
                   className="peer px-4 py-2.5 w-full 
@@ -125,10 +130,23 @@ export default function Accounts() {
                   Password again
                 </label>
               </div>
+              <div className="flex py-5 gap-3">
+                <label htmlFor="Clan">Clan:</label>
+                <select className=" bg-slate-800" name="Clan">
+                  <option value="red">Red</option>
+                  <option value="green">Green</option>
+                </select>
+
+                <label htmlFor="Asgard">Asgard:</label>
+                <input name="Asgard" type="checkbox"></input>
+              </div>
             </form>
           </div>
           <a href="#">
-            <FontAwesomeIcon icon={faUserPlus} className="h-10" />
+            <FontAwesomeIcon
+              icon={faUserPlus}
+              className="h-10 border-2 p-3 rounded-lg hover:border-purple-800 hover:text-purple-800"
+            />
           </a>
           <h1>Add user</h1>
         </div>

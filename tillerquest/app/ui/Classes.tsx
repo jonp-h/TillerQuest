@@ -80,9 +80,9 @@ export default function Classes() {
               alt={className}
               onClick={() => setChosenClass(className)}
               className={clsx(
-                "rounded-full p-2 shadow-inner shadow-black",
+                "rounded-full p-3 shadow-inner shadow-black",
                 className === chosenClass &&
-                  "p-0 border-2 shadow-inner shadow-black border-purple-600 "
+                  "p-1 border-2 shadow-inner shadow-black border-purple-600 "
               )}
               width={200}
               height={150}
