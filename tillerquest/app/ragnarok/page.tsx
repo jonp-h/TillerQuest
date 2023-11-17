@@ -317,7 +317,7 @@ export default function Ragnarok() {
               className="w-14"
               key={index}
               // style={{ backgroundColor: rune }}
-              // alt
+              alt=""
               src={rune}
               data-id={index}
               draggable="true"

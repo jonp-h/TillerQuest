@@ -70,7 +70,7 @@ export default function Abilities() {
   const [chosenClass, setChosenClass] = useState("cleric2");
   return (
     <main className="grid grid-cols-2 md:grid-cols-5 gap-7">
-      {classes.map((classType: any) => {
+      {classes.map((classType) => {
         const className = classType.name;
         const src = classType.src;
         return (
