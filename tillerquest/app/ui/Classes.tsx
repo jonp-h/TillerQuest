@@ -66,17 +66,16 @@ const classes = [
   },
 ];
 
-export default function Abilities() {
-  const [chosenClass, setChosenClass] = useState("cleric2");
+export default function Classes() {
+  const [chosenClass, setChosenClass] = useState("cleric1");
   return (
     <main className="grid grid-cols-2 md:grid-cols-5 gap-7">
       {classes.map((classType) => {
         const className = classType.name;
         const src = classType.src;
         return (
-          <div className="text-center">
+          <div key={className} className="text-center">
             <Image
-              key={className}
               src={src}
               alt={className}
               onClick={() => setChosenClass(className)}
