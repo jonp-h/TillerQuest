@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { julius_Sans_One } from "./fonts";
 
 export default function Home() {
   return (
@@ -16,8 +17,11 @@ export default function Home() {
           priority
         />
       </div>
-      <h1 className="text-4xl py-5 font-extrabold lg:text-6xl">Tiller Quest</h1>
-
+      <div className={julius_Sans_One.className}>
+        <h1 className="text-4xl py-5 font-extrabold lg:text-6xl">
+          Tiller Quest
+        </h1>
+      </div>
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <Link
           href="/explore"

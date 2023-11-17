@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react"; // Import React and useState
+import { julius_Sans_One } from "./../fonts";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
@@ -25,10 +26,11 @@ export default function NavBar() {
               width={45}
               height={150}
             />
-
-            <h1 className="pl-8 font-bold text-sm md:text-xl lg:text-3xl">
-              Tiller Quest
-            </h1>
+            <div className={julius_Sans_One.className}>
+              <h1 className="pl-8 font-bold text-sm md:text-xl lg:text-3xl ">
+                Tiller Quest
+              </h1>
+            </div>
           </div>
         </Link>
 

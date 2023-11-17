@@ -1,20 +1,8 @@
 import type { Metadata } from "next";
-import { Julius_Sans_One } from "next/font/google";
+import { inter } from "./fonts";
 import "./globals.css";
-import localFont from "next/font/local";
 import NavBar from "./ui/NavBar";
 import Footer from "./ui/Footer";
-
-// Optional dyslexic font, should be implemented to trigger on user request
-// const dyslexic = localFont({
-//   src: "./OpenDyslexic-Regular.otf",
-//   display: "swap",
-// });
-
-const julius_Sans_One = Julius_Sans_One({
-  subsets: ["latin"],
-  weight: ["400"],
-});
 
 export const metadata: Metadata = {
   title: "Tiller Quest",
@@ -28,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={julius_Sans_One.className}>
+      <body className={inter.className}>
         <NavBar />
         {children}
         <Footer />

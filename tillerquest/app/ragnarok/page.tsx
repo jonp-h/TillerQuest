@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 const width = 8;
@@ -305,7 +306,10 @@ export default function Ragnarok() {
     <main className="flex  flex-col  items-center min-h-screen justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="bg-slate-800 md:flex min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
         <div
-          className="grid grid-cols-8 justify-center md:p-10 "
+          className={clsx(
+            "grid grid-cols-8 justify-center md:p-10",
+            maxMoves == 0 && "hidden"
+          )}
           style={{ width: "560px" }}
         >
           {currentRuneArrangement.map((rune: string, index: number) => (

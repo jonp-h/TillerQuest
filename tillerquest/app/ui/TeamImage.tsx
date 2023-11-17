@@ -18,8 +18,8 @@ export default function TeamImage() {
             ></div>
           </div>
           <Image
-            className="pb-10 w-33"
-            src="/logo/TQ.png"
+            className="rounded-full pb-10 w-33"
+            src="/classes/cleric1.jpg"
             alt="Tiller Quest logo"
             width={80}
             height={80}
@@ -39,8 +39,8 @@ export default function TeamImage() {
             ></div>
           </div>
           <Image
-            className="pb-10 w-33"
-            src="/logo/TQ.png"
+            className="rounded-full pb-10 w-33"
+            src="/classes/cleric1.jpg"
             alt="Tiller Quest logo"
             width={80}
             height={80}
@@ -62,8 +62,8 @@ export default function TeamImage() {
             ></div>
           </div>
           <Image
-            className=""
-            src="/logo/TQ.png"
+            className="rounded-full "
+            src="/classes/cleric1.jpg"
             alt="Tiller Quest logo"
             width={200}
             height={120}
@@ -84,8 +84,8 @@ export default function TeamImage() {
             ></div>
           </div>
           <Image
-            className="pb-10 w-33"
-            src="/logo/TQ.png"
+            className="rounded-full pb-10 w-33"
+            src="/classes/cleric1.jpg"
             alt="Tiller Quest logo"
             width={80}
             height={80}
@@ -106,8 +106,8 @@ export default function TeamImage() {
             ></div>
           </div>
           <Image
-            className="pb-10 w-33"
-            src="/logo/TQ.png"
+            className="rounded-full pb-10 w-33"
+            src="/classes/cleric1.jpg"
             alt="Tiller Quest logo"
             width={80}
             height={80}

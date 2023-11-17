@@ -6,7 +6,7 @@ export default function ProfileImage() {
       <div className="flex flex-row justify-center">
         <Image
           className=""
-          src="/logo/TQ.png"
+          src="./classes/cleric1.jpg"
           alt="Tiller Quest logo"
           width={280}
           height={150}
