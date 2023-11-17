@@ -46,15 +46,6 @@ const links = [
     href: "/profile",
     icon: faUser,
   },
-  {
-    href: "/notifications",
-    icon: faBell,
-  },
-  {
-    name: "Login",
-    href: "/login",
-    icon: faRightToBracket,
-  },
 ];
 
 interface NavLinksProps {

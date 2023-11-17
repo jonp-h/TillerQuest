@@ -5,9 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
+import UserNavContainer from "./UserNavContainer";
 
-export default function NavBar() {
+export default function NavBar({ switchFont }: { switchFont: () => void }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Initialize state
 
   const toggleMobileMenu = () => {
@@ -37,6 +38,10 @@ export default function NavBar() {
         <div className="hidden md:sticky md:flex gap-20 text-lg justify-between pr-10">
           <NavLinks />
         </div>
+        <div className="flex gap-5 md:mr-3">
+          <UserNavContainer switchFont={switchFont} />
+        </div>
+
         {/* Visible hamburger menu on small screen sizes */}
         <div className="block md:hidden pr-5 cursor-pointer">
           <FontAwesomeIcon icon={faBars} onClick={toggleMobileMenu} />{" "}
@@ -47,6 +52,8 @@ export default function NavBar() {
           isMobileMenuOpen ? "block" : "hidden" // Conditional class based on state
         } sticky z-10 md:hidden pr-5 flex flex-col items-center pt-10 gap-20 text-4xl min-w-full min-h-screen bg-slate-900`}
       >
+        {/* TODO: implement mobile notification switching screen, or just use navbar*/}
+        {/* <UserNavContainer switchFont={switchFont} /> */}
         <NavLinks onClick={() => isMobileMenuOpen && toggleMobileMenu()} />
       </div>
     </>
