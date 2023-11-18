@@ -12,6 +12,7 @@ import Abilities from "../ui/Abilities";
 import { width } from "@fortawesome/free-solid-svg-icons/fa0";
 import ProfileImage from "../ui/ProfileImage";
 import TeamImage from "../ui/TeamImage";
+import ClanStacked from "../ui/ClanStacked";
 
 export default function Profile() {
   let xp: string = "80%";
@@ -25,8 +26,9 @@ export default function Profile() {
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
+        <ClanStacked />
         <div className="flex flex-col gap-2 items-center">
-          <TeamImage />
+          <ProfileImage />
 
           <h1 className="font-extrabold text-2xl">Username</h1>
           <div className="flex gap-5 text-green-300">

@@ -2,13 +2,14 @@ import Image from "next/image";
 
 export default function ProfileImage() {
   return (
-    <div className="bg-slate-800 w-screen p-10 rounded-full">
-      <div className="flex flex-row justify-center">
+    <div className="bg-slate-800 md:mt-24 p-4 rounded-full">
+      <div className="">
         <Image
-          className=""
-          src="./classes/cleric1.jpg"
+          className="rounded-full"
+          draggable="false"
+          src="/classes/rogue3.jpg"
           alt="Tiller Quest logo"
-          width={280}
+          width={340}
           height={150}
         />
       </div>
