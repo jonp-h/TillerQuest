@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { julius_Sans_One } from "../fonts";
 
 export default function Home() {
   return (
@@ -14,7 +15,9 @@ export default function Home() {
           height={150}
           priority
         />
-        <h1 className="text-6xl md:text-6xl">Tiller Quest</h1>
+        <div className={julius_Sans_One.className}>
+          <h1 className="text-6xl md:text-6xl">Tiller Quest</h1>
+        </div>
         <p className="pt-6 md:pt-8 mb-4">Please login to enter Valhalla</p>
         <form>
           {/* Username login */}
@@ -34,7 +37,7 @@ export default function Home() {
             peer-placeholder-shown:text-base 
             duration-300 select-none cursor-text"
             >
-              username
+              Username
             </label>
           </div>
 
@@ -55,7 +58,7 @@ export default function Home() {
             peer-placeholder-shown:text-base 
             duration-300 select-none cursor-text"
             >
-              password
+              Password
             </label>
           </div>
 
@@ -73,7 +76,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center justify-between mb-10">
-            <p className="mr-4">Dont have an account?</p>
+            <p className="mr-4">{"Don't have an account?"}</p>
             <Link href="/apply">
               <button
                 type="button"

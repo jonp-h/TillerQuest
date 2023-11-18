@@ -11,18 +11,25 @@ import {
   faRightToBracket,
   faPaperPlane,
   faStore,
+  faBell,
+  faFire,
 } from "@fortawesome/free-solid-svg-icons";
 
 const links = [
   {
-    name: "Action",
-    href: "/action",
+    name: "Åsgard",
+    href: "/asgard",
     icon: faBolt,
   },
   {
     name: "Shop",
     href: "/shop",
     icon: faStore,
+  },
+  {
+    name: "Ragnarok",
+    href: "/ragnarok",
+    icon: faFire,
   },
   {
     name: "Explore",
@@ -38,11 +45,6 @@ const links = [
     name: "Profile",
     href: "/profile",
     icon: faUser,
-  },
-  {
-    name: "Login",
-    href: "/login",
-    icon: faRightToBracket,
   },
 ];
 
