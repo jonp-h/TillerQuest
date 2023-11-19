@@ -11,6 +11,7 @@ export default function Home() {
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
           src="/logo/TQ.png"
+          draggable={false}
           alt="Tiller Quest logo"
           width={280}
           height={150}

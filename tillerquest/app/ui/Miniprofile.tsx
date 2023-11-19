@@ -3,14 +3,16 @@ import Image from "next/image";
 export default function MiniProfile() {
   return (
     <div className="flex flex-col  justify-center">
-      <Image
-        className="rounded-full"
-        draggable="false"
-        src="/classes/cleric1.jpg"
-        alt="Clan member"
-        width={120}
-        height={120}
-      />
+      <div className="bg-slate-700 p-1 rounded-full">
+        <Image
+          className="rounded-full"
+          draggable="false"
+          src="/classes/cleric1.jpg"
+          alt="Clan member"
+          width={120}
+          height={120}
+        />
+      </div>
       <div className="flex flex-col gap-1 text-center">
         <h1 className="">Name</h1>
         {/* Health bar */}

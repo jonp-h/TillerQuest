@@ -7,6 +7,17 @@ import {
   faUser,
   faRightToBracket,
   faPaperPlane,
+  faMoneyBills,
+  faMoneyBill,
+  faMoneyBill1,
+  faMoneyBill1Wave,
+  faMoneyBillWaveAlt,
+  faMoneyCheck,
+  faCircle,
+  fa1,
+  faCoins,
+  faDiamondTurnRight,
+  faDiamond,
 } from "@fortawesome/free-solid-svg-icons";
 import Abilities from "../ui/Abilities";
 import { width } from "@fortawesome/free-solid-svg-icons/fa0";
@@ -65,12 +76,25 @@ export default function Profile() {
             ></div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-10 p-10">
-          <div>
+        <div className="flex flex-col items-center gap-5 p-10">
+          <div className="flex gap-3">
+            <FontAwesomeIcon
+              icon={faCoins}
+              className="text-2xl text-yellow-400"
+            />
             <h2>Gold: 1234</h2>
+            <FontAwesomeIcon
+              icon={faDiamond}
+              className="text-2xl text-blue-500"
+            />
             <h2>Runestones: 5</h2>
-            <h2></h2>
           </div>
+          <Link
+            href="profile/level-up"
+            className="text-lg mb-3 bg-purple-900 rounded-lg p-2 px-4 hover:bg-purple-800"
+          >
+            Level up
+          </Link>
           <h2 className="font-extrabold text-2xl">Abilites</h2>
           <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
             <Abilities />

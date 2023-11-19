@@ -1,6 +1,8 @@
 "use client";
 import clsx from "clsx";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import Scoreboard from "../ui/Scoreboard";
 
 const width = 8;
 const runes = [
@@ -19,7 +21,8 @@ export default function Ragnarok() {
   const [squareBeingDragged, setSquareBeingDragged] = useState(Object);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(Object);
   const [score, setScore] = useState(0);
-  const [maxMoves, setMaxMoves] = useState(3);
+  const [maxMoves, setMaxMoves] = useState(6);
+  const [showScoreboard, setShowScoreboard] = useState(false);
 
   const checkForColumnOfFive = () => {
     // only need to check until the 5th bottom row
@@ -304,59 +307,72 @@ export default function Ragnarok() {
   return (
     //Main container with gradient background
     <main className="flex  flex-col  items-center min-h-screen justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="bg-slate-800 md:flex min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
-        <div
-          className={clsx(
-            "grid grid-cols-8 justify-center md:p-10",
-            maxMoves == 0 && "hidden"
-          )}
-          style={{ width: "560px" }}
-        >
-          {currentRuneArrangement.map((rune: string, index: number) => (
-            <img
-              className="w-14"
-              key={index}
-              // style={{ backgroundColor: rune }}
-              alt=""
-              src={rune}
-              data-id={index}
-              draggable="true"
-              onDragStart={dragStart}
-              // stop browser from refreshing when dragging image
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => e.preventDefault()}
-              onDragLeave={(e) => e.preventDefault()}
-              onDrop={dragDrop}
-              onDragEnd={dragEnd}
-            />
-          ))}
+      <div className="bg-slate-800 md:flex md:flex-col min-h-screen w-full md:min-h-fit md:w-auto rounded-lg text-center">
+        <div className="flex flex-col md:flex-row">
+          <div
+            className={clsx(
+              "grid grid-cols-8 justify-center md:p-10",
+              maxMoves == 0 && "hidden"
+            )}
+            style={{ width: "560px" }}
+          >
+            {currentRuneArrangement.map((rune: string, index: number) => (
+              <img
+                className="w-14"
+                key={index}
+                // style={{ backgroundColor: rune }}
+                alt=""
+                src={rune}
+                data-id={index}
+                draggable="true"
+                onDragStart={dragStart}
+                // stop browser from refreshing when dragging image
+                onDragOver={(e) => e.preventDefault()}
+                onDragEnter={(e) => e.preventDefault()}
+                onDragLeave={(e) => e.preventDefault()}
+                onDrop={dragDrop}
+                onDragEnd={dragEnd}
+              />
+            ))}
+          </div>
+          <div className="">
+            <h1 className=" text-6xl p-10">RAGNAROK</h1>
+            {maxMoves !== 0 && (
+              <h1 className="font-semibold text-xl text-orange-600">
+                Moves left: {maxMoves}
+              </h1>
+            )}
+            {maxMoves !== 0 && (
+              <h1 className="p-5 font-semibold text-5xl text-yellow-400">
+                Score: {score}
+              </h1>
+            )}
+            {maxMoves === 0 && (
+              <h1 className="font-semibold text-xl text-orange-600">
+                Game over
+              </h1>
+            )}
+            {maxMoves === 0 && (
+              <h1 className="p-5 font-semibold text-5xl text-red-600">
+                Final score: {score}
+              </h1>
+            )}
+            <p className=" flex flex-col py-6 gap-3">
+              <strong>3 matches:</strong> 3 points
+              <br /> <strong>4 matches:</strong> 9 points <br />{" "}
+              <strong>5 matches:</strong> 12 points + 1 extra move
+            </p>
+            <a onClick={() => setShowScoreboard(true)}>
+              <button
+                type="button"
+                className="inline-block mb-10 rounded px-6 pb-2 pt-2 text-xs font-medium uppercase transition duration-200 ease-in-out bg-purple-950 hover:bg-purple-900"
+              >
+                Scoreboard
+              </button>
+            </a>
+          </div>
         </div>
-        <div className="">
-          <h1 className=" text-6xl p-10">RAGNAROK</h1>
-          {maxMoves !== 0 && (
-            <h1 className="font-semibold text-xl text-orange-600">
-              Moves left: {maxMoves}
-            </h1>
-          )}
-          {maxMoves !== 0 && (
-            <h1 className="p-5 font-semibold text-5xl text-yellow-400">
-              Score: {score}
-            </h1>
-          )}
-          {maxMoves === 0 && (
-            <h1 className="font-semibold text-xl text-orange-600">Game over</h1>
-          )}
-          {maxMoves === 0 && (
-            <h1 className="p-5 font-semibold text-5xl text-red-600">
-              Final score: {score}
-            </h1>
-          )}
-          <p className=" flex flex-col py-6 gap-3">
-            <strong>3 matches:</strong> 3 points
-            <br /> <strong>4 matches:</strong> 9 points <br />{" "}
-            <strong>5 matches:</strong> 12 points + 1 extra move
-          </p>
-        </div>
+        {showScoreboard && <Scoreboard />}
       </div>
     </main>
   );
