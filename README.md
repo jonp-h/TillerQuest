@@ -54,6 +54,10 @@ $ npm run dev
   - sm: Smartphone
   - xs: Phone (reduced screen size)
 
+- Client side rendering:
+  - Try to keep client side rendering inside "client based components" where possible
+  - Eg. the needed client side code should be moved inside its own component
+
 <!--
 
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
