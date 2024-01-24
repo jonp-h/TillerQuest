@@ -25,7 +25,8 @@ import ProfileImage from "@/components/ui/ProfileImage";
 import TeamImage from "@/components/ui/TeamImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth, signOut } from "@/auth";
-import { sign } from "crypto";
+import { getSession, useSession } from "next-auth/react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default async function Profile() {
   let xp: string = "80%";
@@ -45,18 +46,16 @@ export default async function Profile() {
         <div className="flex flex-col gap-2 items-center">
           <ProfileImage />
 
-          <h1 className="font-extrabold text-2xl">
-            Username & session: {JSON.stringify(session)}
-          </h1>
-          <button
-            onClick={async () => {
+          <h1 className="font-extrabold text-2xl">{session?.user?.name}</h1>
+          <form
+            action={async () => {
               "use server";
 
               await signOut();
             }}
           >
-            Sign out
-          </button>
+            <button type="submit">Sign out</button>
+          </form>
           <div className="flex gap-5 text-green-300">
             <h2>Class</h2>
             <h2>Title</h2>
