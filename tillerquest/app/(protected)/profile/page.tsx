@@ -19,19 +19,27 @@ import {
   faDiamondTurnRight,
   faDiamond,
 } from "@fortawesome/free-solid-svg-icons";
-import Abilities from "../ui/Abilities";
+import Abilities from "@/components/ui/Abilities";
 import { width } from "@fortawesome/free-solid-svg-icons/fa0";
-import ProfileImage from "../ui/ProfileImage";
-import TeamImage from "../ui/TeamImage";
-import ClanStacked from "../ui/ClanStacked";
+import ProfileImage from "@/components/ui/ProfileImage";
+import TeamImage from "@/components/ui/TeamImage";
+import ClanStacked from "@/components/ui/ClanStacked";
+import { auth, signOut } from "@/auth";
+import { getSession, useSession } from "next-auth/react";
+import { db } from "@/lib/db";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getUserById } from "@/data/user";
 
-export default function Profile() {
-  let xp: string = "80%";
-  let hp: string = "44%";
-  let mana: string = "30%";
-  let totalXp: string = "145";
-  let totalHp: string = "324";
-  let totalMana: string = "456";
+export default async function Profile() {
+  const session = await auth();
+
+  let user;
+  if (session && session.user?.id) {
+    user = await getUserById(session.user.id);
+    console.log("fetched data from db");
+  }
+
+  const hpBar = user ? (user?.hp / user?.hpMax) * 100 : 0;
 
   return (
     //Main container with gradient background
@@ -41,38 +49,47 @@ export default function Profile() {
         <div className="flex flex-col gap-2 items-center">
           <ProfileImage />
 
-          <h1 className="font-extrabold text-2xl">Username</h1>
+          <h1 className="font-extrabold text-2xl">{session?.user?.name}</h1>
+          <form
+            action={async () => {
+              "use server";
+
+              await signOut();
+            }}
+          >
+            <button type="submit">Sign out</button>
+          </form>
           <div className="flex gap-5 text-green-300">
             <h2>Class</h2>
             <h2>Title</h2>
             <h2>Level</h2>
           </div>
           <h3 className="text-orange-300">
-            XP: {xp} / {totalXp}
+            XP: {user?.xp} / {500}
           </h3>
 
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-orange-500 h-2.5 rounded-full"
-              style={{ width: xp }}
+              style={{ width: user?.xp }}
             ></div>
           </div>
           <h3 className="text-red-500">
-            HP: {hp} / {totalHp}
+            HP: {user?.hp} / {user?.hpMax}
           </h3>
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-red-500 h-2.5 rounded-full"
-              style={{ width: hp }}
+              style={{ width: hpBar * 4 }}
             ></div>
           </div>
           <h3 className="text-blue-400">
-            Mana: {mana} / {totalMana}
+            Mana: {user?.mana} / {user?.manaMax}
           </h3>
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-blue-500 h-2.5 rounded-full"
-              style={{ width: mana }}
+              style={{ width: user?.mana }}
             ></div>
           </div>
         </div>

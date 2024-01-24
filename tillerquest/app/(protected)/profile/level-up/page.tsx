@@ -1,4 +1,4 @@
-import Abilities from "@/app/ui/Abilities";
+import Abilities from "@/components/ui/Abilities";
 
 export default function Levelup() {
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import PlayerList from "@/app/ui/PlayerList";
+import PlayerList from "@/components/ui/PlayerList";
 
 export default function Action() {
   return (

@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Scoreboard from "../ui/Scoreboard";
+import Scoreboard from "@/components/ui/Scoreboard";
 
 const width = 8;
 const runes = [

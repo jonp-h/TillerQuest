@@ -1,5 +1,5 @@
 import Image from "next/image";
-import MiniProfile from "../ui/Miniprofile";
+import MiniProfile from "./Miniprofile";
 
 export default function TeamImage() {
   return (

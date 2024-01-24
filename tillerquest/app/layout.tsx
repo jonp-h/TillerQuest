@@ -4,9 +4,10 @@
 import type { Metadata } from "next";
 import { dyslexic, inter } from "./fonts";
 import "./globals.css";
-import NavBar from "./ui/NavBar";
-import Footer from "./ui/Footer";
+import NavBar from "../components/ui/NavBar";
+import Footer from "../components/ui/Footer";
 import { useState } from "react";
+import { SessionProvider } from "next-auth/react";
 
 // export const metadata: Metadata = {
 //   title: "Tiller Quest",
@@ -26,12 +27,14 @@ export default function RootLayout({
     );
   };
   return (
-    <html lang="en">
-      <body className={chosenFont}>
-        <NavBar switchFont={switchFont} />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <body className={chosenFont}>
+          <NavBar switchFont={switchFont} />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

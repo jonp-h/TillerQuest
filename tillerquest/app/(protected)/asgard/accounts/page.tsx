@@ -8,7 +8,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import clsx from "clsx";
-import Classes from "@/app/ui/Classes";
+import Classes from "@/components/ui/Classes";
 
 export default function Accounts() {
   return (
