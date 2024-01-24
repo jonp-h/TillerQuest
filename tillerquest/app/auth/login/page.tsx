@@ -9,10 +9,11 @@ import ErrorBox from "@/components/ui/ErrorBox";
 import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function Login() {
-  const searchParams = useSearchParams();
-  const urlError = searchParams.get("error");
+  // const searchParams = useSearchParams();
+  // const urlError = searchParams.get("error");
 
   const onClick = () => {
     signIn("github", {
@@ -22,6 +23,7 @@ export default function Login() {
 
   return (
     //Main container with gradient background
+    // <Suspense>
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="grid justify-items-center justify-center w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
         {/* The React image component, width and height in RENDERED pixels*/}
@@ -66,8 +68,10 @@ export default function Login() {
           </Link>
         </div>
         {/* Sends an error if an error message is passed */}
-        <ErrorBox message={urlError || undefined} />
+        {/* Need suspense, to ensure entire page has loaded into client-side */}
+        {/* <ErrorBox message={urlError || "error"} /> */}
       </div>
+      {/* </Suspense> */}
     </main>
   );
 }

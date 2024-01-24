@@ -26,16 +26,20 @@ import TeamImage from "@/components/ui/TeamImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth, signOut } from "@/auth";
 import { getSession, useSession } from "next-auth/react";
+import { db } from "@/lib/db";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getUserById } from "@/data/user";
 
 export default async function Profile() {
-  let xp: string = "80%";
-  let hp: string = "44%";
-  let mana: string = "30%";
-  let totalXp: string = "145";
-  let totalHp: string = "324";
-  let totalMana: string = "456";
-
   const session = await auth();
+
+  let user;
+  if (session && session.user?.id) {
+    user = await getUserById(session.user.id);
+    console.log("fetched data from db");
+  }
+
+  const hpBar = user ? (user?.hp / user?.hpMax) * 100 : 0;
 
   return (
     //Main container with gradient background
@@ -61,31 +65,31 @@ export default async function Profile() {
             <h2>Level</h2>
           </div>
           <h3 className="text-orange-300">
-            XP: {xp} / {totalXp}
+            XP: {user?.xp} / {500}
           </h3>
 
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-orange-500 h-2.5 rounded-full"
-              style={{ width: xp }}
+              style={{ width: user?.xp }}
             ></div>
           </div>
           <h3 className="text-red-500">
-            HP: {hp} / {totalHp}
+            HP: {user?.hp} / {user?.hpMax}
           </h3>
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-red-500 h-2.5 rounded-full"
-              style={{ width: hp }}
+              style={{ width: hpBar * 4 }}
             ></div>
           </div>
           <h3 className="text-blue-400">
-            Mana: {mana} / {totalMana}
+            Mana: {user?.mana} / {user?.manaMax}
           </h3>
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div
               className="bg-blue-500 h-2.5 rounded-full"
-              style={{ width: mana }}
+              style={{ width: user?.mana }}
             ></div>
           </div>
         </div>
