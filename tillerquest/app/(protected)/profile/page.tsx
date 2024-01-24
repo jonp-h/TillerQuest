@@ -19,19 +19,23 @@ import {
   faDiamondTurnRight,
   faDiamond,
 } from "@fortawesome/free-solid-svg-icons";
-import Abilities from "../ui/Abilities";
+import Abilities from "@/components/ui/Abilities";
 import { width } from "@fortawesome/free-solid-svg-icons/fa0";
-import ProfileImage from "../ui/ProfileImage";
-import TeamImage from "../ui/TeamImage";
-import ClanStacked from "../ui/ClanStacked";
+import ProfileImage from "@/components/ui/ProfileImage";
+import TeamImage from "@/components/ui/TeamImage";
+import ClanStacked from "@/components/ui/ClanStacked";
+import { auth, signOut } from "@/auth";
+import { sign } from "crypto";
 
-export default function Profile() {
+export default async function Profile() {
   let xp: string = "80%";
   let hp: string = "44%";
   let mana: string = "30%";
   let totalXp: string = "145";
   let totalHp: string = "324";
   let totalMana: string = "456";
+
+  const session = await auth();
 
   return (
     //Main container with gradient background
@@ -41,7 +45,18 @@ export default function Profile() {
         <div className="flex flex-col gap-2 items-center">
           <ProfileImage />
 
-          <h1 className="font-extrabold text-2xl">Username</h1>
+          <h1 className="font-extrabold text-2xl">
+            Username & session: {JSON.stringify(session)}
+          </h1>
+          <button
+            onClick={async () => {
+              "use server";
+
+              await signOut();
+            }}
+          >
+            Sign out
+          </button>
           <div className="flex gap-5 text-green-300">
             <h2>Class</h2>
             <h2>Title</h2>

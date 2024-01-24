@@ -4,8 +4,8 @@
 import type { Metadata } from "next";
 import { dyslexic, inter } from "./fonts";
 import "./globals.css";
-import NavBar from "./ui/NavBar";
-import Footer from "./ui/Footer";
+import NavBar from "../components/ui/NavBar";
+import Footer from "../components/ui/Footer";
 import { useState } from "react";
 
 // export const metadata: Metadata = {

@@ -1,8 +1,21 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { julius_Sans_One } from "../fonts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import ErrorBox from "@/components/ui/ErrorBox";
+import { signIn } from "next-auth/react";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
-export default function Home() {
+export default function Login() {
+  const onClick = () => {
+    signIn("github", {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
+  };
+
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
@@ -21,7 +34,7 @@ export default function Home() {
         <p className="pt-6 md:pt-8 mb-4">Please login to enter Valhalla</p>
         <form>
           {/* Username login */}
-          <div className="flex flex-col items-start mb-6">
+          {/* <div className="flex flex-col items-start mb-6">
             <input
               type="text"
               id="username"
@@ -42,7 +55,7 @@ export default function Home() {
           </div>
 
           {/* Password input */}
-          <div className="flex flex-col items-start mb-6">
+          {/* <div className="flex flex-col items-start mb-6">
             <input
               type="password"
               id="password"
@@ -70,9 +83,26 @@ export default function Home() {
               data-te-ripple-color="light"
             >
               Log in
-            </button>
+            </button> */}
 
-            <Link href="/forgot-password">Forgot password?</Link>
+          {/* <Link href="/forgot-password">Forgot password?</Link> */}
+          {/* </div> */}
+          <div className="mb-2 pb-1 pt-3 text-center">
+            <button
+              className="mb-4 w-full rounded px-6 pb-2 pt-2.5 gap-x-3 flex items-center justify-center text-xl font-medium uppercase shadow-xl transition duration-200 ease-in-out bg-gradient-to-r from-purple-950 to-purple-900 hover:from-purple-900 hover:to-purple-800 active:bg-purple-900"
+              type="button"
+              data-te-ripple-init
+              data-te-ripple-color="light"
+              onClick={() => {
+                onClick();
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faGithub as IconProp}
+                className="text-2xl"
+              />
+              Github
+            </button>
           </div>
 
           <div className="flex items-center justify-between mb-10">
@@ -87,6 +117,8 @@ export default function Home() {
             </Link>
           </div>
         </form>
+        {/* Sends an error if an error message is passed */}
+        <ErrorBox message="" />
       </div>
     </main>
   );

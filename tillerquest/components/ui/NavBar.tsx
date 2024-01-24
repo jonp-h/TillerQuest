@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react"; // Import React and useState
-import { julius_Sans_One } from "./../fonts";
+import { julius_Sans_One } from "../../app/fonts";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
