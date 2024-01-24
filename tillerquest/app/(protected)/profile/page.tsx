@@ -26,7 +26,6 @@ import TeamImage from "@/components/ui/TeamImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth, signOut } from "@/auth";
 import { getSession, useSession } from "next-auth/react";
-import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default async function Profile() {
   let xp: string = "80%";
