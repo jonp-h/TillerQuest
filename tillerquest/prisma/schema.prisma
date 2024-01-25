@@ -13,30 +13,37 @@ datasource db {
 }
 
 enum UserRole {
+  NEW
   USER
   ADMIN
 }
 model User {
   id            String    @id @default(cuid())
   name          String?
+  lastname      String?
   email         String?   @unique
   username      String?   @unique
   title         String?
+  class         String?
+  image         String?
   level         Int       @default(1)
   xp            Int       @default(1)
   hp            Int       @default(40)
   hpMax         Int       @default(40)
   mana          Int       @default(4)
   manaMax       Int       @default(40)
-  class         String?
-  abilities     String[]
-  runes         Int[]
+  runes         Int       @default(1)
+  gold          Int       @default(0)
+  abilities     Ability[] // A user can have many abilities
+  clanId        Int
   emailVerified DateTime?
-  image         String?
-  role          UserRole   @default(USER)
-  accounts      Account[]
+  role          UserRole   @default(NEW)
+  accounts      Account[] // Relation to Github account
+
+  clan          Clan       @relation(fields: [clanId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
+// Github account
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -55,6 +62,21 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
+model Ability {
+  id               Int @id @default(autoincrement())
+  name             String
+  description      String
+  cost             Int
+  user             User[] // An ability can belong to many users ????
+}
+
+model Clan{
+  id              Int @id @default(autoincrement())
+  name            String @unique
+  members         User[] 
+}
+
 
 // npx prisma generate
 // npx prisma db push
