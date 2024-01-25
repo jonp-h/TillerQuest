@@ -32,16 +32,6 @@ const links = [
     icon: faFire,
   },
   {
-    name: "Explore",
-    href: "/explore",
-    icon: faMagnifyingGlass,
-  },
-  {
-    name: "About Us",
-    href: "/about-us",
-    icon: faPaperPlane,
-  },
-  {
     name: "Profile",
     href: "/profile",
     icon: faUser,

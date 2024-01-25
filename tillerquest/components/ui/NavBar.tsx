@@ -35,7 +35,7 @@ export default function NavBar({ switchFont }: { switchFont: () => void }) {
           </div>
         </Link>
 
-        <div className="hidden md:sticky md:flex gap-20 text-lg justify-between pr-10">
+        <div className="hiddens md:sticky  md:flex gap-5 text-lg justify-between pr-10">
           <NavLinks />
         </div>
         <div className="flex gap-5 md:mr-3">

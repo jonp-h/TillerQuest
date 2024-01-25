@@ -28,7 +28,7 @@ export default function UserNavContainer({
       <Link href={"/notifications"} className="flex gap-1.5 items-center">
         <FontAwesomeIcon icon={faBell} className="w-6 " />
       </Link>
-      <Link href={"/login"} className="flex gap-1.5 items-center">
+      <Link href={"/auth/login"} className="flex gap-1.5 items-center">
         <FontAwesomeIcon icon={faRightFromBracket} className="w-6 " />
         <p>Login</p>
       </Link>

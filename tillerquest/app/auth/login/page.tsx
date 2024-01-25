@@ -35,7 +35,7 @@ export default function Login() {
           priority
         />
         <div className={julius_Sans_One.className}>
-          <h1 className="text-6xl md:text-6xl">Tiller Quest</h1>
+          <h1 className="text-center text-6xl md:text-6xl">Tiller Quest</h1>
         </div>
         <p className="pt-6 md:pt-8 mb-4">Please login to enter Valhalla</p>
         <div className="mb-2 pb-1 pt-3 text-center">
