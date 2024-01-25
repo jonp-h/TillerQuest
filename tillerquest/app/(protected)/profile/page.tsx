@@ -49,20 +49,15 @@ export default async function Profile() {
         <div className="flex flex-col gap-2 items-center">
           <ProfileImage />
 
-          <h1 className="font-extrabold text-2xl">{session?.user?.name}</h1>
-          <form
-            action={async () => {
-              "use server";
-
-              await signOut();
-            }}
-          >
-            <button type="submit">Sign out</button>
-          </form>
+          <h1 className="font-extrabold text-2xl">
+            {user?.name}
+            {user?.username}
+            {user?.lastname}
+          </h1>
           <div className="flex gap-5 text-green-300">
-            <h2>Class</h2>
-            <h2>Title</h2>
-            <h2>Level</h2>
+            <h2>{user?.title}</h2>
+            <h2>{user?.class}</h2>
+            <h2>{user?.level}</h2>
           </div>
           <h3 className="text-orange-300">
             XP: {user?.xp} / {500}

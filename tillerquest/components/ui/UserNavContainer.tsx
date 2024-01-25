@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react"; // Import React and useState
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,14 +7,22 @@ import {
   faBell,
   faEye,
   faRightFromBracket,
+  faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { auth, signOut } from "@/auth";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function UserNavContainer({
   switchFont,
 }: {
   switchFont: () => void;
 }) {
-  const pathname = usePathname();
+  const user = useCurrentUser();
+
+  const logout = () => {
+    signOut();
+  };
+
   return (
     <>
       <div>
@@ -25,13 +32,22 @@ export default function UserNavContainer({
           onClick={switchFont}
         />
       </div>
+
       <Link href={"/notifications"} className="flex gap-1.5 items-center">
         <FontAwesomeIcon icon={faBell} className="w-6 " />
       </Link>
-      <Link href={"/auth/login"} className="flex gap-1.5 items-center">
-        <FontAwesomeIcon icon={faRightFromBracket} className="w-6 " />
-        <p>Login</p>
-      </Link>
+
+      {user ? (
+        <Link onClick={logout} href={"/"} className="flex gap-1.5 items-center">
+          <FontAwesomeIcon icon={faRightFromBracket} className="w-6 " />
+          <p>Sign out</p>
+        </Link>
+      ) : (
+        <Link href={"/auth/login"} className="flex gap-1.5 items-center">
+          <FontAwesomeIcon icon={faRightToBracket} className="w-6 " />
+          <p>Sign in</p>
+        </Link>
+      )}
     </>
   );
 }
