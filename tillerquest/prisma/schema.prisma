@@ -71,10 +71,17 @@ model Ability {
   user             User[] // An ability can belong to many users ????
 }
 
-model Clan{
+model Clan {
   id              Int @id @default(autoincrement())
   name            String @unique
   members         User[] 
+}
+
+model CosmicEvent {
+  id              Int @id @default(autoincrement())
+  name            String @unique
+  description     String
+  date            DateTime?
 }
 
 
