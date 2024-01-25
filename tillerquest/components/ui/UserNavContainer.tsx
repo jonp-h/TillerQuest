@@ -9,8 +9,8 @@ import {
   faRightFromBracket,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { auth, signOut } from "@/auth";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { signOut } from "next-auth/react";
 
 export default function UserNavContainer({
   switchFont,
