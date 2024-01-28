@@ -17,6 +17,20 @@ enum UserRole {
   USER
   ADMIN
 }
+
+enum Class {
+  WARRIOR
+  MAGE
+  ROGUE
+  HUNTER
+  PRIEST
+  SHAMAN
+  WARLOCK
+  DRUID
+  PALADIN
+  DEATHKNIGHT
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -35,12 +49,12 @@ model User {
   runes         Int       @default(1)
   gold          Int       @default(0)
   abilities     Ability[] // A user can have many abilities
-  clanId        Int
+  clanId        Int?
   emailVerified DateTime?
   role          UserRole   @default(NEW)
   accounts      Account[] // Relation to Github account
 
-  clan          Clan       @relation(fields: [clanId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  clan          Clan?       @relation(fields: [clanId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 // Github account
