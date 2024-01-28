@@ -23,6 +23,14 @@ export const authRoutes = ["/auth/login", "/auth/error"];
 export const apiAuthPrefix = "/api/auth";
 
 /**
+ * The prefix for API authentication routes.
+ * Routes that start with this prefix are used for API authentication.
+ * These routes need to be accessible by the public.
+ * @type {string}
+ */
+export const adminPrefix = "/asgard";
+
+/**
  * Route to redirect to after login.
  * The default for this is the profile page.
  * @type {string}

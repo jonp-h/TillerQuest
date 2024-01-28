@@ -9,3 +9,15 @@ export const getUserById = async (id: string) => {
     return null;
   }
 };
+
+export const updateUser = async (id: string, data: any) => {
+  try {
+    await db.user.update({
+      where: { id },
+      data: data,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};

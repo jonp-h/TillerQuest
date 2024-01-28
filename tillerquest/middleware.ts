@@ -9,7 +9,9 @@ import {
 } from "./routes";
 import { UserRole } from "@prisma/client";
 import { getUserById } from "./data/user";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import { NextRequest, NextResponse } from "next/server";
+import { INTERNALS } from "next/dist/server/web/spec-extension/request";
 
 export const { auth } = NextAuth(authConfig);
 
@@ -27,11 +29,6 @@ export default auth(async (req) => {
   // if route is api/auth, do not redirect
   if (isApiAuthRoute) {
     return null;
-  }
-
-  if (isAdminRoute) {
-    const userRole = req.auth?.user.role;
-    console.log(userRole);
   }
 
   // if user is logged in and tries to route to login, redirect to default login redirect (profile)
