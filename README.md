@@ -48,6 +48,7 @@ $ npm run dev
 ```
 
 - Tailwind responsive:
+
   - xl: Desktop
   - lg: Laptop
   - md: Tablet
@@ -55,8 +56,13 @@ $ npm run dev
   - xs: Phone (reduced screen size)
 
 - Client side rendering:
+
   - Try to keep client side rendering inside "client based components" where possible
   - Eg. the needed client side code should be moved inside its own component
+
+- Auth:
+  - Client side pages use useSession()
+  - Server side pages use auth()
 
 <!--
 
