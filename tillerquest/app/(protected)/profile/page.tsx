@@ -1,33 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
 import Link from "next/link";
-import {
-  faBolt,
-  faMagnifyingGlass,
-  faUser,
-  faRightToBracket,
-  faPaperPlane,
-  faMoneyBills,
-  faMoneyBill,
-  faMoneyBill1,
-  faMoneyBill1Wave,
-  faMoneyBillWaveAlt,
-  faMoneyCheck,
-  faCircle,
-  fa1,
-  faCoins,
-  faDiamondTurnRight,
-  faDiamond,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faDiamond } from "@fortawesome/free-solid-svg-icons";
 import Abilities from "@/components/ui/Abilities";
-import { width } from "@fortawesome/free-solid-svg-icons/fa0";
 import ProfileImage from "@/components/ui/ProfileImage";
-import TeamImage from "@/components/ui/TeamImage";
 import ClanStacked from "@/components/ui/ClanStacked";
-import { auth, signOut } from "@/auth";
-import { getSession, useSession } from "next-auth/react";
-import { db } from "@/lib/db";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { auth } from "@/auth";
 import { getUserById } from "@/data/user";
 
 export default async function Profile() {
@@ -44,75 +21,81 @@ export default async function Profile() {
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
-        <ClanStacked />
-        <div className="flex flex-col gap-2 items-center">
-          <ProfileImage />
+      {session?.user?.role !== "NEW" ? (
+        <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
+          <ClanStacked />
+          <div className="flex flex-col gap-2 items-center">
+            <ProfileImage />
 
-          <h1 className="font-extrabold text-2xl">
-            {user?.name}
-            {user?.username}
-            {user?.lastname}
-          </h1>
-          <div className="flex gap-5 text-green-300">
-            <h2>{user?.title}</h2>
-            <h2>{user?.class}</h2>
-            <h2>{user?.level}</h2>
-          </div>
-          <h3 className="text-orange-300">
-            XP: {user?.xp} / {500}
-          </h3>
+            <h1 className="font-extrabold text-2xl">
+              {user?.name}
+              {user?.username}
+              {user?.lastname}
+            </h1>
+            <div className="flex gap-5 text-green-300">
+              <h2>{user?.title}</h2>
+              <h2>{user?.class}</h2>
+              <h2>{user?.level}</h2>
+            </div>
+            <h3 className="text-orange-300">
+              XP: {user?.xp} / {500}
+            </h3>
 
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div
-              className="bg-orange-500 h-2.5 rounded-full"
-              style={{ width: user?.xp }}
-            ></div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div
+                className="bg-orange-500 h-2.5 rounded-full"
+                style={{ width: user?.xp }}
+              ></div>
+            </div>
+            <h3 className="text-red-500">
+              HP: {user?.hp} / {user?.hpMax}
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div
+                className="bg-red-500 h-2.5 rounded-full"
+                style={{ width: hpBar * 4 }}
+              ></div>
+            </div>
+            <h3 className="text-blue-400">
+              Mana: {user?.mana} / {user?.manaMax}
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div
+                className="bg-blue-500 h-2.5 rounded-full"
+                style={{ width: user?.mana }}
+              ></div>
+            </div>
           </div>
-          <h3 className="text-red-500">
-            HP: {user?.hp} / {user?.hpMax}
-          </h3>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div
-              className="bg-red-500 h-2.5 rounded-full"
-              style={{ width: hpBar * 4 }}
-            ></div>
-          </div>
-          <h3 className="text-blue-400">
-            Mana: {user?.mana} / {user?.manaMax}
-          </h3>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div
-              className="bg-blue-500 h-2.5 rounded-full"
-              style={{ width: user?.mana }}
-            ></div>
+          <div className="flex flex-col items-center gap-5 p-10">
+            <div className="flex gap-3">
+              <FontAwesomeIcon
+                icon={faCoins}
+                className="text-2xl text-yellow-400"
+              />
+              <h2>Gold: 1234</h2>
+              <FontAwesomeIcon
+                icon={faDiamond}
+                className="text-2xl text-blue-500"
+              />
+              <h2>Runestones: 5</h2>
+            </div>
+            <Link
+              href="profile/level-up"
+              className="text-lg mb-3 bg-purple-900 rounded-lg p-2 px-4 hover:bg-purple-800"
+            >
+              Level up
+            </Link>
+            <h2 className="font-extrabold text-2xl">Abilites</h2>
+            <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
+              <Abilities />
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-5 p-10">
-          <div className="flex gap-3">
-            <FontAwesomeIcon
-              icon={faCoins}
-              className="text-2xl text-yellow-400"
-            />
-            <h2>Gold: 1234</h2>
-            <FontAwesomeIcon
-              icon={faDiamond}
-              className="text-2xl text-blue-500"
-            />
-            <h2>Runestones: 5</h2>
-          </div>
-          <Link
-            href="profile/level-up"
-            className="text-lg mb-3 bg-purple-900 rounded-lg p-2 px-4 hover:bg-purple-800"
-          >
-            Level up
-          </Link>
-          <h2 className="font-extrabold text-2xl">Abilites</h2>
-          <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
-            <Abilities />
-          </div>
-        </div>
-      </div>
+      ) : (
+        <Link className="bg-slate-900 p-5 rounded-xl" href={"/create"}>
+          Create user profile
+        </Link>
+      )}
     </main>
   );
 }
