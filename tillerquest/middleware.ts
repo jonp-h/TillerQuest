@@ -5,17 +5,22 @@ import {
   publicRoutes,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
+  adminPrefix,
 } from "./routes";
-import { NextRequest, NextResponse } from "next/server";
+import { UserRole } from "@prisma/client";
+import { getUserById } from "./data/user";
+import { getSession } from "next-auth/react";
 
 export const { auth } = NextAuth(authConfig);
 
 // middleware function which runs on all pages
-export default auth((req) => {
+export default auth(async (req) => {
   const { nextUrl } = req;
+  // double negation to convert to boolean
   const isLoggedIn = !!req.auth;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isAdminRoute = nextUrl.pathname.startsWith(adminPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
@@ -24,7 +29,12 @@ export default auth((req) => {
     return null;
   }
 
-  // if user is logged in and route is public, redirect to default login redirect
+  if (isAdminRoute) {
+    const userRole = req.auth?.user.role;
+    console.log(userRole);
+  }
+
+  // if user is logged in and tries to route to login, redirect to default login redirect (profile)
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
