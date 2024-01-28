@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import UserNavContainer from "./UserNavContainer";
 
-export default function NavBar({ switchFont }: { switchFont: () => void }) {
+export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Initialize state
 
   const toggleMobileMenu = () => {
@@ -39,7 +39,7 @@ export default function NavBar({ switchFont }: { switchFont: () => void }) {
           <NavLinks />
         </div>
         <div className="flex gap-5 md:mr-3">
-          <UserNavContainer switchFont={switchFont} />
+          <UserNavContainer />
         </div>
 
         {/* Visible hamburger menu on small screen sizes */}

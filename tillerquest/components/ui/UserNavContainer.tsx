@@ -12,11 +12,7 @@ import {
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { signOut } from "next-auth/react";
 
-export default function UserNavContainer({
-  switchFont,
-}: {
-  switchFont: () => void;
-}) {
+export default function UserNavContainer() {
   const user = useCurrentUser();
 
   const logout = () => {
@@ -25,14 +21,6 @@ export default function UserNavContainer({
 
   return (
     <>
-      <div>
-        <FontAwesomeIcon
-          className="w-5 hover:cursor-pointer"
-          icon={faEye}
-          onClick={switchFont}
-        />
-      </div>
-
       <Link href={"/notifications"} className="flex gap-1.5 items-center">
         <FontAwesomeIcon icon={faBell} className="w-6 " />
       </Link>
