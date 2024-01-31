@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 export const inter = Inter({
   subsets: ["latin"],
   weight: ["400"],
+  variable: "--font-sans",
 });
 
 export const julius_Sans_One = Julius_Sans_One({
@@ -11,8 +12,9 @@ export const julius_Sans_One = Julius_Sans_One({
   weight: ["400"],
 });
 
+// TODO:
 // Optional dyslexic font, should be implemented to trigger on user request
-export const dyslexic = localFont({
-  src: "./OpenDyslexic-Regular.otf",
-  display: "swap",
-});
+// export const dyslexic = localFont({
+//   src: "./OpenDyslexic-Regular.otf",
+//   display: "swap",
+// });

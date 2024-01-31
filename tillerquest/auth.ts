@@ -29,6 +29,7 @@ export const {
   // we can use them to add data to the session / tokens
   callbacks: {
     async signIn({ user }) {
+      // TODO: ??
       const existingUser = await getUserById(user.id);
 
       return true;
@@ -39,8 +40,6 @@ export const {
       }
 
       session.user.customField = "custom";
-
-      console.log(token.role + "&" + !!session.user.id);
 
       if (token.role && !!session.user) {
         session.user.role = token.role as UserRole;
@@ -61,10 +60,8 @@ export const {
       if (!existingUser) return token;
 
       if (trigger === "update" && session?.role) {
-        console.log("updating token: " + session.role);
         token.role = session.role;
         await updateUser(token.sub, { role: session.role });
-        console.log("updated token: " + session.role);
       }
 
       // add role and username to token

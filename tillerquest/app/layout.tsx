@@ -1,13 +1,14 @@
 // TODO: double check if use client is good for use in layout
 
 import type { Metadata } from "next";
-import { dyslexic, inter } from "./fonts";
-import "./globals.css";
+import { inter } from "./fonts";
+import "@/styles/globals.css";
 import NavBar from "../components/ui/NavBar";
 import Footer from "../components/ui/Footer";
 import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { cn } from "@/lib/utils";
 
 // export const metadata: Metadata = {
 //   title: "Tiller Quest",
@@ -32,7 +33,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={cn(inter.className)}>
           <NavBar />
           {children}
           <Footer />
