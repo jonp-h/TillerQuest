@@ -64,6 +64,20 @@ $ npm run dev
   - Client side pages use useSession()
   - Server side pages use auth()
 
+# Design manual:
+
+### Main color Scheme:
+
+(made for dark mode)
+
+- **Main color:**
+  - slate-900 #0f172a
+- **Accent:**
+  - default: purple-900 #581c87
+  - hover: purple-800 #6b21a8
+- **Text:**
+  - white
+
 <!--
 
 To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:

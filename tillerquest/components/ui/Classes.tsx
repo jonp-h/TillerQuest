@@ -82,7 +82,7 @@ export default function Classes() {
               className={clsx(
                 "rounded-full shadow-inner shadow-black",
                 className === chosenClass &&
-                  " border-2 shadow-inner shadow-black border-purple-600 "
+                  " border-4 shadow-inner shadow-black border-purple-600 "
               )}
               width={200}
               height={150}

@@ -365,7 +365,7 @@ export default function Ragnarok() {
             <a onClick={() => setShowScoreboard(true)}>
               <button
                 type="button"
-                className="inline-block mb-10 rounded px-6 pb-2 pt-2 text-xs font-medium uppercase transition duration-200 ease-in-out bg-purple-950 hover:bg-purple-900"
+                className="inline-block mb-10 rounded px-6 pb-2 pt-2 text-xs font-medium uppercase transition duration-200 ease-in-out bg-purple-900 hover:bg-purple-800"
               >
                 Scoreboard
               </button>
