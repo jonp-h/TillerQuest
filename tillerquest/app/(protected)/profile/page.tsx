@@ -13,7 +13,7 @@ export default async function Profile() {
   let user;
   if (session && session.user?.id) {
     user = await getUserById(session.user.id);
-    console.log("fetched data from db");
+    console.log("fetched data from db in profile page");
   }
 
   const hpBar = user ? (user?.hp / user?.hpMax) * 100 : 0;
@@ -72,12 +72,12 @@ export default async function Profile() {
                 icon={faCoins}
                 className="text-2xl text-yellow-400"
               />
-              <h2>Gold: 1234</h2>
+              <h2>Gold: {user?.gold}</h2>
               <FontAwesomeIcon
                 icon={faDiamond}
                 className="text-2xl text-blue-500"
               />
-              <h2>Runestones: 5</h2>
+              <h2>Runestones: {user?.runes}</h2>
             </div>
             <Link
               href="profile/level-up"
