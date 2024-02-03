@@ -9,6 +9,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
   customField: string;
+  username: string;
   role: UserRole;
 };
 

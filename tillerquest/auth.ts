@@ -45,6 +45,10 @@ export const {
         session.user.role = token.role as UserRole;
       }
 
+      if (token.username && !!session.user) {
+        session.user.username = token.username as string;
+      }
+
       if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email;
@@ -59,12 +63,28 @@ export const {
 
       if (!existingUser) return token;
 
+      // should only trigger on user creation
+      // await updateUser(token.sub, { role: session.role });
+      // TODO: double check if this is a sufficient updating of username in db
       if (trigger === "update" && session?.role) {
         token.role = session.role;
-        await updateUser(token.sub, { role: session.role });
+        await updateUser(token.sub, {
+          role: session.role,
+          username: session.username,
+          name: session.name,
+          lastname: session.lastname,
+        });
       }
 
+      //TODO:  ^if so no need to do this:
+
+      // if (trigger === "update" && session?.username) {
+      //   token.username = session.username;
+      //   await updateUser(token.sub, { username: session.username });
+      // }
+
       // add role and username to token
+      token.username = existingUser.username;
       token.name = existingUser.name;
       token.role = existingUser.role;
 
