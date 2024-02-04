@@ -73,6 +73,8 @@ export const {
           username: session.username,
           name: session.name,
           lastname: session.lastname,
+          class: session.class,
+          image: session.image,
         });
       }
 

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { InputWithLabel } from "@/components/ui/InputWithLabel";
-import { updateUser } from "@/data/user";
 
 export default function Create() {
   const { update } = useSession();
@@ -22,6 +21,7 @@ export default function Create() {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
+  const [playerClass, setPlayerClass] = useState("Cleric1");
 
   // updates the user with the role of USER
   const handleSubmit = async (event: any) => {
@@ -39,12 +39,15 @@ export default function Create() {
       style: { background: "#581c87", color: "#fff" },
     });
     // update the role from NEW to USER
-    // add initial username, name and lastname
+    // add initial username, name, lastname, class and class image
+    // sends to auth.ts, which updates the token with some values and the db
     update({
       role: "USER",
       username: username,
       name: name,
       lastname: lastname,
+      class: playerClass.slice(0, -1),
+      image: playerClass,
     });
     // necessary refreshes before redirecting to profile
     getSession();
@@ -72,7 +75,10 @@ export default function Create() {
               onChange={(e) => setSecret(e.target.value)}
             />
             <h1 className="text-3xl">Choose class</h1>
-            <Classes />
+            <Classes
+              playerClass={playerClass}
+              setPlayerClass={setPlayerClass}
+            />
             <InputWithLabel
               type="text"
               text="Username"

@@ -29,12 +29,11 @@ export default middleware(async (req) => {
   if (isApiAuthRoute) {
     return null;
   }
-  console.log(!req.url.endsWith(DEFAULT_CREATION_PAGE));
 
   // if user's role is NEW redirect to user creation page. Do not redirect if already on creation page
   if (req.auth?.user.role === "NEW") {
     if (req.nextUrl.pathname === DEFAULT_CREATION_PAGE) {
-      return;
+      return null;
     }
     {
       console.log("redirecting to create, new user");

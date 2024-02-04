@@ -19,16 +19,16 @@ enum UserRole {
 }
 
 enum Class {
-  WARRIOR
-  MAGE
-  ROGUE
-  HUNTER
-  PRIEST
-  SHAMAN
-  WARLOCK
-  DRUID
-  PALADIN
-  DEATHKNIGHT
+  Warrior
+  Mage
+  Rogue
+  Hunter
+  Priest
+  Shaman
+  Warlock
+  Druid
+  Paladin
+  Deathknight
 }
 
 model User {
@@ -37,8 +37,8 @@ model User {
   lastname      String?
   email         String?   @unique
   username      String?   @unique
-  title         String?
-  class         String?
+  title         String?   @default("Newborn")
+  class         Class?
   image         String?
   level         Int       @default(1)
   xp            Int       @default(1)
@@ -51,7 +51,7 @@ model User {
   abilities     Ability[] // A user can have many abilities
   clanId        Int?
   emailVerified DateTime?
-  role          UserRole   @default(NEW)
+  role          UserRole   @default(NEW) // A new user starts with role NEW, then changes to USER
   accounts      Account[] // Relation to Github account
 
   clan          Clan?       @relation(fields: [clanId], references: [id], onUpdate: Cascade, onDelete: Cascade)

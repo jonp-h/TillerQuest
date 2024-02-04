@@ -5,69 +5,68 @@ import { useState } from "react";
 
 const classes = [
   {
-    name: "cleric1",
+    name: "Cleric1",
     src: "/classes/cleric1.jpg",
   },
   {
-    name: "cleric2",
+    name: "Cleric2",
     src: "/classes/cleric2.jpg",
   },
   {
-    name: "druid1",
+    name: "Druid1",
     src: "/classes/druid1.jpg",
   },
   {
-    name: "fighter1",
+    name: "Fighter1",
     src: "/classes/fighter1.jpg",
   },
   {
-    name: "fighter2",
+    name: "Fighter2",
     src: "/classes/fighter2.jpg",
   },
   {
-    name: "paladin1",
+    name: "Paladin1",
     src: "/classes/paladin1.jpg",
   },
   {
-    name: "rogue1",
+    name: "Rogue1",
     src: "/classes/rogue1.jpg",
   },
   {
-    name: "rogue2",
+    name: "Rogue2",
     src: "/classes/rogue2.jpg",
   },
   {
-    name: "rogue3",
+    name: "Rogue3",
     src: "/classes/rogue3.jpg",
   },
   {
-    name: "warrior1",
+    name: "Warrior1",
     src: "/classes/warrior1.jpg",
   },
   {
-    name: "warrior2",
+    name: "Warrior2",
     src: "/classes/warrior2.jpg",
   },
   {
-    name: "warrior3",
+    name: "Warrior3",
     src: "/classes/warrior3.jpg",
   },
   {
-    name: "wizard1",
+    name: "Wizard1",
     src: "/classes/wizard1.jpg",
   },
   {
-    name: "wizard2",
+    name: "Wizard2",
     src: "/classes/wizard2.jpg",
   },
   {
-    name: "mage1",
+    name: "Mage1",
     src: "/classes/mage1.jpg",
   },
 ];
 
-export default function Classes() {
-  const [chosenClass, setChosenClass] = useState("cleric1");
+export default function Classes(props: any) {
   return (
     <main className="grid grid-cols-2 md:grid-cols-5 gap-7">
       {classes.map((classType) => {
@@ -78,10 +77,10 @@ export default function Classes() {
             <Image
               src={src}
               alt={className}
-              onClick={() => setChosenClass(className)}
+              onClick={() => props.setPlayerClass(className)}
               className={clsx(
                 "rounded-full shadow-inner shadow-black",
-                className === chosenClass &&
+                className === props.playerClass &&
                   " border-4 shadow-inner shadow-black border-purple-600 "
               )}
               width={200}
@@ -91,7 +90,7 @@ export default function Classes() {
             <h1
               className={clsx(
                 "text-2xl pt-1",
-                className === chosenClass && "text-purple-400 font-bold"
+                className === props.playerClass && "text-purple-400 font-bold"
               )}
             >
               {className}
