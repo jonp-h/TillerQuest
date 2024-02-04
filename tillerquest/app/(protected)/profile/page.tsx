@@ -7,6 +7,10 @@ import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";
 import { getUserById } from "@/data/user";
 import { Progress } from "@/components/ui/Progress";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+import ErrorToast from "@/components/ui/RedirectToast";
 
 export default async function Profile() {
   const session = await auth();
@@ -17,11 +21,10 @@ export default async function Profile() {
     console.log("fetched data from db in profile page");
   }
 
-  const hpBar = user ? (user?.hp / user?.hpMax) * 100 : 0;
-
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
+      <ErrorToast />
       {session?.user?.role !== "NEW" ? (
         <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
           <ClanStacked />

@@ -10,6 +10,7 @@ import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import ErrorToast from "@/components/ui/RedirectToast";
 
 export default function Login() {
   // const searchParams = useSearchParams();
@@ -25,6 +26,7 @@ export default function Login() {
     //Main container with gradient background
     // <Suspense>
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
+      <ErrorToast />
       <div className="grid justify-items-center justify-center w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
         {/* The React image component, width and height in RENDERED pixels*/}
         <Image

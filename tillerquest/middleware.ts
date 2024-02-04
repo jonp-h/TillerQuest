@@ -44,7 +44,10 @@ export default middleware(async (req) => {
   // if user's role is not ADMIN redirect to profile page
   if (isAdminRoute && req.auth?.user.role !== "ADMIN") {
     console.log("redirecting to profile, no admin");
-    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+
+    return Response.redirect(
+      new URL(DEFAULT_LOGIN_REDIRECT + "?redirected=true", nextUrl)
+    );
   }
 
   // if user is logged in and tries to route to login or creation page, redirect to default login redirect (profile)
@@ -61,7 +64,9 @@ export default middleware(async (req) => {
     if (nextUrl.search) {
       callbackUrl += nextUrl.search;
     }
-    return Response.redirect(new URL(`/auth/login`, nextUrl));
+    return Response.redirect(
+      new URL(`/auth/login` + "?redirected=true", nextUrl)
+    );
   }
 
   return null;
