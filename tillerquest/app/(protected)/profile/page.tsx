@@ -31,7 +31,7 @@ export default async function Profile() {
             <div className=" flex justify-evenly gap-3 items-center text-2xl">
               <h2>{user?.name}</h2>
               <h2 className=" font-extrabold text-violet-400 text-3xl">
-                "{user?.username}"
+                &quot;{user?.username}&quot;
               </h2>
               <h2>{user?.lastname}</h2>
             </div>
