@@ -72,6 +72,7 @@ $ npm run dev
 
 - **Main color:**
   - slate-900 #0f172a
+  - slate-700
 - **Accent:**
   - default: purple-900 #581c87
   - hover: purple-800 #6b21a8
