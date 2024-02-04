@@ -6,17 +6,16 @@ import {
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
   adminPrefix,
+  DEFAULT_CREATION_PAGE,
 } from "./routes";
-import { UserRole } from "@prisma/client";
-import { getUserById } from "./data/user";
-import { getSession, useSession } from "next-auth/react";
-import { NextRequest, NextResponse } from "next/server";
-import { INTERNALS } from "next/dist/server/web/spec-extension/request";
+import { auth as middleware } from "./auth";
 
 export const { auth } = NextAuth(authConfig);
 
 // middleware function which runs on all pages
-export default auth(async (req) => {
+// changed from auth to middleware to fulfill auth import
+// this gives access to req.auth
+export default middleware(async (req) => {
   const { nextUrl } = req;
   // double negation to convert to boolean
   const isLoggedIn = !!req.auth;
@@ -31,8 +30,21 @@ export default auth(async (req) => {
     return null;
   }
 
-  // if user is logged in and tries to route to login, redirect to default login redirect (profile)
-  if (isAuthRoute) {
+  // if user's role is NEW redirect to user creation page
+  if (
+    nextUrl.pathname !== DEFAULT_CREATION_PAGE &&
+    req.auth?.user.role === "NEW"
+  ) {
+    return Response.redirect(new URL(DEFAULT_CREATION_PAGE, nextUrl));
+  }
+
+  // if user's role is not ADMIN redirect to profile page
+  if (isAdminRoute && req.auth?.user.role !== "ADMIN") {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+  }
+
+  // if user is logged in and tries to route to login or creation page, redirect to default login redirect (profile)
+  if (isAuthRoute || nextUrl.pathname === DEFAULT_CREATION_PAGE) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }

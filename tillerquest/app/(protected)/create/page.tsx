@@ -39,6 +39,7 @@ export default function Create() {
       style: { background: "#581c87", color: "#fff" },
     });
     // update the role from NEW to USER
+    // add initial username, name and lastname
     update({
       role: "USER",
       username: username,
