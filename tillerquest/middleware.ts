@@ -29,17 +29,22 @@ export default middleware(async (req) => {
   if (isApiAuthRoute) {
     return null;
   }
+  console.log(!req.url.endsWith(DEFAULT_CREATION_PAGE));
 
-  // if user's role is NEW redirect to user creation page
-  if (
-    nextUrl.pathname !== DEFAULT_CREATION_PAGE &&
-    req.auth?.user.role === "NEW"
-  ) {
-    return Response.redirect(new URL(DEFAULT_CREATION_PAGE, nextUrl));
+  // if user's role is NEW redirect to user creation page. Do not redirect if already on creation page
+  if (req.auth?.user.role === "NEW") {
+    if (req.nextUrl.pathname === DEFAULT_CREATION_PAGE) {
+      return;
+    }
+    {
+      console.log("redirecting to create, new user");
+      return Response.redirect(new URL(DEFAULT_CREATION_PAGE, nextUrl));
+    }
   }
 
   // if user's role is not ADMIN redirect to profile page
   if (isAdminRoute && req.auth?.user.role !== "ADMIN") {
+    console.log("redirecting to profile, no admin");
     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
