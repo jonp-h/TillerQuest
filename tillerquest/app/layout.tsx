@@ -9,6 +9,9 @@ import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { cn } from "@/lib/utils";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "@/styles/theme";
 
 // export const metadata: Metadata = {
 //   title: "Tiller Quest",
@@ -34,9 +37,13 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={cn(inter.className)}>
-          <NavBar />
-          {children}
-          <Footer />
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <NavBar />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </AppRouterCacheProvider>
         </body>
       </html>
     </SessionProvider>

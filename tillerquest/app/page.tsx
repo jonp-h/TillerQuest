@@ -1,12 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { julius_Sans_One } from "./fonts";
+import { Button } from "@mui/material";
 
 export default function Home() {
   return (
     //Main container with gradient background
     <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="relative flex place-items-center ">
+        <Button variant="contained" color="secondary">
+          Click me
+        </Button>
         {/* The React image component, width and height in RENDERED pixels*/}
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
