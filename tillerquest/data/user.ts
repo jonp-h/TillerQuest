@@ -21,3 +21,27 @@ export const updateUser = async (id: string, data: any) => {
     return false;
   }
 };
+
+async function getUserClan(id: string) {
+  const userWithClan = await db.user.findUnique({
+    where: { id: id },
+    include: { clan: true },
+  });
+
+  return userWithClan?.clan;
+}
+
+// get all the users that are in the same clan as the current user
+// TODO: could add clanname to token and use that instead of fetching the clanId
+export const getUsersByCurrentUserClan = async () => {
+  // const clanId = await getUserClan(id);
+  const clanId = 1; // TODO: remove this hardcoding
+  try {
+    const users = await db.user.findMany({
+      where: { clanId },
+    });
+    return users;
+  } catch {
+    return null;
+  }
+};

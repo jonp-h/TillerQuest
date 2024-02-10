@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { faCoins, faDiamond } from "@fortawesome/free-solid-svg-icons";
-import Abilities from "@/components/ui/Abilities";
+import Abilities from "@/components/ui/AbilityGrid";
 import ProfileImage from "@/components/ui/ProfileImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";
@@ -90,7 +90,7 @@ export default async function Profile() {
               <h2>Runestones: {user?.runes}</h2>
             </div>
             <Link
-              href="profile/level-up"
+              href="profile/abilities"
               className="text-lg mb-3 bg-purple-900 rounded-lg p-2 px-4 hover:bg-purple-800"
             >
               Level up
