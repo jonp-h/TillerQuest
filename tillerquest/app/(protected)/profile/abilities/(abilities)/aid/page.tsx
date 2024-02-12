@@ -13,15 +13,16 @@ import {
 import { useState } from "react";
 
 export default function Aid() {
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState("128969752");
   // const [clanMembersList, setClanMembersList] = useState([] as any);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setSelectedUser(event.target.value as string);
-  };
+  // const handleChange = (event: SelectChangeEvent) => {
+  //   setSelectedUser(event.target.value as number);
+  // };
 
   // const clanMembersNode = renderClanMembers();
 
+  console.log(selectedUserId);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
@@ -38,8 +39,8 @@ export default function Aid() {
             the caster 20 experience points.
           </p>
           <ClanMemberSelect
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
+            selectedUserId={selectedUserId}
+            setSelectedUserId={setSelectedUserId}
           />
           <Button variant="contained" size="large" color="primary">
             Cast
