@@ -1,6 +1,5 @@
 "use client";
-import ClanMemberSelect from "@/components/ui/ClanMemberSelect";
-import { getUsersByCurrentUserClan } from "@/data/user";
+import UserSelect from "@/components/ui/UserSelect";
 import {
   Button,
   FormControl,
@@ -14,15 +13,7 @@ import { useState } from "react";
 
 export default function Aid() {
   const [selectedUserId, setSelectedUserId] = useState("128969752");
-  // const [clanMembersList, setClanMembersList] = useState([] as any);
 
-  // const handleChange = (event: SelectChangeEvent) => {
-  //   setSelectedUser(event.target.value as number);
-  // };
-
-  // const clanMembersNode = renderClanMembers();
-
-  console.log(selectedUserId);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
       <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
@@ -38,7 +29,7 @@ export default function Aid() {
             Choose a clan member to heal for a total of 4 health points. Grants
             the caster 20 experience points.
           </p>
-          <ClanMemberSelect
+          <UserSelect
             selectedUserId={selectedUserId}
             setSelectedUserId={setSelectedUserId}
           />

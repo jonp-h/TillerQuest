@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
+import { unstable_cache, unstable_noStore } from "next/cache";
 
 export const getUserById = async (id: string) => {
+  unstable_noStore();
   try {
     const user = await db.user.findUnique({ where: { id } });
 
@@ -33,7 +35,7 @@ async function getUserClan(id: string) {
 
 // get all the users that are in the same clan as the current user
 // TODO: could add clanname to token and use that instead of fetching the clanId
-export const getUsersByCurrentUserClan = async () => {
+export const getUsersByCurrentUserClan = unstable_cache(async () => {
   // const clanId = await getUserClan(id);
   const clanId = 1; // TODO: remove this hardcoding
   try {
@@ -44,4 +46,4 @@ export const getUsersByCurrentUserClan = async () => {
   } catch {
     return null;
   }
-};
+});

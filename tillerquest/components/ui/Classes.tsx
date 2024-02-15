@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import clsx from "clsx";
-import { useState } from "react";
 import { Tooltip, Zoom } from "@mui/material";
 
 const classes = [
@@ -91,12 +90,13 @@ export default function Classes(props: any) {
         const description = classType.description;
         return (
           <Tooltip
+            key={className}
             TransitionComponent={Zoom}
             TransitionProps={{ timeout: 600 }}
             title={description}
             arrow
           >
-            <div key={className} className="text-center">
+            <div className="text-center">
               <Image
                 src={src}
                 alt={className}

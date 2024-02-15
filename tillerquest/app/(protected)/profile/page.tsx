@@ -5,9 +5,9 @@ import Abilities from "@/components/ui/AbilityGrid";
 import ProfileImage from "@/components/ui/ProfileImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";
-import { getUserById } from "@/data/user";
+import { getUserById, getUsersByCurrentUserClan } from "@/data/user";
 import { Progress } from "@/components/ui/Progress";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import ErrorToast from "@/components/ui/RedirectToast";
@@ -16,8 +16,10 @@ export default async function Profile() {
   const session = await auth();
 
   let user;
+  let members;
   if (session && session.user?.id) {
     user = await getUserById(session.user.id);
+    members = await getUsersByCurrentUserClan();
     console.log("fetched data from db in profile page");
   }
 
@@ -27,7 +29,9 @@ export default async function Profile() {
       <ErrorToast />
       {session?.user?.role !== "NEW" ? (
         <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
-          <ClanStacked />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ClanStacked members={members} />
+          </Suspense>
           <div className="flex flex-col gap-3 items-center">
             <ProfileImage playerClass={user?.image || "Cleric1"} />
 
