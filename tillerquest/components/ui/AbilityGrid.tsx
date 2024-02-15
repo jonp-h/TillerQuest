@@ -1,61 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import clsx from "clsx";
-import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBolt,
-  faMagnifyingGlass,
-  faUser,
-  faPaperPlane,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHand, faShield } from "@fortawesome/free-solid-svg-icons";
 
 const placeholderAbilities = [
   {
     name: "Aid",
-    href: "/aid",
+    href: "/Aid",
     icon: faUser,
   },
   {
-    name: "Explore",
-    href: "/explore",
-    icon: faMagnifyingGlass,
+    name: "Healing hands",
+    href: "/Healing-hands",
+    icon: faHand,
   },
   {
-    name: "Fly",
-    href: "/fly",
-    icon: faPaperPlane,
-  },
-  {
-    name: "Shapeshift",
-    href: "/shapeshift",
-    icon: faUser,
-  },
-  {
-    name: "Thunder",
-    href: "/thunder",
-    icon: faBolt,
-  },
-  {
-    name: "Thunder",
-    href: "/thunder",
-    icon: faBolt,
-  },
-  {
-    name: "Thunder",
-    href: "/thunder",
-    icon: faBolt,
-  },
-  {
-    name: "Thunder",
-    href: "/thunder",
-    icon: faBolt,
-  },
-  {
-    name: "Thunder",
-    href: "/thunder",
-    icon: faBolt,
+    name: "Shield",
+    href: "/Shield",
+    icon: faShield,
   },
 ];
 

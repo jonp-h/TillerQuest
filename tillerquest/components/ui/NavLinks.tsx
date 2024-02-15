@@ -32,6 +32,11 @@ const links = [
     icon: faFire,
   },
   {
+    name: "Abilities",
+    href: "/abilities",
+    icon: faBolt,
+  },
+  {
     name: "Profile",
     href: "/profile",
     icon: faUser,

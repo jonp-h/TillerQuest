@@ -35,7 +35,7 @@ async function getUserClan(id: string) {
 
 // get all the users that are in the same clan as the current user
 // TODO: could add clanname to token and use that instead of fetching the clanId
-export const getUsersByCurrentUserClan = unstable_cache(async () => {
+export const getUsersByCurrentUserClan = async () => {
   // const clanId = await getUserClan(id);
   const clanId = 1; // TODO: remove this hardcoding
   try {
@@ -46,4 +46,4 @@ export const getUsersByCurrentUserClan = unstable_cache(async () => {
   } catch {
     return null;
   }
-});
+};
