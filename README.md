@@ -27,6 +27,7 @@
 <!-- FEATURES -->
 
 ### This project uses:
+
 - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
 - [CLSX](https://www.npmjs.com/package/clsx) for conditional CSS.
 - [FontAwesome](https://fontawesome.com) for icons.
@@ -75,8 +76,9 @@ $ npm run dev
 - **Main color:**
   - slate-900 #0f172a
   - slate-700 #334155
-- **Accent:**
-  - default: purple-900 #581c87
+- **Primary:**
+  - primary: purple-900 #581c87
+  - variant:
   - hover: purple-800 #6b21a8
   - text: purple-500 #a855f7
 - **Text:**

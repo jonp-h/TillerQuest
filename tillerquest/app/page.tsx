@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { julius_Sans_One } from "./fonts";
+import { Button } from "@mui/material";
 
 export default function Home() {
   return (

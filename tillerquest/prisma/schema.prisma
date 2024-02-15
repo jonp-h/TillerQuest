@@ -78,10 +78,12 @@ model Account {
 }
 
 model Ability {
-  id               Int @id @default(autoincrement())
-  name             String
+  name             String @id @unique
+  type             String? // Passive, Aura, Heal, Buff, Debuff, etc
   description      String
   cost             Int
+  xpGiven          Int
+  value            Int?
   user             User[] // An ability can belong to many users ????
 }
 

@@ -1,11 +1,11 @@
 "use client";
 import Classes from "@/components/ui/Classes";
-import { Button } from "@/components/ui/Button";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { InputWithLabel } from "@/components/ui/InputWithLabel";
+import { Button, TextField } from "@mui/material";
 
 export default function Create() {
   const { update } = useSession();
@@ -67,11 +67,13 @@ export default function Create() {
             onSubmit={handleSubmit}
           >
             <h1 className="text-5xl">Create user</h1>
-            <InputWithLabel
-              type="text"
-              text="Enter creation secret"
-              id="secret"
-              placeholder="Secret"
+            <TextField
+              variant="filled"
+              label="Enter secret code"
+              helperText="The secret code given from administrator"
+              color="info"
+              className=" max-w-lg w-full"
+              size="small"
               onChange={(e) => setSecret(e.target.value)}
             />
             <h1 className="text-3xl">Choose class</h1>
@@ -79,28 +81,32 @@ export default function Create() {
               playerClass={playerClass}
               setPlayerClass={setPlayerClass}
             />
-            <InputWithLabel
-              type="text"
-              text="Username"
-              id="username"
-              placeholder="Username"
+            <TextField
+              variant="outlined"
+              label="Enter username"
+              helperText="You will be identified by this name"
+              color="info"
+              className=" max-w-lg w-full"
+              size="small"
               onChange={(e) => setUsername(e.target.value)}
             />
-            <InputWithLabel
-              type="text"
-              text="Name"
-              id="name"
-              placeholder="Name"
+            <TextField
+              variant="outlined"
+              label="Enter name"
+              color="info"
+              className=" max-w-lg w-full"
+              size="small"
               onChange={(e) => setName(e.target.value)}
             />
-            <InputWithLabel
-              type="text"
-              text="Lastname"
-              id="lastname"
-              placeholder="Lastname"
+            <TextField
+              variant="outlined"
+              label="Enter last name"
+              color="info"
+              className=" max-w-lg w-full"
+              size="small"
               onChange={(e) => setLastname(e.target.value)}
             />
-            <Button type="submit" variant={"default"}>
+            <Button type="submit" variant="contained">
               Create user
             </Button>
           </form>
