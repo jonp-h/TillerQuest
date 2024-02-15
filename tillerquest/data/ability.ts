@@ -13,7 +13,7 @@ export const getAbilityByName = async (name: string) => {
   }
 };
 
-export const useAbilityOnSingleUser = async (id: string, value: number) => {
+export const handleAbilityOnSingleUser = async (id: string, value: number) => {
   try {
     console.log("ability heal ", value, " on user ", id);
     await db.user.update({

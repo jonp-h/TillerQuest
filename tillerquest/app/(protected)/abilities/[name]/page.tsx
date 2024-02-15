@@ -1,9 +1,7 @@
 import UserSelect from "@/components/ui/UserSelect";
-import { getAbilityByName, useAbilityOnSingleUser } from "@/data/ability";
+import { getAbilityByName } from "@/data/ability";
 import { getUsersByCurrentUserClan } from "@/data/user";
-import { Button } from "@mui/material";
 import { notFound } from "next/navigation";
-import { useState } from "react";
 
 export default async function Page({ params }: { params: { name: string } }) {
   const name = params.name;

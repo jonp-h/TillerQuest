@@ -4,14 +4,14 @@ import ClanMemberGrid from "./ClanMemberGrid";
 import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@mui/material";
-import { useAbilityOnSingleUser } from "@/data/ability";
+import { handleAbilityOnSingleUser } from "@/data/ability";
 
 const UserSelect = (props: any) => {
   const [selectedUserId, setSelectedUserId] = useState("");
 
-  const useAbility = async (userId: string, value: number) => {
+  const handleAbility = async (userId: string, value: number) => {
     console.log("useAbility", userId, value);
-    useAbilityOnSingleUser(userId, value);
+    handleAbilityOnSingleUser(userId, value);
     console.log("called useAbilityOnSingleUser");
   };
 
@@ -61,7 +61,7 @@ const UserSelect = (props: any) => {
           size="large"
           color="primary"
           // grab the local selected user and the value of the ability from the parent server component
-          onClick={() => useAbility(selectedUserId, props.value)}
+          onClick={() => handleAbility(selectedUserId, props.value)}
         >
           Use ability
         </Button>
