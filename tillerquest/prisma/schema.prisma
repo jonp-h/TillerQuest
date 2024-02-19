@@ -49,12 +49,12 @@ model User {
   runes         Int       @default(1)
   gold          Int       @default(0)
   abilities     Ability[] // A user can have many abilities
-  clanId        Int?
+  clanName      String?
   emailVerified DateTime?
   role          UserRole   @default(NEW) // A new user starts with role NEW, then changes to USER
   accounts      Account[] // Relation to Github account
 
-  clan          Clan?       @relation(fields: [clanId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  clan          Clan?       @relation(fields: [clanName], references: [name], onUpdate: Cascade, onDelete: Cascade)
 }
 
 // Github account
@@ -88,8 +88,7 @@ model Ability {
 }
 
 model Clan {
-  id              Int @id @default(autoincrement())
-  name            String @unique
+  name            String @id
   members         User[] 
 }
 

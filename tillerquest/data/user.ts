@@ -12,6 +12,17 @@ export const getUserById = async (id: string) => {
   }
 };
 
+export const getUserByUsername = async (username: string) => {
+  unstable_noStore();
+  try {
+    const user = await db.user.findUnique({ where: { username } });
+
+    return user;
+  } catch {
+    return null;
+  }
+};
+
 export const updateUser = async (id: string, data: any) => {
   try {
     await db.user.update({
@@ -24,23 +35,14 @@ export const updateUser = async (id: string, data: any) => {
   }
 };
 
-async function getUserClan(id: string) {
-  const userWithClan = await db.user.findUnique({
-    where: { id: id },
-    include: { clan: true },
-  });
-
-  return userWithClan?.clan;
-}
-
 // get all the users that are in the same clan as the current user
 // TODO: could add clanname to token and use that instead of fetching the clanId
-export const getUsersByCurrentUserClan = async () => {
+export const getUsersByCurrentUserClan = async (clanName: string) => {
   // const clanId = await getUserClan(id);
-  const clanId = 1; // TODO: remove this hardcoding
+  // const clanId = 1; // TODO: remove this hardcoding
   try {
     const users = await db.user.findMany({
-      where: { clanId },
+      where: { clanName },
     });
     return users;
   } catch {

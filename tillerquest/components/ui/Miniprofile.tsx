@@ -1,8 +1,6 @@
 import Image from "next/image";
 
 export default function MiniProfile(props: any) {
-  console.log(props);
-
   return (
     <div className="flex flex-col  justify-center">
       <div className="bg-slate-700 p-1 rounded-full">
