@@ -7,6 +7,7 @@ import NavLinks from "./NavLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import UserNavContainer from "./UserNavContainer";
+import { Session } from "next-auth";
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Initialize state

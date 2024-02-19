@@ -14,34 +14,9 @@ import {
   faBell,
   faFire,
 } from "@fortawesome/free-solid-svg-icons";
-
-const links = [
-  {
-    name: "Åsgard",
-    href: "/asgard",
-    icon: faBolt,
-  },
-  {
-    name: "Shop",
-    href: "/shop",
-    icon: faStore,
-  },
-  {
-    name: "Ragnarok",
-    href: "/ragnarok",
-    icon: faFire,
-  },
-  {
-    name: "Abilities",
-    href: "/abilities",
-    icon: faBolt,
-  },
-  {
-    name: "Profile",
-    href: "/profile",
-    icon: faUser,
-  },
-];
+import { auth } from "@/auth";
+import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
 interface NavLinksProps {
   onClick?: (event: React.MouseEvent) => void;
@@ -49,6 +24,36 @@ interface NavLinksProps {
 
 export default function NavLinks({ onClick }: NavLinksProps) {
   const pathname = usePathname();
+
+  const { data: session } = useSession();
+
+  const links = [
+    {
+      name: "Åsgard",
+      href: "/asgard",
+      icon: faBolt,
+    },
+    {
+      name: "Shop",
+      href: "/shop",
+      icon: faStore,
+    },
+    {
+      name: "Ragnarok",
+      href: "/ragnarok",
+      icon: faFire,
+    },
+    {
+      name: "Abilities",
+      href: "/abilities",
+      icon: faBolt,
+    },
+    {
+      name: session?.user.username ? session?.user.username : "Profile",
+      href: "/profile/" + session?.user.username,
+      icon: faUser,
+    },
+  ];
 
   return (
     <>
