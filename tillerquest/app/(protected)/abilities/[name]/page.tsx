@@ -1,13 +1,22 @@
+import { auth } from "@/auth";
 import UserSelect from "@/components/ui/UserSelect";
 import { getAbilityByName } from "@/data/ability";
-import { getUsersByCurrentUserClan } from "@/data/user";
+import { getUserById, getUsersByCurrentUserClan } from "@/data/user";
+import { currentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { name: string } }) {
   const name = params.name;
   const ability = await getAbilityByName(name);
-  //TODO: remove hardcoding
-  const members = await getUsersByCurrentUserClan(1);
+  const session = await auth();
+  let members;
+  if (session) {
+    const user = await getUserById(session?.user.id);
+
+    if (user?.clanName) {
+      members = await getUsersByCurrentUserClan(user.clanName);
+    }
+  }
 
   console.log("in ability page");
 
