@@ -19,7 +19,8 @@ export default async function Profile() {
   let members;
   if (session && session.user?.id) {
     user = await getUserById(session.user.id);
-    members = await getUsersByCurrentUserClan();
+    //TODO: remove hardcoding
+    members = await getUsersByCurrentUserClan(user?.clanName || "");
     console.log("fetched data from db in profile page");
   }
 
@@ -30,7 +31,7 @@ export default async function Profile() {
       {session?.user?.role !== "NEW" ? (
         <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
           <Suspense fallback={<div>Loading...</div>}>
-            <ClanStacked members={members} />
+            <ClanStacked members={members} user={user?.id} />
           </Suspense>
           <div className="flex flex-col gap-3 items-center">
             <ProfileImage playerClass={user?.image || "Cleric1"} />

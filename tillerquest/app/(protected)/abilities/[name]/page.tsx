@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 export default async function Page({ params }: { params: { name: string } }) {
   const name = params.name;
   const ability = await getAbilityByName(name);
-  const members = await getUsersByCurrentUserClan();
+  //TODO: remove hardcoding
+  const members = await getUsersByCurrentUserClan(1);
 
   console.log("in ability page");
 
