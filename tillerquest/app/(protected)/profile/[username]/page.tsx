@@ -5,11 +5,12 @@ import { notFound } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { faCoins, faDiamond } from "@fortawesome/free-solid-svg-icons";
-import Abilities from "@/components/ui/AbilityGrid";
+import UserAbilites from "@/components/ui/UserAbilities";
 import ProfileImage from "@/components/ui/ProfileImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";
 import {
+  getUserWithAbilitiesByUsername,
   getUserById,
   getUserByUsername,
   getUsersByCurrentUserClan,
@@ -27,7 +28,8 @@ export default async function Page({
   params: { username: string };
 }) {
   const username = params.username;
-  const user = await getUserByUsername(username);
+  // const user = await getUserByUsername(username); // removed because of the need to also fetch the relation abilities
+  const user = await getUserWithAbilitiesByUsername(username);
   // hardcoded if a user has no clan
   const members = await getUsersByCurrentUserClan(user?.clanName || "");
   //   const session = await auth();
@@ -128,7 +130,7 @@ export default async function Page({
           <h2 className="font-extrabold text-2xl">Abilites</h2>
           {user?.hp !== 0 ? (
             <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
-              <Abilities />
+              <UserAbilites abilities={user?.abilities} />
             </div>
           ) : (
             <h2 className="text-red-500">The dead can do naught</h2>

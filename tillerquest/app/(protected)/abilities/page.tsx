@@ -1,5 +1,5 @@
 "use client";
-import AbilityGrid from "@/components/ui/AbilityGrid";
+import AbilityGrid from "@/components/ui/UserAbilities";
 import { Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 

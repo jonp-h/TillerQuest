@@ -22,11 +22,25 @@ const placeholderAbilities = [
   },
 ];
 
-export default function AbilityGrid() {
+export default function UserAbilites(props: any) {
+  console.log("props.user.abilities", props.user);
   return (
     <>
       {/* The following code can be exanded to include icons */}
-      {placeholderAbilities.map((abilities) => {
+      {props.abilities.map((ability: any) => {
+        return (
+          <Link
+            key={ability.name}
+            href={"../abilities/" + ability.name}
+            className="flex flex-col gap-3 hover:text-purple-600 hover:border-purple-600 border-white border-2 rounded-lg p-3 items-center"
+          >
+            <FontAwesomeIcon icon={ability.icon} className=" h-10" />
+            <p>{ability.name.replace("-", " ")}</p>
+          </Link>
+        );
+      })}
+
+      {/* {placeholderAbilities.map((abilities) => {
         const icon = abilities.icon;
         return (
           <Link
@@ -38,7 +52,7 @@ export default function AbilityGrid() {
             <p>{abilities.name}</p>
           </Link>
         );
-      })}
+      })} */}
     </>
   );
 }
