@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { faCoins, faDiamond } from "@fortawesome/free-solid-svg-icons";
-import Abilities from "@/components/ui/AbilityGrid";
+import Abilities from "@/components/ui/UserAbilities";
 import ProfileImage from "@/components/ui/ProfileImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";

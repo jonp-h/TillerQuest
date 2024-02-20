@@ -35,6 +35,21 @@ export const updateUser = async (id: string, data: any) => {
   }
 };
 
+// Prisma require "include" to include relations
+export const getUserWithAbilitiesByUsername = async (username: string) => {
+  try {
+    const user = await db.user.findUnique({
+      where: { username },
+      include: {
+        abilities: true,
+      },
+    });
+
+    return user;
+  } catch {
+    return null;
+  }
+};
 // get all the users that are in the same clan as the current user
 // TODO: could add clanname to token and use that instead of fetching the clanId
 export const getUsersByCurrentUserClan = async (clanName: string) => {

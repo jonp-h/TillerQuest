@@ -18,18 +18,23 @@ enum UserRole {
   ADMIN
 }
 
+// Original:
+// Seid, viking, druwid, narr, 
 enum Class {
-  Warrior
+  Cleric
+  Druid
+  // Fighter
   Mage
+  Paladin
   Rogue
-  Hunter
-  Priest
+  // Hunter
   Shaman
   Warlock
-  Druid
-  Paladin
+  Warrior
+  Wizard
   Deathknight
 }
+
 
 model User {
   id            String    @id @default(cuid())
@@ -78,9 +83,10 @@ model Account {
 }
 
 model Ability {
-  name             String @id @unique
+  name             String @id
   type             String? // Passive, Aura, Heal, Buff, Debuff, etc
   description      String
+  icon            String?
   cost             Int
   xpGiven          Int
   value            Int?
