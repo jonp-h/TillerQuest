@@ -19,6 +19,7 @@ import { Suspense, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import ErrorToast from "@/components/ui/RedirectToast";
+import clsx from "clsx";
 
 export default async function Page({
   params,
@@ -42,7 +43,12 @@ export default async function Page({
 
   return (
     //Main container with gradient background
-    <main className="flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950">
+    <main
+      className={clsx(
+        "flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950",
+        user?.hp === 0 && " bg-gradient-to-t from-gray-950 to-gray-500 "
+      )}
+    >
       <ErrorToast />
       <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10 bg-slate-900 relative md:rounded-xl md:shadow-xl ">
         <Suspense fallback={<div>Loading...</div>}>
@@ -53,7 +59,7 @@ export default async function Page({
           />
         </Suspense>
         <div className="flex flex-col gap-3 items-center">
-          <ProfileImage playerClass={user?.image || "Cleric1"} />
+          <ProfileImage user={user} />
 
           <div className=" flex justify-evenly gap-3 items-center text-2xl">
             <h2>{user?.name}</h2>
@@ -120,9 +126,13 @@ export default async function Page({
             Level up
           </Link>
           <h2 className="font-extrabold text-2xl">Abilites</h2>
-          <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
-            <Abilities />
-          </div>
+          {user?.hp !== 0 ? (
+            <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
+              <Abilities />
+            </div>
+          ) : (
+            <h2 className="text-red-500">The dead can do naught</h2>
+          )}
         </div>
       </div>
     </main>
