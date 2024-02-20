@@ -31,7 +31,7 @@ export default function AbilityGrid() {
         return (
           <Link
             key={abilities.name}
-            href={"abilities/" + abilities.href}
+            href={"../abilities" + abilities.href}
             className="flex flex-col gap-3 hover:text-purple-600 hover:border-purple-600 border-white border-2 rounded-lg p-3 items-center"
           >
             <FontAwesomeIcon icon={icon} className=" h-10" />

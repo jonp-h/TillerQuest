@@ -4,14 +4,14 @@ import ClanMemberGrid from "./ClanMemberGrid";
 import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@mui/material";
-import { handleAbilityOnSingleUser } from "@/data/ability";
+import { healOrDamageSingleUser } from "@/data/ability";
 
 const UserSelect = (props: any) => {
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const handleAbility = async (userId: string, value: number) => {
     console.log("useAbility", userId, value);
-    handleAbilityOnSingleUser(userId, value);
+    healOrDamageSingleUser(userId, value);
     console.log("called useAbilityOnSingleUser");
   };
 
@@ -26,6 +26,7 @@ const UserSelect = (props: any) => {
       <>
         <main className=" grid grid-cols-2 md:flex gap-7">
           {memberList.map((member: any) => {
+            const image = member.hp !== 0 ? member.image + ".jpg" : "grave.jpg";
             return (
               <div
                 key={member.name}
@@ -37,7 +38,7 @@ const UserSelect = (props: any) => {
                 )}
               >
                 <Image
-                  src={"/classes/" + member.image + ".jpg"}
+                  src={"/classes/" + image}
                   alt={member.name}
                   className={clsx(
                     "rounded-full shadow-inner shadow-black",
