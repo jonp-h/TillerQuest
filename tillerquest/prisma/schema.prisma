@@ -51,6 +51,7 @@ model User {
   hpMax         Int       @default(40)
   mana          Int       @default(4)
   manaMax       Int       @default(40)
+  lastMana      String    @default("") // Last time user recieved mana. User should not get more mana on account creation
   runes         Int       @default(1)
   gold          Int       @default(0)
   abilities     Ability[] // A user can have many abilities

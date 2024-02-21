@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@/lib/db";
 import { unstable_cache, unstable_noStore } from "next/cache";
 
@@ -62,5 +63,25 @@ export const getUsersByCurrentUserClan = async (clanName: string) => {
     return users;
   } catch {
     return null;
+  }
+};
+
+export const giveMana = async (id: string, value: number) => {
+  const today = new Date().toISOString().slice(0, 10);
+  console.log(id, value, today);
+  try {
+    await db.user.update({
+      // only select users who have not received mana today
+      where: { id: id, lastMana: { not: today } },
+      data: {
+        mana: {
+          increment: value,
+        },
+        lastMana: today,
+      },
+    });
+    return true;
+  } catch {
+    return false;
   }
 };
