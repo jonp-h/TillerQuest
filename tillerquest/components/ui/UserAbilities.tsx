@@ -30,12 +30,12 @@ export default function UserAbilites(props: any) {
       {props.abilities.map((ability: any) => {
         return (
           <Link
-            key={ability.name}
-            href={"../abilities/" + ability.name}
+            key={ability.abilityName}
+            href={"../abilities/" + ability.abilityName}
             className="flex flex-col gap-3 hover:text-purple-600 hover:border-purple-600 border-white border-2 rounded-lg p-3 items-center"
           >
             <FontAwesomeIcon icon={ability.icon} className=" h-10" />
-            <p>{ability.name.replace("-", " ")}</p>
+            <p>{ability.abilityName.replace("-", " ")}</p>
           </Link>
         );
       })}

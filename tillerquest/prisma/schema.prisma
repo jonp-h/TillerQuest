@@ -49,12 +49,12 @@ model User {
   xp            Int       @default(1)
   hp            Int       @default(40)
   hpMax         Int       @default(40)
-  mana          Int       @default(4)
+  mana          Int       @default(0)
   manaMax       Int       @default(40)
   lastMana      String    @default("") // Last time user recieved mana. User should not get more mana on account creation
   runes         Int       @default(1)
   gold          Int       @default(0)
-  abilities     Ability[] // A user can have many abilities
+  abilities     AbilitiesOnUsers[] // A user can have many abilities
   clanName      String?
   emailVerified DateTime?
   role          UserRole   @default(NEW) // A new user starts with role NEW, then changes to USER
@@ -87,12 +87,37 @@ model Ability {
   name             String @id
   type             String? // Passive, Aura, Heal, Buff, Debuff, etc
   description      String
-  icon            String?
+  duration         Int?
+  icon             String?
   cost             Int
   xpGiven          Int
   value            Int?
-  user             User[] // An ability can belong to many users ????
+  user             AbilitiesOnUsers[] // An ability can belong to many users ????
 }
+
+// relational table for abilities and users
+// should only exist if the user has the ability
+model AbilitiesOnUsers {
+  user          User @relation(fields: [userId], references: [id])
+  userId        String
+  effect        Ability @relation(fields: [abilityName], references: [name])
+  abilityName   String
+  endTime       DateTime?
+  currentValue  Int?
+
+  @@id([userId, abilityName])
+}
+
+//FIXME: Redundant?
+// model Effect {
+//   name             String @id
+//   // add relation to ability?
+//   type             String? 
+//   icon             String?
+//   // endTime          DateTime?
+//   value            Int?
+//   user             EffectsOnUsers[] // An effect can belong to many users ????
+// }
 
 model Clan {
   name            String @id
@@ -106,6 +131,13 @@ model CosmicEvent {
   date            DateTime?
 }
 
+//user titles
+model Title {
+  name  String @id
+  price Int
+  //tastaturkriger
+
+}
 
 // npx prisma generate
 // npx prisma db push

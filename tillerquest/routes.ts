@@ -35,7 +35,7 @@ export const adminPrefix = "/asgard";
  * The default for this is the profile page.
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/profile";
+export const DEFAULT_LOGIN_REDIRECT = "/";
 
 /**
  * Route for user creation page.

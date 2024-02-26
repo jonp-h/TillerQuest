@@ -37,12 +37,15 @@ export const updateUser = async (id: string, data: any) => {
 };
 
 // Prisma require "include" to include relations
-export const getUserWithAbilitiesByUsername = async (username: string) => {
+export const getUserWithAbilitiesAndEffectsByUsername = async (
+  username: string
+) => {
   try {
     const user = await db.user.findUnique({
       where: { username },
       include: {
         abilities: true,
+        // effects: true,
       },
     });
 
@@ -51,6 +54,18 @@ export const getUserWithAbilitiesByUsername = async (username: string) => {
     return null;
   }
 };
+
+export const getAbilitiesOnUser = async (id: string) => {
+  try {
+    const abilities = await db.abilitiesOnUsers.findMany({
+      where: { userId: id },
+    });
+    return abilities;
+  } catch {
+    return null;
+  }
+};
+
 // get all the users that are in the same clan as the current user
 // TODO: could add clanname to token and use that instead of fetching the clanId
 export const getUsersByCurrentUserClan = async (clanName: string) => {
@@ -85,3 +100,20 @@ export const giveMana = async (id: string, value: number) => {
     return false;
   }
 };
+
+//FIXME: Redundant?
+// Prisma require "include" to include relations
+// export const getUserEffectsByUsername = async (username: string) => {
+//   try {
+//     const user = await db.user.findUnique({
+//       where: { username },
+//       include: {
+//         effects: true,
+//       },
+//     });
+
+//     return user;
+//   } catch {
+//     return null;
+//   }
+// };

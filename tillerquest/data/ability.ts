@@ -13,7 +13,13 @@ export const getAbilityByName = async (name: string) => {
   }
 };
 
-export const healOrDamageSingleUser = async (id: string, value: number) => {
+export const healOrDamageSingleUser = async (
+  id: string,
+  value: number,
+  cost: number,
+  xpGiven: number
+) => {
+  // error handling for cost is done clientside
   try {
     const targetHp = await db.user.findUnique({
       where: { id },
@@ -74,6 +80,23 @@ export const healOrDamageSingleUser = async (id: string, value: number) => {
         },
       });
     }
+
+    // finally decrement the cost from the user's mana
+    // and increment the user's xp by the xpGiven
+    await db.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        mana: {
+          decrement: cost,
+        },
+        xp: {
+          increment: xpGiven,
+        },
+      },
+    });
+
     return true;
   } catch (err) {
     console.log(err);

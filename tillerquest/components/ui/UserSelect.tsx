@@ -9,10 +9,20 @@ import { healOrDamageSingleUser } from "@/data/ability";
 const UserSelect = (props: any) => {
   const [selectedUserId, setSelectedUserId] = useState("");
 
-  const handleAbility = async (userId: string, value: number) => {
-    console.log("useAbility", userId, value);
-    healOrDamageSingleUser(userId, value);
-    console.log("called useAbilityOnSingleUser");
+  const handleAbility = async (userId: string, user: any, ability: any) => {
+    console.log("useAbility", userId, ability.value);
+
+    if (user.mana > ability.cost) {
+      healOrDamageSingleUser(
+        userId,
+        ability.value,
+        ability.cost,
+        ability.xpGiven
+      );
+    } else {
+      console.log("Not enough mana");
+      //TODO: toast
+    }
   };
 
   {
@@ -62,7 +72,9 @@ const UserSelect = (props: any) => {
           size="large"
           color="primary"
           // grab the local selected user and the value of the ability from the parent server component
-          onClick={() => handleAbility(selectedUserId, props.value)}
+          onClick={() =>
+            handleAbility(selectedUserId, props.user, props.ability)
+          }
         >
           Use ability
         </Button>

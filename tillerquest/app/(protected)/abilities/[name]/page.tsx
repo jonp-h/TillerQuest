@@ -45,7 +45,7 @@ export default async function Page({ params }: { params: { name: string } }) {
               <span className="text-orange-400">{ability.xpGiven} xp</span>
             </h2>
             <p className="text-lg max-w-md">{ability.description}</p>
-            <UserSelect members={members} value={ability.value} />
+            <UserSelect members={members} user={user} ability={ability} />
           </div>
         ) : (
           <h2 className="text-red-500">The dead can do naught</h2>
