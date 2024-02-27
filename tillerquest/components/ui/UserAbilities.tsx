@@ -34,7 +34,8 @@ export default function UserAbilites(props: any) {
             href={"../abilities/" + ability.abilityName}
             className="flex flex-col gap-3 hover:text-purple-600 hover:border-purple-600 border-white border-2 rounded-lg p-3 items-center"
           >
-            <FontAwesomeIcon icon={ability.icon} className=" h-10" />
+            {/* FIXME: add icon */}
+            {/* <FontAwesomeIcon icon={ability.icon} className=" h-10" /> */}
             <p>{ability.abilityName.replace("-", " ")}</p>
           </Link>
         );

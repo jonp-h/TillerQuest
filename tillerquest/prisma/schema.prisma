@@ -128,13 +128,16 @@ model CosmicEvent {
   id              Int @id @default(autoincrement())
   name            String @unique
   description     String
-  date            DateTime?
+  dateRevealed    String? @unique // TODO: Check if need change
+  timesUsed       Int @default(0)
+  recommendedDateStart String?
+  recommendedDateEnd String?
 }
 
 //user titles
 model Title {
   name  String @id
-  price Int
+  cost Int
   //tastaturkriger
 
 }

@@ -10,10 +10,11 @@ import ProfileImage from "@/components/ui/ProfileImage";
 import ClanStacked from "@/components/ui/ClanStacked";
 import { auth } from "@/auth";
 import {
-  getUserWithAbilitiesByUsername,
+  getUserWithAbilitiesAndEffectsByUsername,
   getUserById,
   getUserByUsername,
   getUsersByCurrentUserClan,
+  getAbilitiesOnUser,
 } from "@/data/user";
 import { Progress } from "@/components/ui/Progress";
 import { Suspense, useEffect } from "react";
@@ -22,6 +23,8 @@ import { useRouter } from "next/router";
 import ErrorToast from "@/components/ui/RedirectToast";
 import clsx from "clsx";
 import { Button } from "@mui/material";
+import UserEffects from "@/components/ui/UserEffects";
+import { getDailyCosmic } from "@/data/cosmic";
 
 export default async function Page({
   params,
@@ -30,12 +33,16 @@ export default async function Page({
 }) {
   const username = params.username;
   // const user = await getUserByUsername(username); // removed because of the need to also fetch the relation abilities
-  const user = await getUserWithAbilitiesByUsername(username);
+  //FIXME: remove effects
+  const user = await getUserWithAbilitiesAndEffectsByUsername(username);
   // hardcoded if a user has no clan
   const members = await getUsersByCurrentUserClan(user?.clanName || "");
-  //   const session = await auth();
+
+  const effects = user && (await getAbilitiesOnUser(user?.id));
+
   const day = new Date().toISOString().slice(0, 10);
-  console.log("in dynamic profile page");
+
+  const dailyCosmic = await getDailyCosmic();
 
   // FIXME: redundant?
   if (!username) {
@@ -53,11 +60,12 @@ export default async function Page({
       )}
     >
       <ErrorToast />
+
       <div className=" bg-slate-900 relative md:rounded-xl md:shadow-xl ">
         {/* Information box shown when needed */}
         {/* compares the last time user got mana with current day */}
         {!!user && user?.lastMana !== day ? (
-          <div className=" w-full rounded-xl flex flex-col items-center gap-5 p-5 justify-center bg-gray-900">
+          <div className=" w-full rounded-xl flex flex-col items-center gap-5 p-5 justify-center bg-slate-900">
             <h2>
               Welcome to <span className="text-orange-400">Midgard</span>
             </h2>
@@ -70,6 +78,15 @@ export default async function Page({
                 Daily mana
               </Button>
             </Link>
+          </div>
+        ) : null}
+        {/* Cosmic event box shown when revealed */}
+        {dailyCosmic ? (
+          <div className=" w-full rounded-xl flex flex-col items-center gap-5 p-5 justify-center bg-slate-900">
+            <h1 className=" text-red-500 font-extrabold text-xl">
+              {dailyCosmic?.name} has been revealed
+            </h1>
+            <h2>{dailyCosmic.description}</h2>
           </div>
         ) : null}
         <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10">
@@ -100,12 +117,6 @@ export default async function Page({
             <h3 className="text-orange-300">
               XP: {user?.xp} / {500}
             </h3>
-            {/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div
-                className="bg-orange-500 h-2.5 rounded-full"
-                style={{ width: user?.xp }}
-              ></div>
-            </div> */}
 
             {/* TODO: make percentage based on level requirement */}
             <Progress
@@ -146,6 +157,12 @@ export default async function Page({
                 Level up
               </Button>
             </Link>
+
+            <h2 className="font-extrabold text-2xl">Effects</h2>
+            <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
+              <UserEffects effects={effects} />
+            </div>
+
             <h2 className="font-extrabold text-2xl">Abilites</h2>
             {user?.hp !== 0 ? (
               <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
