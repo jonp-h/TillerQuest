@@ -28,10 +28,9 @@
 
 ### This project uses:
 
-- [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html).
-- [CLSX](https://www.npmjs.com/package/clsx) for conditional CSS.
-- [FontAwesome](https://fontawesome.com) for icons.
-- [shadcn](https://ui.shadcn.com/) for base components.
+- [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) for type safety.
+- [Material UI](https://mui.com/material-ui/) for base components.
+- [Google's Materiaul Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
 
@@ -44,7 +43,7 @@ $ git clone
 # Go into the repository
 
 # Install dependencies
-$ npm install
+$ npm i
 
 # Run the app
 $ npm run dev
@@ -110,7 +109,3 @@ $ npm start
 This software uses the following open source packages:
 
 - [Node.js](https://nodejs.org/)
-
-## License
-
-MIT

@@ -1,93 +1,35 @@
+import { auth } from "@/auth";
 import Image from "next/image";
-import Link from "next/link";
-import { julius_Sans_One } from "./fonts";
-import { Button } from "@mui/material";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
-    //Main container with gradient background
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-gradient-to-br from-purple-950 to-gray-950">
-      <div className="relative flex place-items-center ">
-        {/* The React image component, width and height in RENDERED pixels*/}
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
-          src="/logo/TQ.png"
-          draggable={false}
-          alt="Tiller Quest logo"
-          width={280}
-          height={150}
-          priority
-        />
-      </div>
-      <div className={julius_Sans_One.className}>
-        <h1 className="text-4xl py-5 font-extrabold lg:text-6xl">
-          Tiller Quest
-        </h1>
-      </div>
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <Link
-          href="/explore"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Explore{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Tiller Quest and its uses in the classroom
+    <main className=" bg-gradient-to-b from-indigo-900 to-purple-950 w-screen min-h-screen">
+      <div className="w-screen flex justify-center text-center">
+        <div className="mt-36 grid gap-6 text-6xl">
+          <Image src="/TQlogo.png" alt="TillerQuest" width={300} height={300} />
+          <h1>TillerQuest</h1>
+          <p>{session ? session.user?.role : "Not logged in"}</p>
+          <p>{session ? session.user?.class : "Not logged in"}</p>
+          <p>
+            {session
+              ? session.user?.name +
+                session.user.username +
+                session.user.lastname
+              : "Not logged in"}
           </p>
-        </Link>
-
-        <Link
-          href="/login"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Login{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Continue your journey in the world of Tiller Quest!
+          <p>
+            TillerQuest uses OAuth to confirm your identity through other
+            services. When you log in, you only ever give your credentials to
+            that service - never to TillerQuest. Then, the service you use tells
+            the TillerQuest servers that you're really you. In general, this
+            reveals no information about you beyond what is already public; here
+            are examples from GitHub (https://api.github.com/users/octocat).
+            TillerQuest will remember your unique ID, names, URL, and image from
+            the service you use to authenticate.
           </p>
-        </Link>
-
-        <Link
-          href="/signup"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Sign up{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Create an account to start your journey to Valhalla!
-          </p>
-        </Link>
-
-        <Link
-          href="/about"
-          className=" rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            About us{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Read about the gods behind Tiller Quest
-          </p>
-        </Link>
+        </div>
       </div>
     </main>
   );

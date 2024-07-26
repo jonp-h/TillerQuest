@@ -1,48 +1,32 @@
-import NextAuth, { Session } from "next-auth";
-import { UserRole } from "@prisma/client";
+import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import authConfig from "./auth.config";
+import { Class, UserRole } from "@prisma/client";
+import { db } from "./lib/db";
+import { getUserById, updateUser } from "./data/user";
 
-import { db } from "@/lib/db";
-import authConfig from "@/auth.config";
-import { getUserById, updateUser } from "@/data/user";
-
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-  update,
-} = NextAuth({
-  pages: {
-    signIn: "/auth/login",
-    error: "/auth/error",
-  },
-  events: {
-    async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
-    },
-  },
-  // the functions in callbacks are called on every request
-  // we can use them to add data to the session / tokens
+export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
+  adapter: PrismaAdapter(db),
+  session: { strategy: "jwt" },
+  ...authConfig,
   callbacks: {
-    async signIn({ user }) {
-      // TODO: ??
-      const existingUser = await getUserById(user.id);
+    // FIXME: 02 commented
+    // async signIn({ user }) {
+    //   // TODO: ??
+    //   const existingUser = await getUserById(user.id);
 
-      return true;
-    },
+    //   return true;
+    // },
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
 
-      session.user.customField = "custom";
-
       if (token.role && !!session.user) {
         session.user.role = token.role as UserRole;
+      }
+      if (token.class && !!session.user) {
+        session.user.class = token.class as Class;
       }
 
       if (token.username && !!session.user) {
@@ -50,13 +34,13 @@ export const {
       }
 
       if (session.user) {
+        session.user.lastname = token.lastname as string;
         session.user.name = token.name;
-        session.user.email = token.email;
       }
 
       return session;
     },
-    async jwt({ token, trigger, session }) {
+    async jwt({ token, trigger, session }): Promise<any> {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
@@ -64,9 +48,8 @@ export const {
       if (!existingUser) return token;
 
       // should only trigger on user creation
-      // await updateUser(token.sub, { role: session.role });
-      // TODO: double check if this is a sufficient updating of username in db
-      if (trigger === "update" && session?.role) {
+      if (trigger === "update") {
+        console.log("updating role in db", session.role);
         token.role = session.role;
         await updateUser(token.sub, {
           role: session.role,
@@ -78,22 +61,15 @@ export const {
         });
       }
 
-      //TODO:  ^if so no need to do this:
-
-      // if (trigger === "update" && session?.username) {
-      //   token.username = session.username;
-      //   await updateUser(token.sub, { username: session.username });
-      // }
-
       // add role and username to token
-      token.username = existingUser.username;
       token.name = existingUser.name;
+      token.username = existingUser.username;
+      token.lastname = existingUser.lastname;
+      token.class = existingUser.class;
       token.role = existingUser.role;
+      token.class = existingUser.class;
 
       return token;
     },
   },
-  adapter: PrismaAdapter(db),
-  session: { strategy: "jwt" },
-  ...authConfig,
 });

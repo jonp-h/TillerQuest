@@ -1,179 +1,167 @@
-import UserSelect from "@/components/ui/UserSelect";
-import { getAbilityByName } from "@/data/ability";
+import MainContainer from "@/components/MainContainer";
+import { getMembersByCurrentUserClan, getUserByUsername } from "@/data/user";
+import { Button, LinearProgress, Paper, Typography } from "@mui/material";
+import React from "react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
+import { red, blue } from "@mui/material/colors";
+import { AutoAwesome, Circle, Diamond } from "@mui/icons-material";
+import MiniatureProfile from "@/components/MiniatureProfile";
+import { getUserAbilities } from "@/data/abilities";
+import { getUserEffects } from "@/data/effects";
+import TimeLeft from "@/components/TimeLeft";
+import Ability from "@/components/Ability";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import { faCoins, faDiamond } from "@fortawesome/free-solid-svg-icons";
-import UserAbilites from "@/components/ui/UserAbilities";
-import ProfileImage from "@/components/ui/ProfileImage";
-import ClanStacked from "@/components/ui/ClanStacked";
-import { auth } from "@/auth";
-import {
-  getUserWithAbilitiesAndEffectsByUsername,
-  getUserById,
-  getUserByUsername,
-  getUsersByCurrentUserClan,
-  getAbilitiesOnUser,
-} from "@/data/user";
-import { Progress } from "@/components/ui/Progress";
-import { Suspense, useEffect } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
-import ErrorToast from "@/components/ui/RedirectToast";
-import clsx from "clsx";
-import { Button } from "@mui/material";
-import UserEffects from "@/components/ui/UserEffects";
-import { getDailyCosmic } from "@/data/cosmic";
-
-export default async function Page({
-  params,
+export default async function ProfilePage({
+  params: { username },
 }: {
   params: { username: string };
 }) {
-  const username = params.username;
-  // const user = await getUserByUsername(username); // removed because of the need to also fetch the relation abilities
-  //FIXME: remove effects
-  const user = await getUserWithAbilitiesAndEffectsByUsername(username);
-  // hardcoded if a user has no clan
-  const members = await getUsersByCurrentUserClan(user?.clanName || "");
+  const user = await getUserByUsername(username);
 
-  const effects = user && (await getAbilitiesOnUser(user?.id));
-
-  const day = new Date().toISOString().slice(0, 10);
-
-  const dailyCosmic = await getDailyCosmic();
-
-  // FIXME: redundant?
-  if (!username) {
-    return <p>not found</p>;
+  if (!user) {
+    notFound();
   }
 
-  console.log("fetched data from db in profile page");
+  const clanMembers = await getMembersByCurrentUserClan(user.guildName || "");
+
+  const userAbilities = await getUserAbilities(user.id);
+  const userEffects = await getUserEffects(user.id);
 
   return (
-    //Main container with gradient background
-    <main
-      className={clsx(
-        "flex min-h-screen flex-col items-center justify-between md:p-16 bg-gradient-to-br from-purple-950 to-gray-950",
-        user?.hp === 0 && " bg-gradient-to-t from-gray-950 to-gray-500 "
-      )}
-    >
-      <ErrorToast />
-
-      <div className=" bg-slate-900 relative md:rounded-xl md:shadow-xl ">
-        {/* Information box shown when needed */}
-        {/* compares the last time user got mana with current day */}
-        {!!user && user?.lastMana !== day ? (
-          <div className=" w-full rounded-xl flex flex-col items-center gap-5 p-5 justify-center bg-slate-900">
-            <h2>
-              Welcome to <span className="text-orange-400">Midgard</span>
-            </h2>
-            <h2>
-              You are worthy of{" "}
-              <span className="text-blue-400">daily mana</span>
-            </h2>
-            <Link href={"../mana"}>
-              <Button size="large" variant="contained">
-                Daily mana
-              </Button>
-            </Link>
-          </div>
-        ) : null}
-        {/* Cosmic event box shown when revealed */}
-        {dailyCosmic ? (
-          <div className=" w-full rounded-xl flex flex-col items-center gap-5 p-5 justify-center bg-slate-900">
-            <h1 className=" text-red-500 font-extrabold text-xl">
-              {dailyCosmic?.name} has been revealed
-            </h1>
-            <h2>{dailyCosmic.description}</h2>
-          </div>
-        ) : null}
-        <div className="flex flex-col md:flex-row justify-items-center md:gap-20  w-full min-h-screen md:min-h-fit md:w-auto p-10">
-          <Suspense fallback={<div>Loading...</div>}>
-            <ClanStacked
-              clanName={user?.clanName}
-              members={members}
-              username={username}
-            />
-          </Suspense>
-          <div className="flex flex-col gap-3 items-center">
-            <ProfileImage user={user} />
-
-            <div className=" flex justify-evenly gap-3 items-center text-2xl">
-              <h2>{user?.name}</h2>
-              <h2 className=" font-extrabold text-violet-400 text-3xl">
-                &quot;{user?.username}&quot;
-              </h2>
-              <h2>{user?.lastname}</h2>
-            </div>
-            <div className="flex gap-5 text-xl text-green-300">
-              <h2>{user?.title}</h2>
-              <h2>{user?.class}</h2>
-              <h2>{user?.level}</h2>
-            </div>
-
-            {/* Progress bars */}
-            <h3 className="text-orange-300">
-              XP: {user?.xp} / {500}
-            </h3>
-
-            {/* TODO: make percentage based on level requirement */}
-            <Progress
-              value={user ? (user.xp / 500) * 100 : 0}
-              className="bg-orange-500"
-            />
-
-            <h3 className="text-red-500">
-              HP: {user?.hp} / {user?.hpMax}
-            </h3>
-            <Progress
-              value={user ? (user.hp / user.hpMax) * 100 : 0}
-              className="bg-red-500"
-            />
-            <h3 className="text-blue-400">
-              Mana: {user?.mana} / {user?.manaMax}
-            </h3>
-            <Progress
-              value={user ? (user.mana / user.manaMax) * 100 : 0}
-              className="bg-blue-500"
+    <MainContainer>
+      <div className="flex flex-col justify-center md:flex-row">
+        {user.guildName && (
+          <Paper
+            elevation={6}
+            className="flex flex-col m-3 gap-3 items-center p-5 md:w-2/12 w-full order-2 md:order-1"
+          >
+            <Typography variant="h4" align="center" flexWrap="wrap">
+              {user.guildName}
+            </Typography>
+            {clanMembers?.map((member: any) =>
+              member.username !== user.username ? (
+                <MiniatureProfile key={member.id} member={member} />
+              ) : null
+            )}
+          </Paper>
+        )}
+        <Paper
+          className="flex flex-col m-3 gap-3 items-center p-5 md:w-5/12 w-full order-first md:order-2"
+          elevation={5}
+        >
+          <div className="from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full">
+            <Image
+              className="rounded-full"
+              src={"/classes/" + user.image + ".jpg" || ""}
+              alt={user.username || ""}
+              width={250}
+              height={250}
+              draggable={false}
             />
           </div>
-          <div className="flex flex-col items-center gap-5 p-10">
-            <div className="flex gap-3">
-              <FontAwesomeIcon
-                icon={faCoins}
-                className="text-2xl text-yellow-400"
+          <div className=" flex justify-evenly gap-3 items-center text-2xl">
+            <Typography variant="h5">{user.name}</Typography>
+            <Typography
+              variant="h4"
+              color="Highlight"
+              sx={{ fontWeight: "bold" }}
+            >
+              &quot;{user?.username}&quot;
+            </Typography>
+            <Typography variant="h5">{user?.lastname}</Typography>
+          </div>
+          <div className="flex gap-5">
+            <Typography variant="h6" color="aquamarine">
+              {user.title}
+            </Typography>
+            <Typography variant="h6" color="aquamarine">
+              {user.class}
+            </Typography>
+            <Typography variant="h6" color="aquamarine">
+              Level: {user.level}
+            </Typography>
+          </div>
+
+          <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
+            <div>
+              <Typography variant="body2" color="orange">
+                XP: {user.xp} / {500}
+              </Typography>
+              <LinearProgress
+                color="experience"
+                variant="determinate"
+                value={(user.hp / user.hpMax) * 100}
               />
-              <h2>Gold: {user?.gold}</h2>
-              <FontAwesomeIcon
-                icon={faDiamond}
-                className="text-2xl text-blue-500"
-              />
-              <h2>Runestones: {user?.runes}</h2>
             </div>
-            <Link href="profile/abilities">
-              <Button size="large" variant="contained">
+            <div>
+              <Typography variant="body2" color={red[600]}>
+                HP: {user.hp} / {user.hpMax}
+              </Typography>
+              <LinearProgress
+                color="health"
+                variant="determinate"
+                value={(user.hp / user.hpMax) * 100}
+              />
+            </div>
+            <div>
+              <Typography variant="body2" color={blue[300]}>
+                Mana: {user.mana} / {user.manaMax}
+              </Typography>
+              <LinearProgress
+                color="mana"
+                variant="determinate"
+                value={(user.mana / user.manaMax) * 100}
+              />
+            </div>
+          </div>
+        </Paper>
+        <div className="flex flex-col m-3 gap-3 items-center md:w-5/12 w-full order-3 md:order-2">
+          <Paper
+            className="flex flex-col items-center p-5 w-full h-1/4"
+            elevation={5}
+          >
+            <Typography variant="h4">Resources</Typography>
+            <div className="flex mt-2 gap-10">
+              <Typography variant="h5" color="gold">
+                Gold: {user.gold}
+                <Circle />
+              </Typography>
+              <Typography variant="h5" color="cyan">
+                Gemstones: {user.gemstones}
+                <Diamond />
+              </Typography>
+              <Button variant="contained" color="secondary">
                 Level up
               </Button>
-            </Link>
-
-            <h2 className="font-extrabold text-2xl">Effects</h2>
-            <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
-              <UserEffects effects={effects} />
             </div>
-
-            <h2 className="font-extrabold text-2xl">Abilites</h2>
-            {user?.hp !== 0 ? (
-              <div className="grid grid-cols-3 gap-5 md:gap-10 md:grid-cols-4">
-                <UserAbilites abilities={user?.abilities} />
-              </div>
-            ) : (
-              <h2 className="text-red-500">The dead can do naught</h2>
-            )}
-          </div>
+          </Paper>
+          <Paper className=" items-center p-5 w-full h-3/4" elevation={6}>
+            <Typography variant="h4" align="center">
+              Active effects
+            </Typography>
+            <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
+              {userEffects?.map((effect: any) => (
+                <Paper elevation={10} className="text-center items-center p-2">
+                  <Typography variant="h6">{effect.ability.name}</Typography>
+                  <TimeLeft endTime={new Date(effect.endTime)} />
+                  <AutoAwesome />
+                </Paper>
+              ))}
+            </div>
+          </Paper>
         </div>
       </div>
-    </main>
+      <Paper elevation={6} className="mx-3">
+        <Typography variant="h4" align="center">
+          Abilities
+        </Typography>
+        <div className="grid grid-cols-6 gap-3 p-5">
+          {userAbilities?.map((ability: any) => (
+            <Ability key={ability.id} ability={ability} />
+          ))}
+        </div>
+      </Paper>
+    </MainContainer>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 export default function TimeLeft(props: { endTime: Date }) {
@@ -23,11 +24,9 @@ export default function TimeLeft(props: { endTime: Date }) {
   }, []);
 
   return (
-    <div>
-      <p className=" text-gray-400">
-        {days !== 0 && days + "d"} {hours !== 0 && hours + "h"}{" "}
-        {minutes !== 0 && minutes + "m"} {seconds !== 0 && seconds + "s"}
-      </p>
-    </div>
+    <Typography variant="body1">
+      {days !== 0 && days + "d"} {hours !== 0 && hours + "h"}{" "}
+      {minutes !== 0 && minutes + "m"} {seconds !== 0 && seconds + "s"}
+    </Typography>
   );
 }

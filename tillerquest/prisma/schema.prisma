@@ -1,15 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
-}
-
-// prisma/schema.prisma
-datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum UserRole {
@@ -18,131 +13,177 @@ enum UserRole {
   ADMIN
 }
 
-// Original:
-// Seid, viking, druwid, narr, 
 enum Class {
-  Cleric
   Druid
-  // Fighter
-  Mage
-  Paladin
-  Rogue
-  // Hunter
-  Shaman
-  Warlock
-  Warrior
   Wizard
-  Deathknight
+  Barbarian
 }
 
+enum AbilityType {
+  Passive
+  Aura
+  Heal
+  Buff
+  Debuff
+}
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  lastname      String?
-  email         String?   @unique
-  username      String?   @unique
-  title         String?   @default("Newborn")
-  class         Class?
-  image         String?
-  level         Int       @default(1)
-  xp            Int       @default(1)
-  hp            Int       @default(40)
-  hpMax         Int       @default(40)
-  mana          Int       @default(0)
-  manaMax       Int       @default(40)
-  lastMana      String    @default("") // Last time user recieved mana. User should not get more mana on account creation
-  runes         Int       @default(1)
-  gold          Int       @default(0)
-  abilities     AbilitiesOnUsers[] // A user can have many abilities
-  clanName      String?
-  emailVerified DateTime?
-  role          UserRole   @default(NEW) // A new user starts with role NEW, then changes to USER
-  accounts      Account[] // Relation to Github account
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  username String? @unique
+  lastname String?
+  title    String? @default("Newborn")
+  class    Class?
+  image    String?
 
-  clan          Clan?       @relation(fields: [clanName], references: [name], onUpdate: Cascade, onDelete: Cascade)
+  level    Int      @default(1)
+  xp       Int      @default(1)
+  hp       Int      @default(40)
+  hpMax    Int      @default(40)
+  mana     Int      @default(0)
+  manaMax  Int      @default(40)
+  lastMana DateTime @default(now()) // Last time user recieved mana. User should not get more mana on account creation
+
+  gemstones Int @default(1)
+  gold      Int @default(0)
+
+  abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
+  // abilityNames String[]
+
+  effects EffectsOnUser[] // m-n relation to effects on users. A user can have many effects
+  // effectId String[] @db.ObjectId
+
+  guild     Guild?  @relation(fields: [guildName], references: [name])
+  guildName String?
+
+  role UserRole @default(NEW)
+
+  email         String?   @unique
+  emailVerified DateTime?
+  accounts      Account[] // Relation to OAuth account
+  // sessions      Session[]      FIXME: Removed?
+  // Optional for WebAuthn support
+  // Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Authenticator Authenticator[]
+  // Session   Session[]          FIXME: Removed?
 }
 
-// Github account
+model Guild {
+  name String @id @map("_id")
+
+  members User[]
+}
+
+model Ability {
+  name        String      @id @map("_id")
+  type        AbilityType
+  description String?
+  duration    Int?
+  icon        String?
+  cost        Int         @default(2)
+  xpGiven     Int         @default(10)
+  value       Int?
+
+  users UserAbility[] // m-n relation to users. A ability can owned by many users
+
+  userEffects EffectsOnUser[] // m-n relation to effects on users. An ability can have effects on many users
+}
+
+// relational model to explicitly manage the M-N relationship between User and Ability
+model UserAbility {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @db.ObjectId
+  abilityName String
+  user        User    @relation(fields: [userId], references: [id])
+  ability     Ability @relation(fields: [abilityName], references: [name])
+
+  @@unique([userId, abilityName])
+}
+
+// model Effect {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   userIds     String[] @db.ObjectId
+//   abilityName String?
+//   value       Int?
+
+//   ability Ability? @relation(fields: [abilityName], references: [name])
+//   // cosmic
+
+//   onUser EffectsOnUser[] // m-n relation to users. An effect can have many users
+// }
+
+// relational model to explicitly manage the M-N relationship between User and Ability
+model EffectsOnUser {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    @db.ObjectId
+  abilityName String?
+  endTime     DateTime?
+  value       Int?
+
+  user    User     @relation(fields: [userId], references: [id])
+  ability Ability? @relation(fields: [abilityName], references: [name])
+
+  @@unique([userId, abilityName])
+}
+
+// 3rd party authentication. OAuth
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
-model Ability {
-  name             String @id
-  type             String? // Passive, Aura, Heal, Buff, Debuff, etc
-  description      String
-  duration         Int?
-  icon             String?
-  cost             Int
-  xpGiven          Int
-  value            Int?
-  user             AbilitiesOnUsers[] // An ability can belong to many users ????
-}
+// model Session {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   sessionToken String   @unique
+//   userId       String   @db.ObjectId
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-// relational table for abilities and users
-// should only exist if the user has the ability
-model AbilitiesOnUsers {
-  user          User @relation(fields: [userId], references: [id])
-  userId        String
-  effect        Ability @relation(fields: [abilityName], references: [name])
-  abilityName   String
-  endTime       DateTime?
-  currentValue  Int?
-
-  @@id([userId, abilityName])
-}
-
-//FIXME: Redundant?
-// model Effect {
-//   name             String @id
-//   // add relation to ability?
-//   type             String? 
-//   icon             String?
-//   // endTime          DateTime?
-//   value            Int?
-//   user             EffectsOnUsers[] // An effect can belong to many users ????
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 // }
 
-model Clan {
-  name            String @id
-  members         User[] 
-}
+// model VerificationToken {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   identifier String
+//   token      String
+//   expires    DateTime
 
-model CosmicEvent {
-  id              Int @id @default(autoincrement())
-  name            String @unique
-  description     String
-  dateRevealed    String? @unique // TODO: Check if need change
-  timesUsed       Int @default(0)
-  recommendedDateStart String?
-  recommendedDateEnd String?
-}
+//   @@unique([identifier, token])
+// }
 
-//user titles
-model Title {
-  name  String @id
-  cost Int
-  //tastaturkriger
+// // Optional for WebAuthn support
+// model Authenticator {
+//   credentialID         String  @id @map("_id")
+//   userId               String  @db.ObjectId
+//   providerAccountId    String
+//   credentialPublicKey  String
+//   counter              Int
+//   credentialDeviceType String
+//   credentialBackedUp   Boolean
+//   transports           String?
 
-}
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-// npx prisma generate
-// npx prisma db push
-
-//npx prisma studio
+//   @@unique([userId, credentialID])
+// }

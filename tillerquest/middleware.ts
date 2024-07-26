@@ -1,21 +1,24 @@
+// Session expiry every time it is called
+// Avoid using queries in the middleware, as Prisma does not work on the edge
+
 import authConfig from "./auth.config";
 import NextAuth from "next-auth";
 import {
-  apiAuthPrefix,
-  publicRoutes,
-  authRoutes,
-  DEFAULT_LOGIN_REDIRECT,
   adminPrefix,
+  apiAuthPrefix,
+  authRoutes,
   DEFAULT_CREATION_PAGE,
+  DEFAULT_LOGIN_REDIRECT,
+  publicRoutes,
 } from "./routes";
 import { auth as middleware } from "./auth";
 
-export const { auth } = NextAuth(authConfig);
-
+const { auth } = NextAuth(authConfig);
 // middleware function which runs on all pages
 // changed from auth to middleware to fulfill auth import
 // this gives access to req.auth
-export default middleware(async (req) => {
+// export default auth(async function middleware(req): Promise<any> {
+export default middleware(async (req): Promise<any> => {
   const { nextUrl } = req;
   // double negation to convert to boolean
   const isLoggedIn = !!req.auth;
@@ -35,10 +38,8 @@ export default middleware(async (req) => {
     if (req.nextUrl.pathname === DEFAULT_CREATION_PAGE) {
       return null;
     }
-    {
-      console.log("redirecting to create, new user");
-      return Response.redirect(new URL(DEFAULT_CREATION_PAGE, nextUrl));
-    }
+    console.log("redirecting to create, new user");
+    return Response.redirect(new URL(DEFAULT_CREATION_PAGE, nextUrl));
   }
 
   // if user's role is not ADMIN redirect to profile page
@@ -55,7 +56,6 @@ export default middleware(async (req) => {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
-    return null;
   }
 
   // if user is not logged in and route is not public, redirect to login
@@ -64,9 +64,7 @@ export default middleware(async (req) => {
     if (nextUrl.search) {
       callbackUrl += nextUrl.search;
     }
-    return Response.redirect(
-      new URL(`/auth/login` + "?redirected=true", nextUrl)
-    );
+    return Response.redirect(new URL("/?redirected=true", nextUrl));
   }
 
   return null;
