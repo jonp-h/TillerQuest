@@ -50,7 +50,7 @@ export default function UseAbilityForm({
         >
           {insignificantMana && (
             <Typography variant="body1" color="error">
-              You don't have enough mana to use this ability.
+              You don&apos;t have enough mana to use this ability.
             </Typography>
           )}
           <Button
@@ -66,7 +66,7 @@ export default function UseAbilityForm({
       ) : (
         <div className="flex flex-col gap-4 items-center">
           <Typography variant="body1" color="error">
-            You don't own this ability. Buy it in the shop.
+            You don&apos;t own this ability. Buy it in the shop.
           </Typography>
 
           <Link href={"/shop"}>

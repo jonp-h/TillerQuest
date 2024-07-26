@@ -21,7 +21,7 @@ export default function TimeLeft(props: { endTime: Date }) {
     const interval = setInterval(() => getTime(), 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  });
 
   return (
     <Typography variant="body1">

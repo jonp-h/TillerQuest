@@ -142,7 +142,11 @@ export default async function ProfilePage({
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
               {userEffects?.map((effect: any) => (
-                <Paper elevation={10} className="text-center items-center p-2">
+                <Paper
+                  elevation={10}
+                  key={effect.ability.name}
+                  className="text-center items-center p-2"
+                >
                   <Typography variant="h6">{effect.ability.name}</Typography>
                   <TimeLeft endTime={new Date(effect.endTime)} />
                   <AutoAwesome />

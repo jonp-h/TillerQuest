@@ -23,11 +23,12 @@ export default async function Home() {
             TillerQuest uses OAuth to confirm your identity through other
             services. When you log in, you only ever give your credentials to
             that service - never to TillerQuest. Then, the service you use tells
-            the TillerQuest servers that you're really you. In general, this
-            reveals no information about you beyond what is already public; here
-            are examples from GitHub (https://api.github.com/users/octocat).
-            TillerQuest will remember your unique ID, names, URL, and image from
-            the service you use to authenticate.
+            the TillerQuest servers that you&apos;re really you. In general,
+            this reveals no information about you beyond what is already public;
+            here are examples from GitHub
+            (https://api.github.com/users/octocat). TillerQuest will remember
+            your unique ID, names, URL, and image from the service you use to
+            authenticate.
           </p>
         </div>
       </div>

@@ -63,7 +63,7 @@ export default function NavbarContent() {
       {/* On smaller screens only show icons */}
       <div className="flex justify-end gap-2 md:gap-8  w-full">
         {links.map((link) => (
-          <Link href={link.href}>
+          <Link href={link.href} key={link.name}>
             <Button
               variant={pathname === link.href ? "outlined" : "text"}
               color={pathname === link.href ? "primary" : "inherit"}
