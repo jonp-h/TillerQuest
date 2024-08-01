@@ -1,12 +1,21 @@
 "use client";
-import { Ability, UserAbility } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
 import Tree from "react-d3-tree";
 
+interface RawNodeDatum {
+  name: string;
+  attributes?: Record<string, string | number | boolean>;
+  children?: RawNodeDatum[];
+}
+
 const renderNodeWithCustomEvents = (
-  userAbilities: UserAbility[],
-  { nodeDatum, handleNodeClick }
+  userAbilities: { abilityName: string }[] | null,
+  {
+    nodeDatum,
+    handleNodeClick,
+  }: { nodeDatum: RawNodeDatum; handleNodeClick: (node: RawNodeDatum) => void }
 ) => (
   <g>
     <defs>
@@ -36,7 +45,8 @@ const renderNodeWithCustomEvents = (
       onClick={() => handleNodeClick(nodeDatum)}
     />
 
-    {userAbilities.some((ability) => ability.abilityName === nodeDatum.name) ? (
+    {userAbilities &&
+    userAbilities.some((ability) => ability.abilityName === nodeDatum.name) ? (
       <circle
         r="60"
         fill="url(#ownedGradient)"
@@ -76,29 +86,54 @@ export default function AbilityTree({
   rootAbilities,
   userAbilities,
 }: {
-  rootAbilities: Ability[];
-  userAbilities: UserAbility[];
+  rootAbilities: {
+    name: string;
+    type: $Enums.AbilityType;
+    children: {
+      name: string;
+      children: {
+        name: string;
+        children: {
+          name: string;
+        }[];
+      }[];
+    }[];
+  };
+  userAbilities:
+    | {
+        abilityName: string;
+      }[]
+    | null;
 }) {
   const router = useRouter();
 
-  const handleNodeClick = (nodeDatum) => {
+  const handleNodeClick = (nodeDatum: RawNodeDatum) => {
     router.push(`/abilities/${nodeDatum.name}`);
   };
 
   const useCenteredTree = (defaultTranslate = { x: 0, y: 0 }) => {
     const [translate, setTranslate] = useState(defaultTranslate);
-    const [dimensions, setDimensions] = useState();
-    const containerRef = useCallback((containerElem) => {
-      if (containerElem !== null) {
-        const { width, height } = containerElem.getBoundingClientRect();
-        setDimensions({ width, height });
-        setTranslate({ x: width / 2, y: height - 1500 / 2 });
-      }
-    }, []);
+    const [dimensions, setDimensions] = useState<
+      { width: number; height: number } | undefined
+    >();
+    const containerRef = useCallback(
+      (
+        containerElem: {
+          getBoundingClientRect: () => { width: any; height: any };
+        } | null
+      ) => {
+        if (containerElem !== null) {
+          const { width, height } = containerElem.getBoundingClientRect();
+          setDimensions({ width, height });
+          setTranslate({ x: width / 2, y: height - 1500 / 2 });
+        }
+      },
+      []
+    );
     return [dimensions, translate, containerRef];
   };
 
-  const [dimensions, translate, containerRef] = useCenteredTree();
+  const [dimensions, translate, containerRef] = useCenteredTree({ x: 0, y: 0 });
 
   return (
     <>
@@ -110,7 +145,9 @@ export default function AbilityTree({
       }
       `}
       </style>
+      {/* @ts-ignore */}
       <div className="h-screen w-screen" ref={containerRef}>
+        {/* @ts-ignore */}
         <Tree
           data={rootAbilities}
           depthFactor={250}
