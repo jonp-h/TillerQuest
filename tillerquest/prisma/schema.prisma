@@ -77,6 +77,8 @@ model Guild {
   members User[]
 }
 
+// current limitations with prisma studio make the admin unable to add new records in models with many-to-many relationships
+// https://github.com/prisma/studio/issues/980
 model Ability {
   name        String      @id @map("_id")
   type        AbilityType
@@ -86,6 +88,11 @@ model Ability {
   cost        Int         @default(2)
   xpGiven     Int         @default(10)
   value       Int?
+
+  parentAbility  String[] // m-n relation to parent abilities. An ability can have many parent abilities
+  parents        Ability[] @relation("AbilityHierarchy", fields: [parentAbility], references: [name])
+  childAbilities String[] // m-n relation to child abilities. An ability can have many child abilities
+  children       Ability[] @relation("AbilityHierarchy", fields: [childAbilities], references: [name])
 
   users UserAbility[] // m-n relation to users. A ability can owned by many users
 
