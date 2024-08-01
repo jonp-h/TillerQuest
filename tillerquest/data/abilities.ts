@@ -2,11 +2,63 @@
 
 import { db } from "@/lib/db";
 
+export const getAbilityHierarchy = async () => {
+  try {
+    // first get all root nodes, those without parents
+    const roots = await db.ability.findMany({
+      where: {
+        parents: {
+          none: {},
+        },
+      },
+      select: {
+        name: true,
+        type: true,
+        children: {
+          select: {
+            name: true,
+            children: {
+              select: {
+                name: true,
+                children: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return roots;
+  } catch {
+    return null;
+  }
+};
+
 export const getUserAbilities = async (userId: string) => {
   try {
     const abilities = await db.userAbility.findMany({
       where: {
         userId,
+      },
+    });
+    return abilities;
+  } catch {
+    return null;
+  }
+};
+
+export const getOwnedAbilities = async (userId: string) => {
+  try {
+    const abilities = await db.userAbility.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        abilityName: true,
       },
     });
     return abilities;
@@ -28,6 +80,7 @@ export const getAbility = async (abilityName: string) => {
   }
 };
 
+// TODO: redundant?
 export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string
