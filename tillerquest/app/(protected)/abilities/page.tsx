@@ -1,7 +1,6 @@
 import MainContainer from "@/components/MainContainer";
-import { Tab, Tabs, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
-import AbilityTree from "./AbilityTree";
 import { getAbilityHierarchy, getOwnedAbilities } from "@/data/abilities";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";

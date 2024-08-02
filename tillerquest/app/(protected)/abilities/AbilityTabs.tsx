@@ -10,23 +10,24 @@ interface TabPanelProps {
   value: number;
 }
 
-interface RootAbilities {
-  name: string;
-  type: $Enums.AbilityType;
-  children: {
-    name: string;
-    children: {
+type RootAbilities =
+  | {
       name: string;
+      type: $Enums.AbilityType;
       children: {
         name: string;
         children: {
           name: string;
+          children: {
+            name: string;
+            children: {
+              name: string;
+            }[];
+          }[];
         }[];
       }[];
-    }[];
-  }[];
-}
-[];
+    }[]
+  | null;
 
 function a11yProps(index: number) {
   return {
