@@ -2,9 +2,10 @@
 
 import { db } from "@/lib/db";
 
+// due to the limitations of Prisma, we can't add do recursive queries. This manual approach goes 4 levels deep
 export const getAbilityHierarchy = async () => {
   try {
-    // first get all root nodes, those without parents
+    // gets all abilities that have no parents, and their children
     const roots = await db.ability.findMany({
       where: {
         parents: {
@@ -23,6 +24,11 @@ export const getAbilityHierarchy = async () => {
                 children: {
                   select: {
                     name: true,
+                    children: {
+                      select: {
+                        name: true,
+                      },
+                    },
                   },
                 },
               },

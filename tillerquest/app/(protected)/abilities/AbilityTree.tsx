@@ -10,6 +10,24 @@ interface RawNodeDatum {
   children?: RawNodeDatum[];
 }
 
+interface RootAbilities {
+  name: string;
+  type: $Enums.AbilityType;
+  children: {
+    name: string;
+    children: {
+      name: string;
+      children: {
+        name: string;
+        children: {
+          name: string;
+        }[];
+      }[];
+    }[];
+  }[];
+}
+[];
+
 const renderNodeWithCustomEvents = (
   userAbilities: { abilityName: string }[] | null,
   {
@@ -86,19 +104,7 @@ export default function AbilityTree({
   rootAbilities,
   userAbilities,
 }: {
-  rootAbilities: {
-    name: string;
-    type: $Enums.AbilityType;
-    children: {
-      name: string;
-      children: {
-        name: string;
-        children: {
-          name: string;
-        }[];
-      }[];
-    }[];
-  };
+  rootAbilities: RootAbilities;
   userAbilities:
     | {
         abilityName: string;
@@ -146,7 +152,7 @@ export default function AbilityTree({
       `}
       </style>
       {/* @ts-ignore */}
-      <div className="h-screen w-screen" ref={containerRef}>
+      <div className="h-screen w-full" ref={containerRef}>
         {/* @ts-ignore */}
         <Tree
           data={rootAbilities}
