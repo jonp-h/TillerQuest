@@ -95,7 +95,7 @@ const renderNodeWithCustomEvents = (
       fontSize={30}
       onClick={() => handleNodeClick(nodeDatum)}
     >
-      {nodeDatum.name}
+      {nodeDatum.name.replace("-", " ")}
     </text>
   </g>
 );
@@ -160,7 +160,7 @@ export default function AbilityTree({
           dimensions={dimensions}
           translate={translate}
           orientation="vertical"
-          pathFunc={"step"}
+          pathFunc={"diagonal"}
           pathClassFunc={() => "linkClass"}
           draggable={true}
           zoomable={false}

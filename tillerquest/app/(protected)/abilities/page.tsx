@@ -13,6 +13,7 @@ export default async function AbilitiesPage() {
   if (user?.user.id == undefined) {
     return notFound();
   }
+
   const userAbilities = await getOwnedAbilities(user?.user?.id);
 
   return (

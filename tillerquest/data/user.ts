@@ -1,5 +1,7 @@
 "use server";
 import { db } from "@/lib/db";
+import { User } from "@prisma/client";
+import { checkManaPassives } from "./passives";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -53,4 +55,18 @@ export const getMembersByCurrentUserClan = async (guildName: string) => {
   } catch {
     return null;
   }
+};
+
+export const getMana = async (user: User) => {
+  // get passiveValue from mana passive
+  var passiveValue = (await checkManaPassives(user.id)) ?? 0;
+
+  // the daily mana is 4
+  var dailyMana = 4 + passiveValue;
+
+  // use get mana
+  return db.user.update({
+    where: { id: user.id },
+    data: { mana: { increment: dailyMana }, lastMana: new Date() },
+  });
 };

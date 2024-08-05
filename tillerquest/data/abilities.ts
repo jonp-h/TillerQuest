@@ -2,15 +2,14 @@
 
 import { db } from "@/lib/db";
 
-// due to the limitations of Prisma, we can't add do recursive queries. This manual approach goes 4 levels deep
+// due to the limitations of Prisma, we can't add do recursive queries.
+// This manual approach goes 4 levels deep
 export const getAbilityHierarchy = async () => {
   try {
     // gets all abilities that have no parents, and their children
     const roots = await db.ability.findMany({
       where: {
-        parents: {
-          none: {},
-        },
+        parent: null,
       },
       select: {
         name: true,
@@ -86,7 +85,48 @@ export const getAbility = async (abilityName: string) => {
   }
 };
 
-// TODO: redundant?
+// decrement the cost from the user's gemstones
+const startTransaction = async (buyingUserId: string, abilityCost: number) => {
+  try {
+    await db.user.update({
+      where: {
+        id: buyingUserId,
+      },
+      data: {
+        gemstones: {
+          decrement: abilityCost,
+        },
+      },
+    });
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const buyAbility = async (
+  userId: string,
+  abilityName: string,
+  abilityCost: number
+) => {
+  if (await startTransaction(userId, abilityCost)) {
+    try {
+      await db.userAbility.create({
+        data: {
+          userId,
+          abilityName,
+        },
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  } else {
+    return "Insufficient funds";
+  }
+};
+
 export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string

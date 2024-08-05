@@ -11,6 +11,7 @@ import { getUserAbilities } from "@/data/abilities";
 import { getUserEffects } from "@/data/effects";
 import TimeLeft from "@/components/TimeLeft";
 import Ability from "@/components/Ability";
+import Link from "next/link";
 
 export default async function ProfilePage({
   params: { username },
@@ -28,8 +29,33 @@ export default async function ProfilePage({
   const userAbilities = await getUserAbilities(user.id);
   const userEffects = await getUserEffects(user.id);
 
+  // Server-side component: date-time check
+  const currentDate = new Date();
+  const isWeekend = () => {
+    const dayOfWeek = currentDate.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6;
+  };
+
   return (
     <MainContainer>
+      {/* If the user has not recieved mana today, and it is not weekend  */}
+      {user.lastMana.toISOString().slice(0, 10) !=
+        currentDate.toISOString().slice(0, 10) &&
+        !isWeekend() && (
+          <Paper
+            elevation={6}
+            className="m-3 p-5 flex gap-5 text-center justify-center"
+          >
+            <Typography variant="h5" align="center">
+              You sense magic in the air
+            </Typography>
+            <Link href="/mana">
+              <Button variant="contained" color="primary">
+                Get mana
+              </Button>
+            </Link>
+          </Paper>
+        )}
       <div className="flex flex-col justify-center md:flex-row">
         {user.guildName && (
           <Paper
