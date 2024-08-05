@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 // https://github.com/prisma/studio/issues/980
 export const createAbility = async () => {
   const abilityData = {
-    name: "passiveTest5",
+    name: "passiveTest6",
     type: "Passive",
     description: "test",
     duration: 1,
@@ -14,9 +14,14 @@ export const createAbility = async () => {
     xpGiven: 1,
     value: 1,
     parents: {
-      connect: {
-        name: "passiveTest2",
-      },
+      connect: [
+        {
+          name: "passiveTest2",
+        },
+        {
+          name: "passiveTest3",
+        },
+      ],
     },
   };
 
