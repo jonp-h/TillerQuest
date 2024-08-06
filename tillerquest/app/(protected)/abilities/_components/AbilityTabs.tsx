@@ -1,8 +1,8 @@
 "use client";
 import { Paper, Tab, Tabs } from "@mui/material";
-import { $Enums } from "@prisma/client";
 import React from "react";
 import AbilityTree from "./AbilityTree";
+import { RootAbilities, UserAbilities } from "./interfaces";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -10,35 +10,14 @@ interface TabPanelProps {
   value: number;
 }
 
-type RootAbilities =
-  | {
-      name: string;
-      type: $Enums.AbilityType;
-      children: {
-        name: string;
-        children: {
-          name: string;
-          children: {
-            name: string;
-            children: {
-              name: string;
-            }[];
-          }[];
-        }[];
-      }[];
-    }[]
-  | null;
-
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    "aria-controls": `ability-tabpanel-${index}`,
   };
 }
 
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
+function CustomTabPanel({ children, value, index, ...other }: TabPanelProps) {
   return (
     <div
       role="abilityTabPanel"
@@ -56,44 +35,40 @@ export default function AbilityTabs({
   rootAbilities,
   userAbilities,
 }: {
-  rootAbilities: RootAbilities;
-  userAbilities:
-    | {
-        abilityName: string;
-      }[]
-    | null;
+  rootAbilities: RootAbilities[] | null;
+  userAbilities: UserAbilities[] | null;
 }) {
   const [value, setValue] = React.useState(0);
 
+  // Handle tab change between ability types
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  if (rootAbilities)
-    return (
-      <div>
-        <Tabs
-          centered
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          {rootAbilities.map((ability, index) => (
-            <Tab label={ability.type} {...a11yProps(index)} />
-          ))}
-        </Tabs>
+  return (
+    <div>
+      <Tabs
+        centered
+        value={value}
+        onChange={handleChange}
+        aria-label="Ability tabs"
+      >
+        {rootAbilities?.map((ability, index) => (
+          <Tab label={ability.type} {...a11yProps(index)} />
+        ))}
+      </Tabs>
 
-        <div className="flex flex-col justify-center mx-20 ">
-          {rootAbilities &&
-            rootAbilities.map((ability, index) => (
-              <CustomTabPanel value={value} index={index}>
-                <AbilityTree
-                  rootAbilities={ability}
-                  userAbilities={userAbilities}
-                />
-              </CustomTabPanel>
-            ))}
-        </div>
+      <div className="flex flex-col justify-center mx-20 ">
+        {rootAbilities &&
+          rootAbilities.map((ability, index) => (
+            <CustomTabPanel value={value} index={index}>
+              <AbilityTree
+                rootAbilities={ability}
+                userAbilities={userAbilities}
+              />
+            </CustomTabPanel>
+          ))}
       </div>
-    );
+    </div>
+  );
 }

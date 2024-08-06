@@ -1,11 +1,8 @@
-export interface RawNodeDatum {
-  name: string;
-  attributes?: Record<string, string | number | boolean>;
-  children?: RawNodeDatum[];
-}
+import { RawNodeDatum } from "react-d3-tree";
+import { UserAbilities } from "./interfaces";
 
 export const AbilityNodes = (
-  userAbilities: { abilityName: string }[] | null,
+  userAbilities: UserAbilities[] | null,
   {
     nodeDatum,
     handleNodeClick,

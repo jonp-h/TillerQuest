@@ -26,6 +26,7 @@ export const getUserByUsername = async (username: string) => {
   }
 };
 
+// TODO: consider implementation of typesafety from auth.ts
 export const updateUser = async (id: string, data: any) => {
   try {
     await db.user.update({
@@ -61,10 +62,10 @@ export const getMembersByCurrentUserGuild = async (guildName: string) => {
 
 export const getMana = async (user: User) => {
   // get passiveValue from mana passive
-  var passiveValue = (await checkManaPassives(user.id)) ?? 0;
+  let passiveValue = (await checkManaPassives(user.id)) ?? 0;
 
   // the daily mana is 4
-  var mana = dailyMana + passiveValue;
+  let mana = dailyMana + passiveValue;
 
   // use get mana
   return db.user.update({

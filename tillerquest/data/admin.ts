@@ -27,11 +27,12 @@ export const createAbility = async () => {
 
   try {
     const newAbility = await db.ability.create({
+      // @ts-ignore
       data: abilityData,
     });
     console.log("New ability created:", newAbility);
-  } catch (error: any) {
-    console.error("Error creating ability:", error.message);
+  } catch (error) {
+    console.error("Error creating ability:", error);
     throw new Error("Unable to create ability");
   }
 };

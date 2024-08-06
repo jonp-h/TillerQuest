@@ -21,7 +21,12 @@ const classes = [
   },
 ];
 
-export default function Classes(props: any) {
+interface ClassesProps {
+  playerClass: string;
+  setPlayerClass: any; // TODO: Fix this type to extend enum
+}
+
+export default function Classes({ playerClass, setPlayerClass }: ClassesProps) {
   return (
     <main className="grid grid-cols-3 gap-7">
       {classes.map((classType) => {
@@ -40,10 +45,10 @@ export default function Classes(props: any) {
               <Image
                 src={src}
                 alt={className}
-                onClick={() => props.setPlayerClass(className)}
+                onClick={() => setPlayerClass(className)}
                 className={clsx(
                   "rounded-full shadow-inner shadow-black",
-                  className === props.playerClass &&
+                  className === playerClass &&
                     " border-4 shadow-inner shadow-black border-purple-600 "
                 )}
                 width={200}
@@ -53,7 +58,7 @@ export default function Classes(props: any) {
               <h1
                 className={clsx(
                   "text-2xl pt-1",
-                  className === props.playerClass && "text-purple-400 font-bold"
+                  className === playerClass && "text-purple-400 font-bold"
                 )}
               >
                 {className}

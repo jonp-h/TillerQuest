@@ -19,7 +19,7 @@ function ManaForm({
 }: ManaFormProps) {
   const [feedback, setFeedback] = React.useState<string | null>(null);
 
-  const handleGetMana = async (event: any) => {
+  const handleGetMana = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (
       user.lastMana.toISOString().slice(0, 10) ===

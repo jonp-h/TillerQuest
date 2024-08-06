@@ -118,12 +118,18 @@ export const buyAbility = async (userId: string, ability: Ability) => {
       });
 
       if (ability.isPassive) {
+        let endTime = new Date();
+        endTime.setMinutes(endTime.getMinutes() + (ability.duration || 0));
+        const endTimeISOString = ability.duration
+          ? endTime.toISOString()
+          : undefined;
+
         await db.effectsOnUser.create({
           data: {
             userId,
             abilityName: ability.name,
             value: ability.value ?? 0,
-            endTime: undefined,
+            endTime: endTimeISOString,
           },
         });
       }
@@ -162,9 +168,9 @@ export const selectAbility = async (
 ) => {
   switch (ability.type) {
     // case "":
-    //   var endTime = new Date();
+    //   let endTime = new Date();
     //   endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
-    //   var endTimeISOString = endTime.toISOString();
+    //   let endTimeISOString = endTime.toISOString();
     //   return useDebuffAbility(
     //     userId,
     //     userId,

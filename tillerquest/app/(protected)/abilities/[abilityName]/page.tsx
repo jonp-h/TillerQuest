@@ -32,7 +32,7 @@ export default async function AbilitiesPage({
   );
 
   // check if root, if not check if user owns parent ability
-  var missingParentAbility = true;
+  let missingParentAbility = true;
   if (ability.parentAbility === null) {
     missingParentAbility = false;
   } else {

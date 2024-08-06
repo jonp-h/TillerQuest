@@ -1,10 +1,10 @@
 import { Paper, Typography } from "@mui/material";
 import React from "react";
 
-type MainContainerProps = {
+interface MainContainerProps {
   heading: string;
   children: React.ReactNode;
-};
+}
 
 export default function MainContainer({
   heading,

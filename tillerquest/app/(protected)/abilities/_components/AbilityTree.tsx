@@ -1,38 +1,16 @@
 "use client";
-import { $Enums } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
-import Tree from "react-d3-tree";
-import { AbilityNodes, RawNodeDatum } from "./AbilityNodes";
-
-interface RootAbilities {
-  name: string;
-  type: $Enums.AbilityType;
-  children: {
-    name: string;
-    children: {
-      name: string;
-      children: {
-        name: string;
-        children: {
-          name: string;
-        }[];
-      }[];
-    }[];
-  }[];
-}
-[];
+import Tree, { RawNodeDatum } from "react-d3-tree";
+import { AbilityNodes } from "./AbilityNodes";
+import { RootAbilities, UserAbilities } from "./interfaces";
 
 export default function AbilityTree({
   rootAbilities,
   userAbilities,
 }: {
-  rootAbilities: RootAbilities;
-  userAbilities:
-    | {
-        abilityName: string;
-      }[]
-    | null;
+  rootAbilities: RootAbilities | null;
+  userAbilities: UserAbilities[] | null;
 }) {
   const router = useRouter();
 
@@ -48,6 +26,7 @@ export default function AbilityTree({
     const containerRef = useCallback(
       (
         containerElem: {
+          // Typescript does not recognize width and height
           getBoundingClientRect: () => { width: any; height: any };
         } | null
       ) => {
