@@ -2,6 +2,7 @@
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
 import { checkManaPassives } from "./passives";
+import { dailyMana, gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -37,12 +38,13 @@ export const updateUser = async (id: string, data: any) => {
   }
 };
 
-// get all the users that are in the same clan as the current user
-export const getMembersByCurrentUserClan = async (guildName: string) => {
+// get all the users that are in the same guild as the current user
+export const getMembersByCurrentUserGuild = async (guildName: string) => {
   try {
     const members = await db.user.findMany({
       where: { guildName },
       select: {
+        id: true,
         username: true,
         image: true,
         hp: true,
@@ -62,11 +64,49 @@ export const getMana = async (user: User) => {
   var passiveValue = (await checkManaPassives(user.id)) ?? 0;
 
   // the daily mana is 4
-  var dailyMana = 4 + passiveValue;
+  var mana = dailyMana + passiveValue;
 
   // use get mana
   return db.user.update({
     where: { id: user.id },
-    data: { mana: { increment: dailyMana }, lastMana: new Date() },
+    data: { mana: { increment: mana }, lastMana: new Date() },
   });
+};
+
+// XP functions
+
+export const giveXP = async (users: User[], xp: number) => {
+  try {
+    db.user.updateMany({
+      where: { id: { in: users.map((user) => user.id) } },
+      data: { xp: { increment: xp } },
+    });
+
+    users.map(async (user) => {
+      checkLevelUp(user);
+    });
+
+    return "Success";
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+export const checkLevelUp = async (user: User) => {
+  while (user.xp >= user.xpToLevel) {
+    const excessXp = user.xp - user.xpToLevel;
+    const newXpToLevel = user.xpToLevel * xpMultiplier;
+    const newLevel = user.level + 1;
+
+    return db.user.update({
+      where: { id: user.id },
+      data: {
+        level: newLevel,
+        xp: excessXp,
+        xpToLevel: newXpToLevel,
+        gemstones: { increment: gemstonesOnLevelUp },
+      },
+    });
+  }
 };

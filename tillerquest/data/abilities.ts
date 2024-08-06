@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
+import { $Enums, Ability, User } from "@prisma/client";
 
 // due to the limitations of Prisma, we can't add do recursive queries.
 // This manual approach goes 4 levels deep
@@ -147,60 +149,49 @@ export const checkIfUserOwnsAbility = async (
 // Ability usage
 
 export const selectAbility = async (
-  userId: string,
-  userMana: number,
-  abilityType: string,
-  abilityCost: number,
-  abilityValue: number | null,
-  abilityXpGiven: number,
-  abilityDuration: number | null
+  user: User,
+  targetUserId: string,
+  ability: Ability
 ) => {
-  switch (abilityType) {
-    case "Debuff":
-      var endTime = new Date();
-      endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
-      var endTimeISOString = endTime.toISOString();
-      useDebuffAbility(
-        userId,
-        userId,
-        userMana || 0,
-        abilityCost,
-        abilityValue || 0,
-        endTimeISOString,
-        abilityXpGiven
-      );
+  switch (ability.type) {
+    // case "":
+    //   var endTime = new Date();
+    //   endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
+    //   var endTimeISOString = endTime.toISOString();
+    //   return useDebuffAbility(
+    //     userId,
+    //     userId,
+    //     userMana || 0,
+    //     abilityCost,
+    //     abilityValue || 0,
+    //     endTimeISOString,
+    //     abilityXpGiven
+    //   );
     case "Heal":
-      useHealAbility(
-        userId,
-        userId,
-        userMana || 0,
-        abilityCost,
-        abilityValue || 0,
-        abilityXpGiven
-      );
+      return await useHealAbility(user, targetUserId, ability);
   }
 };
 
 // finally decrement the cost from the user's mana
 // and increment the user's xp by the xpGiven
-const finalizeAbilityUsage = async (
-  castingUserId: string,
-  abilityManaCost: number,
-  xpGiven: number
-) => {
-  await db.user.update({
-    where: {
-      id: castingUserId,
-    },
-    data: {
-      mana: {
-        decrement: abilityManaCost,
+const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
+  try {
+    await db.user.update({
+      where: {
+        id: castingUser.id,
       },
-      xp: {
-        increment: xpGiven,
+      data: {
+        mana: {
+          decrement: ability.cost,
+        },
+        xp: {
+          increment: ability.xpGiven,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // Helper functions for specific ability types
@@ -226,51 +217,48 @@ const checkHP = async (targetUserId: string, hpValue: number) => {
   }
 };
 
-export const useDebuffAbility = async (
-  castingUserId: string,
-  targetUserId: string,
-  userMana: number,
-  abilityManaCost: number,
-  value: number,
-  endTime: string,
-  xpGiven: number
-) => {
-  if (userMana < abilityManaCost) {
-    return false;
-  }
+// export const useDebuffAbility = async (
+//   castingUserId: string,
+//   targetUserId: string,
+//   userMana: number,
+//   abilityManaCost: number,
+//   value: number,
+//   endTime: string,
+//   xpGiven: number
+// ) => {
+//   if (userMana < abilityManaCost) {
+//     return false;
+//   }
 
-  try {
-    await db.effectsOnUser.create({
-      data: {
-        userId: targetUserId,
-        value,
-        endTime,
-      },
-    });
+//   try {
+//     await db.effectsOnUser.create({
+//       data: {
+//         userId: targetUserId,
+//         value,
+//         endTime,
+//       },
+//     });
 
-    await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
+//     await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
 
-    return true;
-  } catch {
-    return false;
-  }
-};
+//     return true;
+//   } catch {
+//     return false;
+//   }
+// };
 
 export const useHealAbility = async (
-  castingUserId: string,
+  castingUser: User,
   targetUserId: string,
-  userMana: number,
-  abilityManaCost: number,
-  value: number,
-  xpGiven: number
+  ability: Ability
 ) => {
-  if (userMana < abilityManaCost) {
-    return false;
+  if (castingUser.mana < ability.cost) {
+    return "Insufficient mana";
   }
 
-  value = await checkHP(targetUserId, value);
-  if (value === 0) {
-    return false;
+  const valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
+  if (valueToHeal === 0) {
+    return "Target is already at full health";
   }
 
   try {
@@ -280,15 +268,15 @@ export const useHealAbility = async (
       },
       data: {
         hp: {
-          increment: value,
+          increment: valueToHeal,
         },
       },
     });
 
-    await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
+    await finalizeAbilityUsage(castingUser, ability);
 
-    return true;
+    return "Target healed for " + valueToHeal;
   } catch {
-    return false;
+    return "Something went wrong";
   }
 };

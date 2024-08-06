@@ -4,7 +4,7 @@ import { getUserByUsername } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
-import ManaField from "./_components/ManaField";
+import ManaField from "./_components/ManaForm";
 import Image from "next/image";
 import { IP } from "@/lib/IP";
 

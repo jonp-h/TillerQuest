@@ -33,39 +33,3 @@ export const checkManaPassives = async (userId: string) => {
     return 0;
   }
 };
-
-// export const checkManaPassives = (
-//   userId: string,
-//   userAbilities: Ability[]
-// ): void => {
-
-//   const manaPassives = userAbilities.filter(
-//     (userAbility) => userAbility.type === "Mana" && userAbility.isPassive
-//   );
-//   if (manaPassives) useManaPassive(userId, manaPassives);
-// };
-
-// Mana passives
-
-// const useManaPassive = async (userId: string, manaPassives: Ability[]) => {
-//   manaPassives.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
-
-//   return manaPassives[0].value;
-// };
-
-// const useManaPassive = async (userId: string, manaPassives: Ability[]) => {
-//   try {
-//     manaPassives.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
-
-//     return db.user.update({
-//       where: { id: userId },
-//       data: { mana: { increment: manaPassives[0].value ?? 0 } },
-//     });
-//   } catch (error) {
-//     return false;
-//   }
-// };
-
-// Healing passives
-
-// Damage passives

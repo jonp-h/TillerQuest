@@ -30,7 +30,7 @@
 
 - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
-- [Google's Materiaul Icons](https://fonts.google.com/icons) for icons.
+- [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
 
@@ -41,6 +41,7 @@
 $ git clone
 
 # Go into the repository
+$ cd /tillerquest/
 
 # Install dependencies
 $ npm i
@@ -48,6 +49,50 @@ $ npm i
 # Run the app
 $ npm run dev
 ```
+
+## Conventions
+
+### Project structure
+
+tillerquest/
+├── .env
+├── .eslintrc.json
+├── .gitignore
+├── .next/
+│ ├── app-build-manifest.json
+│ ├── build-manifest.json
+│ ├── cache/
+│ ├── fallback-build-manifest.json
+│ ├── package.json
+│ └── react-loadable-manifest.json
+├── app/
+│ ├── (protected)/
+│ │ ├── page/
+│ │ │ ├── \_page-specific-components/
+│ │ │ │ └── Component.tsx
+│ │ │ └── page.tsx
+│ │ └── ...
+├── auth.config.ts
+├── auth.ts
+├── components/
+│ ├── navbar/
+│ │ ├── Navbar.tsx
+│ │ └── NavbarContent.tsx
+│ ├── MainContainer.tsx
+│ └── SecondaryContainer.tsx
+├── data/
+├── lib/
+├── middleware.ts
+├── next-auth.d.ts
+├── next-env.d.ts
+├── next.config.mjs
+├── package.json
+├── postcss.config.mjs
+├── prisma/
+├── public/
+├── routes.ts
+├── tailwind.config.ts
+└── tsconfig.json
 
 - Tailwind responsive:
 

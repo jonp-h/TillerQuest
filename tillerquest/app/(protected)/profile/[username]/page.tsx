@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserClan, getUserByUsername } from "@/data/user";
+import { getMembersByCurrentUserGuild, getUserByUsername } from "@/data/user";
 import { Button, LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
@@ -12,6 +12,7 @@ import { getUserEffects } from "@/data/effects";
 import TimeLeft from "@/components/TimeLeft";
 import Ability from "@/components/Ability";
 import Link from "next/link";
+import { getLevel } from "@/lib/levels";
 
 export default async function ProfilePage({
   params: { username },
@@ -24,7 +25,7 @@ export default async function ProfilePage({
     notFound();
   }
 
-  const clanMembers = await getMembersByCurrentUserClan(user.guildName || "");
+  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   const userAbilities = await getUserAbilities(user.id);
   const userEffects = await getUserEffects(user.id);
@@ -65,7 +66,7 @@ export default async function ProfilePage({
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
-            {clanMembers?.map((member: any) =>
+            {guildMembers?.map((member: any) =>
               member.username !== user.username ? (
                 <MiniatureProfile key={member.id} member={member} />
               ) : null
@@ -112,7 +113,7 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.xp} / {500}
+                XP: {user.xp} / {user.xpToLevel}
               </Typography>
               <LinearProgress
                 color="experience"

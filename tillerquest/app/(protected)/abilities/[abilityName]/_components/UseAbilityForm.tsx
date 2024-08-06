@@ -1,23 +1,40 @@
 "use client";
 import { buyAbility, selectAbility } from "@/data/abilities";
-import { createAbility } from "@/data/admin";
 import { Button, Typography } from "@mui/material";
 import { Ability, User } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import AbilityUserSelect from "./AbilityUserSelect";
+
+type guildMembers =
+  | {
+      id: string;
+      image: string | null;
+      username: string | null;
+      hp: number;
+      hpMax: number;
+      mana: number;
+      manaMax: number;
+    }[]
+  | null;
 
 export default function UseAbilityForm({
   ability,
   user,
   userOwnsAbility,
   missingParentAbility,
+  guildMembers,
 }: {
   ability: Ability;
   user: User;
   userOwnsAbility: boolean;
   missingParentAbility: boolean;
+  guildMembers: guildMembers;
 }) {
+  const [selectedUser, setSelectedUser] = React.useState<string>(
+    guildMembers?.[0].id || ""
+  );
+
   const [error, setError] = useState<string | null>(null);
 
   const insignificantMana = user.mana < ability.cost;
@@ -27,18 +44,7 @@ export default function UseAbilityForm({
   const useAbility = async (event: any) => {
     event.preventDefault();
 
-    selectAbility(
-      user.id,
-      user.mana,
-      ability.type,
-      ability.cost,
-      ability.value,
-      ability.xpGiven,
-      ability.duration
-    );
-
-    router.push("/profile/" + user.username);
-    router.refresh();
+    setError((await selectAbility(user, selectedUser, ability)) ?? null);
   };
 
   const handleBuyAbility = async (event: any) => {
@@ -61,6 +67,11 @@ export default function UseAbilityForm({
 
   return (
     <>
+      <AbilityUserSelect
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+        guildMembers={guildMembers}
+      />
       {error && (
         <Typography variant="body1" color="error">
           {error}

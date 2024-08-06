@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { checkIfUserOwnsAbility, getAbility } from "@/data/abilities";
-import { getUserById } from "@/data/user";
+import { getMembersByCurrentUserGuild, getUserById } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
 import UseAbilityForm from "./_components/UseAbilityForm";
 import Image from "next/image";
+import AbilityUserSelect from "./_components/AbilityUserSelect";
 
 export default async function AbilitiesPage({
   params: { abilityName },
@@ -41,6 +42,8 @@ export default async function AbilitiesPage({
       ability.parentAbility
     ));
   }
+
+  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   return (
     <MainContainer>
@@ -83,6 +86,7 @@ export default async function AbilitiesPage({
               Value: {ability.value}
             </Typography>
           </div>
+          <div></div>
           {missingParentAbility && (
             <Typography variant="body1" color="error">
               You don't own the necessary parent abilities.
@@ -93,6 +97,7 @@ export default async function AbilitiesPage({
             user={user}
             userOwnsAbility={userOwnsAbility}
             missingParentAbility={missingParentAbility}
+            guildMembers={guildMembers}
           />
         </Paper>
       </div>

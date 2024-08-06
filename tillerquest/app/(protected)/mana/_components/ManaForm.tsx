@@ -4,14 +4,14 @@ import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
 
-interface ManaFieldProps {
+interface ManaFormProps {
   user: User;
   isWeekend: boolean;
   currentDate: Date;
   correctLocation: boolean;
 }
 
-const ManaField: React.FC<ManaFieldProps> = ({
+const ManaForm: React.FC<ManaFormProps> = ({
   user,
   isWeekend,
   currentDate,
@@ -68,4 +68,4 @@ const ManaField: React.FC<ManaFieldProps> = ({
   );
 };
 
-export default ManaField;
+export default ManaForm;

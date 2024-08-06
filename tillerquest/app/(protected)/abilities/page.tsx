@@ -4,7 +4,7 @@ import React from "react";
 import { getAbilityHierarchy, getOwnedAbilities } from "@/data/abilities";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
-import AbilityTabs from "./AbilityTabs";
+import AbilityTabs from "./_components/AbilityTabs";
 
 export default async function AbilitiesPage() {
   const user = await auth();

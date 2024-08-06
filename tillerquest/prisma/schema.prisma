@@ -38,13 +38,14 @@ model User {
   class    Class?
   image    String?
 
-  level    Int      @default(1)
-  xp       Int      @default(1)
-  hp       Int      @default(40)
-  hpMax    Int      @default(40)
-  mana     Int      @default(0)
-  manaMax  Int      @default(40)
-  lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
+  level     Int      @default(1)
+  xp        Int      @default(1)
+  xpToLevel Int      @default(100)
+  hp        Int      @default(40)
+  hpMax     Int      @default(40)
+  mana      Int      @default(0)
+  manaMax   Int      @default(40)
+  lastMana  DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
 
   gemstones Int @default(1)
   gold      Int @default(0)

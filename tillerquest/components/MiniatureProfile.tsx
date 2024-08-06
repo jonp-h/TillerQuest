@@ -13,7 +13,7 @@ export default function MiniatureProfile(props: any) {
             className="rounded-full"
             draggable="false"
             src={"/classes/" + image}
-            alt="Clan member"
+            alt={props.member.username || "Guild member"}
             width={100}
             height={100}
           />
