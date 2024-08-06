@@ -107,22 +107,29 @@ const startTransaction = async (buyingUserId: string, abilityCost: number) => {
   }
 };
 
-export const buyAbility = async (
-  userId: string,
-  abilityName: string,
-  abilityCost: number
-) => {
-  if (await startTransaction(userId, abilityCost)) {
+export const buyAbility = async (userId: string, ability: Ability) => {
+  if (await startTransaction(userId, ability.cost)) {
     try {
       await db.userAbility.create({
         data: {
           userId,
-          abilityName,
+          abilityName: ability.name,
         },
       });
-      return true;
+
+      if (ability.isPassive) {
+        await db.effectsOnUser.create({
+          data: {
+            userId,
+            abilityName: ability.name,
+            value: ability.value ?? 0,
+            endTime: undefined,
+          },
+        });
+      }
+      return "Success";
     } catch {
-      return false;
+      return "Something went wrong";
     }
   } else {
     return "Insufficient funds";

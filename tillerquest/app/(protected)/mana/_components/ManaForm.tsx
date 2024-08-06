@@ -11,12 +11,12 @@ interface ManaFormProps {
   correctLocation: boolean;
 }
 
-const ManaForm: React.FC<ManaFormProps> = ({
+function ManaForm({
   user,
   isWeekend,
   currentDate,
   correctLocation,
-}) => {
+}: ManaFormProps) {
   const [feedback, setFeedback] = React.useState<string | null>(null);
 
   const handleGetMana = async (event: any) => {
@@ -66,6 +66,6 @@ const ManaForm: React.FC<ManaFormProps> = ({
       </form>
     </div>
   );
-};
+}
 
 export default ManaForm;

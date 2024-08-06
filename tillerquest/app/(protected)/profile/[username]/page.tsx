@@ -172,11 +172,22 @@ export default async function ProfilePage({
                 <Paper
                   elevation={10}
                   key={effect.ability.name}
-                  className="text-center items-center p-2"
+                  className=" flex flex-col justify-center text-center items-center p-2"
                 >
-                  <Typography variant="h6">{effect.ability.name}</Typography>
-                  <TimeLeft endTime={new Date(effect.endTime)} />
-                  <AutoAwesome />
+                  <Image
+                    className="rounded-full border-slate-700 border-2"
+                    src={"/abilities/" + effect.ability.name + ".jpg"}
+                    alt={effect.ability.name}
+                    draggable={false}
+                    width={50}
+                    height={50}
+                  />
+                  <Typography variant="h6">
+                    {effect.ability.name.replace("-", " ")}
+                  </Typography>
+                  {effect.endTime && (
+                    <TimeLeft endTime={new Date(effect.endTime)} />
+                  )}
                 </Paper>
               ))}
             </div>

@@ -5,9 +5,8 @@ import { getMembersByCurrentUserGuild, getUserById } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
-import UseAbilityForm from "./_components/UseAbilityForm";
+import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
-import AbilityUserSelect from "./_components/AbilityUserSelect";
 
 export default async function AbilitiesPage({
   params: { abilityName },
@@ -92,7 +91,7 @@ export default async function AbilitiesPage({
               You don't own the necessary parent abilities.
             </Typography>
           )}
-          <UseAbilityForm
+          <AbilityForm
             ability={ability}
             user={user}
             userOwnsAbility={userOwnsAbility}

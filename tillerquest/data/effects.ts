@@ -14,11 +14,15 @@ const checkEffects = async () => {
       },
     },
   });
+  // if the effect is expired, remove it (but not passives, without an endTime)
   if (effects) {
     effects.forEach(async (effect) => {
       await db.effectsOnUser.delete({
         where: {
           id: effect.id,
+          endTime: {
+            not: undefined,
+          },
         },
       });
     });

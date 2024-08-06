@@ -18,7 +18,7 @@ type guildMembers =
     }[]
   | null;
 
-export default function UseAbilityForm({
+export default function AbilityForm({
   ability,
   user,
   userOwnsAbility,
@@ -41,11 +41,15 @@ export default function UseAbilityForm({
 
   const router = useRouter();
 
+  // ---------------- Use ability ----------------
+
   const useAbility = async (event: any) => {
     event.preventDefault();
 
     setError((await selectAbility(user, selectedUser, ability)) ?? null);
   };
+
+  // ---------------- Buy ability ----------------
 
   const handleBuyAbility = async (event: any) => {
     event.preventDefault();
@@ -56,33 +60,37 @@ export default function UseAbilityForm({
     }
 
     if (user.gemstones < ability.cost) {
-      setError("You don't have enough mana to buy this ability.");
+      setError("You don't have enough gemstones to buy this ability.");
       return;
     }
 
-    await buyAbility(user.id, ability.name, ability.cost);
+    setError(await buyAbility(user.id, ability));
 
     router.refresh();
   };
 
+  // -----------------------
+
   return (
     <>
-      <AbilityUserSelect
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
-        guildMembers={guildMembers}
-      />
       {error && (
         <Typography variant="body1" color="error">
           {error}
         </Typography>
       )}
+      {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         !ability.isPassive ? (
+          // Rendered when user owns active ability
           <form
             onSubmit={useAbility}
             className="flex flex-col gap-4 items-center"
           >
+            <AbilityUserSelect
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+              guildMembers={guildMembers}
+            />
             {insignificantMana && (
               <Typography variant="body1" color="error">
                 You don&apos;t have enough mana to use this ability.
@@ -99,6 +107,7 @@ export default function UseAbilityForm({
             </Button>
           </form>
         ) : (
+          // Rendered when user owns passive ability
           <Button
             variant="contained"
             color="primary"
@@ -110,6 +119,7 @@ export default function UseAbilityForm({
           </Button>
         )
       ) : (
+        // Rendered when user does not own ability
         <form
           onSubmit={handleBuyAbility}
           className="flex flex-col gap-4 items-center"
