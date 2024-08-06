@@ -18,7 +18,7 @@ type guildMembers =
 
 interface Props {
   selectedUser: string | undefined;
-  setSelectedUser: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedUser: React.Dispatch<React.SetStateAction<string>>;
   guildMembers: guildMembers;
 }
 
