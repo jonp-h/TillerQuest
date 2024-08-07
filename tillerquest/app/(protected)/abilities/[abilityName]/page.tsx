@@ -88,7 +88,7 @@ export default async function AbilitiesPage({
           <div></div>
           {missingParentAbility && (
             <Typography variant="body1" color="error">
-              You don't own the necessary parent abilities.
+              You don&apos;t own the necessary parent abilities.
             </Typography>
           )}
           <AbilityForm

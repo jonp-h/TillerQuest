@@ -167,6 +167,10 @@ export const selectAbility = async (
   targetUserId: string,
   ability: Ability
 ) => {
+  if (user.hp === 0) {
+    return "You can't use abilities while dead";
+  }
+
   switch (ability.type) {
     // case "":
     //   let endTime = new Date();
@@ -223,14 +227,15 @@ const checkHP = async (targetUserId: string, hpValue: number) => {
     });
 
     if (targetHP?.hp === 0) {
-      return 0;
+      return "dead";
     } else if (targetHP && targetHP?.hp + hpValue >= targetHP?.hpMax) {
       return targetHP?.hpMax - targetHP?.hp;
     } else {
       return hpValue;
     }
   } catch {
-    return 0;
+    console.error("Error checking HP");
+    return "Something went wrong";
   }
 };
 
@@ -276,6 +281,10 @@ export const useHealAbility = async (
   const valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
   if (valueToHeal === 0) {
     return "Target is already at full health";
+  } else if (valueToHeal === "dead") {
+    return "You can't heal a dead target. The dead require a different kind of magic.";
+  } else if (typeof valueToHeal === "string") {
+    return valueToHeal;
   }
 
   try {
@@ -294,6 +303,7 @@ export const useHealAbility = async (
 
     return "Target healed for " + valueToHeal;
   } catch {
+    console.log("Error using heal ability");
     return "Something went wrong";
   }
 };

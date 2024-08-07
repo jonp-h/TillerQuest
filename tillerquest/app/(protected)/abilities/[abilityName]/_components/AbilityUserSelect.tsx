@@ -44,7 +44,11 @@ function AbilityUserSelect({
             <Image
               className="rounded-full"
               draggable="false"
-              src={"/classes/" + member.image + ".jpg"}
+              src={
+                member.hp !== 0
+                  ? "/classes/" + member.image + ".jpg"
+                  : "/classes/grave.jpg"
+              }
               alt={member.username || "Guild member"}
               width={100}
               height={100}

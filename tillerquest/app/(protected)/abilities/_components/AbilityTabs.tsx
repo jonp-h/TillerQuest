@@ -54,14 +54,14 @@ export default function AbilityTabs({
         aria-label="Ability tabs"
       >
         {rootAbilities?.map((ability, index) => (
-          <Tab label={ability.type} {...a11yProps(index)} />
+          <Tab key={ability.name} label={ability.type} {...a11yProps(index)} />
         ))}
       </Tabs>
 
       <div className="flex flex-col justify-center mx-20 ">
         {rootAbilities &&
           rootAbilities.map((ability, index) => (
-            <CustomTabPanel value={value} index={index}>
+            <CustomTabPanel key={ability.name} value={value} index={index}>
               <AbilityTree
                 rootAbilities={ability}
                 userAbilities={userAbilities}

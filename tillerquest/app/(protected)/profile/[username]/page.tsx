@@ -43,7 +43,7 @@ export default async function ProfilePage({
             </Typography>
             {guildMembers?.map((member) =>
               member.username !== user.username ? (
-                <MiniatureProfile member={member} />
+                <MiniatureProfile key={member.id} member={member} />
               ) : null
             )}
           </Paper>
@@ -55,7 +55,11 @@ export default async function ProfilePage({
           <div className="from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full">
             <Image
               className="rounded-full"
-              src={"/classes/" + user.image + ".jpg" || ""}
+              src={
+                user.hp !== 0
+                  ? "/classes/" + user.image + ".jpg"
+                  : "/classes/grave.jpg"
+              }
               alt={user.username || ""}
               width={250}
               height={250}
@@ -172,15 +176,21 @@ export default async function ProfilePage({
           </Paper>
         </div>
       </div>
-      <Paper elevation={6} className="mx-3">
+      <Paper elevation={6} className="mx-3 text-center">
         <Typography variant="h4" align="center">
           Abilities
         </Typography>
-        <div className="grid grid-cols-6 gap-3 p-5">
-          {userAbilities?.map((ability) => (
-            <AbilityCard ability={ability} />
-          ))}
-        </div>
+        {user.hp !== 0 ? (
+          <div className="grid grid-cols-6 gap-3 p-5">
+            {userAbilities?.map((ability) => (
+              <AbilityCard key={ability.id} ability={ability} />
+            ))}
+          </div>
+        ) : (
+          <Typography variant="h5" color="red" className="py-5">
+            The dead can do nothing
+          </Typography>
+        )}
       </Paper>
     </MainContainer>
   );

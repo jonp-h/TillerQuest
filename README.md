@@ -52,6 +52,13 @@ $ npm run dev
 
 ## Conventions
 
+**This project uses Typescript**
+
+- Types should be defined as interfaces
+- Types specific to a component or page should be kept in that page
+- Types required in multiple components should be kept in an interfaces.ts file in the closest \_components folder
+- _Any_ should rarely be used
+
 ### Project structure
 
 tillerquest/
@@ -106,8 +113,9 @@ tillerquest/
 
   - Try to keep client side rendering inside "client based components" where possible
   - Eg. the needed client side code should be moved inside its own component
+  - This is to take advatage of SSR (Server Side Rendering)
 
-- Auth:
+- Authentication of users:
   - Client side pages use useSession()
   - Server side pages use auth()
 
@@ -127,25 +135,6 @@ tillerquest/
   - text: purple-500 #a855f7
 - **Text:**
   - white
-
-<!--
-
-To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-$ git clone
-
-# Go into the repository
-
-# Install dependencies
-$ npm install
-
-# Run the app
-$ npm start
-```
-
--->
 
 ## Credits
 
