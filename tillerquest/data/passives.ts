@@ -20,8 +20,6 @@ export const checkManaPassives = async (userId: string) => {
       },
     });
 
-    console.log(abilities);
-
     if (abilities.length === 0) {
       return;
     }
@@ -29,7 +27,7 @@ export const checkManaPassives = async (userId: string) => {
 
     return abilities[0].value;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return 0;
   }
 };

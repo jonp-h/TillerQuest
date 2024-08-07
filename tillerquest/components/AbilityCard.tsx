@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 
 interface AbilityProps {
-  key: string;
   ability: {
     id: string;
     userId: string;
@@ -12,9 +11,9 @@ interface AbilityProps {
   } | null;
 }
 
-export default function AbilityCard({ key, ability }: AbilityProps) {
+export default function AbilityCard({ ability }: AbilityProps) {
   return (
-    <div className="flex flex-col justify-center" key={key}>
+    <div className="flex flex-col justify-center" key={ability?.abilityName}>
       <Link href={"/abilities/" + ability?.abilityName} passHref>
         <Paper elevation={10} className="text-center items-center p-2">
           <div className="flex justify-center">

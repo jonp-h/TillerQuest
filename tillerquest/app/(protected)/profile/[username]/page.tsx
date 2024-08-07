@@ -43,7 +43,7 @@ export default async function ProfilePage({
             </Typography>
             {guildMembers?.map((member) =>
               member.username !== user.username ? (
-                <MiniatureProfile key={member.id} member={member} />
+                <MiniatureProfile member={member} />
               ) : null
             )}
           </Paper>
@@ -93,7 +93,7 @@ export default async function ProfilePage({
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.hp / user.hpMax) * 100}
+                value={(user.xp / user.xpToLevel) * 100}
               />
             </div>
             <div>
@@ -178,7 +178,7 @@ export default async function ProfilePage({
         </Typography>
         <div className="grid grid-cols-6 gap-3 p-5">
           {userAbilities?.map((ability) => (
-            <AbilityCard key={ability.id} ability={ability} />
+            <AbilityCard ability={ability} />
           ))}
         </div>
       </Paper>

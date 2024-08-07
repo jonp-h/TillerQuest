@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
 import { $Enums, Ability, User } from "@prisma/client";
+import { checkLevelUp } from "./user";
 
 // due to the limitations of Prisma, we can't add do recursive queries.
 // This manual approach goes 4 levels deep
@@ -205,6 +206,9 @@ const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
   } catch (error) {
     console.error(error);
   }
+
+  // after reciving XP, the casting user should be checked for level up
+  checkLevelUp(castingUser);
 };
 
 // Helper functions for specific ability types

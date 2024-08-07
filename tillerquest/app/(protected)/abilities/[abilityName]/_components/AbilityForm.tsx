@@ -43,7 +43,7 @@ export default function AbilityForm({
 
   // ---------------- Use ability ----------------
 
-  const useAbility = async (event: any) => {
+  const useAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     setError((await selectAbility(user, selectedUser, ability)) ?? null);
@@ -51,7 +51,7 @@ export default function AbilityForm({
 
   // ---------------- Buy ability ----------------
 
-  const handleBuyAbility = async (event: any) => {
+  const handleBuyAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (missingParentAbility) {

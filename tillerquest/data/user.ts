@@ -95,12 +95,12 @@ export const giveXP = async (users: User[], xp: number) => {
 };
 
 export const checkLevelUp = async (user: User) => {
-  while (user.xp >= user.xpToLevel) {
+  if (user.xp >= user.xpToLevel) {
     const excessXp = user.xp - user.xpToLevel;
     const newXpToLevel = user.xpToLevel * xpMultiplier;
     const newLevel = user.level + 1;
 
-    return db.user.update({
+    await db.user.update({
       where: { id: user.id },
       data: {
         level: newLevel,
@@ -108,6 +108,12 @@ export const checkLevelUp = async (user: User) => {
         xpToLevel: newXpToLevel,
         gemstones: { increment: gemstonesOnLevelUp },
       },
+    });
+    checkLevelUp({
+      ...user,
+      xp: excessXp,
+      xpToLevel: newXpToLevel,
+      level: newLevel,
     });
   }
 };
