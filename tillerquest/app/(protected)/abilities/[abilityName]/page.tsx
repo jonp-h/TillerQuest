@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
+import { $Enums } from "@prisma/client";
 
 export default async function AbilitiesPage({
   params: { abilityName },
@@ -25,6 +26,8 @@ export default async function AbilitiesPage({
   if (!user) {
     notFound();
   }
+
+  const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
 
   const userOwnsAbility = await checkIfUserOwnsAbility(
     session?.user.id,
@@ -86,7 +89,7 @@ export default async function AbilitiesPage({
             </Typography>
           </div>
           <div></div>
-          {missingParentAbility && (
+          {missingParentAbility && userIsCorrectClass && (
             <Typography variant="body1" color="error">
               You don&apos;t own the necessary parent abilities.
             </Typography>

@@ -4,11 +4,14 @@ import React, { useCallback, useState } from "react";
 import Tree, { RawNodeDatum } from "react-d3-tree";
 import { AbilityNodes } from "./AbilityNodes";
 import { RootAbilities, UserAbilities } from "./interfaces";
+import { $Enums } from "@prisma/client";
 
 export default function AbilityTree({
+  userClass,
   rootAbilities,
   userAbilities,
 }: {
+  userClass: $Enums.Class;
   rootAbilities: RootAbilities | null;
   userAbilities: UserAbilities[] | null;
 }) {
@@ -43,6 +46,11 @@ export default function AbilityTree({
 
   const [dimensions, translate, containerRef] = useCenteredTree({ x: 0, y: 0 });
 
+  const userIsNotClass = !(
+    Object.values($Enums.Class).includes(rootAbilities?.type as $Enums.Class) &&
+    userClass != (rootAbilities?.type as $Enums.Class)
+  );
+
   return (
     <>
       <style>
@@ -68,7 +76,7 @@ export default function AbilityTree({
           zoomable={false}
           nodeSize={{ x: 350, y: 350 }}
           renderCustomNodeElement={(rd3tProps) =>
-            AbilityNodes(userAbilities, {
+            AbilityNodes(userIsNotClass, userAbilities, {
               ...rd3tProps,
               handleNodeClick,
             })

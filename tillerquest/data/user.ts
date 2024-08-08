@@ -1,8 +1,8 @@
 "use server";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
-import { checkManaPassives } from "./passives";
-import { dailyMana, gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
+import { dailyMana } from "@/lib/gameSetting";
+import { checkMana } from "./helpers";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -26,6 +26,7 @@ export const getUserByUsername = async (username: string) => {
   }
 };
 
+// used on account creation page
 // TODO: consider implementation of typesafety from auth.ts
 export const updateUser = async (id: string, data: any) => {
   try {
@@ -61,59 +62,12 @@ export const getMembersByCurrentUserGuild = async (guildName: string) => {
 };
 
 export const getMana = async (user: User) => {
-  // get passiveValue from mana passive
-  let passiveValue = (await checkManaPassives(user.id)) ?? 0;
-
-  // the daily mana is 4
-  let mana = dailyMana + passiveValue;
+  // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
+  let manaValue = (await checkMana(user.id, dailyMana)) ?? 0;
 
   // use get mana
   return db.user.update({
     where: { id: user.id },
-    data: { mana: { increment: mana }, lastMana: new Date() },
+    data: { mana: { increment: manaValue }, lastMana: new Date() },
   });
-};
-
-// XP functions
-
-export const giveXP = async (users: User[], xp: number) => {
-  try {
-    db.user.updateMany({
-      where: { id: { in: users.map((user) => user.id) } },
-      data: { xp: { increment: xp } },
-    });
-
-    users.map(async (user) => {
-      checkLevelUp(user);
-    });
-
-    return "Success";
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
-};
-
-export const checkLevelUp = async (user: User) => {
-  if (user.xp >= user.xpToLevel) {
-    const excessXp = user.xp - user.xpToLevel;
-    const newXpToLevel = user.xpToLevel * xpMultiplier;
-    const newLevel = user.level + 1;
-
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        level: newLevel,
-        xp: excessXp,
-        xpToLevel: newXpToLevel,
-        gemstones: { increment: gemstonesOnLevelUp },
-      },
-    });
-    checkLevelUp({
-      ...user,
-      xp: excessXp,
-      xpToLevel: newXpToLevel,
-      level: newLevel,
-    });
-  }
 };

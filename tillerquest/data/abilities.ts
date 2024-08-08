@@ -1,9 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
-import { $Enums, Ability, User } from "@prisma/client";
-import { checkLevelUp } from "./user";
+import { Ability, User } from "@prisma/client";
+import { checkHP, checkLevelUp } from "./helpers";
 
 // due to the limitations of Prisma, we can't add do recursive queries.
 // This manual approach goes 4 levels deep
@@ -216,28 +215,6 @@ const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
 };
 
 // Helper functions for specific ability types
-
-const checkHP = async (targetUserId: string, hpValue: number) => {
-  try {
-    const targetHP = await db.user.findFirst({
-      where: {
-        id: targetUserId,
-      },
-      select: { hp: true, hpMax: true },
-    });
-
-    if (targetHP?.hp === 0) {
-      return "dead";
-    } else if (targetHP && targetHP?.hp + hpValue >= targetHP?.hpMax) {
-      return targetHP?.hpMax - targetHP?.hp;
-    } else {
-      return hpValue;
-    }
-  } catch {
-    console.error("Error checking HP");
-    return "Something went wrong";
-  }
-};
 
 // export const useDebuffAbility = async (
 //   castingUserId: string,

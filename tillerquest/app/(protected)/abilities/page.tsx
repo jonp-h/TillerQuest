@@ -21,7 +21,11 @@ export default async function AbilitiesPage() {
       <Typography className="text-center" variant="h1">
         Abilities
       </Typography>
-      <AbilityTabs rootAbilities={abilities} userAbilities={userAbilities} />
+      <AbilityTabs
+        userClass={user.user.class}
+        rootAbilities={abilities}
+        userAbilities={userAbilities}
+      />
     </MainContainer>
   );
 }

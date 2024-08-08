@@ -1,7 +1,7 @@
 "use client";
 import { buyAbility, selectAbility } from "@/data/abilities";
 import { Button, Typography } from "@mui/material";
-import { Ability, User } from "@prisma/client";
+import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
@@ -38,6 +38,8 @@ export default function AbilityForm({
   const [error, setError] = useState<string | null>(null);
 
   const insignificantMana = user.mana < ability.cost;
+
+  const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
 
   const router = useRouter();
 
@@ -118,8 +120,9 @@ export default function AbilityForm({
             Activated
           </Button>
         )
-      ) : (
-        // Rendered when user does not own ability
+      ) : // Rendered when user does not own ability
+
+      userIsCorrectClass ? (
         <form
           onSubmit={handleBuyAbility}
           className="flex flex-col gap-4 items-center"
@@ -132,6 +135,10 @@ export default function AbilityForm({
             Buy ability
           </Button>
         </form>
+      ) : (
+        <Typography variant="body1" color="error">
+          You&apos;re not the correct class to buy this ability.
+        </Typography>
       )}
     </>
   );

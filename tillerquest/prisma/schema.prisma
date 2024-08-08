@@ -13,6 +13,15 @@ enum UserRole {
   ADMIN
 }
 
+enum SchoolClass {
+  IM1
+  IM2
+  IM3
+  IT1
+  IT2
+  IT3
+}
+
 enum Class {
   Druid
   Wizard
@@ -27,16 +36,22 @@ enum AbilityType {
   Trickery
   Magic
   Heal
+
+  // class specific types
+  Druid
+  Wizard
+  Barbarian
 }
 
 model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  username String? @unique
-  lastname String?
-  title    String? @default("Newborn")
-  class    Class?
-  image    String?
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  username    String?      @unique
+  lastname    String?
+  title       String?      @default("Newborn")
+  schoolClass SchoolClass?
+  class       Class?
+  image       String?
 
   level     Int      @default(1)
   xp        Int      @default(1)
@@ -84,7 +99,7 @@ model Guild {
 // https://github.com/prisma/studio/issues/980
 model Ability {
   name        String      @id @map("_id")
-  type        AbilityType
+  type        AbilityType // Can be generic or class specific
   isPassive   Boolean     @default(false)
   description String?
   duration    Int?

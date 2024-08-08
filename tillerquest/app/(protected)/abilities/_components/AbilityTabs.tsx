@@ -3,6 +3,7 @@ import { Paper, Tab, Tabs } from "@mui/material";
 import React from "react";
 import AbilityTree from "./AbilityTree";
 import { RootAbilities, UserAbilities } from "./interfaces";
+import { $Enums } from "@prisma/client";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -32,9 +33,11 @@ function CustomTabPanel({ children, value, index, ...other }: TabPanelProps) {
 }
 
 export default function AbilityTabs({
+  userClass,
   rootAbilities,
   userAbilities,
 }: {
+  userClass: $Enums.Class;
   rootAbilities: RootAbilities[] | null;
   userAbilities: UserAbilities[] | null;
 }) {
@@ -54,7 +57,22 @@ export default function AbilityTabs({
         aria-label="Ability tabs"
       >
         {rootAbilities?.map((ability, index) => (
-          <Tab key={ability.name} label={ability.type} {...a11yProps(index)} />
+          <Tab
+            key={ability.name}
+            label={ability.type}
+            sx={{
+              color:
+                Object.values($Enums.Class).includes(
+                  ability.type as $Enums.Class
+                ) && userClass != (ability.type as $Enums.Class)
+                  ? "salmon"
+                  : "primary",
+            }}
+            style={{
+              borderRadius: "10px",
+            }}
+            {...a11yProps(index)}
+          />
         ))}
       </Tabs>
 
@@ -63,6 +81,7 @@ export default function AbilityTabs({
           rootAbilities.map((ability, index) => (
             <CustomTabPanel key={ability.name} value={value} index={index}>
               <AbilityTree
+                userClass={userClass}
                 rootAbilities={ability}
                 userAbilities={userAbilities}
               />

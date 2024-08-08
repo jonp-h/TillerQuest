@@ -13,6 +13,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CasinoIcon from "@mui/icons-material/Casino";
 
 import { IconButton } from "@mui/material";
 
@@ -46,9 +47,9 @@ export default function NavbarContent() {
 
   if (session.data?.user.role === "ADMIN") {
     links.unshift({
-      name: "Admin",
-      href: "/admin",
-      icon: <ShieldIcon />,
+      name: "Game Master",
+      href: "/gamemaster",
+      icon: <CasinoIcon />,
     });
   }
 

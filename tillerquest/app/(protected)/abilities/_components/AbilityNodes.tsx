@@ -1,7 +1,9 @@
 import { RawNodeDatum } from "react-d3-tree";
 import { UserAbilities } from "./interfaces";
+import { $Enums } from "@prisma/client";
 
 export const AbilityNodes = (
+  userIsNotClass: boolean,
   userAbilities: UserAbilities[] | null,
   {
     nodeDatum,
@@ -18,10 +20,16 @@ export const AbilityNodes = (
         <stop offset="50%" stopColor="purple" stopOpacity={0.5} />
         <stop offset="100%" stopColor="purple" stopOpacity={0} />
       </radialGradient>
+      <radialGradient id="wrongClassGradient">
+        <stop offset="70%" stopColor="grey" />
+        <stop offset="100%" stopColor="salmon" />
+      </radialGradient>
     </defs>
     <circle
       r="75"
-      fill="url(#backgroundGradient)"
+      fill={
+        userIsNotClass ? "url(#backgroundGradient)" : "url(#wrongClassGradient)"
+      }
       strokeWidth="0"
       onClick={() => handleNodeClick(nodeDatum)}
     />

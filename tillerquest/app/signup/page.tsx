@@ -11,7 +11,7 @@ export default function SignUpPage() {
       <div className="flex justify-center lg:pt-10">
         <Paper
           elevation={6}
-          className="flex flex-col justify-center p-5 w-full h-screen lg:w-1/2 xl:w-1/3"
+          className="flex flex-col justify-center p-5 w-full h-screen lg:h-auto lg:w-1/2 xl:w-1/3"
         >
           <div className="flex flex-col gap-5">
             <Typography variant="h3" align="center">
