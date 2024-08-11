@@ -65,7 +65,7 @@ $ npm run dev
 - Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
 - Global and reusable components should be kept in the components folder at the root of the project.
 - Remember to use Pascal-case for components.
-
+```
 tillerquest/
 ├── .env
 ├── .eslintrc.json
@@ -105,6 +105,7 @@ tillerquest/
 ├── routes.ts
 ├── tailwind.config.ts
 └── tsconfig.json
+```
 
 - Tailwind responsive:
 
