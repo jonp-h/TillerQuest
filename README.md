@@ -71,16 +71,11 @@ tillerquest/
 ├── .eslintrc.json
 ├── .gitignore
 ├── .next/
-│ ├── app-build-manifest.json
-│ ├── build-manifest.json
-│ ├── cache/
-│ ├── fallback-build-manifest.json
-│ ├── package.json
-│ └── react-loadable-manifest.json
+│ ├── ...
 ├── app/
 │ ├── (protected)/
 │ │ ├── page/
-│ │ │ ├── \_page-specific-components/
+│ │ │ ├── _page-specific-components/
 │ │ │ │ └── Component.tsx
 │ │ │ └── page.tsx
 │ │ └── ...
@@ -90,8 +85,7 @@ tillerquest/
 │ ├── navbar/
 │ │ ├── Navbar.tsx
 │ │ └── NavbarContent.tsx
-│ ├── MainContainer.tsx
-│ └── SecondaryContainer.tsx
+│ └── MainContainer.tsx
 ├── data/
 ├── lib/
 ├── middleware.ts
@@ -136,6 +130,7 @@ tillerquest/
 
 TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and never will be)**.
 
+<!--
 - **Main color:**
   - slate-900 #0f172a
   - slate-700 #334155
@@ -146,6 +141,7 @@ TillerQuest is an application made for darkmode. Background and colors should th
   - text: purple-500 #a855f7
 - **Text:**
   - white
+  -->
 
 ## Credits
 
