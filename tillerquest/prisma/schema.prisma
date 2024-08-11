@@ -31,13 +31,14 @@ enum Class {
 enum AbilityType {
   Health
   Mana
+  // Experience // Considered as a passive ability. Requires larges changes in the codebase
   Strength
   Agility
   Trickery
   Magic
   Heal
 
-  // class specific types
+  // Class specific types
   Druid
   Wizard
   Barbarian
@@ -104,8 +105,8 @@ model Ability {
   description String?
   duration    Int?
   icon        String?
-  cost        Int         @default(2)
-  xpGiven     Int         @default(10)
+  cost        Int         @default(1)
+  xpGiven     Int         @default(0)
   value       Int?
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
@@ -143,9 +144,10 @@ model UserAbility {
 
 // relational model to explicitly manage the M-N relationship between User and Ability
 model EffectsOnUser {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String    @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String      @db.ObjectId
   abilityName String?
+  effectType  AbilityType
   endTime     DateTime?
   value       Int?
 

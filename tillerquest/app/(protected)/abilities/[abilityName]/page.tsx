@@ -27,7 +27,9 @@ export default async function AbilitiesPage({
     notFound();
   }
 
-  const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
+  const userIsCorrectClass =
+    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
+    user.class === ability.type;
 
   const userOwnsAbility = await checkIfUserOwnsAbility(
     session?.user.id,

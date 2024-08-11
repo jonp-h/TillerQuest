@@ -1,12 +1,70 @@
 "use server";
 import { db } from "@/lib/db";
-import { getUserAbilities } from "./abilities";
 import { gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
 import { User } from "@prisma/client";
+import { getUserEffectsByType } from "./effects";
+
+// ---------------- Effect Helpers ----------------
+
+export const checkEffects = async (userId: string, type: string) => {
+  removeAllOldEffects();
+
+  return getUserPassiveEffect(userId, type);
+};
+
+/**
+ * Retrieves the passive value for a specific user, based on effect type. Returns all the values added together.
+ *
+ * @param userId - The ID of the user.
+ * @param type - The type of the effect.
+ * @returns The value of the passive effects of a given type, or 0 if no effect is found.
+ */
+export const getUserPassiveEffect = async (userId: string, type: string) => {
+  const userEffects = await getUserEffectsByType(userId, type);
+
+  if (!userEffects) {
+    return 0;
+  }
+
+  var value = 0;
+  userEffects.forEach((effect) => {
+    value += effect.value ?? 0;
+  });
+
+  return value;
+};
+
+// removes every user's old effects
+export const removeAllOldEffects = async () => {
+  // if the effect is expired, remove it
+  const effects = await db.effectsOnUser.findMany({
+    where: {
+      endTime: {
+        lte: new Date(),
+      },
+    },
+  });
+  // if the effect is expired, remove it (but not passives without an endTime)
+  if (effects) {
+    effects.forEach(async (effect) => {
+      await db.effectsOnUser.delete({
+        where: {
+          id: effect.id,
+          endTime: {
+            not: undefined,
+          },
+        },
+      });
+    });
+  }
+};
 
 // ---------------- Health Helpers ----------------
 
 export const checkHP = async (targetUserId: string, hpValue: number) => {
+  // check if user has any health passives to add to the healing value
+  hpValue = ((await checkEffects(targetUserId, "Health")) ?? 0) + hpValue;
+
   try {
     const targetHP = await db.user.findFirst({
       where: {
@@ -32,7 +90,7 @@ export const checkHP = async (targetUserId: string, hpValue: number) => {
 
 export const checkMana = async (targetUserId: string, manaValue: number) => {
   // check if user has any mana passives to add to the mana value
-  manaValue = ((await checkManaPassives(targetUserId)) ?? 0) + manaValue;
+  manaValue = ((await checkEffects(targetUserId, "Mana")) ?? 0) + manaValue;
 
   try {
     const targetMana = await db.user.findFirst({
@@ -49,36 +107,6 @@ export const checkMana = async (targetUserId: string, manaValue: number) => {
     }
   } catch (error) {
     console.error("Error checking Mana");
-  }
-};
-
-// local helper function to check mana passives
-const checkManaPassives = async (userId: string) => {
-  const userAbilities = await getUserAbilities(userId);
-
-  if (userAbilities === null) {
-    return 0;
-  }
-  try {
-    const abilities = await db.ability.findMany({
-      where: {
-        name: {
-          in: userAbilities.map((userAbility) => userAbility.abilityName),
-        },
-        isPassive: true,
-        type: "Mana",
-      },
-    });
-
-    if (abilities.length === 0) {
-      return 0;
-    }
-    abilities.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
-
-    return abilities[0].value;
-  } catch (error) {
-    console.error(error);
-    return 0;
   }
 };
 

@@ -1,14 +1,6 @@
 "use client";
-import {
-  Button,
-  Input,
-  List,
-  ListSubheader,
-  Paper,
-  TextField,
-} from "@mui/material";
+import { Button, List, Paper, TextField } from "@mui/material";
 import { User } from "@prisma/client";
-
 import React from "react";
 import UserList from "./UserList";
 import {
@@ -17,11 +9,15 @@ import {
   giveXpToUsers,
   healUsers,
 } from "@/data/admin";
+import { useRouter } from "next/navigation";
 
 export default function ListControls({ users }: { users: User[] }) {
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [value, setValue] = React.useState<number>(4);
   const [feedback, setFeedback] = React.useState<string>("");
+  const [isPending, startTransition] = React.useTransition();
+
+  const router = useRouter();
 
   const selectAllUsers = () => {
     if (users.length === selectedUsers.length) {
@@ -32,22 +28,27 @@ export default function ListControls({ users }: { users: User[] }) {
   };
 
   const handleAdminAction = async (action: string) => {
-    switch (action) {
-      case "heal":
-        setFeedback(await healUsers(selectedUsers, value));
-        break;
-      case "damage":
-        setFeedback(await damageUsers(selectedUsers, value));
-        break;
-      case "xp":
-        setFeedback(await giveXpToUsers(selectedUsers, value));
-        break;
-      case "mana":
-        setFeedback(await giveManaToUsers(selectedUsers, value));
-        break;
-      default:
-        setFeedback("No action selected");
-    }
+    startTransition(async () => {
+      switch (action) {
+        case "heal":
+          setFeedback(await healUsers(selectedUsers, value));
+          break;
+        case "damage":
+          setFeedback(await damageUsers(selectedUsers, value));
+          break;
+        case "xp":
+          setFeedback(await giveXpToUsers(selectedUsers, value));
+          break;
+        case "mana":
+          setFeedback(await giveManaToUsers(selectedUsers, value));
+          break;
+        default:
+          setFeedback("No action selected");
+      }
+      setTimeout(() => {
+        router.refresh();
+      }, 3000);
+    });
   };
 
   return (
@@ -87,6 +88,7 @@ export default function ListControls({ users }: { users: User[] }) {
           <Button
             variant="outlined"
             color="error"
+            disabled={isPending}
             onClick={() => handleAdminAction("damage")}
           >
             Damage selected users
@@ -94,6 +96,7 @@ export default function ListControls({ users }: { users: User[] }) {
           <Button
             variant="outlined"
             color="error"
+            disabled={isPending}
             onClick={() => handleAdminAction("heal")}
           >
             Heal selected users
@@ -101,6 +104,7 @@ export default function ListControls({ users }: { users: User[] }) {
           <Button
             variant="outlined"
             color="error"
+            disabled={isPending}
             onClick={() => handleAdminAction("xp")}
           >
             Give XP to selected users
@@ -108,6 +112,7 @@ export default function ListControls({ users }: { users: User[] }) {
           <Button
             variant="outlined"
             color="error"
+            disabled={isPending}
             onClick={() => handleAdminAction("mana")}
           >
             Give mana to selected users

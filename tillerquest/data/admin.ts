@@ -2,6 +2,11 @@
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
 import { checkLevelUp, checkMana } from "./helpers";
+import {
+  guildmemberResurrectionDamage,
+  minResurrectionHP,
+} from "@/lib/gameSetting";
+import { getMembersByCurrentUserGuild } from "./user";
 
 // ------------------ Debugging functions not used in the app ------------------
 
@@ -57,6 +62,50 @@ export const getAllDeadUsers = async () => {
 export const getAllUsers = async () => {
   const users = await db.user.findMany();
   return users;
+};
+
+export const resurrectUsers = async (userId: { id: string }) => {
+  try {
+    await db.$transaction(async (db) => {
+      const user = await db.user.update({
+        data: {
+          hp: minResurrectionHP,
+        },
+        where: {
+          id: userId.id,
+        },
+      });
+
+      // FIXME: implement resurrection damage to all guild members
+      // const guildMembers = await getMembersByCurrentUserGuild(
+      //   user.guildName ?? ""
+      // );
+      // guildMembers?.map(async (member) => {
+
+      //   if (member) {
+      //     // Damage to apply to guild members. the guild members should not go below userReserrectionHP. the damage done is guildmemberResurrectionDamage
+      //     const damageToApply = Math.min(
+      //       member.hp - minResurrectionHP,
+      //       guildmemberResurrectionDamage
+      //     );
+
+      //     await db.user.update({
+      //       where: {
+      //         id: member.id,
+      //       },
+      //       data: {
+      //         hp: { decrement: damageToApply },
+      //       },
+      //     });
+      //   }
+      // });
+
+      return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";
+    });
+  } catch (error) {
+    console.error("Error resurrecting user" + error);
+    return "Something went wrong with " + error;
+  }
 };
 
 export const healUsers = async (users: { id: string }[], value: number) => {
@@ -138,6 +187,8 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
  * @returns A string indicating the result of the operation.
  */
 export const giveXpToUsers = async (users: User[], xp: number) => {
+  // TODO: Consider the use of xp passives
+
   try {
     await db.user.updateMany({
       where: { id: { in: users.map((user) => user.id) } },

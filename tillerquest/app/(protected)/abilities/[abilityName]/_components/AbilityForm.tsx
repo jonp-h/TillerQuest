@@ -39,7 +39,11 @@ export default function AbilityForm({
 
   const insignificantMana = user.mana < ability.cost;
 
-  const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
+  // const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
+
+  const userIsCorrectClass =
+    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
+    user.class === ability.type;
 
   const router = useRouter();
 
@@ -68,6 +72,7 @@ export default function AbilityForm({
 
     setError(await buyAbility(user.id, ability));
 
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     router.refresh();
   };
 

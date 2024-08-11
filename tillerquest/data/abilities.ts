@@ -87,61 +87,6 @@ export const getAbility = async (abilityName: string) => {
   }
 };
 
-// decrement the cost from the user's gemstones
-const startTransaction = async (buyingUserId: string, abilityCost: number) => {
-  try {
-    await db.user.update({
-      where: {
-        id: buyingUserId,
-      },
-      data: {
-        gemstones: {
-          decrement: abilityCost,
-        },
-      },
-    });
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-};
-
-export const buyAbility = async (userId: string, ability: Ability) => {
-  if (await startTransaction(userId, ability.cost)) {
-    try {
-      await db.userAbility.create({
-        data: {
-          userId,
-          abilityName: ability.name,
-        },
-      });
-
-      if (ability.isPassive) {
-        let endTime = new Date();
-        endTime.setMinutes(endTime.getMinutes() + (ability.duration || 0));
-        const endTimeISOString = ability.duration
-          ? endTime.toISOString()
-          : undefined;
-
-        await db.effectsOnUser.create({
-          data: {
-            userId,
-            abilityName: ability.name,
-            value: ability.value ?? 0,
-            endTime: endTimeISOString,
-          },
-        });
-      }
-      return "Success";
-    } catch {
-      return "Something went wrong";
-    }
-  } else {
-    return "Insufficient funds";
-  }
-};
-
 export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string
@@ -159,7 +104,73 @@ export const checkIfUserOwnsAbility = async (
   }
 };
 
-// Ability usage
+// ------------------- Ability transactions -------------------
+
+/**
+ * Buys an ability for a user.
+ *
+ * @param userId - The ID of the user.
+ * @param ability - The ability to be bought.
+ * @returns A promise that resolves to "Success" if the ability is successfully bought, or a string indicating an error if something goes wrong.
+ */
+export const buyAbility = async (userId: string, ability: Ability) => {
+  try {
+    return db.$transaction(async (db) => {
+      // decrement the cost from the user's gemstones
+      const user = await db.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          gemstones: {
+            decrement: ability.cost,
+          },
+        },
+      });
+
+      // check if user has enough gemstones
+      if (user.gemstones < 0) {
+        throw new Error("Insufficient gemstones");
+      }
+
+      await db.userAbility.create({
+        data: {
+          userId,
+          abilityName: ability.name,
+        },
+      });
+
+      if (ability.isPassive) {
+        // user can only have one passive of each type (mana, health, xp)
+        // delete the old one, before adding the upgraded version
+        await db.effectsOnUser.deleteMany({
+          where: {
+            userId,
+            effectType: ability.type,
+          },
+        });
+
+        // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
+        await db.effectsOnUser.create({
+          data: {
+            userId,
+            effectType: ability.type,
+            abilityName: ability.name,
+            value: ability.value ?? 0,
+            endTime: ability.duration
+              ? new Date(Date.now() + ability.duration * 60000).toISOString()
+              : undefined,
+          },
+        });
+      }
+      return "Success";
+    });
+  } catch (error) {
+    return "Something went wrong with " + error;
+  }
+};
+
+// ------------------- Ability usage -------------------
 
 export const selectAbility = async (
   user: User,
@@ -214,37 +225,7 @@ const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
   checkLevelUp(castingUser);
 };
 
-// Helper functions for specific ability types
-
-// export const useDebuffAbility = async (
-//   castingUserId: string,
-//   targetUserId: string,
-//   userMana: number,
-//   abilityManaCost: number,
-//   value: number,
-//   endTime: string,
-//   xpGiven: number
-// ) => {
-//   if (userMana < abilityManaCost) {
-//     return false;
-//   }
-
-//   try {
-//     await db.effectsOnUser.create({
-//       data: {
-//         userId: targetUserId,
-//         value,
-//         endTime,
-//       },
-//     });
-
-//     await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
-
-//     return true;
-//   } catch {
-//     return false;
-//   }
-// };
+// ---------------------------- Helper functions for specific ability types ----------------------------
 
 export const useHealAbility = async (
   castingUser: User,

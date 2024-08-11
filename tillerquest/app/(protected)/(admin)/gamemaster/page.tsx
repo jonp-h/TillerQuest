@@ -22,37 +22,38 @@ export default async function GameMasterPage() {
           </Typography>
         )}
         <div className="flex justify-evenly">
-          {deadUsers &&
-            deadUsers.map((user) => (
+          {deadUsers && (
+            <Link href={`/gamemaster/resurrect/`}>
               <Button variant="contained" color="error">
-                Resurrect: {user.username}
+                Resurrect
               </Button>
-            ))}
+            </Link>
+          )}
         </div>
       </Paper>
       <div className="flex mt-10 justify-evenly">
         <Link href="/gamemaster/xp">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             XP
           </Button>
         </Link>
         <Link href="/gamemaster/damage">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             Damage
           </Button>
         </Link>
         <Link href="/gamemaster/mana">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             Mana
           </Button>
         </Link>
         <Link href="/gamemaster/guilds">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             Guilds
           </Button>
         </Link>
         <Link href="/gamemaster/cosmic">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             Cosmic
           </Button>
         </Link>
@@ -62,7 +63,7 @@ export default async function GameMasterPage() {
           </Button>
         </Link>
         <Link href="/gamemaster/abilities">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" disabled={true}>
             Ability management
           </Button>
         </Link>

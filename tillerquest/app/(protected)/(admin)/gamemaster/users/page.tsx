@@ -5,7 +5,7 @@ import React from "react";
 import { getAllUsers } from "@/data/admin";
 import ListControls from "./_components/ListControls";
 
-export default async function GuildsPage() {
+export default async function UsersPage() {
   const users = await getAllUsers();
 
   return (

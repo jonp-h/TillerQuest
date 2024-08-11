@@ -61,6 +61,11 @@ $ npm run dev
 
 ### Project structure
 
+- The application use the Next.js app-router.
+- Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
+- Global and reusable components should be kept in the components folder at the root of the project.
+- Remember to use Pascal-case for components.
+
 tillerquest/
 ├── .env
 ├── .eslintrc.json
@@ -109,11 +114,16 @@ tillerquest/
   - sm: Smartphone
   - xs: Phone (reduced screen size)
 
-- Client side rendering:
+- Client Side Rendering:
 
   - Try to keep client side rendering inside "client based components" where possible
-  - Eg. the needed client side code should be moved inside its own component
-  - This is to take advatage of SSR (Server Side Rendering)
+    - Eg. the needed client side code should be moved inside its own component
+    - This is to take advatage of SSR (Server Side Rendering)
+
+- Server Side Rendering:
+
+- SSR is the preferred.
+- All page.tsx should be kept SSR.
 
 - Authentication of users:
   - Client side pages use useSession()
@@ -123,7 +133,7 @@ tillerquest/
 
 ### Main color Scheme:
 
-(made for dark mode)
+TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and never will be)**.
 
 - **Main color:**
   - slate-900 #0f172a
