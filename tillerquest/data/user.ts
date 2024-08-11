@@ -1,7 +1,8 @@
 "use server";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
-import { checkManaPassives } from "./passives";
+import { dailyMana } from "@/lib/gameSetting";
+import { checkMana } from "./helpers";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -25,6 +26,8 @@ export const getUserByUsername = async (username: string) => {
   }
 };
 
+// used on account creation page
+// TODO: consider implementation of typesafety from auth.ts
 export const updateUser = async (id: string, data: any) => {
   try {
     await db.user.update({
@@ -37,12 +40,13 @@ export const updateUser = async (id: string, data: any) => {
   }
 };
 
-// get all the users that are in the same clan as the current user
-export const getMembersByCurrentUserClan = async (guildName: string) => {
+// get all the users that are in the same guild as the current user
+export const getMembersByCurrentUserGuild = async (guildName: string) => {
   try {
     const members = await db.user.findMany({
       where: { guildName },
       select: {
+        id: true,
         username: true,
         image: true,
         hp: true,
@@ -58,15 +62,12 @@ export const getMembersByCurrentUserClan = async (guildName: string) => {
 };
 
 export const getMana = async (user: User) => {
-  // get passiveValue from mana passive
-  var passiveValue = (await checkManaPassives(user.id)) ?? 0;
-
-  // the daily mana is 4
-  var dailyMana = 4 + passiveValue;
+  // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
+  let manaValue = (await checkMana(user.id, dailyMana)) ?? 0;
 
   // use get mana
   return db.user.update({
     where: { id: user.id },
-    data: { mana: { increment: dailyMana }, lastMana: new Date() },
+    data: { mana: { increment: manaValue }, lastMana: new Date() },
   });
 };

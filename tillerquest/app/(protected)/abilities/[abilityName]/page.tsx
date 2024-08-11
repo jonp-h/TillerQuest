@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { checkIfUserOwnsAbility, getAbility } from "@/data/abilities";
-import { getUserById } from "@/data/user";
+import { getMembersByCurrentUserGuild, getUserById } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
-import UseAbilityForm from "./_components/UseAbilityForm";
+import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
+import { $Enums } from "@prisma/client";
 
 export default async function AbilitiesPage({
   params: { abilityName },
@@ -26,13 +27,17 @@ export default async function AbilitiesPage({
     notFound();
   }
 
+  const userIsCorrectClass =
+    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
+    user.class === ability.type;
+
   const userOwnsAbility = await checkIfUserOwnsAbility(
     session?.user.id,
     abilityName
   );
 
   // check if root, if not check if user owns parent ability
-  var missingParentAbility = true;
+  let missingParentAbility = true;
   if (ability.parentAbility === null) {
     missingParentAbility = false;
   } else {
@@ -41,6 +46,8 @@ export default async function AbilitiesPage({
       ability.parentAbility
     ));
   }
+
+  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   return (
     <MainContainer>
@@ -83,16 +90,18 @@ export default async function AbilitiesPage({
               Value: {ability.value}
             </Typography>
           </div>
-          {missingParentAbility && (
+          <div></div>
+          {missingParentAbility && userIsCorrectClass && (
             <Typography variant="body1" color="error">
-              You don't own the necessary parent abilities.
+              You don&apos;t own the necessary parent abilities.
             </Typography>
           )}
-          <UseAbilityForm
+          <AbilityForm
             ability={ability}
             user={user}
             userOwnsAbility={userOwnsAbility}
             missingParentAbility={missingParentAbility}
+            guildMembers={guildMembers}
           />
         </Paper>
       </div>

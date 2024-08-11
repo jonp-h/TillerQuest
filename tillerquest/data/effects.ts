@@ -1,33 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { $Enums } from "@prisma/client";
+import { removeAllOldEffects } from "./helpers";
 
-// Every call to the db should first check if the state of effects
-
-const checkEffects = async () => {
-  // if the effect is expired, remove it
-  // TODO: could contain user id
-  const effects = await db.effectsOnUser.findMany({
-    where: {
-      endTime: {
-        lte: new Date(),
-      },
-    },
-  });
-  if (effects) {
-    effects.forEach(async (effect) => {
-      await db.effectsOnUser.delete({
-        where: {
-          id: effect.id,
-        },
-      });
-    });
-  }
-};
+// ---------------- Getters Helpers ----------------
 
 export const getUserEffects = async (userId: string) => {
   try {
-    await checkEffects();
+    await removeAllOldEffects();
     const effects = await db.effectsOnUser.findMany({
       where: {
         userId,
@@ -41,6 +22,20 @@ export const getUserEffects = async (userId: string) => {
             icon: true,
           },
         },
+      },
+    });
+    return effects;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserEffectsByType = async (userId: string, type: string) => {
+  try {
+    const effects = await db.effectsOnUser.findMany({
+      where: {
+        userId,
+        effectType: type as $Enums.AbilityType,
       },
     });
     return effects;

@@ -5,15 +5,16 @@ import Link from "next/link";
 import Button from "@mui/material/Button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { UserRole } from "@prisma/client";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShieldIcon from "@mui/icons-material/Shield";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import StadiumIcon from "@mui/icons-material/Stadium";
 import BoltIcon from "@mui/icons-material/Bolt";
 import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
-import MenuIcon from "@mui/icons-material/Menu";
+import CasinoIcon from "@mui/icons-material/Casino";
+
 import { IconButton } from "@mui/material";
 
 export default function NavbarContent() {
@@ -46,9 +47,9 @@ export default function NavbarContent() {
 
   if (session.data?.user.role === "ADMIN") {
     links.unshift({
-      name: "Admin",
-      href: "/admin",
-      icon: <ShieldIcon />,
+      name: "Game Master",
+      href: "/gamemaster",
+      icon: <CasinoIcon />,
     });
   }
 
@@ -98,6 +99,7 @@ export default function NavbarContent() {
               sx={{ display: { xs: "block", md: "block", lg: "none" } }}
               color="secondary"
               size="large"
+              onClick={() => signOut()}
             >
               <LogoutIcon />
             </IconButton>
@@ -110,7 +112,7 @@ export default function NavbarContent() {
               color="primary"
               startIcon={<LoginIcon />}
               sx={{ display: { xs: "none", md: "none", lg: "block" } }}
-              onClick={() => signIn("github")}
+              onClick={() => signIn("github", { callbackUrl: "/" })}
             >
               Sign in
             </Button>
@@ -118,9 +120,28 @@ export default function NavbarContent() {
               sx={{ display: { xs: "block", md: "block", lg: "none" } }}
               color="secondary"
               size="large"
+              onClick={() => signIn("github", { callbackUrl: "/" })}
             >
               <LoginIcon />
             </IconButton>
+            <Link href={"/signup"}>
+              <Button
+                className="whitespace-nowrap"
+                variant="contained"
+                color="primary"
+                startIcon={<PersonAddIcon />}
+                sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+              >
+                Sign up
+              </Button>
+              <IconButton
+                sx={{ display: { xs: "block", md: "block", lg: "none" } }}
+                color="secondary"
+                size="large"
+              >
+                <PersonAddIcon />
+              </IconButton>
+            </Link>
           </>
         )}
       </div>

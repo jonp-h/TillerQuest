@@ -1,0 +1,93 @@
+"use client";
+import { Paper, Tab, Tabs } from "@mui/material";
+import React from "react";
+import AbilityTree from "./AbilityTree";
+import { RootAbilities, UserAbilities } from "./interfaces";
+import { $Enums } from "@prisma/client";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `ability-tabpanel-${index}`,
+  };
+}
+
+function CustomTabPanel({ children, value, index, ...other }: TabPanelProps) {
+  return (
+    <div
+      role="abilityTabPanel"
+      hidden={value !== index}
+      id={`ability-tabpanel-${index}`}
+      aria-labelledby={`ability-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Paper elevation={5}>{children}</Paper>}
+    </div>
+  );
+}
+
+export default function AbilityTabs({
+  userClass,
+  rootAbilities,
+  userAbilities,
+}: {
+  userClass: $Enums.Class;
+  rootAbilities: RootAbilities[] | null;
+  userAbilities: UserAbilities[] | null;
+}) {
+  const [value, setValue] = React.useState(0);
+
+  // Handle tab change between ability types
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  return (
+    <div>
+      <Tabs
+        centered
+        value={value}
+        onChange={handleChange}
+        aria-label="Ability tabs"
+      >
+        {rootAbilities?.map((ability, index) => (
+          <Tab
+            key={ability.name}
+            label={ability.type}
+            sx={{
+              color:
+                Object.values($Enums.Class).includes(
+                  ability.type as $Enums.Class
+                ) && userClass != (ability.type as $Enums.Class)
+                  ? "salmon"
+                  : "primary",
+            }}
+            style={{
+              borderRadius: "10px",
+            }}
+            {...a11yProps(index)}
+          />
+        ))}
+      </Tabs>
+
+      <div className="flex flex-col justify-center mx-20 ">
+        {rootAbilities &&
+          rootAbilities.map((ability, index) => (
+            <CustomTabPanel key={ability.name} value={value} index={index}>
+              <AbilityTree
+                userClass={userClass}
+                rootAbilities={ability}
+                userAbilities={userAbilities}
+              />
+            </CustomTabPanel>
+          ))}
+      </div>
+    </div>
+  );
+}

@@ -1,17 +1,17 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserClan, getUserByUsername } from "@/data/user";
+import { getMembersByCurrentUserGuild, getUserByUsername } from "@/data/user";
 import { Button, LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
-import { AutoAwesome, Circle, Diamond } from "@mui/icons-material";
+import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserAbilities } from "@/data/abilities";
 import { getUserEffects } from "@/data/effects";
 import TimeLeft from "@/components/TimeLeft";
-import Ability from "@/components/Ability";
-import Link from "next/link";
+import InformationBox from "./_components/InformationBox";
+import AbilityCard from "@/components/AbilityCard";
 
 export default async function ProfilePage({
   params: { username },
@@ -24,38 +24,14 @@ export default async function ProfilePage({
     notFound();
   }
 
-  const clanMembers = await getMembersByCurrentUserClan(user.guildName || "");
+  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   const userAbilities = await getUserAbilities(user.id);
   const userEffects = await getUserEffects(user.id);
 
-  // Server-side component: date-time check
-  const currentDate = new Date();
-  const isWeekend = () => {
-    const dayOfWeek = currentDate.getDay();
-    return dayOfWeek === 0 || dayOfWeek === 6;
-  };
-
   return (
     <MainContainer>
-      {/* If the user has not recieved mana today, and it is not weekend  */}
-      {user.lastMana.toISOString().slice(0, 10) !=
-        currentDate.toISOString().slice(0, 10) &&
-        !isWeekend() && (
-          <Paper
-            elevation={6}
-            className="m-3 p-5 flex gap-5 text-center justify-center"
-          >
-            <Typography variant="h5" align="center">
-              You sense magic in the air
-            </Typography>
-            <Link href="/mana">
-              <Button variant="contained" color="primary">
-                Get mana
-              </Button>
-            </Link>
-          </Paper>
-        )}
+      <InformationBox user={user} />
       <div className="flex flex-col justify-center md:flex-row">
         {user.guildName && (
           <Paper
@@ -65,7 +41,7 @@ export default async function ProfilePage({
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
-            {clanMembers?.map((member: any) =>
+            {guildMembers?.map((member) =>
               member.username !== user.username ? (
                 <MiniatureProfile key={member.id} member={member} />
               ) : null
@@ -79,7 +55,11 @@ export default async function ProfilePage({
           <div className="from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full">
             <Image
               className="rounded-full"
-              src={"/classes/" + user.image + ".jpg" || ""}
+              src={
+                user.hp !== 0
+                  ? "/classes/" + user.image + ".jpg"
+                  : "/classes/grave.jpg"
+              }
               alt={user.username || ""}
               width={250}
               height={250}
@@ -112,12 +92,12 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.xp} / {500}
+                XP: {user.xp} / {user.xpToLevel}
               </Typography>
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.hp / user.hpMax) * 100}
+                value={(user.xp / user.xpToLevel) * 100}
               />
             </div>
             <div>
@@ -167,30 +147,50 @@ export default async function ProfilePage({
               Active effects
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
-              {userEffects?.map((effect: any) => (
-                <Paper
-                  elevation={10}
-                  key={effect.ability.name}
-                  className="text-center items-center p-2"
-                >
-                  <Typography variant="h6">{effect.ability.name}</Typography>
-                  <TimeLeft endTime={new Date(effect.endTime)} />
-                  <AutoAwesome />
-                </Paper>
-              ))}
+              {userEffects?.map(
+                (effect) =>
+                  effect.ability !== null && (
+                    <Paper
+                      elevation={10}
+                      key={effect.ability.name}
+                      className=" flex flex-col justify-center text-center items-center p-2"
+                    >
+                      <Image
+                        className="rounded-full border-slate-700 border-2"
+                        src={"/abilities/" + effect.ability.name + ".jpg"}
+                        alt={effect.ability.name}
+                        draggable={false}
+                        width={50}
+                        height={50}
+                      />
+                      <Typography variant="h6">
+                        {effect.ability.name.replace("-", " ")}
+                      </Typography>
+                      {effect.endTime && (
+                        <TimeLeft endTime={new Date(effect.endTime)} />
+                      )}
+                    </Paper>
+                  )
+              )}
             </div>
           </Paper>
         </div>
       </div>
-      <Paper elevation={6} className="mx-3">
+      <Paper elevation={6} className="mx-3 text-center">
         <Typography variant="h4" align="center">
           Abilities
         </Typography>
-        <div className="grid grid-cols-6 gap-3 p-5">
-          {userAbilities?.map((ability: any) => (
-            <Ability key={ability.id} ability={ability} />
-          ))}
-        </div>
+        {user.hp !== 0 ? (
+          <div className="grid grid-cols-6 gap-3 p-5">
+            {userAbilities?.map((ability) => (
+              <AbilityCard key={ability.id} ability={ability} />
+            ))}
+          </div>
+        ) : (
+          <Typography variant="h5" color="red" className="py-5">
+            The dead can do nothing
+          </Typography>
+        )}
       </Paper>
     </MainContainer>
   );

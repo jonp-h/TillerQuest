@@ -4,22 +4,22 @@ import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
 
-interface ManaFieldProps {
+interface ManaFormProps {
   user: User;
   isWeekend: boolean;
   currentDate: Date;
   correctLocation: boolean;
 }
 
-const ManaField: React.FC<ManaFieldProps> = ({
+function ManaForm({
   user,
   isWeekend,
   currentDate,
   correctLocation,
-}) => {
+}: ManaFormProps) {
   const [feedback, setFeedback] = React.useState<string | null>(null);
 
-  const handleGetMana = async (event: any) => {
+  const handleGetMana = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (
       user.lastMana.toISOString().slice(0, 10) ===
@@ -66,6 +66,6 @@ const ManaField: React.FC<ManaFieldProps> = ({
       </form>
     </div>
   );
-};
+}
 
-export default ManaField;
+export default ManaForm;

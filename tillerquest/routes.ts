@@ -5,7 +5,7 @@
  * These routes do not require authentication.
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/signup"];
 
 /**
  * Routes that handle login and registration.
@@ -23,12 +23,12 @@ export const authRoutes = ["/auth/login", "/auth/error"];
 export const apiAuthPrefix = "/api/auth";
 
 /**
- * The prefix for API authentication routes.
- * Routes that start with this prefix are used for API authentication.
- * These routes need to be accessible by the public.
+ * The prefix for admin authentication routes.
+ * Routes that start with this prefix are used for admin authentication.
+ * These routes should be protected and only accessible by admins.
  * @type {string}
  */
-export const adminPrefix = "/asgard";
+export const adminPrefix = "/gamemaster";
 
 /**
  * Route to redirect to after login.

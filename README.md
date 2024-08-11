@@ -30,7 +30,7 @@
 
 - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
-- [Google's Materiaul Icons](https://fonts.google.com/icons) for icons.
+- [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
 
@@ -41,6 +41,7 @@
 $ git clone
 
 # Go into the repository
+$ cd /tillerquest/
 
 # Install dependencies
 $ npm i
@@ -48,6 +49,62 @@ $ npm i
 # Run the app
 $ npm run dev
 ```
+
+## Conventions
+
+**This project uses Typescript**
+
+- Types should be defined as interfaces
+- Types specific to a component or page should be kept in that page
+- Types required in multiple components should be kept in an interfaces.ts file in the closest \_components folder
+- _Any_ should rarely be used
+
+### Project structure
+
+- The application use the Next.js app-router.
+- Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
+- Global and reusable components should be kept in the components folder at the root of the project.
+- Remember to use Pascal-case for components.
+
+tillerquest/
+├── .env
+├── .eslintrc.json
+├── .gitignore
+├── .next/
+│ ├── app-build-manifest.json
+│ ├── build-manifest.json
+│ ├── cache/
+│ ├── fallback-build-manifest.json
+│ ├── package.json
+│ └── react-loadable-manifest.json
+├── app/
+│ ├── (protected)/
+│ │ ├── page/
+│ │ │ ├── \_page-specific-components/
+│ │ │ │ └── Component.tsx
+│ │ │ └── page.tsx
+│ │ └── ...
+├── auth.config.ts
+├── auth.ts
+├── components/
+│ ├── navbar/
+│ │ ├── Navbar.tsx
+│ │ └── NavbarContent.tsx
+│ ├── MainContainer.tsx
+│ └── SecondaryContainer.tsx
+├── data/
+├── lib/
+├── middleware.ts
+├── next-auth.d.ts
+├── next-env.d.ts
+├── next.config.mjs
+├── package.json
+├── postcss.config.mjs
+├── prisma/
+├── public/
+├── routes.ts
+├── tailwind.config.ts
+└── tsconfig.json
 
 - Tailwind responsive:
 
@@ -57,12 +114,18 @@ $ npm run dev
   - sm: Smartphone
   - xs: Phone (reduced screen size)
 
-- Client side rendering:
+- Client Side Rendering:
 
   - Try to keep client side rendering inside "client based components" where possible
-  - Eg. the needed client side code should be moved inside its own component
+    - Eg. the needed client side code should be moved inside its own component
+    - This is to take advatage of SSR (Server Side Rendering)
 
-- Auth:
+- Server Side Rendering:
+
+- SSR is the preferred.
+- All page.tsx should be kept SSR.
+
+- Authentication of users:
   - Client side pages use useSession()
   - Server side pages use auth()
 
@@ -70,7 +133,7 @@ $ npm run dev
 
 ### Main color Scheme:
 
-(made for dark mode)
+TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and never will be)**.
 
 - **Main color:**
   - slate-900 #0f172a
@@ -82,25 +145,6 @@ $ npm run dev
   - text: purple-500 #a855f7
 - **Text:**
   - white
-
-<!--
-
-To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-$ git clone
-
-# Go into the repository
-
-# Install dependencies
-$ npm install
-
-# Run the app
-$ npm start
-```
-
--->
 
 ## Credits
 

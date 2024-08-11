@@ -1,47 +1,63 @@
 "use client";
 import { buyAbility, selectAbility } from "@/data/abilities";
-import { createAbility } from "@/data/admin";
 import { Button, Typography } from "@mui/material";
-import { Ability, User } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import AbilityUserSelect from "./AbilityUserSelect";
 
-export default function UseAbilityForm({
+type guildMembers =
+  | {
+      id: string;
+      image: string | null;
+      username: string | null;
+      hp: number;
+      hpMax: number;
+      mana: number;
+      manaMax: number;
+    }[]
+  | null;
+
+export default function AbilityForm({
   ability,
   user,
   userOwnsAbility,
   missingParentAbility,
+  guildMembers,
 }: {
   ability: Ability;
   user: User;
   userOwnsAbility: boolean;
   missingParentAbility: boolean;
+  guildMembers: guildMembers;
 }) {
+  const [selectedUser, setSelectedUser] = React.useState<string>(
+    guildMembers?.[0].id || ""
+  );
+
   const [error, setError] = useState<string | null>(null);
 
   const insignificantMana = user.mana < ability.cost;
 
+  // const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
+
+  const userIsCorrectClass =
+    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
+    user.class === ability.type;
+
   const router = useRouter();
 
-  const useAbility = async (event: any) => {
+  // ---------------- Use ability ----------------
+
+  const useAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    selectAbility(
-      user.id,
-      user.mana,
-      ability.type,
-      ability.cost,
-      ability.value,
-      ability.xpGiven,
-      ability.duration
-    );
-
-    router.push("/profile/" + user.username);
-    router.refresh();
+    setError((await selectAbility(user, selectedUser, ability)) ?? null);
   };
 
-  const handleBuyAbility = async (event: any) => {
+  // ---------------- Buy ability ----------------
+
+  const handleBuyAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (missingParentAbility) {
@@ -50,14 +66,17 @@ export default function UseAbilityForm({
     }
 
     if (user.gemstones < ability.cost) {
-      setError("You don't have enough mana to buy this ability.");
+      setError("You don't have enough gemstones to buy this ability.");
       return;
     }
 
-    await buyAbility(user.id, ability.name, ability.cost);
+    setError(await buyAbility(user.id, ability));
 
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     router.refresh();
   };
+
+  // -----------------------
 
   return (
     <>
@@ -66,12 +85,19 @@ export default function UseAbilityForm({
           {error}
         </Typography>
       )}
+      {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         !ability.isPassive ? (
+          // Rendered when user owns active ability
           <form
             onSubmit={useAbility}
             className="flex flex-col gap-4 items-center"
           >
+            <AbilityUserSelect
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+              guildMembers={guildMembers}
+            />
             {insignificantMana && (
               <Typography variant="body1" color="error">
                 You don&apos;t have enough mana to use this ability.
@@ -88,6 +114,7 @@ export default function UseAbilityForm({
             </Button>
           </form>
         ) : (
+          // Rendered when user owns passive ability
           <Button
             variant="contained"
             color="primary"
@@ -98,7 +125,9 @@ export default function UseAbilityForm({
             Activated
           </Button>
         )
-      ) : (
+      ) : // Rendered when user does not own ability
+
+      userIsCorrectClass ? (
         <form
           onSubmit={handleBuyAbility}
           className="flex flex-col gap-4 items-center"
@@ -111,6 +140,10 @@ export default function UseAbilityForm({
             Buy ability
           </Button>
         </form>
+      ) : (
+        <Typography variant="body1" color="error">
+          You&apos;re not the correct class to buy this ability.
+        </Typography>
       )}
     </>
   );

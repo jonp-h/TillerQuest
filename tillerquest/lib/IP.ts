@@ -6,7 +6,7 @@ export async function IP() {
   const FALLBACK_IP_ADDRESS = "0.0.0.0";
   const forwardedFor = headers().get("x-forwarded-for");
 
-  var ip = headers().get("x-real-ip") ?? FALLBACK_IP_ADDRESS;
+  let ip = headers().get("x-real-ip") ?? FALLBACK_IP_ADDRESS;
 
   if (forwardedFor) {
     ip = forwardedFor.split(",")[0] ?? FALLBACK_IP_ADDRESS;
@@ -15,7 +15,7 @@ export async function IP() {
   switch (ip) {
     case FALLBACK_IP_ADDRESS:
       return false;
-    case "::ffff:127.0.0.1":
+    case process.env.NEXT_PUBLIC_MAGICAL_AREA:
       return true;
     default:
       return false;

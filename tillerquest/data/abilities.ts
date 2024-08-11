@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { Ability, User } from "@prisma/client";
+import { checkHP, checkLevelUp } from "./helpers";
 
 // due to the limitations of Prisma, we can't add do recursive queries.
 // This manual approach goes 4 levels deep
@@ -85,48 +87,6 @@ export const getAbility = async (abilityName: string) => {
   }
 };
 
-// decrement the cost from the user's gemstones
-const startTransaction = async (buyingUserId: string, abilityCost: number) => {
-  try {
-    await db.user.update({
-      where: {
-        id: buyingUserId,
-      },
-      data: {
-        gemstones: {
-          decrement: abilityCost,
-        },
-      },
-    });
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-};
-
-export const buyAbility = async (
-  userId: string,
-  abilityName: string,
-  abilityCost: number
-) => {
-  if (await startTransaction(userId, abilityCost)) {
-    try {
-      await db.userAbility.create({
-        data: {
-          userId,
-          abilityName,
-        },
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  } else {
-    return "Insufficient funds";
-  }
-};
-
 export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string
@@ -144,133 +104,145 @@ export const checkIfUserOwnsAbility = async (
   }
 };
 
-// Ability usage
+// ------------------- Ability transactions -------------------
+
+/**
+ * Buys an ability for a user.
+ *
+ * @param userId - The ID of the user.
+ * @param ability - The ability to be bought.
+ * @returns A promise that resolves to "Success" if the ability is successfully bought, or a string indicating an error if something goes wrong.
+ */
+export const buyAbility = async (userId: string, ability: Ability) => {
+  try {
+    return db.$transaction(async (db) => {
+      // decrement the cost from the user's gemstones
+      const user = await db.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          gemstones: {
+            decrement: ability.cost,
+          },
+        },
+      });
+
+      // check if user has enough gemstones
+      if (user.gemstones < 0) {
+        throw new Error("Insufficient gemstones");
+      }
+
+      await db.userAbility.create({
+        data: {
+          userId,
+          abilityName: ability.name,
+        },
+      });
+
+      if (ability.isPassive) {
+        // user can only have one passive of each type (mana, health, xp)
+        // delete the old one, before adding the upgraded version
+        await db.effectsOnUser.deleteMany({
+          where: {
+            userId,
+            effectType: ability.type,
+          },
+        });
+
+        // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
+        await db.effectsOnUser.create({
+          data: {
+            userId,
+            effectType: ability.type,
+            abilityName: ability.name,
+            value: ability.value ?? 0,
+            endTime: ability.duration
+              ? new Date(Date.now() + ability.duration * 60000).toISOString()
+              : undefined,
+          },
+        });
+      }
+      return "Success";
+    });
+  } catch (error) {
+    return "Something went wrong with " + error;
+  }
+};
+
+// ------------------- Ability usage -------------------
 
 export const selectAbility = async (
-  userId: string,
-  userMana: number,
-  abilityType: string,
-  abilityCost: number,
-  abilityValue: number | null,
-  abilityXpGiven: number,
-  abilityDuration: number | null
+  user: User,
+  targetUserId: string,
+  ability: Ability
 ) => {
-  switch (abilityType) {
-    case "Debuff":
-      var endTime = new Date();
-      endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
-      var endTimeISOString = endTime.toISOString();
-      useDebuffAbility(
-        userId,
-        userId,
-        userMana || 0,
-        abilityCost,
-        abilityValue || 0,
-        endTimeISOString,
-        abilityXpGiven
-      );
+  if (user.hp === 0) {
+    return "You can't use abilities while dead";
+  }
+
+  switch (ability.type) {
+    // case "":
+    //   let endTime = new Date();
+    //   endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
+    //   let endTimeISOString = endTime.toISOString();
+    //   return useDebuffAbility(
+    //     userId,
+    //     userId,
+    //     userMana || 0,
+    //     abilityCost,
+    //     abilityValue || 0,
+    //     endTimeISOString,
+    //     abilityXpGiven
+    //   );
     case "Heal":
-      useHealAbility(
-        userId,
-        userId,
-        userMana || 0,
-        abilityCost,
-        abilityValue || 0,
-        abilityXpGiven
-      );
+      return await useHealAbility(user, targetUserId, ability);
   }
 };
 
 // finally decrement the cost from the user's mana
 // and increment the user's xp by the xpGiven
-const finalizeAbilityUsage = async (
-  castingUserId: string,
-  abilityManaCost: number,
-  xpGiven: number
-) => {
-  await db.user.update({
-    where: {
-      id: castingUserId,
-    },
-    data: {
-      mana: {
-        decrement: abilityManaCost,
-      },
-      xp: {
-        increment: xpGiven,
-      },
-    },
-  });
-};
-
-// Helper functions for specific ability types
-
-const checkHP = async (targetUserId: string, hpValue: number) => {
+const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
   try {
-    const targetHP = await db.user.findFirst({
+    await db.user.update({
       where: {
-        id: targetUserId,
+        id: castingUser.id,
       },
-      select: { hp: true, hpMax: true },
-    });
-
-    if (targetHP?.hp === 0) {
-      return 0;
-    } else if (targetHP && targetHP?.hp + hpValue >= targetHP?.hpMax) {
-      return targetHP?.hpMax - targetHP?.hp;
-    } else {
-      return hpValue;
-    }
-  } catch {
-    return 0;
-  }
-};
-
-export const useDebuffAbility = async (
-  castingUserId: string,
-  targetUserId: string,
-  userMana: number,
-  abilityManaCost: number,
-  value: number,
-  endTime: string,
-  xpGiven: number
-) => {
-  if (userMana < abilityManaCost) {
-    return false;
-  }
-
-  try {
-    await db.effectsOnUser.create({
       data: {
-        userId: targetUserId,
-        value,
-        endTime,
+        mana: {
+          decrement: ability.cost,
+        },
+        xp: {
+          increment: ability.xpGiven,
+        },
       },
     });
-
-    await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
-
-    return true;
-  } catch {
-    return false;
+  } catch (error) {
+    console.error(error);
   }
+
+  // after reciving XP, the casting user should be checked for level up
+  checkLevelUp(castingUser);
 };
+
+// ---------------------------- Helper functions for specific ability types ----------------------------
 
 export const useHealAbility = async (
-  castingUserId: string,
+  castingUser: User,
   targetUserId: string,
-  userMana: number,
-  abilityManaCost: number,
-  value: number,
-  xpGiven: number
+  ability: Ability
 ) => {
-  if (userMana < abilityManaCost) {
-    return false;
+  if (castingUser.mana < ability.cost) {
+    return "Insufficient mana";
   }
 
-  value = await checkHP(targetUserId, value);
-  if (value === 0) {
-    return false;
+  const valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
+  if (valueToHeal === 0) {
+    return "Target is already at full health";
+  } else if (valueToHeal === "dead") {
+    return "You can't heal a dead target. The dead require a different kind of magic.";
+  } else if (typeof valueToHeal === "string") {
+    return valueToHeal;
   }
 
   try {
@@ -280,15 +252,16 @@ export const useHealAbility = async (
       },
       data: {
         hp: {
-          increment: value,
+          increment: valueToHeal,
         },
       },
     });
 
-    await finalizeAbilityUsage(castingUserId, abilityManaCost, xpGiven);
+    await finalizeAbilityUsage(castingUser, ability);
 
-    return true;
+    return "Target healed for " + valueToHeal;
   } catch {
-    return false;
+    console.log("Error using heal ability");
+    return "Something went wrong";
   }
 };
