@@ -78,14 +78,17 @@ DATABASE_URL=...
 
 ```
 
-- Inspect the database in Mongodb or with "npx prisma studio"
-
 ```bash
 $ cd /data/mocking/
 
 $ node generate.mjs #To mock an example database
 
 ```
+
+- Inspect the database in Mongodb website or with "npx prisma studio"
+  - If the mocking was successful the database should have example data
+- Create your own user by signing in with GitHub OAuth and creating a user
+- Happy testing!
 
 ## Conventions
 
