@@ -37,7 +37,8 @@ export default function AbilityForm({
 
   const [error, setError] = useState<string | null>(null);
 
-  const insignificantMana = user.mana < ability.cost;
+  // If mana cost is null, the ability is a passive ability
+  const lackingMana = user.mana < (ability.manaCost || 0);
 
   // const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
 
@@ -65,7 +66,7 @@ export default function AbilityForm({
       return;
     }
 
-    if (user.gemstones < ability.cost) {
+    if (user.gemstones < ability.gemstoneCost) {
       setError("You don't have enough gemstones to buy this ability.");
       return;
     }
@@ -98,7 +99,7 @@ export default function AbilityForm({
               setSelectedUser={setSelectedUser}
               guildMembers={guildMembers}
             />
-            {insignificantMana && (
+            {lackingMana && (
               <Typography variant="body1" color="error">
                 You don&apos;t have enough mana to use this ability.
               </Typography>
@@ -108,7 +109,7 @@ export default function AbilityForm({
               color="primary"
               size="large"
               type="submit"
-              disabled={insignificantMana}
+              disabled={lackingMana}
             >
               Use
             </Button>
