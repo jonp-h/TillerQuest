@@ -123,7 +123,7 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         },
         data: {
           gemstones: {
-            decrement: ability.cost,
+            decrement: ability.gemstoneCost,
           },
         },
       });
@@ -210,10 +210,10 @@ const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
       },
       data: {
         mana: {
-          decrement: ability.cost,
+          decrement: ability.manaCost || 0,
         },
         xp: {
-          increment: ability.xpGiven,
+          increment: ability.xpGiven || 0,
         },
       },
     });
@@ -232,7 +232,7 @@ export const useHealAbility = async (
   targetUserId: string,
   ability: Ability
 ) => {
-  if (castingUser.mana < ability.cost) {
+  if (castingUser.mana < (ability.manaCost || 0)) {
     return "Insufficient mana";
   }
 

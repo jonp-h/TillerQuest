@@ -71,9 +71,12 @@ export default async function AbilitiesPage({
             </div>
           </div>
           <Typography variant="h3">{ability.name.replace("-", " ")}</Typography>
-          <div className="flex justify-around">
+          <div className="flex justify-around mb-3">
             <Typography variant="h6" color="aquamarine">
               {ability.type}
+            </Typography>
+            <Typography variant="h6" color="error">
+              Gemstone cost: {ability.gemstoneCost}
             </Typography>
             {!ability.isPassive && (
               <Typography variant="h6" color="orange">
@@ -82,10 +85,13 @@ export default async function AbilitiesPage({
             )}
           </div>
           <Typography variant="body1">{ability.description}</Typography>
-          <div className="flex justify-around">
-            <Typography variant="h6" color="error">
-              Cost: {ability.cost}
-            </Typography>
+          <div className="flex justify-around my-3">
+            {ability.manaCost && (
+              <Typography variant="h6" color="cyan">
+                Mana cost: {ability.manaCost}
+              </Typography>
+            )}
+
             <Typography variant="h6" color="cyan">
               Value: {ability.value}
             </Typography>

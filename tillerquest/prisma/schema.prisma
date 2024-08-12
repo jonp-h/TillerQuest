@@ -99,15 +99,16 @@ model Guild {
 // current limitations with prisma studio make the admin unable to add new records in models with many-to-many relationships
 // https://github.com/prisma/studio/issues/980
 model Ability {
-  name        String      @id @map("_id")
-  type        AbilityType // Can be generic or class specific
-  isPassive   Boolean     @default(false)
-  description String?
-  duration    Int?
-  icon        String?
-  cost        Int?        @default(1)
-  xpGiven     Int?        @default(0)
-  value       Int?
+  name         String      @id @map("_id")
+  type         AbilityType // Can be generic or class specific
+  isPassive    Boolean     @default(false)
+  description  String?
+  duration     Int?
+  icon         String?
+  gemstoneCost Int         @default(1)
+  manaCost     Int?        @default(2)
+  xpGiven      Int?        @default(0)
+  value        Int?
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
   parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: NoAction, onUpdate: NoAction)

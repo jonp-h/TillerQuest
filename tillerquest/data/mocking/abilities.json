@@ -6,7 +6,8 @@
     "description": "Restores health to a target.",
     "duration": null,
     "icon": "heal.png",
-    "cost": 10,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 10,
     "value": 4,
     "parentAbility": null
@@ -18,7 +19,8 @@
     "description": "Restores a large amount of health to a target.",
     "duration": null,
     "icon": "heal2.png",
-    "cost": 10,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 15,
     "value": 6,
     "parentAbility": "Heal"
@@ -30,7 +32,8 @@
     "description": "Restores a massive amount of health to a target.",
     "duration": null,
     "icon": "heal3.png",
-    "cost": 10,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 20,
     "value": 8,
     "parentAbility": "Greater-Heal"
@@ -42,7 +45,8 @@
     "description": "Every time you are healed, you gain 1 extra health.",
     "duration": null,
     "icon": "vigor.png",
-    "cost": null,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": null,
     "value": 1,
     "parentAbility": null
@@ -54,7 +58,8 @@
     "description": "Every time you are healed, you gain 3 extra health.",
     "duration": null,
     "icon": "vigor2.png",
-    "cost": null,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": null,
     "value": 3,
     "parentAbility": "Vigor"
@@ -66,7 +71,8 @@
     "description": "Every time you are healed, you gain 5 extra health.",
     "duration": null,
     "icon": "vigor3.png",
-    "cost": null,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": null,
     "value": 5,
     "parentAbility": "Enhanced-Vigor"
@@ -78,7 +84,8 @@
     "description": "Every time you gain mana, you gain 1 extra mana.",
     "duration": null,
     "icon": "mana-regen.png",
-    "cost": null,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": null,
     "value": 1,
     "parentAbility": null
@@ -90,7 +97,8 @@
     "description": "Every time you gain mana, you gain 3 extra mana.",
     "duration": null,
     "icon": "mana-regen.png",
-    "cost": null,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": null,
     "value": 3,
     "parentAbility": "Arcane-Focus"
@@ -102,7 +110,8 @@
     "description": "You may give 2 mana of your mana to another player.",
     "duration": null,
     "icon": "mana-regen.png",
-    "cost": 2,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 20,
     "value": 2,
     "parentAbility": "Arcane-Focus"
@@ -114,7 +123,8 @@
     "description": "With your knowledge of nature, you can heal a target for more than normal.",
     "duration": null,
     "icon": "heal.png",
-    "cost": 2,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 10,
     "value": 6,
     "parentAbility": null
@@ -126,7 +136,8 @@
     "description": "You appeal to the game master, and plead for extended time.",
     "duration": 60,
     "icon": "postpone.png",
-    "cost": 10,
+    "gemstoneCost": 1,
+    "manaCost": 2,
     "xpGiven": 50,
     "value": null,
     "parentAbility": null

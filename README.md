@@ -53,7 +53,7 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- Create mongodb user and test database
+- Create Mongodb user and database
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
 
@@ -77,6 +77,8 @@ DATABASE_URL=...
 #Your connection string from mongodb. Should contain username and password. (https://www.mongodb.com/docs/manual/reference/connection-string/)
 
 ```
+
+- Inspect the database in Mongodb or with "npx prisma studio"
 
 ```bash
 $ cd /data/mocking/

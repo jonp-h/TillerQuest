@@ -19,7 +19,8 @@ export const createAbility = async () => {
     description: "test",
     duration: 1,
     icon: "test",
-    cost: 1,
+    manaCost: 2,
+    gemStoneCost: 1,
     xpGiven: 1,
     value: 1,
     parents: {
