@@ -1,0 +1,34 @@
+[
+  {
+    "id": "66b104dde260e59018c7d90f",
+    "username": "Ymir",
+    "name": "Snow",
+    "lastname": "Dog",
+    "email": "john@example.com",
+    "image": "Druid",
+    "hp": 88,
+    "hpMax": 100,
+    "mana": 37,
+    "manaMax": 50,
+    "level": 10,
+    "guildName": "Testers",
+    "role": "USER",
+    "class": "Druid"
+  },
+  {
+    "id": "76b420dde260e59018c7d78f",
+    "username": "Button",
+    "name": "Benja",
+    "lastname": "Min",
+    "email": "karl@example.com",
+    "image": "Barbarian",
+    "hp": 44,
+    "hpMax": 100,
+    "mana": 20,
+    "manaMax": 50,
+    "level": 8,
+    "guildName": "Testers",
+    "role": "USER",
+    "class": "Barbarian"
+  }
+]

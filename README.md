@@ -50,6 +50,41 @@ $ npm i
 $ npm run dev
 ```
 
+#### Setup test env
+
+- First complete the above instructions
+- Create mongodb user and test database
+- Create .env inside project folder (same folder as app/)
+  - Create the following variables and replace the "..."
+
+```
+AUTH_SECRET=...
+# This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+
+AUTH_GITHUB_ID=...
+#In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+AUTH_GITHUB_SECRET=...
+#Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+NEXT_PUBLIC_NEW_USER_SECRET=...
+#Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
+
+NEXT_PUBLIC_MAGICAL_AREA=...
+#IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
+
+DATABASE_URL=...
+#Your connection string from mongodb. Should contain username and password. (https://www.mongodb.com/docs/manual/reference/connection-string/)
+
+```
+
+```bash
+$ cd /data/mocking/
+
+$ node generate.mjs #To mock an example database
+
+```
+
 ## Conventions
 
 **This project uses Typescript**
@@ -122,8 +157,8 @@ tillerquest/
 
 - Server Side Rendering:
 
-- SSR is the preferred.
-- All page.tsx should be kept SSR.
+  - SSR is preferred when possible
+  - All page.tsx should be kept SSR
 
 - Authentication of users:
   - Client side pages use useSession()

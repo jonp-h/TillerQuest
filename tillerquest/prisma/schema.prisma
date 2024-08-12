@@ -72,7 +72,7 @@ model User {
   effects EffectsOnUser[] // m-n relation to effects on users. A user can have many effects
   // effectId String[] @db.ObjectId
 
-  guild     Guild?  @relation(fields: [guildName], references: [name])
+  guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   guildName String?
 
   role UserRole @default(NEW)
@@ -105,8 +105,8 @@ model Ability {
   description String?
   duration    Int?
   icon        String?
-  cost        Int         @default(1)
-  xpGiven     Int         @default(0)
+  cost        Int?        @default(1)
+  xpGiven     Int?        @default(0)
   value       Int?
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
@@ -114,9 +114,8 @@ model Ability {
   // childAbilities String[] // m-n relation to child abilities. An ability can have many child abilities
   children      Ability[] @relation("AbilityHierarchy")
 
-  users UserAbility[] // m-n relation to users. A ability can owned by many users
-
-  userEffects EffectsOnUser[] // m-n relation to effects on users. An ability can have effects on many users
+  users       UserAbility[] // m-n relation to users. A ability can owned by many users 
+  userEffects EffectsOnUser[] // m-n relation to effects on users. An ability can have effects on many users 
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
@@ -124,8 +123,8 @@ model UserAbility {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   userId      String  @db.ObjectId
   abilityName String
-  user        User    @relation(fields: [userId], references: [id])
-  ability     Ability @relation(fields: [abilityName], references: [name])
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ability     Ability @relation(fields: [abilityName], references: [name], onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
@@ -151,8 +150,8 @@ model EffectsOnUser {
   endTime     DateTime?
   value       Int?
 
-  user    User     @relation(fields: [userId], references: [id])
-  ability Ability? @relation(fields: [abilityName], references: [name])
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ability Ability? @relation(fields: [abilityName], references: [name], onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
