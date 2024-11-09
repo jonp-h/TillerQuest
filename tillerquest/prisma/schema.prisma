@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,9 +17,13 @@ enum SchoolClass {
   IM1
   IM2
   IM3
+  IM4
   IT1
   IT2
   IT3
+  MP1
+  MP2
+  MP3
 }
 
 enum Class {
@@ -45,7 +49,7 @@ enum AbilityType {
 }
 
 model User {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(cuid())
   name        String?
   username    String?      @unique
   lastname    String?
@@ -69,7 +73,8 @@ model User {
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
   // abilityNames String[]
 
-  effects EffectsOnUser[] // m-n relation to effects on users. A user can have many effects
+  effects EffectsOnUser[]
+  // m-n relation to effects on users. A user can have many effects
   // effectId String[] @db.ObjectId
 
   guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
@@ -84,14 +89,15 @@ model User {
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   // Authenticator Authenticator[]
   // Session   Session[]          FIXME: Removed?
+  Session   Session[]
 }
 
 model Guild {
-  name String @id @map("_id")
+  name String @id
 
   members User[]
 }
@@ -99,7 +105,7 @@ model Guild {
 // current limitations with prisma studio make the admin unable to add new records in models with many-to-many relationships
 // https://github.com/prisma/studio/issues/980
 model Ability {
-  name         String      @id @map("_id")
+  name         String      @id @default(cuid())
   type         AbilityType // Can be generic or class specific
   isPassive    Boolean     @default(false)
   description  String?
@@ -121,11 +127,11 @@ model Ability {
 
 // relational model to explicitly manage the M-N relationship between User and Ability
 model UserAbility {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @db.ObjectId
+  id          String  @id @default(cuid())
+  userId      String
   abilityName String
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ability     Ability @relation(fields: [abilityName], references: [name], onDelete: Cascade)
+  user        User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  ability     Ability @relation(fields: [abilityName], references: [name], onUpdate: Cascade, onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
@@ -144,55 +150,57 @@ model UserAbility {
 
 // relational model to explicitly manage the M-N relationship between User and Ability
 model EffectsOnUser {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String      @db.ObjectId
+  id          String      @id @default(cuid())
+  userId      String
   abilityName String?
   effectType  AbilityType
   endTime     DateTime?
   value       Int?
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ability Ability? @relation(fields: [abilityName], references: [name], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade, onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
 
 // 3rd party authentication. OAuth
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.String
-  session_state     String?
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
-// model Session {
-//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-//   sessionToken String   @unique
-//   userId       String   @db.ObjectId
-//   expires      DateTime
-//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
 
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
 
 // model VerificationToken {
-//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
 //   identifier String
 //   token      String
 //   expires    DateTime

@@ -1,11 +1,11 @@
 import NextAuth from "next-auth";
+import { db } from "./lib/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config";
 import { Class, UserRole } from "@prisma/client";
-import { db } from "./lib/db";
 import { getUserById, updateUser } from "./data/user";
 
-export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   ...authConfig,
@@ -35,7 +35,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
 
       if (session.user) {
         session.user.lastname = token.lastname as string;
-        session.user.name = token.name;
+        session.user.name = token.name as string;
       }
 
       return session;
@@ -47,7 +47,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
 
       if (!existingUser) return token;
 
-      // should only trigger on user creation
+      // should only trigger on user successful setup/user-creation
       if (trigger === "update") {
         console.log("updating role in db", session.role);
         token.role = session.role;

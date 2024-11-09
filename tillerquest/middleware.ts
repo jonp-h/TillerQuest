@@ -1,8 +1,8 @@
-// Session expiry every time it is called
+// Will update session expiry every time it is called
 // Avoid using queries in the middleware, as Prisma does not work on the edge
 
-import authConfig from "./auth.config";
 import NextAuth from "next-auth";
+import authConfig from "./auth.config";
 import {
   adminPrefix,
   apiAuthPrefix,
@@ -34,7 +34,7 @@ export default middleware(async (req): Promise<any> => {
   }
 
   // if user's role is NEW redirect to user creation page. Do not redirect if already on creation page
-  if (req.auth?.user.role === "NEW") {
+  if (req.auth?.user?.role === "NEW") {
     if (req.nextUrl.pathname === DEFAULT_CREATION_PAGE) {
       return null;
     }
@@ -47,7 +47,7 @@ export default middleware(async (req): Promise<any> => {
     console.log("redirecting to profile, no admin");
 
     return Response.redirect(
-      new URL(DEFAULT_LOGIN_REDIRECT + "?redirected=true", nextUrl)
+      new URL(DEFAULT_LOGIN_REDIRECT + "?redirected=true", nextUrl),
     );
   }
 

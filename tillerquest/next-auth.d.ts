@@ -9,6 +9,7 @@ import { Class } from "@prisma/client";
 // for example, to implement role-based access control.
 
 export type ExtendedUser = DefaultSession["user"] & {
+  name: string;
   username: string;
   lastname: string;
   class: Class;
@@ -25,9 +26,10 @@ import { JWT } from "next-auth/jwt";
 
 declare module "auth/core/jwt" {
   interface JWT {
+    name: string;
     username: string;
     lastname: string;
-    role: UserRole;
     class: Class;
+    role: UserRole;
   }
 }

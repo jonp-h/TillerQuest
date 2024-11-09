@@ -2,7 +2,7 @@
 import { Button, Paper, Typography, TextField } from "@mui/material";
 import React, { useState } from "react";
 import Classes from "./Classes";
-import { getSession, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
 import { useRouter } from "next/navigation";
 import { $Enums } from "@prisma/client";
@@ -17,7 +17,7 @@ export default function CreateUserForm() {
   const [name, setName] = useState(data?.user.name);
   const [lastname, setLastname] = useState(data?.user.lastname);
   const [playerClass, setPlayerClass] = useState(
-    data?.user.class || $Enums.Class.Barbarian
+    data?.user.class || $Enums.Class.Barbarian,
   );
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -42,9 +42,10 @@ export default function CreateUserForm() {
     });
     // necessary refreshes before redirecting to profile
     getSession();
-    router.refresh();
+    // router.refresh();
     await update().then(() => {
-      router.push("/");
+      signOut();
+      // router.push("/");
     });
   };
 

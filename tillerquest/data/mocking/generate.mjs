@@ -18,36 +18,36 @@ async function main() {
   const guildsPath = path.join(__dirname, "guilds.json");
   const guildsData = JSON.parse(fs.readFileSync(guildsPath, "utf-8"));
 
-  // for (const guild of guildsData) {
-  //   await prisma.guild.create({
-  //     data: {
-  //       name: guild.name,
-  //     },
-  //   });
-  // }
-  // console.info("Guilds have been added to the database.");
+  for (const guild of guildsData) {
+    await prisma.guild.create({
+      data: {
+        name: guild.name,
+      },
+    });
+  }
+  console.info("Guilds have been added to the database.");
 
-  // for (const user of usersData) {
-  //   await prisma.user.create({
-  //     data: {
-  //       id: user.id,
-  //       username: user.username,
-  //       name: user.name,
-  //       lastname: user.lastname,
-  //       email: user.email,
-  //       image: user.image,
-  //       hp: user.hp,
-  //       hpMax: user.hpMax,
-  //       mana: user.mana,
-  //       manaMax: user.manaMax,
-  //       level: user.level,
-  //       guildName: user.guildName,
-  //       role: user.role,
-  //       class: user.class,
-  //     },
-  //   });
-  // }
-  // console.info("Users have been added to the database.");
+  for (const user of usersData) {
+    await prisma.user.create({
+      data: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        image: user.image,
+        hp: user.hp,
+        hpMax: user.hpMax,
+        mana: user.mana,
+        manaMax: user.manaMax,
+        level: user.level,
+        guildName: user.guildName,
+        role: user.role,
+        class: user.class,
+      },
+    });
+  }
+  console.info("Users have been added to the database.");
 
   for (const ability of abilitiesData) {
     await prisma.ability.create({

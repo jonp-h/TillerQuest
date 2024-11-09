@@ -36,11 +36,11 @@
 
 ## How To Use
 
-```bash
+```ps
 # Clone this repository
 $ git clone
 
-# Go into the repository
+# Enter the repository
 $ cd /tillerquest/
 
 # Install dependencies
@@ -53,7 +53,7 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- Create Mongodb user and database
+- Setup a local Mongodb instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
 
@@ -74,13 +74,15 @@ NEXT_PUBLIC_MAGICAL_AREA=...
 #IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
 
 DATABASE_URL=...
-#Your connection string from mongodb. Should contain username and password. (https://www.mongodb.com/docs/manual/reference/connection-string/)
+#Your connection string from mongodb. Should contain username and password in docker-compose. (https://www.mongodb.com/docs/manual/reference/connection-string/)
+# Example: mongodb://username:password@localhost:27018/TQ?retryWrites=true&w=majority&appName=TQ&authSource=admin
 
 ```
 
-- Inspect the database in Mongodb or with "npx prisma studio"
+- Inspect the database in MongodbCompass or with "npx prisma studio"
 
-```bash
+```ps
+
 $ cd /data/mocking/
 
 $ node generate.mjs #To mock an example database
@@ -91,8 +93,8 @@ $ node generate.mjs #To mock an example database
 
 **This project uses Typescript**
 
-- Types should be defined as interfaces
-- Types specific to a component or page should be kept in that page
+- Types should be defined as interfaces, to enable inheritance
+- Types specific to a component or page should be kept inside that file
 - Types required in multiple components should be kept in an interfaces.ts file in the closest \_components folder
 - _Any_ should rarely be used
 

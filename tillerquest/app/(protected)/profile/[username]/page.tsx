@@ -14,10 +14,11 @@ import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 
 export default async function ProfilePage({
-  params: { username },
+  params,
 }: {
   params: { username: string };
 }) {
+  const { username } = await params;
   const user = await getUserByUsername(username);
 
   if (!user) {
@@ -44,7 +45,7 @@ export default async function ProfilePage({
             {guildMembers?.map((member) =>
               member.username !== user.username ? (
                 <MiniatureProfile key={member.id} member={member} />
-              ) : null
+              ) : null,
             )}
           </Paper>
         )}
@@ -170,7 +171,7 @@ export default async function ProfilePage({
                         <TimeLeft endTime={new Date(effect.endTime)} />
                       )}
                     </Paper>
-                  )
+                  ),
               )}
             </div>
           </Paper>
