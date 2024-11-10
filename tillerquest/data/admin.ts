@@ -1,12 +1,9 @@
 "use server";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
-import { checkLevelUp, checkMana } from "./helpers";
-import {
-  guildmemberResurrectionDamage,
-  minResurrectionHP,
-} from "@/lib/gameSetting";
-import { getMembersByCurrentUserGuild } from "./user";
+import { checkLevelUp, checkMana, handleResurrection } from "./helpers";
+import { minResurrectionHP } from "@/lib/gameSetting";
+import { damageValidator, healingValidator } from "./helpers";
 
 // ------------------ Debugging functions not used in the app ------------------
 
@@ -65,44 +62,55 @@ export const getAllUsers = async () => {
   return users;
 };
 
-export const resurrectUsers = async (userId: { id: string }) => {
+export const resurrectUsers = async ({
+  userId,
+  effect,
+}: {
+  userId: string;
+  effect: string;
+}) => {
   try {
-    await db.$transaction(async (db) => {
-      const user = await db.user.update({
-        data: {
-          hp: minResurrectionHP,
-        },
-        where: {
-          id: userId.id,
-        },
+    // if the effect is free, the user will be resurrected without any consequences
+    if (effect === "free") {
+      await db.$transaction(async (db) => {
+        const user = await db.user.update({
+          data: {
+            hp: minResurrectionHP,
+          },
+          where: {
+            id: userId,
+          },
+        });
       });
+      return "The resurrection was successful";
+    }
 
-      // FIXME: implement resurrection damage to all guild members
-      // const guildMembers = await getMembersByCurrentUserGuild(
-      //   user.guildName ?? ""
-      // );
-      // guildMembers?.map(async (member) => {
-
-      //   if (member) {
-      //     // Damage to apply to guild members. the guild members should not go below userReserrectionHP. the damage done is guildmemberResurrectionDamage
-      //     const damageToApply = Math.min(
-      //       member.hp - minResurrectionHP,
-      //       guildmemberResurrectionDamage
-      //     );
-
-      //     await db.user.update({
-      //       where: {
-      //         id: member.id,
-      //       },
-      //       data: {
-      //         hp: { decrement: damageToApply },
-      //       },
-      //     });
-      //   }
-      // });
-
-      return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";
-    });
+    switch (effect) {
+      case "criticalMiss":
+        await handleResurrection(userId, [
+          "Phone-loss",
+          "Reduced-xp-gain",
+          "Hat-of-shame",
+          "Sudden-pop-quiz",
+        ]);
+        break;
+      case "phone":
+        await handleResurrection(userId, ["Phone-loss"]);
+        break;
+      case "xp":
+        await handleResurrection(userId, ["Reduced-xp-gain"]);
+        break;
+      case "hat":
+        await handleResurrection(userId, ["Hat-of-shame"]);
+        break;
+      case "quiz":
+        await handleResurrection(userId, ["Sudden-pop-quiz"]);
+        break;
+      case "criticalHit":
+        await handleResurrection(userId, []);
+        break;
+    }
+    return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";
   } catch (error) {
     console.error("Error resurrecting user" + error);
     return "Something went wrong with " + error;
@@ -120,13 +128,11 @@ export const healUsers = async (users: { id: string }[], value: number) => {
           select: { hp: true, hpMax: true },
         });
 
-        let valueToHeal = value;
-
-        if (targetHP?.hp === 0) {
-          valueToHeal = 0;
-        } else if (targetHP && targetHP?.hp + value >= targetHP?.hpMax) {
-          valueToHeal = targetHP?.hpMax - targetHP?.hp;
-        }
+        let valueToHeal = await healingValidator(
+          targetHP!.hp,
+          value,
+          targetHP!.hpMax,
+        );
 
         if (valueToHeal !== 0) {
           await db.user.update({
@@ -138,7 +144,7 @@ export const healUsers = async (users: { id: string }[], value: number) => {
             },
           });
         }
-      })
+      }),
     );
     return "Healing successful. The dead are not healed";
   } catch (error) {
@@ -158,11 +164,7 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
           select: { hp: true, hpMax: true },
         });
 
-        let valueToDamage = value;
-
-        if (targetHP && targetHP?.hp - value <= 0) {
-          valueToDamage = targetHP?.hp;
-        }
+        let valueToDamage = await damageValidator(targetHP!.hp, value, 0);
 
         await db.user.update({
           where: {
@@ -172,7 +174,7 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
             hp: { decrement: valueToDamage },
           },
         });
-      })
+      }),
     );
     return "Damage successful";
   } catch (error) {
@@ -222,7 +224,7 @@ export const giveManaToUsers = async (users: User[], mana: number) => {
             mana: { increment: manaToGive },
           },
         });
-      })
+      }),
     );
     return "Mana given successful";
   } catch (error) {

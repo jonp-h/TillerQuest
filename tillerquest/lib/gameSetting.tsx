@@ -10,7 +10,7 @@ export const gemstonesOnLevelUp = 2;
 export const dailyMana = 4;
 
 // Resurrection health points on resurrected user
-export const minResurrectionHP = 5;
+export const minResurrectionHP = 3;
 
-// Resurrection health points on guild members
+// Health points to damage on guild members during a member resurrection
 export const guildmemberResurrectionDamage = 10;

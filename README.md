@@ -33,6 +33,7 @@
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
+- [Dice-Box](https://fantasticdice.games) for dice animations.
 
 ## How To Use
 

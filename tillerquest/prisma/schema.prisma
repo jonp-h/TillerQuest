@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -33,9 +33,10 @@ enum Class {
 }
 
 enum AbilityType {
+  Deathsave
   Health
   Mana
-  // Experience // Considered as a passive ability. Requires larges changes in the codebase
+  // Experience // This is considered as a passive ability. Requires larges changes in the codebase
   Strength
   Agility
   Trickery
