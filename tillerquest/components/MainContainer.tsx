@@ -10,7 +10,7 @@ export default function MainContainer({
     <Paper id="main-container" className="pt-24 min-h-screen" elevation={1}>
       <div
         id="dice-canvas"
-        className="absolute pt-24 inset-0 w-full h-full pointer-events-none"
+        className="absolute pt-24 z-10 inset-0 w-full h-full pointer-events-none"
       />
 
       {children}

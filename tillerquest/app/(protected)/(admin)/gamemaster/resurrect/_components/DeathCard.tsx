@@ -9,7 +9,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin";
@@ -25,19 +25,24 @@ export default function DeathCard({ user }: { user: User }) {
     });
   };
 
-  let diceBox: DiceBox | null = null;
+  const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
 
   const initializeDiceBox = async () => {
-    diceBox = new DiceBox({
-      container: "#dice-canvas", // required
-      assetPath: "/assets/", // required
-      themeColor: "#581c87",
-      scale: 6,
-      gravity: 0.5,
-      restitution: 0.3,
-      settleTimeout: 6000,
-    });
-    await diceBox.init();
+    try {
+      const newDiceBox = new DiceBox({
+        container: "#dice-canvas", // required
+        assetPath: "/assets/", // required
+        themeColor: "#581c87",
+        scale: 6,
+        gravity: 0.5,
+        restitution: 0.3,
+        settleTimeout: 6000,
+      });
+      await newDiceBox.init();
+      setDiceBox(newDiceBox);
+    } catch (error) {
+      console.error("Error initializing DiceBox:", error);
+    }
   };
 
   useEffect(() => {
@@ -74,18 +79,25 @@ export default function DeathCard({ user }: { user: User }) {
           justifyContent: "center",
         }}
       >
-        {/* <CardMedia
-          component="img"
+        <Box
           sx={{
-            width: 151,
-            height: 151,
-            justifyContent: "center",
-            borderRadius: "999px",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            marginTop: "1rem",
           }}
-          image={"/classes/" + user.image + ".jpg"}
-          alt={user.username ?? "user"}
-        /> */}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        >
+          <CardMedia
+            component="img"
+            sx={{
+              width: 151,
+              height: 151,
+              justifyContent: "center",
+              borderRadius: "999px",
+            }}
+            image={"/classes/" + user.image + ".jpg"}
+            alt={user.username ?? "user"}
+          />
           <CardContent sx={{ flex: "1 0 auto" }}>
             <Typography component="div" variant="h5">
               {user.name} {user.username} {user.lastname}
@@ -105,7 +117,6 @@ export default function DeathCard({ user }: { user: User }) {
               color="error"
               endIcon={<Casino />}
               onClick={() => rollDice()}
-              disabled={number !== 0}
             >
               Death Save
             </Button>
@@ -126,7 +137,7 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 2 ? "secondary" : "warning"}
+              color={number === 2 ? "error" : "warning"}
               endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("phone")}
             >
@@ -134,7 +145,7 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 3 ? "secondary" : "warning"}
+              color={number === 3 ? "error" : "warning"}
               endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("xp")}
             >
@@ -142,7 +153,7 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 4 ? "secondary" : "warning"}
+              color={number === 4 ? "error" : "warning"}
               endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("quiz")}
             >
@@ -150,7 +161,7 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 5 ? "secondary" : "warning"}
+              color={number === 5 ? "error" : "warning"}
               endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("hat")}
             >
@@ -158,7 +169,7 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 6 ? "secondary" : "warning"}
+              color={number === 6 ? "error" : "warning"}
               endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("criticalHit")}
             >
