@@ -14,7 +14,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
-
 import { IconButton } from "@mui/material";
 
 export default function NavbarContent() {
@@ -58,7 +57,7 @@ export default function NavbarContent() {
       <Link href="/">
         <div className="flex items-center gap-5">
           <Image src="/TQlogo.png" alt="TillerQuest" width={70} height={70} />
-          <p className="hidden md:block">TillerQuest</p>
+          <h1 className={"hidden md:block text-2xl"}>TillerQuest</h1>
         </div>
       </Link>
       {/* On smaller screens only show icons */}

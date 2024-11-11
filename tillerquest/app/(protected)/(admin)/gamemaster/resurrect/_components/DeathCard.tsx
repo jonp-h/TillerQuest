@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { Casino } from "@mui/icons-material";
+import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin";
 import DiceBox from "@3d-dice/dice-box";
@@ -22,7 +22,6 @@ export default function DeathCard({ user }: { user: User }) {
     resurrectUsers({
       userId: user.id,
       effect: effect,
-      guildName: user.guildName || "",
     });
   };
 
@@ -36,6 +35,7 @@ export default function DeathCard({ user }: { user: User }) {
       scale: 6,
       gravity: 0.5,
       restitution: 0.3,
+      settleTimeout: 6000,
     });
     await diceBox.init();
   };
@@ -96,7 +96,7 @@ export default function DeathCard({ user }: { user: User }) {
               color="text.secondary"
               component="div"
             >
-              Level: {user.level} {number}
+              Level: {user.level}
             </Typography>
           </CardContent>
           <div className="flex flex-col items-center px-2 gap-2">
@@ -118,48 +118,48 @@ export default function DeathCard({ user }: { user: User }) {
             </Button>
             <Button
               variant="contained"
-              color={number === 1 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 1 ? "error" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("criticalMiss")}
             >
               1: Everything
             </Button>
             <Button
               variant="contained"
-              color={number === 2 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 2 ? "secondary" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("phone")}
             >
               2: Phone
             </Button>
             <Button
               variant="contained"
-              color={number === 3 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 3 ? "secondary" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("xp")}
             >
               3: Reduced XP
             </Button>
             <Button
               variant="contained"
-              color={number === 4 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 4 ? "secondary" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("quiz")}
             >
               4: Pop-Quiz
             </Button>
             <Button
               variant="contained"
-              color={number === 5 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 5 ? "secondary" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("hat")}
             >
               5: Hat
             </Button>
             <Button
               variant="contained"
-              color={number === 6 ? "primary" : "warning"}
-              endIcon={<Casino />}
+              color={number === 6 ? "secondary" : "warning"}
+              endIcon={<ErrorOutline />}
               onClick={() => handleRessurect("criticalHit")}
             >
               6: Freedom

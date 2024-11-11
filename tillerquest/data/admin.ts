@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
-import { checkLevelUp, checkMana, handleResurrection } from "./helpers";
+import { checkLevelUp, checkMana, resurrectUser } from "./helpers";
 import { minResurrectionHP } from "@/lib/gameSetting";
 import { damageValidator, healingValidator } from "./helpers";
 
@@ -87,7 +87,7 @@ export const resurrectUsers = async ({
 
     switch (effect) {
       case "criticalMiss":
-        await handleResurrection(userId, [
+        await resurrectUser(userId, [
           "Phone-loss",
           "Reduced-xp-gain",
           "Hat-of-shame",
@@ -95,19 +95,19 @@ export const resurrectUsers = async ({
         ]);
         break;
       case "phone":
-        await handleResurrection(userId, ["Phone-loss"]);
+        await resurrectUser(userId, ["Phone-loss"]);
         break;
       case "xp":
-        await handleResurrection(userId, ["Reduced-xp-gain"]);
+        await resurrectUser(userId, ["Reduced-xp-gain"]);
         break;
       case "hat":
-        await handleResurrection(userId, ["Hat-of-shame"]);
+        await resurrectUser(userId, ["Hat-of-shame"]);
         break;
       case "quiz":
-        await handleResurrection(userId, ["Sudden-pop-quiz"]);
+        await resurrectUser(userId, ["Sudden-pop-quiz"]);
         break;
       case "criticalHit":
-        await handleResurrection(userId, []);
+        await resurrectUser(userId, []);
         break;
     }
     return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";

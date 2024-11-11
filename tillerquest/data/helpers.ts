@@ -6,7 +6,7 @@ import {
   minResurrectionHP,
   xpMultiplier,
 } from "@/lib/gameSetting";
-import { User } from "@prisma/client";
+import { $Enums, AbilityType, User } from "@prisma/client";
 import { getUserEffectsByType } from "./effects";
 import { getMembersByCurrentUserGuild } from "./user";
 
@@ -99,8 +99,8 @@ export const damageValidator = async (
   damageToTake: number,
   healthTreshold: number,
 ) => {
-  // if the damage puts the user below the health treshold, return the damage to get to the health treshold instead, else return damage
-  if (userHealth - damageToTake < healthTreshold) {
+  // return the dametaken, unless it brings the user below the healthtreshhold, then return the damage to bring the user to the health treshold
+  if (userHealth - damageToTake <= healthTreshold) {
     return userHealth - healthTreshold;
   } else {
     return damageToTake;
@@ -120,7 +120,7 @@ export const healingValidator = async (
   }
 };
 
-export const handleResurrection = async (userId: string, effects: string[]) => {
+export const resurrectUser = async (userId: string, effects: string[]) => {
   await db.$transaction(async (db) => {
     const user = await db.user.update({
       data: {
@@ -133,7 +133,11 @@ export const handleResurrection = async (userId: string, effects: string[]) => {
     });
 
     if (user.guildName) {
-      const guildMembers = await getMembersByCurrentUserGuild(user.guildName);
+      // get all guildmembers and remove the resurrected user from the guildmembers array
+      let guildMembers = await getMembersByCurrentUserGuild(
+        user.guildName,
+      ).then((member) => member!.filter((member) => member.id !== userId));
+
       await Promise.all(
         guildMembers?.map(async (member) => {
           const damageToTake = await damageValidator(
@@ -147,23 +151,31 @@ export const handleResurrection = async (userId: string, effects: string[]) => {
               id: member.id,
             },
             data: {
-              hp: damageToTake,
+              hp: { decrement: damageToTake },
             },
           });
         }) || [],
       );
     }
-    // if the effect array is empty, none will be added
-    effects.forEach(async (effect) => {
-      await db.effectsOnUser.create({
-        data: {
-          userId: userId,
-          abilityName: effect,
-          endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
-          effectType: "Deathsave",
-        },
-      });
-    });
+    await Promise.all(
+      // if the effect array is empty, none will be added
+      effects.map(async (effect) => {
+        try {
+          console.log(effect);
+          await db.effectsOnUser.create({
+            data: {
+              userId: userId,
+              abilityName: effect,
+              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+              effectType: "Deathsave" as AbilityType,
+            },
+          });
+        } catch (error) {
+          console.error("Error resurrecting user" + error);
+          return "Something went wrong with" + error;
+        }
+      }),
+    );
   });
 };
 
