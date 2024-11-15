@@ -33,14 +33,15 @@
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
+- [Dice-Box](https://fantasticdice.games) for dice animations.
 
 ## How To Use
 
-```bash
+```ps
 # Clone this repository
 $ git clone
 
-# Go into the repository
+# Enter the repository
 $ cd /tillerquest/
 
 # Install dependencies
@@ -53,7 +54,9 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- Create Mongodb user and database at their website
+- 
+- Setup a local PostegreSQL instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
+
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
 
@@ -74,18 +77,23 @@ NEXT_PUBLIC_NEW_USER_SECRET=...
 # Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
 
 NEXT_PUBLIC_MAGICAL_AREA=...
-# IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
+
+#IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
+
+DATABASE_URL=...
+#Your connection string from mongodb. Should contain username and password in docker-compose. (https://www.mongodb.com/docs/manual/reference/connection-string/)
+# Example: mongodb://username:password@localhost:27018/TQ?retryWrites=true&w=majority&appName=TQ&authSource=admin
 
 ```
 
-```bash
+```ps
 $ cd /data/mocking/
 
 $ node generate.mjs #To mock an example database
 
 ```
 
-- Inspect the database in Mongodb website or with "npx prisma studio"
+- Inspect the database at the database website or with "npx prisma studio"
   - If the mocking was successful the database should have example data
 - Create your own user by signing in with GitHub OAuth and creating a user
 - Happy testing!
@@ -94,8 +102,8 @@ $ node generate.mjs #To mock an example database
 
 **This project uses Typescript**
 
-- Types should be defined as interfaces
-- Types specific to a component or page should be kept in that page
+- Types should be defined as interfaces, to enable inheritance
+- Types specific to a component or page should be kept inside that file
 - Types required in multiple components should be kept in an interfaces.ts file in the closest \_components folder
 - _Any_ should rarely be used
 

@@ -4,9 +4,13 @@ import { headers } from "next/headers";
 
 export async function IP() {
   const FALLBACK_IP_ADDRESS = "0.0.0.0";
-  const forwardedFor = headers().get("x-forwarded-for");
+  const forwardedFor = await headers().then((headers) =>
+    headers.get("x-forwarded-for"),
+  );
 
-  let ip = headers().get("x-real-ip") ?? FALLBACK_IP_ADDRESS;
+  let ip =
+    (await headers().then((headers) => headers.get("x-real-ip"))) ??
+    FALLBACK_IP_ADDRESS;
 
   if (forwardedFor) {
     ip = forwardedFor.split(",")[0] ?? FALLBACK_IP_ADDRESS;

@@ -1,0 +1,4 @@
+# initial start in project root folder
+
+cd tillerquest
+npx lint-staged

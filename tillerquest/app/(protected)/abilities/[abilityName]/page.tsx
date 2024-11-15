@@ -9,11 +9,12 @@ import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
 
-export default async function AbilitiesPage({
-  params: { abilityName },
+export default async function AbilityNamePage({
+  params,
 }: {
-  params: { abilityName: string };
+  params: Promise<{ abilityName: string }>;
 }) {
+  const { abilityName } = await params;
   const ability = await getAbility(abilityName);
   const session = await auth();
 
@@ -33,7 +34,7 @@ export default async function AbilitiesPage({
 
   const userOwnsAbility = await checkIfUserOwnsAbility(
     session?.user.id,
-    abilityName
+    abilityName,
   );
 
   // check if root, if not check if user owns parent ability
@@ -43,7 +44,7 @@ export default async function AbilitiesPage({
   } else {
     missingParentAbility = !(await checkIfUserOwnsAbility(
       user.id,
-      ability.parentAbility
+      ability.parentAbility,
     ));
   }
 

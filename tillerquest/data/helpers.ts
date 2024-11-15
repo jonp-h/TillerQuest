@@ -1,8 +1,14 @@
 "use server";
 import { db } from "@/lib/db";
-import { gemstonesOnLevelUp, xpMultiplier } from "@/lib/gameSetting";
-import { User } from "@prisma/client";
+import {
+  gemstonesOnLevelUp,
+  guildmemberResurrectionDamage,
+  minResurrectionHP,
+  xpMultiplier,
+} from "@/lib/gameSetting";
+import { $Enums, AbilityType, User } from "@prisma/client";
 import { getUserEffectsByType } from "./effects";
+import { getMembersByCurrentUserGuild } from "./user";
 
 // ---------------- Effect Helpers ----------------
 
@@ -84,6 +90,93 @@ export const checkHP = async (targetUserId: string, hpValue: number) => {
     console.error("Error checking HP");
     return "Something went wrong with" + error;
   }
+};
+
+// ---------------- Validators ----------------
+
+export const damageValidator = async (
+  userHealth: number,
+  damageToTake: number,
+  healthTreshold: number,
+) => {
+  // return the dametaken, unless it brings the user below the healthtreshhold, then return the damage to bring the user to the health treshold
+  if (userHealth - damageToTake <= healthTreshold) {
+    return userHealth - healthTreshold;
+  } else {
+    return damageToTake;
+  }
+};
+
+export const healingValidator = async (
+  usersCurrentHealth: number,
+  healingValue: number,
+  usersMaxHealth: number,
+) => {
+  // if the healing puts the user above the health treshhold, return the healing to get to the health treshold instead, else return healing
+  if (usersCurrentHealth + healingValue >= usersMaxHealth) {
+    return usersMaxHealth - usersCurrentHealth;
+  } else {
+    return healingValue;
+  }
+};
+
+export const resurrectUser = async (userId: string, effects: string[]) => {
+  await db.$transaction(async (db) => {
+    const user = await db.user.update({
+      data: {
+        hp: minResurrectionHP,
+      },
+      where: {
+        id: userId,
+      },
+      select: { guildName: true },
+    });
+
+    if (user.guildName) {
+      // get all guildmembers and remove the resurrected user from the guildmembers array
+      let guildMembers = await getMembersByCurrentUserGuild(
+        user.guildName,
+      ).then((member) => member!.filter((member) => member.id !== userId));
+
+      await Promise.all(
+        guildMembers?.map(async (member) => {
+          const damageToTake = await damageValidator(
+            member.hp,
+            guildmemberResurrectionDamage,
+            minResurrectionHP,
+          );
+
+          return db.user.update({
+            where: {
+              id: member.id,
+            },
+            data: {
+              hp: { decrement: damageToTake },
+            },
+          });
+        }) || [],
+      );
+    }
+    await Promise.all(
+      // if the effect array is empty, none will be added
+      effects.map(async (effect) => {
+        try {
+          console.log(effect);
+          await db.effectsOnUser.create({
+            data: {
+              userId: userId,
+              abilityName: effect,
+              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+              effectType: "Deathsave" as AbilityType,
+            },
+          });
+        } catch (error) {
+          console.error("Error resurrecting user" + error);
+          return "Something went wrong with" + error;
+        }
+      }),
+    );
+  });
 };
 
 // ---------------- Mana Helpers ----------------

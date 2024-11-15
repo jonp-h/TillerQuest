@@ -9,6 +9,7 @@ export default async function CreatePage() {
     <div>
       <SessionProvider session={session}>
         <CreateUserForm />
+        {JSON.stringify(session?.user)}
       </SessionProvider>
     </div>
   );

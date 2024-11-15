@@ -31,3 +31,17 @@ body {
     text-wrap: balance;
   }
 }
+
+html {
+  font-family: var(--font-inter);
+}
+
+h1 {
+  font-family: var(--font-julius-sans-one);
+  font-weight: bold;
+}
+
+#dice-canvas canvas {
+  width: 100%;
+  height: 100%;
+}

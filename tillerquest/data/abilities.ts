@@ -89,7 +89,7 @@ export const getAbility = async (abilityName: string) => {
 
 export const checkIfUserOwnsAbility = async (
   userId: string,
-  abilityName: string
+  abilityName: string,
 ) => {
   try {
     const ability = await db.userAbility.findFirst({
@@ -159,7 +159,7 @@ export const buyAbility = async (userId: string, ability: Ability) => {
             value: ability.value ?? 0,
             endTime: ability.duration
               ? new Date(Date.now() + ability.duration * 60000).toISOString()
-              : undefined,
+              : undefined, //TODO: datetime?
           },
         });
       }
@@ -175,7 +175,7 @@ export const buyAbility = async (userId: string, ability: Ability) => {
 export const selectAbility = async (
   user: User,
   targetUserId: string,
-  ability: Ability
+  ability: Ability,
 ) => {
   if (user.hp === 0) {
     return "You can't use abilities while dead";
@@ -230,7 +230,7 @@ const finalizeAbilityUsage = async (castingUser: User, ability: Ability) => {
 export const useHealAbility = async (
   castingUser: User,
   targetUserId: string,
-  ability: Ability
+  ability: Ability,
 ) => {
   if (castingUser.mana < (ability.manaCost || 0)) {
     return "Insufficient mana";
