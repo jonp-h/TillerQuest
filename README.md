@@ -54,7 +54,9 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- Setup a local Mongodb instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
+- 
+- Setup a local PostegreSQL instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
+
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
 
@@ -63,15 +65,19 @@ AUTH_SECRET=...
 # This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
 
 AUTH_GITHUB_ID=...
-#In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
 
 AUTH_GITHUB_SECRET=...
-#Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+DATABASE_URL=...
+# Your connection string from mongodb. Should contain username and password. (https://www.mongodb.com/docs/manual/reference/connection-string/)
 
 NEXT_PUBLIC_NEW_USER_SECRET=...
-#Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
+# Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
 
 NEXT_PUBLIC_MAGICAL_AREA=...
+
 #IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
 
 DATABASE_URL=...
@@ -80,15 +86,17 @@ DATABASE_URL=...
 
 ```
 
-- Inspect the database in MongodbCompass or with "npx prisma studio"
-
 ```ps
-
 $ cd /data/mocking/
 
 $ node generate.mjs #To mock an example database
 
 ```
+
+- Inspect the database at the database website or with "npx prisma studio"
+  - If the mocking was successful the database should have example data
+- Create your own user by signing in with GitHub OAuth and creating a user
+- Happy testing!
 
 ## Conventions
 
@@ -105,22 +113,17 @@ $ node generate.mjs #To mock an example database
 - Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
 - Global and reusable components should be kept in the components folder at the root of the project.
 - Remember to use Pascal-case for components.
-
+```
 tillerquest/
 ├── .env
 ├── .eslintrc.json
 ├── .gitignore
 ├── .next/
-│ ├── app-build-manifest.json
-│ ├── build-manifest.json
-│ ├── cache/
-│ ├── fallback-build-manifest.json
-│ ├── package.json
-│ └── react-loadable-manifest.json
+│ ├── ...
 ├── app/
 │ ├── (protected)/
 │ │ ├── page/
-│ │ │ ├── \_page-specific-components/
+│ │ │ ├── _page-specific-components/
 │ │ │ │ └── Component.tsx
 │ │ │ └── page.tsx
 │ │ └── ...
@@ -130,9 +133,12 @@ tillerquest/
 │ ├── navbar/
 │ │ ├── Navbar.tsx
 │ │ └── NavbarContent.tsx
-│ ├── MainContainer.tsx
-│ └── SecondaryContainer.tsx
+│ └── MainContainer.tsx
 ├── data/
+│ ├── mocking/
+│ │ ├── users.json
+│ │ └── generate.mjs
+│ └── abilities.ts
 ├── lib/
 ├── middleware.ts
 ├── next-auth.d.ts
@@ -145,6 +151,7 @@ tillerquest/
 ├── routes.ts
 ├── tailwind.config.ts
 └── tsconfig.json
+```
 
 - Tailwind responsive:
 
@@ -175,6 +182,7 @@ tillerquest/
 
 TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and never will be)**.
 
+<!--
 - **Main color:**
   - slate-900 #0f172a
   - slate-700 #334155
@@ -185,6 +193,7 @@ TillerQuest is an application made for darkmode. Background and colors should th
   - text: purple-500 #a855f7
 - **Text:**
   - white
+  -->
 
 ## Credits
 
