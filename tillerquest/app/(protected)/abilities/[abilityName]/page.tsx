@@ -9,7 +9,11 @@ import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
 
-export default async function AbilitiesPage(params: { abilityName: string }) {
+export default async function AbilityNamePage({
+  params,
+}: {
+  params: Promise<{ abilityName: string }>;
+}) {
   const { abilityName } = await params;
   const ability = await getAbility(abilityName);
   const session = await auth();

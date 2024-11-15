@@ -16,7 +16,7 @@ import AbilityCard from "@/components/AbilityCard";
 export default async function ProfilePage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
   const user = await getUserByUsername(username);
