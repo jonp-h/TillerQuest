@@ -114,6 +114,7 @@ model Ability {
   icon         String?
   gemstoneCost Int         @default(1)
   manaCost     Int?        @default(2)
+  healthCost   Int?        @default(2)
   xpGiven      Int?        @default(0)
   value        Int?
 

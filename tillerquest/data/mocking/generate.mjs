@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { PrismaClient } from "@prisma/client";
+import { abilities } from "./abilities.js";
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -11,8 +12,7 @@ const __dirname = path.dirname(__filename);
 const prisma = new PrismaClient();
 
 async function main() {
-  const abilitiesPath = path.join(__dirname, "abilities.json");
-  const abilitiesData = JSON.parse(fs.readFileSync(abilitiesPath, "utf-8"));
+  const abilitiesData = abilities;
   const usersPath = path.join(__dirname, "users.json");
   const usersData = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
   const guildsPath = path.join(__dirname, "guilds.json");
@@ -60,6 +60,7 @@ async function main() {
         icon: ability.icon || null,
         gemstoneCost: ability.gemstoneCost || null,
         manaCost: ability.manaCost || null,
+        healthCost: ability.healthCost || null,
         xpGiven: ability.xpGiven || null,
         value: ability.value || null,
         parentAbility: ability.parentAbility || null,
