@@ -1,19 +1,5 @@
 const health = [
   {
-    name: "Bandage",
-    type: "Heal",
-    isPassive: false,
-    description: "Restores health to a target.",
-    duration: null,
-    icon: "heal.png",
-    gemstoneCost: 1,
-    manaCost: 2,
-    healthCost: 0,
-    xpGiven: 10,
-    value: 2,
-    parentAbility: null,
-  },
-  {
     name: "Vigor",
     type: "Health",
     isPassive: true,
@@ -26,6 +12,20 @@ const health = [
     xpGiven: null,
     value: 1,
     parentAbility: null,
+  },
+  {
+    name: "Bandage",
+    type: "Heal",
+    isPassive: false,
+    description: "Restores health to a target.",
+    duration: null,
+    icon: "heal.png",
+    gemstoneCost: 1,
+    manaCost: 2,
+    healthCost: 0,
+    xpGiven: 10,
+    value: 2,
+    parentAbility: "Vigor",
   },
   {
     name: "Enhanced-Vigor",
@@ -56,6 +56,7 @@ const health = [
     parentAbility: "Enhanced-Vigor",
   },
 ];
+
 const mana = [
   {
     name: "Arcane-Focus",
@@ -167,7 +168,7 @@ const adventurer = [
 
 const wizard = [
   {
-    name: "Arcane-gift",
+    name: "Arcane-Gift",
     type: "Wizard",
     isPassive: true,
     description:
@@ -193,13 +194,13 @@ const wizard = [
     healthCost: 0,
     xpGiven: 20,
     value: 2,
-    parentAbility: "Arcane-Focus",
+    parentAbility: "Arcane-Gift",
   },
 ];
 
 const druid = [
   {
-    name: "Druidic-Healing",
+    name: "Heal",
     type: "Druid",
     isPassive: false,
     description: "Restores health to a target.",
@@ -358,7 +359,7 @@ const barbarian = [
   },
 ];
 
-export const abilities = [
+const abilities = [
   ...health,
   ...mana,
   ...trickery,
@@ -367,3 +368,4 @@ export const abilities = [
   ...druid,
   ...barbarian,
 ];
+export default abilities;

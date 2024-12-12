@@ -42,6 +42,7 @@ enum AbilityType {
   Trickery
   Magic
   Heal
+  Adventurer
 
   // Class specific types
   Druid
