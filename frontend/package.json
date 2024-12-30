@@ -1,14 +1,11 @@
 {
-  "name": "tillerquest",
-  "version": "0.1.0",
-  "private": true,
+  "name": "frontend",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
-    "prepare": "cd .. && husky tillerquest/.husky && husky install"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@3d-dice/dice-box": "^1.1.4",
