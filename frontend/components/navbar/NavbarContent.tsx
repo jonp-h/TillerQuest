@@ -81,6 +81,22 @@ export default function NavbarContent() {
             </IconButton>
           </Link>
         ))}
+        <Button
+          className="whitespace-nowrap"
+          variant="contained"
+          color="primary"
+          startIcon={<ShieldIcon />}
+          onClick={() => {
+            const data = fetch("http://localhost:8080/users", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            });
+            console.log(data);
+          }}
+        ></Button>
 
         {session.data ? (
           <>
@@ -105,6 +121,35 @@ export default function NavbarContent() {
           </>
         ) : (
           <>
+            {/* <form
+              action="http://localhost:8080/auth/signin/github"
+              method="POST"
+            >
+              <input type="hidden" name="csrfToken" value={csrfToken} />
+              <input
+                type="hidden"
+                name="redirectTo"
+                value="http://localhost:3000"
+              />
+              <Button
+                className="whitespace-nowrap"
+                variant="contained"
+                color="primary"
+                startIcon={<LoginIcon />}
+                sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+                type="submit"
+              >
+                Sign in
+              </Button>
+              <IconButton
+                sx={{ display: { xs: "block", md: "block", lg: "none" } }}
+                color="secondary"
+                size="large"
+                onClick={() => signIn("github", { callbackUrl: "/" })}
+              >
+                <LoginIcon />
+              </IconButton>
+            </form> */}
             <Button
               className="whitespace-nowrap"
               variant="contained"

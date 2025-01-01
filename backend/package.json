@@ -2,14 +2,18 @@
   "name": "backend",
   "version": "0.1.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon"
   },
   "dependencies": {
+    "@auth/express": "^0.8.4",
+    "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^6.1.0",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "nodemon": "^3.1.9"
   },
   "devDependencies": {
