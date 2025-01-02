@@ -10,6 +10,9 @@ import {
 } from "./middleware/auth.js";
 import { auth } from "./middleware/auth.js";
 import rateLimit from "express-rate-limit";
+import cron from "node-cron";
+import { randomCosmic } from "./data/cosmic.js";
+import { exec } from "child_process";
 
 const app = express();
 
@@ -42,6 +45,80 @@ app.get("/gm", authenticatedGameMaster, async (req, res) => {
 app.get("/users", authenticatedUser, async (req, res) => {
   const users = await db.user.findMany();
   res.json(users);
+});
+
+// Schedule a job to run every minute to remove expired abilities
+cron.schedule(
+  "* * * * *",
+  async () => {
+    const now = new Date();
+    try {
+      // await db.collection("passives").deleteMany({ endTime: { $lte: now } });
+      console.log("Expired passives removed");
+    } catch (error) {
+      console.error("Error removing expired passives:", error);
+    }
+  },
+  {
+    name: "removeExpiredPassivesService",
+  }
+);
+
+// Schedule a job to run every minute to change
+cron.schedule(
+  "0 0 * * *",
+  async () => {
+    try {
+      await randomCosmic();
+      console.log("Generated random cosmic event");
+    } catch (error) {
+      console.error("Generated random cosmic event:", error);
+    }
+  },
+  {
+    name: "generateRandomCosmicEventService",
+  }
+);
+
+// Schedule a job to run every day at midnight to backup the database
+cron.schedule(
+  "1 00 * * *",
+  async () => {
+    try {
+      exec(
+        "docker exec -t postgres_container pg_dumpall -U tillerquest > dump_backup.sql && docker cp postgres_container:dump_backup.sql db/backup/TQ_backup_" +
+          new Date()
+            .toISOString()
+            .replace(/[:.]/g, "-")
+            .replace("T", "_")
+            .replace("Z", "")
+            .slice(0, -7) +
+          ".sql",
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error creating database backup: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`Backup stderr: ${stderr}`);
+            return;
+          }
+          console.log(`Database backup created: ${stdout}`);
+        }
+      );
+    } catch (error) {
+      console.error("Error during database backup:", error);
+    }
+  },
+  {
+    name: "databaseBackupService",
+  }
+);
+
+// print out scheduled tasks
+console.log("Started cron jobs:");
+cron.getTasks().forEach((task, name) => {
+  console.log(` - ${name}`);
 });
 
 app.get("/", (req, res) => {
