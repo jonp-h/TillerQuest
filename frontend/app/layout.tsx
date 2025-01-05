@@ -6,6 +6,8 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 import { Inter, Julius_Sans_One } from "next/font/google";
+import axiosInstance from "@/lib/axios";
+import { SWRProvider } from "@/components/providers/SWRProvider";
 
 export const metadata: Metadata = {
   title: "TillerQuest",
@@ -35,13 +37,16 @@ export default function RootLayout({
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>
       <body>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={TillerQuestTheme}>
-            <Navbar />
-            {children}
-            <Footer />
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        {/* Set SWR to use axios config for all fetches */}
+        <SWRProvider>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={TillerQuestTheme}>
+              <Navbar />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </SWRProvider>
       </body>
     </html>
   );
