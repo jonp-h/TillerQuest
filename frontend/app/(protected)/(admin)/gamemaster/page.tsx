@@ -53,7 +53,7 @@ export default async function GameMasterPage() {
           </Button>
         </Link>
         <Link href="/gamemaster/cosmic">
-          <Button color="secondary" variant="contained" disabled={true}>
+          <Button color="secondary" variant="contained">
             Cosmic
           </Button>
         </Link>

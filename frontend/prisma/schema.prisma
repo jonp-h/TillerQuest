@@ -33,7 +33,11 @@ enum Class {
 }
 
 enum AbilityType {
+  // System types
   Deathsave
+  Cosmic
+
+  // Generic types
   Health
   Mana
   // Experience // This is considered as a passive ability. Requires larges changes in the codebase
@@ -118,14 +122,17 @@ model Ability {
   healthCost   Int?        @default(2)
   xpGiven      Int?        @default(0)
   value        Int?
+  cosmicEvent  String?
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
   parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: NoAction, onUpdate: NoAction)
   // childAbilities String[] // m-n relation to child abilities. An ability can have many child abilities
   children      Ability[] @relation("AbilityHierarchy")
 
-  users       UserAbility[] // m-n relation to users. A ability can owned by many users 
+  users       UserAbility[] // m-n relation to users. An ability can be owned by many users 
   userEffects EffectsOnUser[] // m-n relation to effects on users. An ability can have effects on many users 
+
+  cosmic CosmicEvent? @relation(fields: [cosmicEvent], references: [name], onUpdate: Cascade, onDelete: Cascade)
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
@@ -159,11 +166,27 @@ model EffectsOnUser {
   effectType  AbilityType
   endTime     DateTime?
   value       Int?
+  cosmicEvent String?
 
   user    User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade, onDelete: Cascade)
 
+  cosmic CosmicEvent? @relation(fields: [cosmicEvent], references: [name], onUpdate: Cascade, onDelete: Cascade)
+
   @@unique([userId, abilityName])
+}
+
+model CosmicEvent {
+  name        String    @id
+  description String
+  // icon        String
+  selected    Boolean   @default(false)
+  presetDate  DateTime?
+  occurrences Int       @default(0)
+  frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
+
+  ability Ability[]
+  effect  EffectsOnUser[]
 }
 
 // 3rd party authentication. OAuth

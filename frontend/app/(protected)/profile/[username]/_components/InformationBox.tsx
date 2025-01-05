@@ -1,9 +1,16 @@
+import { getCosmic } from "@/data/cosmic";
 import { Button, Paper, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
-export default function InformationBox({ user }: { user: User }): JSX.Element {
+export default async function InformationBox({
+  user,
+}: {
+  user: User;
+}): Promise<JSX.Element> {
+  const cosmic = await getCosmic();
+
   // Server-side component: date-time check
   const currentDate = new Date();
   const isWeekend = () => {
@@ -31,6 +38,19 @@ export default function InformationBox({ user }: { user: User }): JSX.Element {
               Get mana
             </Button>
           </Link>
+        </Paper>
+      )}
+      {cosmic && (
+        <Paper
+          elevation={6}
+          className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
+        >
+          <Typography variant="h4" align="center">
+            <strong>Cosmic: </strong> {cosmic.name}
+          </Typography>
+          <Typography variant="h6" align="center">
+            {cosmic.description}
+          </Typography>
         </Paper>
       )}
     </>
