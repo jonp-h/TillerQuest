@@ -156,7 +156,11 @@ export default function NavbarContent() {
               color="primary"
               startIcon={<LoginIcon />}
               sx={{ display: { xs: "none", md: "none", lg: "block" } }}
-              onClick={() => signIn("github", { callbackUrl: "/" })}
+              onClick={() =>
+                signIn("github", {
+                  redirectTo: "/",
+                })
+              }
             >
               Sign in
             </Button>
@@ -164,7 +168,11 @@ export default function NavbarContent() {
               sx={{ display: { xs: "block", md: "block", lg: "none" } }}
               color="secondary"
               size="large"
-              onClick={() => signIn("github", { callbackUrl: "/" })}
+              onClick={() =>
+                signIn("github", {
+                  redirectTo: "/",
+                })
+              }
             >
               <LoginIcon />
             </IconButton>
