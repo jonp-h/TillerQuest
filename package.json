@@ -1,0 +1,10 @@
+{
+  "name": "tillerquest",
+  "version": "0.1.0",
+  "description": "Tillerquest",
+  "scripts": {
+    "lint": "eslint .",
+    "commitlint": "commitlint --edit",
+    "prepare": "husky"
+  }
+}
