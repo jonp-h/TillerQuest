@@ -1,6 +1,7 @@
 <h1 align="center">
   <br>
   <!-- LOGO IMAGE -->
+  <img src="/frontend/public/TQlogo.png" width="250px" />
   <br>
   TillerQuest
   <br>
