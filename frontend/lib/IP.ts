@@ -19,7 +19,7 @@ export async function IP() {
   switch (ip) {
     case FALLBACK_IP_ADDRESS:
       return false;
-    case process.env.NEXT_PUBLIC_MAGICAL_AREA:
+    case process.env.MAGICAL_AREA:
       return true;
     default:
       return false;
