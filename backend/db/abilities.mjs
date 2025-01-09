@@ -139,7 +139,7 @@ const adventurer = [
     name: "Adventurer",
     type: "Adventurer",
     isPassive: true,
-    description: "You may now partake in the arena's games.",
+    description: "Allows participation in the arena's games.",
     duration: null,
     icon: "adventurer.png",
     gemstoneCost: 1,
@@ -302,7 +302,7 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
-    name: "Bloodlust",
+    name: "Bloodgift",
     type: "Barbarian",
     isPassive: false,
     description: "You may trade 5 health for 2 mana.",
