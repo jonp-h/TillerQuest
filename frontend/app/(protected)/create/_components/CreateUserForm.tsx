@@ -24,7 +24,9 @@ export default function CreateUserForm() {
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    if (!checkNewUserSecret(secret)) {
+    const isCorrectSecret = await checkNewUserSecret(secret);
+
+    if (!isCorrectSecret) {
       setErrorMessage("Secret code is incorrect");
       return;
     }
