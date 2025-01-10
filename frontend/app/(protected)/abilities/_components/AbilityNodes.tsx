@@ -8,7 +8,7 @@ export const AbilityNodes = (
   {
     nodeDatum,
     handleNodeClick,
-  }: { nodeDatum: RawNodeDatum; handleNodeClick: (node: RawNodeDatum) => void }
+  }: { nodeDatum: RawNodeDatum; handleNodeClick: (node: RawNodeDatum) => void },
 ) => (
   <g>
     <defs>
@@ -36,7 +36,7 @@ export const AbilityNodes = (
 
     <image
       clipPath="inset(0% round 50%)"
-      href={`/abilities/${nodeDatum.name}.jpg`}
+      href={`/abilities/${nodeDatum.name}.png`}
       x="-60"
       y="-60"
       height="120"
@@ -63,7 +63,7 @@ export const AbilityNodes = (
       <circle
         r="60"
         fill="black"
-        opacity={0.5}
+        opacity={0}
         strokeWidth="0"
         onClick={() => handleNodeClick(nodeDatum)}
       />
@@ -76,7 +76,7 @@ export const AbilityNodes = (
       fontSize={30}
       onClick={() => handleNodeClick(nodeDatum)}
     >
-      {nodeDatum.name.replace("-", " ")}
+      {nodeDatum.name.replace(/-/g, " ")}
     </text>
   </g>
 );

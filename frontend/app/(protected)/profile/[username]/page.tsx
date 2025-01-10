@@ -59,7 +59,7 @@ export default async function ProfilePage({
               src={
                 user.hp !== 0
                   ? "/classes/" + user.image + ".jpg"
-                  : "/classes/grave.jpg"
+                  : "/classes/Grave.jpg"
               }
               alt={user.username || ""}
               width={250}
