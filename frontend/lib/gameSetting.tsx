@@ -9,6 +9,9 @@ export const gemstonesOnLevelUp = 2;
 // Daily mana
 export const dailyMana = 4;
 
+// Max distance from magical area
+export const magicalArea = 0.00144;
+
 // Resurrection health points on resurrected user
 export const minResurrectionHP = 3;
 

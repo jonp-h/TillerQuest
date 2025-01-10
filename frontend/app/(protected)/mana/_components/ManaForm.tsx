@@ -26,17 +26,17 @@ function ManaForm({
       currentDate.toISOString().slice(0, 10)
     ) {
       setFeedback(
-        "But while you sense the magic around you - you feel it is not yet time to attune to it."
+        "But while you sense the magic around you - you feel it is not yet time to attune to it.",
       );
       return;
     } else if (isWeekend) {
       setFeedback(
-        "But the magic seems dormant today, perhaps you should try again on a different day."
+        "But the magic seems dormant today, perhaps you should try again on a different day.",
       );
       return;
     } else if (!correctLocation) {
       setFeedback(
-        "But you feel no magic around you. You must be in the wrong place."
+        "But you feel no magic around you. You must be in the wrong place.",
       );
       return;
     } else {
@@ -46,7 +46,7 @@ function ManaForm({
       } catch (error) {
         console.error(error);
         setFeedback(
-          "But attuning to the magic fails, you feel no connection - and you feel the need to tell an adult."
+          "But attuning to the magic fails, you feel no connection - and you feel the need to tell an adult.",
         );
       }
     }

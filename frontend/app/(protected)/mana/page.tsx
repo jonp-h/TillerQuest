@@ -4,9 +4,8 @@ import { getUserByUsername } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
-import ManaField from "./_components/ManaForm";
 import Image from "next/image";
-import { IP } from "@/lib/IP";
+import Location from "@/lib/Location";
 
 export default async function ManaPage() {
   const session = await auth();
@@ -20,8 +19,6 @@ export default async function ManaPage() {
   if (!user) {
     notFound();
   }
-
-  const correctLocation = await IP();
 
   const currentDate = new Date();
 
@@ -45,16 +42,10 @@ export default async function ManaPage() {
           width={400}
           height={400}
         />
-        <IP />
         <Typography variant="h5" align="center">
           You attempt to attune to the magic around you
         </Typography>
-        <ManaField
-          user={user}
-          currentDate={currentDate}
-          isWeekend={isWeekend}
-          correctLocation={correctLocation}
-        />
+        <Location user={user} currentDate={currentDate} isWeekend={isWeekend} />
       </Paper>
     </MainContainer>
   );
