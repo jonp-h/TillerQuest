@@ -20,10 +20,7 @@ enum SchoolClass {
   IM4
   IT1
   IT2
-  IT3
   MP1
-  MP2
-  MP3
 }
 
 enum Class {
@@ -65,14 +62,13 @@ model User {
   image           String?
   publicHighscore Boolean      @default(false)
 
-  level     Int      @default(1)
-  xp        Int      @default(1)
-  xpToLevel Int      @default(100)
-  hp        Int      @default(40)
-  hpMax     Int      @default(40)
-  mana      Int      @default(0)
-  manaMax   Int      @default(40)
-  lastMana  DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
+  level    Int      @default(1)
+  xp       Int      @default(0)
+  hp       Int      @default(40)
+  hpMax    Int      @default(40)
+  mana     Int      @default(0)
+  manaMax  Int      @default(40)
+  lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
 
   gemstones Int @default(1)
   gold      Int @default(0)

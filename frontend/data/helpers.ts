@@ -207,27 +207,20 @@ export const checkMana = async (targetUserId: string, manaValue: number) => {
 
 export const checkLevelUp = async (user: User) => {
   try {
-    if (user.xp >= user.xpToLevel) {
-      const excessXp = user.xp - user.xpToLevel;
-      const newXpToLevel = user.xpToLevel * xpMultiplier;
-      const newLevel = user.level + 1;
-
-      await db.user.update({
-        where: { id: user.id },
-        data: {
-          level: newLevel,
-          xp: excessXp,
-          xpToLevel: newXpToLevel,
-          gemstones: { increment: gemstonesOnLevelUp },
-        },
-      });
-      checkLevelUp({
-        ...user,
-        xp: excessXp,
-        xpToLevel: newXpToLevel,
-        level: newLevel,
-      });
-    }
+    db.$transaction(async (db) => {
+      // if the user has enough xp to level up (1000xp per level)
+      const levelDifference = Math.floor(user.xp / 1000) + 1 - user.level;
+      if (levelDifference > 0) {
+        console.log("leveldifference", levelDifference);
+        await db.user.update({
+          where: { id: user.id },
+          data: {
+            level: { increment: levelDifference },
+            gemstones: { increment: gemstonesOnLevelUp },
+          },
+        });
+      }
+    });
   } catch (error) {
     console.error("Error checking level up");
     return "Something went wrong with" + error;

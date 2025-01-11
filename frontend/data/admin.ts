@@ -193,13 +193,18 @@ export const giveXpToUsers = async (users: User[], xp: number) => {
   // TODO: Consider the use of xp passives
 
   try {
-    await db.user.updateMany({
-      where: { id: { in: users.map((user) => user.id) } },
-      data: [{ xp: { increment: xp } }],
-    });
-
-    users.map(async (user) => {
-      checkLevelUp(user);
+    db.$transaction(async (db) => {
+      for (const user of users) {
+        const userWithXp = await db.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            xp: { increment: xp },
+          },
+        });
+        await checkLevelUp(userWithXp);
+      }
     });
 
     return "Successfully gave XP to users";

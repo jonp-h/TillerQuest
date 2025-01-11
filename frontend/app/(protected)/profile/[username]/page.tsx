@@ -12,6 +12,7 @@ import { getUserEffects } from "@/data/effects";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
+import Link from "next/link";
 
 export default async function ProfilePage({
   params,
@@ -93,12 +94,12 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.xp} / {user.xpToLevel}
+                XP: {user.xp} / {Math.ceil(user.xp / 1000) * 1000}
               </Typography>
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.xp / user.xpToLevel) * 100}
+                value={(user.xp % 1000) / 10}
               />
             </div>
             <div>
@@ -138,9 +139,11 @@ export default async function ProfilePage({
                 Gemstones: {user.gemstones}
                 <Diamond />
               </Typography>
-              <Button variant="contained" color="secondary">
-                Level up
-              </Button>
+              <Link href="/abilities">
+                <Button variant="contained" color="secondary">
+                  Level up
+                </Button>
+              </Link>
             </div>
           </Paper>
           <Paper className=" items-center p-5 w-full h-3/4" elevation={6}>
