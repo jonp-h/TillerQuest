@@ -2,15 +2,12 @@
 import { Button, Paper, Typography, TextField } from "@mui/material";
 import React, { useState } from "react";
 import Classes from "./Classes";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
-import { useRouter } from "next/navigation";
 import { $Enums } from "@prisma/client";
 
 export default function CreateUserForm() {
   const { update, data } = useSession();
-
-  const router = useRouter();
 
   const [secret, setSecret] = useState("");
   const [username, setUsername] = useState(data?.user.username);
@@ -33,8 +30,8 @@ export default function CreateUserForm() {
 
     // update the role from NEW to USER
     // add initial username, name, lastname, class and class image
-    // sends to auth.ts, which updates the token with some values and the db
-    update({
+    // sends to auth.ts, which updates the token and the db
+    await update({
       role: "USER",
       username: username,
       name: name,
@@ -42,12 +39,9 @@ export default function CreateUserForm() {
       class: playerClass,
       image: playerClass,
     });
-    // necessary refreshes before redirecting to profile
-    getSession();
-    // router.refresh();
+    // call update to refresh session before redirecting to main page
     await update().then(() => {
-      signOut();
-      // router.push("/");
+      location.reload();
     });
   };
 
@@ -65,7 +59,8 @@ export default function CreateUserForm() {
           onChange={(e) => setSecret(e.target.value)}
           size="small"
           required
-          helperText="Enter the secret code given from an administrator"
+          helperText="Enter the secret code given from a game master"
+          error={!!errorMessage}
         />
         <Typography variant="body1">Enter Username</Typography>
         <TextField
@@ -100,7 +95,9 @@ export default function CreateUserForm() {
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
         {errorMessage && (
-          <Typography variant="body1">{errorMessage}</Typography>
+          <Typography variant="body1" color="error">
+            {errorMessage}
+          </Typography>
         )}
         <Button
           type="submit"
