@@ -55,14 +55,15 @@ enum AbilityType {
 }
 
 model User {
-  id          String       @id @default(cuid())
-  name        String?
-  username    String?      @unique
-  lastname    String?
-  title       String?      @default("Newborn")
-  schoolClass SchoolClass?
-  class       Class?
-  image       String?
+  id              String       @id @default(cuid())
+  name            String?
+  username        String?      @unique
+  lastname        String?
+  title           String?      @default("Newborn")
+  schoolClass     SchoolClass?
+  class           Class?
+  image           String?
+  publicHighscore Boolean      @default(false)
 
   level     Int      @default(1)
   xp        Int      @default(1)

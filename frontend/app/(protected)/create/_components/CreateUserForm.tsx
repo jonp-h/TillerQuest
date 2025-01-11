@@ -1,10 +1,27 @@
 "use client";
-import { Button, Paper, Typography, TextField } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Typography,
+  TextField,
+  Switch,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+} from "@mui/material";
 import React, { useState } from "react";
 import Classes from "./Classes";
 import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
-import { $Enums } from "@prisma/client";
+import { $Enums, SchoolClass } from "@prisma/client";
+import {
+  ArrowDownward,
+  ArrowDropDownCircleOutlined,
+} from "@mui/icons-material";
 
 export default function CreateUserForm() {
   const { update, data } = useSession();
@@ -16,6 +33,8 @@ export default function CreateUserForm() {
   const [playerClass, setPlayerClass] = useState(
     data?.user.class || $Enums.Class.Barbarian,
   );
+  const [schoolClass, setSchoolClass] = useState("");
+  const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
@@ -38,7 +57,10 @@ export default function CreateUserForm() {
       lastname: lastname,
       class: playerClass,
       image: playerClass,
+      schoolClass: schoolClass,
+      publicHighscore: publicHighscore,
     });
+
     // call update to refresh session before redirecting to main page
     await update().then(() => {
       location.reload();
@@ -61,6 +83,7 @@ export default function CreateUserForm() {
           required
           helperText="Enter the secret code given from a game master"
           error={!!errorMessage}
+          autoComplete="off"
         />
         <Typography variant="body1">Enter Username</Typography>
         <TextField
@@ -92,6 +115,18 @@ export default function CreateUserForm() {
           required
           helperText="Enter your lastname"
         />
+        <FormLabel>School class</FormLabel>
+        <RadioGroup row name="row-radio-buttons-group">
+          {Object.values(SchoolClass).map((schoolClass) => (
+            <FormControlLabel
+              value={schoolClass}
+              key={schoolClass}
+              control={<Radio />}
+              label={schoolClass}
+              onClick={() => setSchoolClass(schoolClass)}
+            />
+          ))}
+        </RadioGroup>
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
         {errorMessage && (
@@ -99,6 +134,34 @@ export default function CreateUserForm() {
             {errorMessage}
           </Typography>
         )}
+        <Typography variant="body1">
+          Do you want to be visible on public highscore lists?
+        </Typography>
+        <Switch
+          checked={publicHighscore}
+          onChange={() => setPublicHighscore(!publicHighscore)}
+        />
+        <Accordion sx={{ width: "40%" }}>
+          <AccordionSummary
+            expandIcon={<ArrowDownward />}
+            aria-controls="panel2-content"
+            id="panel2-header"
+          >
+            <Typography component="span">
+              By creating a user you agree to the terms and conditions
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography color="textSecondary">
+              By creating a user, you agree that your username, name, and any
+              other elements you provide will not contain offensive or
+              inappropriate content. <br /> <br /> The administrators reserve
+              the right to remove or modify any content that violates these
+              guidelines. Violations can lead to consequences within the school
+              organization, and banishment from the service.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
         <Button
           type="submit"
           variant="contained"

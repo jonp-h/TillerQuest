@@ -58,6 +58,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           lastname: session.lastname,
           class: session.class,
           image: session.image,
+          schoolClass: session.schoolClass,
+          publicHighscore: session.publicHighscore,
         });
       }
 
