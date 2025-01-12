@@ -18,10 +18,9 @@ import Classes from "./Classes";
 import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
 import { $Enums, SchoolClass } from "@prisma/client";
-import {
-  ArrowDownward,
-  ArrowDropDownCircleOutlined,
-} from "@mui/icons-material";
+import { ArrowDownward } from "@mui/icons-material";
+import { getGuildNames } from "@/data/guilds";
+import ClassGuilds from "./ClassGuilds";
 
 export default function CreateUserForm() {
   const { update, data } = useSession();
@@ -30,9 +29,8 @@ export default function CreateUserForm() {
   const [username, setUsername] = useState(data?.user.username);
   const [name, setName] = useState(data?.user.name);
   const [lastname, setLastname] = useState(data?.user.lastname);
-  const [playerClass, setPlayerClass] = useState(
-    data?.user.class || $Enums.Class.Barbarian,
-  );
+  const [playerClass, setPlayerClass] = useState<string>("Barbarian1");
+  const [guild, setGuild] = useState("");
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -55,7 +53,7 @@ export default function CreateUserForm() {
       username: username,
       name: name,
       lastname: lastname,
-      class: playerClass,
+      class: playerClass.slice(0, -1),
       image: playerClass,
       schoolClass: schoolClass,
       publicHighscore: publicHighscore,
@@ -127,6 +125,8 @@ export default function CreateUserForm() {
             />
           ))}
         </RadioGroup>
+        <Typography variant="body1">Choose Guild</Typography>
+        <ClassGuilds guild={guild} setGuild={setGuild} />
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
         {errorMessage && (

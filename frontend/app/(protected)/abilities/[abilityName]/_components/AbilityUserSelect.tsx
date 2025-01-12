@@ -38,7 +38,7 @@ function AbilityUserSelect({
           <div
             className={clsx(
               "from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full",
-              selectedUser === member.id && "border-2 border-purple-600"
+              selectedUser === member.id && "border-2 border-purple-600",
             )}
           >
             <Image
@@ -46,8 +46,8 @@ function AbilityUserSelect({
               draggable="false"
               src={
                 member.hp !== 0
-                  ? "/classes/" + member.image + ".jpg"
-                  : "/classes/grave.jpg"
+                  ? "/classes/" + member.image + ".png"
+                  : "/classes/grave.png"
               }
               alt={member.username || "Guild member"}
               width={100}

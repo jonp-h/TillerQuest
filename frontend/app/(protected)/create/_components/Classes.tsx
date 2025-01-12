@@ -5,18 +5,78 @@ import { Tooltip, Zoom } from "@mui/material";
 
 const classes = [
   {
-    name: "Wizard",
-    src: "/classes/wizard.jpg",
+    name: "Wizard1",
+    src: "/classes/Wizard.png",
     description: "Lorem ipsum solar sit amet cleric",
   },
   {
-    name: "Barbarian",
-    src: "/classes/barbarian.jpg",
+    name: "Wizard2",
+    src: "/classes/Wizard2.png",
     description: "Lorem ipsum solar sit amet cleric",
   },
   {
-    name: "Druid",
-    src: "/classes/druid.jpg",
+    name: "Wizard3",
+    src: "/classes/Wizard3.png",
+    description: "Lorem ipsum solar sit amet cleric",
+  },
+  {
+    name: "Barbarian1",
+    src: "/classes/Barbarian.png",
+    description: "Lorem ipsum solar sit amet cleric",
+  },
+  {
+    name: "Barbarian2",
+    src: "/classes/Barbarian2.png",
+    description: "Lorem ipsum solar sit amet cleric",
+  },
+  {
+    name: "Barbarian3",
+    src: "/classes/Barbarian3.png",
+    description: "Lorem ipsum solar sit amet cleric",
+  },
+  {
+    name: "Druid1",
+    src: "/classes/Druid.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "Druid2",
+    src: "/classes/Druid2.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "Druid3",
+    src: "/classes/Druid3.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "BloodMage1",
+    src: "/classes/BloodMage.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "BloodMage2",
+    src: "/classes/BloodMage2.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "BloodMage3",
+    src: "/classes/BloodMage3.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "Bard1",
+    src: "/classes/Bard.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "Bard2",
+    src: "/classes/Bard2.png",
+    description: "Lorem ipsum solar sit amet druid",
+  },
+  {
+    name: "Bard3",
+    src: "/classes/Bard3.png",
     description: "Lorem ipsum solar sit amet druid",
   },
 ];
@@ -49,7 +109,7 @@ export default function Classes({ playerClass, setPlayerClass }: ClassesProps) {
                 className={clsx(
                   "rounded-full shadow-inner shadow-black",
                   className === playerClass &&
-                    " border-4 shadow-inner shadow-black border-purple-600 "
+                    " border-4 shadow-inner shadow-black border-purple-600 ",
                 )}
                 width={200}
                 height={150}
@@ -58,10 +118,10 @@ export default function Classes({ playerClass, setPlayerClass }: ClassesProps) {
               <h1
                 className={clsx(
                   "text-2xl pt-1",
-                  className === playerClass && "text-purple-400 font-bold"
+                  className === playerClass && "text-purple-400 font-bold",
                 )}
               >
-                {className}
+                {className.slice(0, -1)}
               </h1>
             </div>
           </Tooltip>

@@ -1,6 +1,9 @@
+// duration is an integer: x * 10 minutes
+
 const health = [
   {
     name: "Vigor",
+    category: "Health",
     type: "Health",
     isPassive: true,
     description: "Every time you are healed, you gain 1 extra health.",
@@ -15,6 +18,7 @@ const health = [
   },
   {
     name: "Bandage",
+    category: "Heal",
     type: "Heal",
     isPassive: false,
     description: "Restores health to a target.",
@@ -29,6 +33,7 @@ const health = [
   },
   {
     name: "Enhanced-Vigor",
+    category: "Health",
     type: "Health",
     isPassive: true,
     description: "Every time you are healed, you gain 3 extra health.",
@@ -43,6 +48,7 @@ const health = [
   },
   {
     name: "Superior-Vigor",
+    category: "Health",
     type: "Health",
     isPassive: true,
     description: "Every time you are healed, you gain 5 extra health.",
@@ -60,6 +66,7 @@ const health = [
 const mana = [
   {
     name: "Arcane-Focus",
+    category: "Mana",
     type: "Mana",
     isPassive: true,
     description: "Every time you gain mana, you gain 1 extra mana.",
@@ -74,6 +81,7 @@ const mana = [
   },
   {
     name: "Arcane-Recovery",
+    category: "Mana",
     type: "Mana",
     isPassive: true,
     description: "Every time you gain mana, you gain 3 extra mana.",
@@ -91,10 +99,11 @@ const mana = [
 const trickery = [
   {
     name: "Evade",
+    category: "Trickery",
     type: "Trickery",
     isPassive: false,
-    description: "You may evade the effects of today's event.",
-    duration: 20,
+    description: "You may evade the effects of today's cosmic event.",
+    duration: 48,
     icon: "Evade.png",
     gemstoneCost: 2,
     manaCost: 2,
@@ -105,6 +114,7 @@ const trickery = [
   },
   {
     name: "Twist-of-Fate",
+    category: "Trickery",
     type: "Trickery",
     isPassive: false,
     description:
@@ -120,10 +130,11 @@ const trickery = [
   },
   {
     name: "Postpone",
+    category: "Trickery",
     type: "Trickery",
     isPassive: true,
     description: "You appeal to the game master, and plead for extended time.",
-    duration: 60,
+    duration: 144, // 8 hours
     icon: "Postpone.png",
     gemstoneCost: 2,
     manaCost: 10,
@@ -137,6 +148,7 @@ const trickery = [
 const adventurer = [
   {
     name: "Adventurer",
+    category: "Adventurer",
     type: "Adventurer",
     isPassive: true,
     description: "Allows participation in the arena's games.",
@@ -151,6 +163,7 @@ const adventurer = [
   },
   {
     name: "Economist",
+    category: "Adventurer",
     type: "Adventurer",
     isPassive: true,
     description:
@@ -169,7 +182,8 @@ const adventurer = [
 const wizard = [
   {
     name: "Arcane-Gift",
-    type: "Wizard",
+    category: "Wizard",
+    type: "Mana",
     isPassive: true,
     description:
       "Every time you gain mana, you gain 1 extra mana. This ability stacks.",
@@ -184,7 +198,8 @@ const wizard = [
   },
   {
     name: "Essence-Transfer",
-    type: "Wizard",
+    category: "Wizard",
+    type: "Transfer",
     isPassive: false,
     description: "You may give 2 of your mana to another player.",
     duration: null,
@@ -201,6 +216,7 @@ const wizard = [
 const druid = [
   {
     name: "Heal",
+    category: "Druid",
     type: "Druid",
     isPassive: false,
     description: "Restores health to a target.",
@@ -209,12 +225,13 @@ const druid = [
     gemstoneCost: 1,
     manaCost: 2,
     healthCost: 0,
-    xpGiven: 10,
+    xpGiven: 25,
     value: 4,
     parentAbility: null,
   },
   {
     name: "Greater-Heal",
+    category: "Druid",
     type: "Druid",
     isPassive: false,
     description: "Restores a large amount of health to a target.",
@@ -229,6 +246,7 @@ const druid = [
   },
   {
     name: "Superior-Heal",
+    category: "Druid",
     type: "Druid",
     isPassive: false,
     description: "Restores a great amount of health to a target.",
@@ -243,6 +261,7 @@ const druid = [
   },
   {
     name: "Healing-Aura",
+    category: "Druid",
     type: "Druid",
     isPassive: false,
     description: "Restores health to all guildmembers.",
@@ -257,6 +276,7 @@ const druid = [
   },
   {
     name: "Revive",
+    category: "Druid",
     type: "Druid",
     isPassive: false,
     description:
@@ -275,6 +295,7 @@ const druid = [
 const barbarian = [
   {
     name: "Toughness",
+    category: "Barbarian",
     type: "Barbarian",
     isPassive: true,
     description: "You gain 5 extra health.",
@@ -289,10 +310,11 @@ const barbarian = [
   },
   {
     name: "Shield",
+    category: "Barbarian",
     type: "Barbarian",
     isPassive: true,
-    description: "You block 2 damage from all attacks.",
-    duration: null,
+    description: "You block 2 damage from all attacks for 1 hour.",
+    duration: 6,
     icon: "Shield.png",
     gemstoneCost: 2,
     manaCost: null,
@@ -302,36 +324,41 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
-    name: "Bloodgift",
-    type: "Barbarian",
-    isPassive: false,
-    description: "You may trade 5 health for 2 mana.",
+    name: "Shielding",
+    category: "Barbarian",
+    type: "Health",
+    isPassive: true,
+    description:
+      "You shield a guildmember from 3 damage the next time they are attacked.",
     duration: null,
-    icon: "Bloodgift.png",
-    gemstoneCost: 1,
-    manaCost: 0,
-    healthCost: 5,
+    icon: "Shield.png",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: 0,
     xpGiven: 50,
     value: 2,
-    parentAbility: "Toughness",
+    parentAbility: "Shield",
   },
   {
-    name: "Blood-Bond",
-    type: "Barbarian",
-    isPassive: false,
-    description: "You may give 5 health to another player.",
+    name: "Protector-of-the-Weak",
+    category: "Barbarian",
+    type: "Health",
+    isPassive: true,
+    description:
+      "You take the damage a guildmember would take when they are attacked. You gain experience based on the amount of damage taken.",
     duration: null,
-    icon: "Blood-Bond.png",
+    icon: "Protector-of-the-Weak.png",
     gemstoneCost: 2,
-    manaCost: 0,
-    healthCost: 5,
-    xpGiven: 50,
-    value: 5,
-    parentAbility: "Bloodgift",
+    manaCost: null,
+    healthCost: 0,
+    xpGiven: 10,
+    value: 1,
+    parentAbility: "Shield",
   },
   {
     name: "Enhanced-Toughness",
-    type: "Barbarian",
+    category: "Barbarian",
+    type: "IncreaseMax",
     isPassive: true,
     description: "You gain 10 extra health.",
     duration: null,
@@ -345,7 +372,8 @@ const barbarian = [
   },
   {
     name: "Superior-Toughness",
-    type: "Barbarian",
+    category: "Barbarian",
+    type: "IncreaseMax",
     isPassive: true,
     description: "You gain 15 extra health.",
     duration: null,
@@ -359,6 +387,135 @@ const barbarian = [
   },
 ];
 
+const bloodMage = [
+  {
+    name: "Secrets-of-the-Crimson",
+    category: "BloodMage",
+    type: "Health",
+    isPassive: true,
+    description: "Every time you are healed, you gain 1 extra health.",
+    duration: null,
+    icon: "Secrets-of-the-Crimson.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 1,
+    parentAbility: null,
+  },
+  {
+    name: "Blood-Bond",
+    category: "BloodMage",
+    type: "Transfer",
+    isPassive: false,
+    description: "You may give 5 health to another player.",
+    duration: null,
+    icon: "Blood-Bond.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 5,
+    xpGiven: 50,
+    value: 5,
+    parentAbility: "Secrets-of-the-Crimson",
+  },
+  {
+    name: "Bloodgift",
+    category: "BloodMage",
+    type: "Transfer",
+    isPassive: false,
+    description: "You may trade 5 health for 2 mana.",
+    duration: null,
+    icon: "Bloodgift.png",
+    gemstoneCost: 1,
+    manaCost: 0,
+    healthCost: 5,
+    xpGiven: 50,
+    value: 2,
+    parentAbility: "Secrets-of-the-Crimson",
+  },
+  {
+    name: "Gift-of-Life",
+    category: "BloodMage",
+    type: "Trade",
+    isPassive: false,
+    description: "You may trade 10 health for 5 mana.",
+    duration: null,
+    icon: "Bloodgift.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 10,
+    xpGiven: 50,
+    value: 5,
+    parentAbility: "Bloodgift",
+  },
+];
+
+const bard = [
+  {
+    name: "Inspire",
+    category: "Bard",
+    type: "IncreaseMax",
+    isPassive: true,
+    description: "You inspire your guildmembers, giving them 5 extra max mana.",
+    duration: null,
+    icon: "Inspire.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 5,
+    parentAbility: null,
+  },
+  {
+    name: "Performance",
+    category: "Bard",
+    type: "Health",
+    isPassive: false,
+    description:
+      "You perform a song, temporarily increasing the health of all guildmembers by 2 for 10 minutes.",
+    duration: 1, /// 10 minutes
+    icon: "Performance.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 2,
+    parentAbility: "Inspire",
+  },
+  {
+    name: "Feast-of-Heroes",
+    category: "Bard",
+    type: "Experience",
+    isPassive: false,
+    description:
+      "You conjure a feast, increasing experience gained for all guildmembers for the day by 25%.",
+    duration: 480, // 8 hours?
+    icon: "Hearty-Performance.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 1.25,
+    parentAbility: "Performance",
+  },
+  {
+    name: "Hearty-Performance",
+    category: "Bard",
+    type: "Health",
+    isPassive: false,
+    description:
+      "You perform a song, temporarily increasing the health of all guildmembers by 5 for 10 minutes.",
+    duration: 1,
+    icon: "Hearty-Performance.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 5,
+    parentAbility: "Hearty-Performance",
+  },
+];
+
 const abilities = [
   ...health,
   ...mana,
@@ -367,5 +524,7 @@ const abilities = [
   ...wizard,
   ...druid,
   ...barbarian,
+  ...bloodMage,
+  ...bard,
 ];
 export default abilities;

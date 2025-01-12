@@ -20,11 +20,11 @@ export default function UserList({
 }) {
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    user: User
+    user: User,
   ) => {
     if (selectedUsers.includes(user)) {
       setSelectedUsers(
-        selectedUsers.filter((selectedUser) => selectedUser !== user)
+        selectedUsers.filter((selectedUser) => selectedUser !== user),
       );
     } else {
       setSelectedUsers([...selectedUsers, user]);
@@ -40,7 +40,7 @@ export default function UserList({
         <div className="p-1 bg-slate-700 rounded-full mr-2">
           <Image
             className="rounded-full"
-            src={"/classes/" + user.image + ".jpg"}
+            src={"/classes/" + user.image + ".png"}
             alt={user.username ?? "User"}
             width={50}
             height={50}

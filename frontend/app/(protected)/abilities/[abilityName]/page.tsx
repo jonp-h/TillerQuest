@@ -63,7 +63,7 @@ export default async function AbilityNamePage({
               {ability.name && (
                 <Image
                   className="rounded-full"
-                  src={"/abilities/" + ability.name + ".jpg"}
+                  src={"/abilities/" + ability.name + ".png"}
                   alt={ability.name}
                   width={200}
                   height={200}

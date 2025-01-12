@@ -95,7 +95,7 @@ export default function DeathCard({ user }: { user: User }) {
               justifyContent: "center",
               borderRadius: "999px",
             }}
-            image={"/classes/" + user.image + ".jpg"}
+            image={"/classes/" + user.image + ".png"}
             alt={user.username ?? "user"}
           />
           <CardContent sx={{ flex: "1 0 auto" }}>

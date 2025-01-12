@@ -164,7 +164,7 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
           select: { hp: true, hpMax: true },
         });
 
-        let valueToDamage = await damageValidator(targetHP!.hp, value, 0);
+        let valueToDamage = await damageValidator(user.id, targetHP!.hp, value);
 
         await db.user.update({
           where: {
