@@ -59,8 +59,8 @@ export default async function ProfilePage({
               className="rounded-full"
               src={
                 user.hp !== 0
-                  ? "/classes/" + user.image + ".jpg"
-                  : "/classes/Grave.jpg"
+                  ? "/classes/" + user.image + ".png"
+                  : "/classes/Grave.png"
               }
               alt={user.username || ""}
               width={250}
@@ -148,7 +148,7 @@ export default async function ProfilePage({
           </Paper>
           <Paper className=" items-center p-5 w-full h-3/4" elevation={6}>
             <Typography variant="h4" align="center">
-              Active effects
+              Passives
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
               {userEffects?.map(
@@ -161,7 +161,7 @@ export default async function ProfilePage({
                     >
                       <Image
                         className="rounded-full border-slate-700 border-2"
-                        src={"/abilities/" + effect.ability.name + ".jpg"}
+                        src={"/abilities/" + effect.ability.name + ".png"}
                         alt={effect.ability.name}
                         draggable={false}
                         width={50}

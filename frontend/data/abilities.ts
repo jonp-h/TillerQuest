@@ -2,9 +2,14 @@
 
 import { db } from "@/lib/db";
 import { Ability, User } from "@prisma/client";
-import { checkHP, checkLevelUp } from "./helpers";
+import {
+  checkHP,
+  checkLevelUp,
+  checkMana,
+  getUserPassiveEffect,
+} from "./helpers";
 
-// due to the limitations of Prisma, we can't add do recursive queries.
+// due to the limitations of Prisma, we can't do recursive queries.
 // This manual approach goes 4 levels deep
 export const getAbilityHierarchy = async () => {
   try {
@@ -113,13 +118,18 @@ export const checkIfUserOwnsAbility = async (
  * @param ability - The ability to be bought.
  * @returns A promise that resolves to "Success" if the ability is successfully bought, or a string indicating an error if something goes wrong.
  */
-export const buyAbility = async (userId: string, ability: Ability) => {
+export const buyAbility = async (user: User, ability: Ability) => {
   try {
     return db.$transaction(async (db) => {
+      // check if user has enough gemstones
+      if (user.gemstones < 0) {
+        throw new Error("Insufficient gemstones");
+      }
+
       // decrement the cost from the user's gemstones
-      const user = await db.user.update({
+      await db.user.update({
         where: {
-          id: userId,
+          id: user.id,
         },
         data: {
           gemstones: {
@@ -128,14 +138,9 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         },
       });
 
-      // check if user has enough gemstones
-      if (user.gemstones < 0) {
-        throw new Error("Insufficient gemstones");
-      }
-
       await db.userAbility.create({
         data: {
-          userId,
+          userId: user.id,
           abilityName: ability.name,
         },
       });
@@ -144,16 +149,17 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         // user can only have one passive of each type (mana, health, xp)
         // delete the old one, before adding the upgraded version
         await db.effectsOnUser.deleteMany({
+          //TODO: change to only delete
           where: {
-            userId,
-            effectType: ability.type,
+            userId: user.id,
+            abilityName: ability.parentAbility,
           },
         });
 
         // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
         await db.effectsOnUser.create({
           data: {
-            userId,
+            userId: user.id,
             effectType: ability.type,
             abilityName: ability.name,
             value: ability.value ?? 0,
@@ -181,22 +187,15 @@ export const selectAbility = async (
     return "You can't use abilities while dead";
   }
 
+  if (user.mana < (ability.manaCost || 0)) {
+    return "Insufficient mana";
+  }
+
   switch (ability.type) {
-    // case "":
-    //   let endTime = new Date();
-    //   endTime.setMinutes(endTime.getMinutes() + (abilityDuration || 0));
-    //   let endTimeISOString = endTime.toISOString();
-    //   return useDebuffAbility(
-    //     userId,
-    //     userId,
-    //     userMana || 0,
-    //     abilityCost,
-    //     abilityValue || 0,
-    //     endTimeISOString,
-    //     abilityXpGiven
-    //   );
     case "Heal":
       return await useHealAbility(user, targetUserId, ability);
+    case "Mana":
+      return await useManaAbility(user, targetUserId, ability);
   }
 };
 
@@ -232,11 +231,9 @@ export const useHealAbility = async (
   targetUserId: string,
   ability: Ability,
 ) => {
-  if (castingUser.mana < (ability.manaCost || 0)) {
-    return "Insufficient mana";
-  }
+  // validate health to heal and passives
+  let valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
 
-  const valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
   if (valueToHeal === 0) {
     return "Target is already at full health";
   } else if (valueToHeal === "dead") {
@@ -262,6 +259,35 @@ export const useHealAbility = async (
     return "Target healed for " + valueToHeal;
   } catch {
     console.log("Error using heal ability");
+    return "Something went wrong";
+  }
+};
+
+export const useManaAbility = async (
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  // validate mana value and passives
+  let value = await checkMana(targetUserId, ability.value ?? 0);
+
+  try {
+    await db.user.update({
+      where: {
+        id: targetUserId,
+      },
+      data: {
+        mana: {
+          increment: value,
+        },
+      },
+    });
+
+    await finalizeAbilityUsage(castingUser, ability);
+
+    return "Target given " + value + " mana";
+  } catch {
+    console.log("Error using mana ability");
     return "Something went wrong";
   }
 };

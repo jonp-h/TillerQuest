@@ -4,19 +4,12 @@ import {
   gemstonesOnLevelUp,
   guildmemberResurrectionDamage,
   minResurrectionHP,
-  xpMultiplier,
 } from "@/lib/gameSetting";
 import { $Enums, AbilityType, User } from "@prisma/client";
 import { getUserEffectsByType } from "./effects";
 import { getMembersByCurrentUserGuild } from "./user";
 
 // ---------------- Effect Helpers ----------------
-
-export const checkEffects = async (userId: string, type: string) => {
-  removeAllOldEffects();
-
-  return getUserPassiveEffect(userId, type);
-};
 
 /**
  * Retrieves the passive value for a specific user, based on effect type. Returns all the values added together.
@@ -40,36 +33,13 @@ export const getUserPassiveEffect = async (userId: string, type: string) => {
   return value;
 };
 
-// removes every user's old effects
-export const removeAllOldEffects = async () => {
-  // if the effect is expired, remove it
-  const effects = await db.effectsOnUser.findMany({
-    where: {
-      endTime: {
-        lte: new Date(),
-      },
-    },
-  });
-  // if the effect is expired, remove it (but not passives without an endTime)
-  if (effects) {
-    effects.forEach(async (effect) => {
-      await db.effectsOnUser.delete({
-        where: {
-          id: effect.id,
-          endTime: {
-            not: undefined,
-          },
-        },
-      });
-    });
-  }
-};
-
 // ---------------- Health Helpers ----------------
 
 export const checkHP = async (targetUserId: string, hpValue: number) => {
   // check if user has any health passives to add to the healing value
-  hpValue = ((await checkEffects(targetUserId, "Health")) ?? 0) + hpValue;
+  const healthBonus = await getUserPassiveEffect(targetUserId, "Health");
+  const classBonus = await getUserPassiveEffect(targetUserId, "BloodMage"); //TODO: improve. switch type to health and rework abilities page tabs
+  hpValue += healthBonus + classBonus;
 
   try {
     const targetHP = await db.user.findFirst({
@@ -95,15 +65,23 @@ export const checkHP = async (targetUserId: string, hpValue: number) => {
 // ---------------- Validators ----------------
 
 export const damageValidator = async (
-  userHealth: number,
-  damageToTake: number,
-  healthTreshold: number,
+  targetUserId: string,
+  targetUserHp: number,
+  damage: number,
+  healthTreshold: number = 0,
 ) => {
-  // return the dametaken, unless it brings the user below the healthtreshhold, then return the damage to bring the user to the health treshold
-  if (userHealth - damageToTake <= healthTreshold) {
-    return userHealth - healthTreshold;
+  // reduce the damage by the passive effects
+  const reducedDamage = await getUserPassiveEffect(targetUserId, "Damage");
+  const newDamage = damage - reducedDamage;
+
+  // ensure the damage does not become negative
+  const finalDamage = newDamage < 0 ? 0 : newDamage;
+
+  // return the damage to take, unless it brings the user below the health treshhold, then return the damage to bring the user to the health treshold
+  if (targetUserHp - finalDamage <= healthTreshold) {
+    return targetUserHp - healthTreshold;
   } else {
-    return damageToTake;
+    return finalDamage;
   }
 };
 
@@ -141,6 +119,7 @@ export const resurrectUser = async (userId: string, effects: string[]) => {
       await Promise.all(
         guildMembers?.map(async (member) => {
           const damageToTake = await damageValidator(
+            member.id,
             member.hp,
             guildmemberResurrectionDamage,
             minResurrectionHP,
@@ -183,7 +162,9 @@ export const resurrectUser = async (userId: string, effects: string[]) => {
 
 export const checkMana = async (targetUserId: string, manaValue: number) => {
   // check if user has any mana passives to add to the mana value
-  manaValue = ((await checkEffects(targetUserId, "Mana")) ?? 0) + manaValue;
+  const manaBonus = await getUserPassiveEffect(targetUserId, "Mana");
+  const classBonus = await getUserPassiveEffect(targetUserId, "Wizard");
+  manaValue += manaBonus + classBonus;
 
   try {
     const targetMana = await db.user.findFirst({

@@ -15,7 +15,7 @@ interface MiniatureProfileProps {
 }
 
 export default function MiniatureProfile({ member }: MiniatureProfileProps) {
-  const image = member.hp !== 0 ? member.image + ".jpg" : "grave.jpg";
+  const image = member.hp !== 0 ? member.image + ".png" : "grave.png";
   return (
     <Link key={member.username} href={"/profile/" + member.username}>
       <div className="flex flex-col justify-center">

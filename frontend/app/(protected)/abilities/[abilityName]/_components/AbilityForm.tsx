@@ -32,7 +32,7 @@ export default function AbilityForm({
   guildMembers: guildMembers;
 }) {
   const [selectedUser, setSelectedUser] = React.useState<string>(
-    guildMembers?.[0].id || ""
+    guildMembers?.[0].id || "",
   );
 
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export default function AbilityForm({
       return;
     }
 
-    setError(await buyAbility(user.id, ability));
+    setError(await buyAbility(user, ability));
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
     router.refresh();
@@ -94,11 +94,13 @@ export default function AbilityForm({
             onSubmit={useAbility}
             className="flex flex-col gap-4 items-center"
           >
-            <AbilityUserSelect
-              selectedUser={selectedUser}
-              setSelectedUser={setSelectedUser}
-              guildMembers={guildMembers}
-            />
+            {guildMembers && (
+              <AbilityUserSelect
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+                guildMembers={guildMembers}
+              />
+            )}
             {lackingMana && (
               <Typography variant="body1" color="error">
                 You don&apos;t have enough mana to use this ability.

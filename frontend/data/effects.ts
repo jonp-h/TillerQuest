@@ -2,13 +2,11 @@
 
 import { db } from "@/lib/db";
 import { $Enums } from "@prisma/client";
-import { removeAllOldEffects } from "./helpers";
 
 // ---------------- Getters Helpers ----------------
 
 export const getUserEffects = async (userId: string) => {
   try {
-    await removeAllOldEffects();
     const effects = await db.effectsOnUser.findMany({
       where: {
         userId,
@@ -40,6 +38,7 @@ export const getUserEffectsByType = async (userId: string, type: string) => {
     });
     return effects;
   } catch {
+    console.error("Error getting user effects by type");
     return null;
   }
 };
