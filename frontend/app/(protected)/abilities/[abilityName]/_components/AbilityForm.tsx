@@ -43,8 +43,8 @@ export default function AbilityForm({
   // const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
 
   const userIsCorrectClass =
-    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
-    user.class === ability.type;
+    !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
+    user.class === ability.category;
 
   const router = useRouter();
 
@@ -73,7 +73,7 @@ export default function AbilityForm({
 
     setError(await buyAbility(user, ability));
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
   };
 

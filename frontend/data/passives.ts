@@ -5,9 +5,9 @@ import { $Enums } from "@prisma/client";
 
 // ---------------- Getters Helpers ----------------
 
-export const getUserEffects = async (userId: string) => {
+export const getUserPassives = async (userId: string) => {
   try {
-    const effects = await db.userPassive.findMany({
+    const passives = await db.userPassive.findMany({
       where: {
         userId,
       },
@@ -22,23 +22,23 @@ export const getUserEffects = async (userId: string) => {
         },
       },
     });
-    return effects;
+    return passives;
   } catch {
     return null;
   }
 };
 
-export const getUserEffectsByType = async (userId: string, type: string) => {
+export const getUserPassivesByType = async (userId: string, type: string) => {
   try {
-    const effects = await db.userPassive.findMany({
+    const passives = await db.userPassive.findMany({
       where: {
         userId,
         effectType: type as $Enums.AbilityType,
       },
     });
-    return effects;
-  } catch {
-    console.error("Error getting user effects by type");
+    return passives;
+  } catch (error) {
+    console.error("Error getting user passives by type " + error);
     return null;
   }
 };

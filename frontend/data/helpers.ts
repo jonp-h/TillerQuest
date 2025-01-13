@@ -6,27 +6,27 @@ import {
   minResurrectionHP,
 } from "@/lib/gameSetting";
 import { $Enums, AbilityType, User } from "@prisma/client";
-import { getUserEffectsByType } from "./passives";
+import { getUserPassivesByType } from "./passives";
 import { getMembersByCurrentUserGuild } from "./user";
 
-// ---------------- Effect Helpers ----------------
+// ---------------- Passive Helpers ----------------
 
 /**
- * Retrieves the passive value for a specific user, based on effect type. Returns all the values added together.
+ * Retrieves the passive value for a specific user, based on passive type. Returns all the values added together.
  *
  * @param userId - The ID of the user.
- * @param type - The type of the effect.
- * @returns The value of the passive effects of a given type, or 0 if no effect is found.
+ * @param type - The type of the passive.
+ * @returns The value of the passive of a given type, or 0 if no passive is found.
  */
 export const getUserPassiveEffect = async (userId: string, type: string) => {
-  const userEffects = await getUserEffectsByType(userId, type);
+  const userPassives = await getUserPassivesByType(userId, type);
 
-  if (!userEffects) {
+  if (!userPassives) {
     return 0;
   }
 
   var value = 0;
-  userEffects.forEach((effect) => {
+  userPassives.forEach((effect) => {
     value += effect.value ?? 0;
   });
 
@@ -38,8 +38,7 @@ export const getUserPassiveEffect = async (userId: string, type: string) => {
 export const checkHP = async (targetUserId: string, hpValue: number) => {
   // check if user has any health passives to add to the healing value
   const healthBonus = await getUserPassiveEffect(targetUserId, "Health");
-  const classBonus = await getUserPassiveEffect(targetUserId, "BloodMage"); //TODO: improve. switch type to health and rework abilities page tabs
-  hpValue += healthBonus + classBonus;
+  hpValue += healthBonus;
 
   try {
     const targetHP = await db.user.findFirst({
@@ -163,8 +162,7 @@ export const resurrectUser = async (userId: string, effects: string[]) => {
 export const checkMana = async (targetUserId: string, manaValue: number) => {
   // check if user has any mana passives to add to the mana value
   const manaBonus = await getUserPassiveEffect(targetUserId, "Mana");
-  const classBonus = await getUserPassiveEffect(targetUserId, "Wizard");
-  manaValue += manaBonus + classBonus;
+  manaValue += manaBonus;
 
   try {
     const targetMana = await db.user.findFirst({
@@ -180,7 +178,7 @@ export const checkMana = async (targetUserId: string, manaValue: number) => {
       return manaValue;
     }
   } catch (error) {
-    console.error("Error checking Mana");
+    console.error("Error checking Mana " + error);
   }
 };
 
@@ -188,22 +186,20 @@ export const checkMana = async (targetUserId: string, manaValue: number) => {
 
 export const checkLevelUp = async (user: User) => {
   try {
-    db.$transaction(async (db) => {
-      // if the user has enough xp to level up (1000xp per level)
-      const levelDifference = Math.floor(user.xp / 1000) + 1 - user.level;
-      if (levelDifference > 0) {
-        console.log("leveldifference", levelDifference);
-        await db.user.update({
-          where: { id: user.id },
-          data: {
-            level: { increment: levelDifference },
-            gemstones: { increment: gemstonesOnLevelUp },
-          },
-        });
-      }
-    });
+    // if the user has enough xp to level up (1000xp per level)
+    const levelDifference = Math.floor(user.xp / 1000) + 1 - user.level;
+    if (levelDifference > 0) {
+      console.log("leveldifference", levelDifference);
+      await db.user.update({
+        where: { id: user.id },
+        data: {
+          level: { increment: levelDifference },
+          gemstones: { increment: gemstonesOnLevelUp },
+        },
+      });
+    }
   } catch (error) {
-    console.error("Error checking level up");
-    return "Something went wrong with" + error;
+    console.error("Error checking level up " + error);
+    return "Something went wrong with " + error;
   }
 };

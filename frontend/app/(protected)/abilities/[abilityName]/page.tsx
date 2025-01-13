@@ -29,8 +29,8 @@ export default async function AbilityNamePage({
   }
 
   const userIsCorrectClass =
-    !Object.values($Enums.Class).includes(ability.type as $Enums.Class) ||
-    user.class === ability.type;
+    !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
+    user.class === ability.category;
 
   const userOwnsAbility = await checkIfUserOwnsAbility(
     session?.user.id,
@@ -74,7 +74,7 @@ export default async function AbilityNamePage({
           <Typography variant="h3">{ability.name.replace("-", " ")}</Typography>
           <div className="flex justify-around mb-3">
             <Typography variant="h6" color="aquamarine">
-              {ability.type}
+              {ability.category}
             </Typography>
             <Typography variant="h6" color="error">
               Gemstone cost: {ability.gemstoneCost}

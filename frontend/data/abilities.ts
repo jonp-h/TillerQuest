@@ -148,14 +148,23 @@ export const buyAbility = async (user: User, ability: Ability) => {
       if (ability.isPassive) {
         // user can only have one passive of each type (mana, health, xp)
         // delete the old one, before adding the upgraded version
-        await db.userPassive.delete({
+        const parentPassive = await db.userPassive.findFirst({
           where: {
-            userId_abilityName: {
-              userId: user.id,
-              abilityName: ability.parentAbility ?? "",
-            },
+            userId: user.id,
+            abilityName: ability.parentAbility ?? "",
+          },
+          select: {
+            id: true,
           },
         });
+
+        if (parentPassive) {
+          await db.userPassive.delete({
+            where: {
+              id: parentPassive?.id,
+            },
+          });
+        }
 
         // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
         await db.userPassive.create({
@@ -192,11 +201,16 @@ export const selectAbility = async (
     return "Insufficient mana";
   }
 
+  // check ability type and call the appropriate function
   switch (ability.type) {
+    // heal the target
     case "Heal":
       return await useHealAbility(user, targetUserId, ability);
+    // give mana to the target
     case "Mana":
       return await useManaAbility(user, targetUserId, ability);
+    case "Transfer":
+      return await useTransferAbility(user, targetUserId, ability);
   }
 };
 
@@ -232,32 +246,34 @@ export const useHealAbility = async (
   targetUserId: string,
   ability: Ability,
 ) => {
-  // validate health to heal and passives
-  let valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
-
-  if (valueToHeal === 0) {
-    return "Target is already at full health";
-  } else if (valueToHeal === "dead") {
-    return "You can't heal a dead target. The dead require a different kind of magic.";
-  } else if (typeof valueToHeal === "string") {
-    return valueToHeal;
-  }
-
   try {
-    await db.user.update({
-      where: {
-        id: targetUserId,
-      },
-      data: {
-        hp: {
-          increment: valueToHeal,
+    await db.$transaction(async (db) => {
+      // validate health to heal and passives
+      let valueToHeal = await checkHP(targetUserId, ability.value ?? 0);
+
+      if (valueToHeal === 0) {
+        return "Target is already at full health";
+      } else if (valueToHeal === "dead") {
+        return "You can't heal a dead target. The dead require a different kind of magic.";
+      } else if (typeof valueToHeal === "string") {
+        return valueToHeal;
+      }
+
+      await db.user.update({
+        where: {
+          id: targetUserId,
         },
-      },
+        data: {
+          hp: {
+            increment: valueToHeal,
+          },
+        },
+      });
+
+      await finalizeAbilityUsage(castingUser, ability);
+
+      return "Target healed for " + valueToHeal;
     });
-
-    await finalizeAbilityUsage(castingUser, ability);
-
-    return "Target healed for " + valueToHeal;
   } catch {
     console.log("Error using heal ability");
     return "Something went wrong";
@@ -270,25 +286,76 @@ export const useManaAbility = async (
   ability: Ability,
 ) => {
   // validate mana value and passives
-  let value = await checkMana(targetUserId, ability.value ?? 0);
-
   try {
-    await db.user.update({
-      where: {
-        id: targetUserId,
-      },
-      data: {
-        mana: {
-          increment: value,
+    db.$transaction(async (db) => {
+      let value = await checkMana(targetUserId, ability.value ?? 0);
+
+      await db.user.update({
+        where: {
+          id: targetUserId,
         },
-      },
+        data: {
+          mana: {
+            increment: value,
+          },
+        },
+      });
+
+      await finalizeAbilityUsage(castingUser, ability);
+
+      return "Target given " + value + " mana";
     });
-
-    await finalizeAbilityUsage(castingUser, ability);
-
-    return "Target given " + value + " mana";
   } catch {
     console.log("Error using mana ability");
+    return "Something went wrong";
+  }
+};
+
+export const useTransferAbility = async (
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  try {
+    return await db.$transaction(async (db) => {
+      // validate mana value and passives
+      let value = await checkMana(targetUserId, ability.value ?? 0);
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          mana: {
+            increment: value,
+          },
+        },
+      });
+
+      await db.user.update({
+        where: {
+          id: castingUser.id,
+        },
+        data: {
+          mana: {
+            decrement: value,
+          },
+        },
+      });
+
+      await db.user.update({
+        where: {
+          id: castingUser.id,
+        },
+        data: {
+          xp: {
+            increment: ability.xpGiven || 0,
+          },
+        },
+      });
+      return "Target given " + value + " of your mana.";
+    });
+  } catch (error) {
+    console.error("Error using transfer ability " + error);
     return "Something went wrong";
   }
 };

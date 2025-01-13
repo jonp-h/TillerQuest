@@ -8,7 +8,7 @@ import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserAbilities } from "@/data/abilities";
-import { getUserEffects } from "@/data/passives";
+import { getUserPassives } from "@/data/passives";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
@@ -29,7 +29,7 @@ export default async function ProfilePage({
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   const userAbilities = await getUserAbilities(user.id);
-  const userEffects = await getUserEffects(user.id);
+  const passives = await getUserPassives(user.id);
 
   return (
     <MainContainer>
@@ -151,29 +151,33 @@ export default async function ProfilePage({
               Passives
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
-              {userEffects?.map(
-                (effect) =>
-                  effect.ability !== null && (
-                    <Paper
-                      elevation={10}
-                      key={effect.ability.name}
-                      className=" flex flex-col justify-center text-center items-center p-2"
+              {passives?.map(
+                (passive) =>
+                  passive.ability !== null && (
+                    <Link
+                      href={"/abilities/" + passive.ability.name}
+                      key={passive.ability.name}
                     >
-                      <Image
-                        className="rounded-full border-slate-700 border-2"
-                        src={"/abilities/" + effect.ability.name + ".png"}
-                        alt={effect.ability.name}
-                        draggable={false}
-                        width={50}
-                        height={50}
-                      />
-                      <Typography variant="h6">
-                        {effect.ability.name.replace("-", " ")}
-                      </Typography>
-                      {effect.endTime && (
-                        <TimeLeft endTime={new Date(effect.endTime)} />
-                      )}
-                    </Paper>
+                      <Paper
+                        elevation={10}
+                        className=" flex flex-col justify-center text-center items-center p-2"
+                      >
+                        <Image
+                          className="rounded-full border-slate-700 border-2"
+                          src={"/abilities/" + passive.ability.name + ".png"}
+                          alt={passive.ability.name}
+                          draggable={false}
+                          width={50}
+                          height={50}
+                        />
+                        <Typography variant="h6">
+                          {passive.ability.name.replace("-", " ")}
+                        </Typography>
+                        {passive.endTime && (
+                          <TimeLeft endTime={new Date(passive.endTime)} />
+                        )}
+                      </Paper>
+                    </Link>
                   ),
               )}
             </div>
