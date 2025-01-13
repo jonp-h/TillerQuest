@@ -6,7 +6,7 @@ import {
   minResurrectionHP,
 } from "@/lib/gameSetting";
 import { $Enums, AbilityType, User } from "@prisma/client";
-import { getUserEffectsByType } from "./effects";
+import { getUserEffectsByType } from "./passives";
 import { getMembersByCurrentUserGuild } from "./user";
 
 // ---------------- Effect Helpers ----------------
@@ -141,7 +141,7 @@ export const resurrectUser = async (userId: string, effects: string[]) => {
       effects.map(async (effect) => {
         try {
           console.log(effect);
-          await db.effectsOnUser.create({
+          await db.userPassive.create({
             data: {
               userId: userId,
               abilityName: effect,

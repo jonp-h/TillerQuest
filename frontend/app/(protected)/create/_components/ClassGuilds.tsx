@@ -1,28 +1,41 @@
 import { getGuildNames } from "@/data/guilds";
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-async function ClassGuilds({
+function ClassGuilds({
   guild,
   setGuild,
 }: {
   guild: string;
-  setGuild: React.Dispatch<React.SetStateAction<string>>;
+  setGuild: (guild: string) => void;
 }) {
-  const guilds = await getGuildNames();
+  const [guilds, setGuilds] = useState<string[]>([]);
+
+  const fetchGuildNames = async () => {
+    let guilds = await getGuildNames();
+    setGuilds(guilds.map((guild) => guild.name));
+    setGuild(guilds[0].name);
+  };
+
+  useEffect(() => {
+    fetchGuildNames();
+  }, []);
+
+  const handleClick = (guildName: string) => {
+    setGuild(guildName);
+  };
 
   return (
     <div>
-      <FormLabel>School class</FormLabel>
       <RadioGroup row name="row-radio-buttons-group">
         {guilds.map((guildName) => (
           <FormControlLabel
-            value={guildName.name}
-            key={guildName.name}
+            value={guildName}
+            key={guildName}
             control={<Radio />}
-            checked={guildName.name === guild}
-            label={guildName.name}
-            onClick={() => setGuild(guildName.name)}
+            checked={guildName === guild}
+            label={guildName}
+            onClick={() => handleClick(guildName)}
           />
         ))}
       </RadioGroup>

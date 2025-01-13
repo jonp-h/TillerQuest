@@ -73,7 +73,7 @@ export const AbilityNodes = (
       strokeWidth="0"
       x="80"
       y="5"
-      fontSize={30}
+      fontSize={25}
       onClick={() => handleNodeClick(nodeDatum)}
     >
       {nodeDatum.name.replace(/-/g, " ")}

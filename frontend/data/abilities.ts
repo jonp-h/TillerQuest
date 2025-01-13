@@ -20,7 +20,7 @@ export const getAbilityHierarchy = async () => {
       },
       select: {
         name: true,
-        type: true,
+        category: true,
         children: {
           select: {
             name: true,
@@ -148,16 +148,17 @@ export const buyAbility = async (user: User, ability: Ability) => {
       if (ability.isPassive) {
         // user can only have one passive of each type (mana, health, xp)
         // delete the old one, before adding the upgraded version
-        await db.effectsOnUser.deleteMany({
-          //TODO: change to only delete
+        await db.userPassive.delete({
           where: {
-            userId: user.id,
-            abilityName: ability.parentAbility,
+            userId_abilityName: {
+              userId: user.id,
+              abilityName: ability.parentAbility ?? "",
+            },
           },
         });
 
         // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
-        await db.effectsOnUser.create({
+        await db.userPassive.create({
           data: {
             userId: user.id,
             effectType: ability.type,

@@ -217,7 +217,7 @@ const druid = [
   {
     name: "Heal",
     category: "Druid",
-    type: "Druid",
+    type: "Heal",
     isPassive: false,
     description: "Restores health to a target.",
     duration: null,
@@ -232,7 +232,7 @@ const druid = [
   {
     name: "Greater-Heal",
     category: "Druid",
-    type: "Druid",
+    type: "Heal",
     isPassive: false,
     description: "Restores a large amount of health to a target.",
     duration: null,
@@ -247,7 +247,7 @@ const druid = [
   {
     name: "Superior-Heal",
     category: "Druid",
-    type: "Druid",
+    type: "Heal",
     isPassive: false,
     description: "Restores a great amount of health to a target.",
     duration: null,
@@ -262,7 +262,7 @@ const druid = [
   {
     name: "Healing-Aura",
     category: "Druid",
-    type: "Druid",
+    type: "Heal",
     isPassive: false,
     description: "Restores health to all guildmembers.",
     duration: null,
@@ -277,7 +277,7 @@ const druid = [
   {
     name: "Revive",
     category: "Druid",
-    type: "Druid",
+    type: "Revive",
     isPassive: false,
     description:
       "Revives a target from death. Must be done before a game master revives the target.",
@@ -296,7 +296,7 @@ const barbarian = [
   {
     name: "Toughness",
     category: "Barbarian",
-    type: "Barbarian",
+    type: "IncreaseMax",
     isPassive: true,
     description: "You gain 5 extra health.",
     duration: null,
@@ -311,7 +311,7 @@ const barbarian = [
   {
     name: "Shield",
     category: "Barbarian",
-    type: "Barbarian",
+    type: "Damage",
     isPassive: true,
     description: "You block 2 damage from all attacks for 1 hour.",
     duration: 6,
@@ -324,8 +324,24 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
-    name: "Shielding",
+    name: "Battle-Ready",
     category: "Barbarian",
+    type: "Adventurer",
+    isPassive: false,
+    description:
+      "You long for the thrill of battle, bringing your guildmates with you for another round in the arena.",
+    duration: 6,
+    icon: "Battle-Ready.png",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: 0,
+    xpGiven: 50,
+    value: 1,
+    parentAbility: "Toughness",
+  },
+  {
+    name: "Shielding",
+    category: "Damage",
     type: "Health",
     isPassive: true,
     description:
@@ -341,7 +357,7 @@ const barbarian = [
   },
   {
     name: "Protector-of-the-Weak",
-    category: "Barbarian",
+    category: "Damage",
     type: "Health",
     isPassive: true,
     description:
@@ -434,6 +450,22 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    name: "Crimson-Shift",
+    category: "BloodMage",
+    type: "Transfer",
+    isPassive: false,
+    description:
+      "You may switch health with a guildmember. You must have more health than the guildmember.",
+    duration: null,
+    icon: "Crimson-Shift.png",
+    gemstoneCost: 2,
+    manaCost: 0,
+    healthCost: 10,
+    xpGiven: 100,
+    value: 10,
+    parentAbility: "Blood-Bond",
+  },
+  {
     name: "Gift-of-Life",
     category: "BloodMage",
     type: "Trade",
@@ -456,7 +488,8 @@ const bard = [
     category: "Bard",
     type: "IncreaseMax",
     isPassive: true,
-    description: "You inspire your guildmembers, giving them 5 extra max mana.",
+    description:
+      "You inspire your guildmembers, giving the entire guild 5 extra max mana.",
     duration: null,
     icon: "Inspire.png",
     gemstoneCost: 2,
@@ -472,14 +505,14 @@ const bard = [
     type: "Health",
     isPassive: false,
     description:
-      "You perform a song, temporarily increasing the health of all guildmembers by 2 for 10 minutes.",
-    duration: 1, /// 10 minutes
+      "You perform a song, temporarily increasing the experience gain for all guildmembers by 10% for 20 minutes.",
+    duration: 2, /// 10 minutes
     icon: "Performance.png",
     gemstoneCost: 2,
     manaCost: 0,
     healthCost: 0,
     xpGiven: 50,
-    value: 2,
+    value: 1.1,
     parentAbility: "Inspire",
   },
   {
@@ -488,7 +521,7 @@ const bard = [
     type: "Experience",
     isPassive: false,
     description:
-      "You conjure a feast, increasing experience gained for all guildmembers for the day by 25%.",
+      "You conjure a feast, increasing experience gained for all guildmembers for the day by 25%. This ability stacks.",
     duration: 480, // 8 hours?
     icon: "Hearty-Performance.png",
     gemstoneCost: 2,
@@ -501,11 +534,11 @@ const bard = [
   {
     name: "Hearty-Performance",
     category: "Bard",
-    type: "Health",
+    type: "IncreaseMax",
     isPassive: false,
     description:
-      "You perform a song, temporarily increasing the health of all guildmembers by 5 for 10 minutes.",
-    duration: 1,
+      "You perform a song, temporarily increasing the health of all guildmembers by 5 for 2 days.",
+    duration: 2880, // 48 hours?
     icon: "Hearty-Performance.png",
     gemstoneCost: 2,
     manaCost: 0,

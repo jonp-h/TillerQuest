@@ -55,6 +55,7 @@ export default function CreateUserForm() {
       lastname: lastname,
       class: playerClass.slice(0, -1),
       image: playerClass,
+      guild: guild,
       schoolClass: schoolClass,
       publicHighscore: publicHighscore,
     });
@@ -113,7 +114,7 @@ export default function CreateUserForm() {
           required
           helperText="Enter your lastname"
         />
-        <FormLabel>School class</FormLabel>
+        <Typography variant="h5">Choose school class</Typography>
         <RadioGroup row name="row-radio-buttons-group">
           {Object.values(SchoolClass).map((schoolClass) => (
             <FormControlLabel
@@ -125,7 +126,7 @@ export default function CreateUserForm() {
             />
           ))}
         </RadioGroup>
-        <Typography variant="body1">Choose Guild</Typography>
+        <Typography variant="h5">Choose Guild</Typography>
         <ClassGuilds guild={guild} setGuild={setGuild} />
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />

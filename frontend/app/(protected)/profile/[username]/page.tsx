@@ -8,7 +8,7 @@ import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserAbilities } from "@/data/abilities";
-import { getUserEffects } from "@/data/effects";
+import { getUserEffects } from "@/data/passives";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";

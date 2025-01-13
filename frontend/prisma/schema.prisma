@@ -31,6 +31,7 @@ enum Class {
   Bard
 }
 
+// Categories used for ability tabs and tree-grouping
 enum AbilityCategory {
   // Generic types
   Health
@@ -52,10 +53,12 @@ enum AbilityCategory {
   Bard
 }
 
+// The ability-logic to be used
 enum AbilityType {
   Deathsave
   Cosmic
   Health
+  Heal
   Mana
   Experience
   Damage
@@ -63,11 +66,11 @@ enum AbilityType {
   Agility
   Trickery
   Magic
-  Heal
   Adventurer
   Transfer
   Trade
   IncreaseMax
+  Revive
 }
 
 model User {
