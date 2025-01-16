@@ -7,12 +7,13 @@ import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { getUserAbilities } from "@/data/abilities";
+import { getUserAbilities } from "@/data/abilities/getters/getAbilities";
 import { getUserPassives } from "@/data/passives";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default async function ProfilePage({
   params,
@@ -25,6 +26,7 @@ export default async function ProfilePage({
   if (!user) {
     notFound();
   }
+  logger.info("User found");
 
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 

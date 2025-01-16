@@ -512,7 +512,7 @@ const bard = [
     manaCost: 0,
     healthCost: 0,
     xpGiven: 50,
-    value: 1.1,
+    value: 0.1,
     parentAbility: "Inspire",
   },
   {
@@ -528,7 +528,7 @@ const bard = [
     manaCost: 0,
     healthCost: 0,
     xpGiven: 50,
-    value: 1.25,
+    value: 0.25,
     parentAbility: "Performance",
   },
   {

@@ -1,6 +1,9 @@
 import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
-import { checkIfUserOwnsAbility, getAbility } from "@/data/abilities";
+import {
+  checkIfUserOwnsAbility,
+  getAbility,
+} from "@/data/abilities/getters/getAbilities";
 import { getMembersByCurrentUserGuild, getUserById } from "@/data/user";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";

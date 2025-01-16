@@ -1,5 +1,8 @@
 "use client";
-import { buyAbility, selectAbility } from "@/data/abilities";
+import {
+  buyAbility,
+  selectAbility,
+} from "@/data/abilities/getters/getAbilities";
 import { Button, Typography } from "@mui/material";
 import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
