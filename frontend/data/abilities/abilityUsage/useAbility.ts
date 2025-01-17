@@ -24,7 +24,7 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
  * - If the user does not have enough mana to use the ability, a message is returned.
  * - Depending on the type of ability, the appropriate function is called to handle the ability usage.
  */
-export const selectAbility = async (
+export const useAbility = async (
   user: User,
   targetUserId: string,
   ability: Ability,
@@ -121,7 +121,7 @@ const finalizeAbilityUsage = async (
 
 // ---------------------------- Helper functions for specific ability types ----------------------------
 
-export const useHealAbility = async (
+const useHealAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   targetUserId: string,
@@ -164,7 +164,7 @@ export const useHealAbility = async (
   }
 };
 
-export const useManaAbility = async (
+const useManaAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   targetUserId: string,
@@ -199,7 +199,7 @@ export const useManaAbility = async (
   }
 };
 
-export const useTransferAbility = async (
+const useTransferAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   targetUserId: string,

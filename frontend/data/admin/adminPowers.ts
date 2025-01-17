@@ -40,8 +40,8 @@ export const healUsers = async (users: { id: string }[], value: number) => {
           }
         }),
       );
+      return "Healing successful. The dead are not healed";
     });
-    return "Healing successful. The dead are not healed";
   } catch (error) {
     logger.error("A game master failed to heal users: " + error);
     return "Something went wrong at " + Date.now() + " with error: " + error;

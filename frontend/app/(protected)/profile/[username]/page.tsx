@@ -1,5 +1,6 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserGuild, getUserByUsername } from "@/data/user";
+import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getUserByUsername } from "@/data/user/getUser";
 import { Button, LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
@@ -8,7 +9,7 @@ import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserAbilities } from "@/data/abilities/getters/getAbilities";
-import { getUserPassives } from "@/data/passives";
+import { getUserPassives } from "@/data/passives/getPassive";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";

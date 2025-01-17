@@ -1,4 +1,4 @@
-import { getCosmic } from "@/data/cosmic";
+import { getCosmic } from "@/data/cosmic/getCosmic";
 import { Button, Paper, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import Link from "next/link";

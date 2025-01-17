@@ -1,4 +1,4 @@
-import { getGuildNames } from "@/data/guilds";
+import { getGuildNames } from "@/data/guilds/getGuilds";
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import React, { useEffect, useState } from "react";
 

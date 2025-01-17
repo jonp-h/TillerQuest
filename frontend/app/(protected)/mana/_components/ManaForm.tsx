@@ -1,5 +1,5 @@
 "use client";
-import { getMana } from "@/data/user";
+import { getDailyMana } from "@/data/mana/mana";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
@@ -41,7 +41,7 @@ function ManaForm({
       return;
     } else {
       try {
-        await getMana(user);
+        await getDailyMana(user);
         setFeedback("And as you focus, you feel your mana restoring.");
       } catch (error) {
         console.error(error);

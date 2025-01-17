@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
 import { $Enums, SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
-import { getGuildNames } from "@/data/guilds";
+import { getGuildNames } from "@/data/guilds/getGuilds";
 import ClassGuilds from "./ClassGuilds";
 
 export default function CreateUserForm() {

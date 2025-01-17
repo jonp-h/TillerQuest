@@ -1,8 +1,6 @@
 "use client";
-import {
-  buyAbility,
-  selectAbility,
-} from "@/data/abilities/getters/getAbilities";
+import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
+import { useAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -53,10 +51,10 @@ export default function AbilityForm({
 
   // ---------------- Use ability ----------------
 
-  const useAbility = async (event: React.SyntheticEvent) => {
+  const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    setError((await selectAbility(user, selectedUser, ability)) ?? null);
+    setError((await useAbility(user, selectedUser, ability)) ?? null);
   };
 
   // ---------------- Buy ability ----------------
@@ -94,7 +92,7 @@ export default function AbilityForm({
         !ability.isPassive ? (
           // Rendered when user owns active ability
           <form
-            onSubmit={useAbility}
+            onSubmit={handleUseAbility}
             className="flex flex-col gap-4 items-center"
           >
             {guildMembers && (

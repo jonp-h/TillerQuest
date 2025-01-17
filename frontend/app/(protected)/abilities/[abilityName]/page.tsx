@@ -2,9 +2,10 @@ import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import {
   checkIfUserOwnsAbility,
-  getAbility,
+  getAbilityByName,
 } from "@/data/abilities/getters/getAbilities";
-import { getMembersByCurrentUserGuild, getUserById } from "@/data/user";
+import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getUserById } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -18,7 +19,7 @@ export default async function AbilityNamePage({
   params: Promise<{ abilityName: string }>;
 }) {
   const { abilityName } = await params;
-  const ability = await getAbility(abilityName);
+  const ability = await getAbilityByName(abilityName);
   const session = await auth();
 
   if (!ability || !session?.user.id) {

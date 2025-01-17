@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
-import { getUserByUsername } from "@/data/user";
+import { getUserByUsername } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";

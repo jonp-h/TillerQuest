@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
-import { resurrectUsers } from "@/data/admin";
+import { resurrectUsers } from "@/data/admin/resurrectUser";
 import DiceBox from "@3d-dice/dice-box";
 
 export default function DeathCard({ user }: { user: User }) {
