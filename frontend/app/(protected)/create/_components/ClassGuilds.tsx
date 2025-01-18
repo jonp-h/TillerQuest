@@ -1,5 +1,5 @@
 import { getGuildNames } from "@/data/guilds/getGuilds";
-import { FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 function ClassGuilds({
@@ -11,15 +11,17 @@ function ClassGuilds({
 }) {
   const [guilds, setGuilds] = useState<string[]>([]);
 
-  const fetchGuildNames = async () => {
-    let guilds = await getGuildNames();
-    setGuilds(guilds.map((guild) => guild.name));
-    setGuild(guilds[0].name);
-  };
-
   useEffect(() => {
+    const fetchGuildNames = async () => {
+      const guilds = await getGuildNames();
+      setGuilds(guilds.map((guild) => guild.name));
+      if (guilds.length > 0) {
+        setGuild(guilds[0].name);
+      }
+    };
+
     fetchGuildNames();
-  }, []);
+  }, [setGuild]);
 
   const handleClick = (guildName: string) => {
     setGuild(guildName);

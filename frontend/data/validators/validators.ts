@@ -3,6 +3,8 @@
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { getUserPassiveEffect } from "../passives/getPassive";
+import { User } from "@prisma/client";
+import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 
 export const healingValidator = async (
   db: PrismaTransaction,
@@ -115,5 +117,59 @@ export const damageValidator = async (
     return targetUserHp - healthTreshold;
   } else {
     return finalDamage;
+  }
+};
+
+export const experienceAndLevelValidator = async (
+  db: PrismaTransaction,
+  user: User,
+  xp: number,
+) => {
+  try {
+    const xpMultipler = await getUserPassiveEffect(db, user.id, "Experience");
+    console.log("xpMultipler", xpMultipler);
+    const xpToGive = Math.round(xp * (xpMultipler + 1));
+    const levelDifference = Math.floor(
+      (user.xp + xpToGive) / 1000 - user.level,
+    );
+
+    console.log("userxp", user.xp);
+    console.log("xpToGive", xpToGive);
+    console.log("userlevel", user.level);
+    console.log((user.xp + xpToGive) / 1000 - user.level);
+    console.log("without floor", (user.xp + xpToGive) / 1000 - user.level);
+    console.log(
+      "with floor",
+      Math.floor((user.xp + xpToGive) / 1000 - user.level),
+    );
+    console.log("levelDifference", levelDifference);
+
+    let levelUpData = {};
+    if (levelDifference > 0) {
+      levelUpData = {
+        level: { increment: levelDifference },
+        gemstones: {
+          increment: gemstonesOnLevelUp * levelDifference,
+        },
+      };
+    }
+    console.log(JSON.stringify(levelUpData));
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        xp: { increment: xpToGive },
+        ...levelUpData,
+      },
+    });
+    if (levelDifference > 0) {
+      logger.info(
+        `LEVEL UP: User ${user.username} leveled up to level ${user.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+      );
+    }
+    return "Successfully gave XP to user";
+  } catch (error) {
+    logger.error("Validating experience and leveling up failed: " + error);
+    return "Something went wrong at " + Date.now() + " with error: " + error;
   }
 };

@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import {
   damageValidator,
+  experienceAndLevelValidator,
   healingValidator,
   manaValidator,
 } from "../validators/validators";
@@ -96,33 +97,7 @@ export const giveXpToUsers = async (users: User[], xp: number) => {
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
-          const xpMultipler = await getUserPassiveEffect(
-            db,
-            user.id,
-            "Experience",
-          );
-          const xpToGive = Math.round(xp * (xpMultipler + 1));
-          const levelDifference =
-            Math.floor(user.xp + xpToGive / 1000) + 1 - user.level;
-
-          await db.user.update({
-            where: { id: user.id },
-            data: {
-              xp: { increment: xpToGive },
-              ...(levelDifference > 0
-                ? {
-                    level: { increment: levelDifference },
-                    gemstones: {
-                      increment: gemstonesOnLevelUp * levelDifference,
-                    },
-                  }
-                : {}),
-            },
-          });
-          levelDifference > 0 &&
-            logger.info(
-              `LEVEL UP: User ${user.id} leveled up to level ${user.level}`,
-            );
+          await experienceAndLevelValidator(db, user, xp);
         }),
       );
       return "Successfully gave XP to users";

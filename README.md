@@ -29,12 +29,13 @@
 
 ### This project uses:
 
-- [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) for type safety.
+- [TypeScript](https://www.typescriptlang.org/) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
 - [Dice-Box](https://fantasticdice.games) for dice animations.
+- [Winston](https://github.com/winstonjs/winston/) for server-side logging.
 
 ## How To Use
 
@@ -55,8 +56,8 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- 
-- Setup a local PostegreSQL instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
+-
+- Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
 
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
@@ -114,6 +115,7 @@ $ node generate.mjs #To mock an example database
 - Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
 - Global and reusable components should be kept in the components folder at the root of the project.
 - Remember to use Pascal-case for components.
+
 ```
 tillerquest/
 ├── .env

@@ -1,6 +1,6 @@
 "use client";
 import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
-import { useAbility } from "@/data/abilities/abilityUsage/useAbility";
+import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -54,7 +54,7 @@ export default function AbilityForm({
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    setError((await useAbility(user, selectedUser, ability)) ?? null);
+    setError((await selectAbility(user, selectedUser, ability)) ?? null);
   };
 
   // ---------------- Buy ability ----------------

@@ -14,7 +14,6 @@ import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
-import { logger } from "@/lib/logger";
 
 export default async function ProfilePage({
   params,
@@ -27,7 +26,6 @@ export default async function ProfilePage({
   if (!user) {
     notFound();
   }
-  logger.info("User found");
 
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 

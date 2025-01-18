@@ -1,3 +1,4 @@
+"use server";
 // ------------------- Ability usage -------------------
 
 import { Ability, User } from "@prisma/client";
@@ -5,7 +6,11 @@ import { db as prisma } from "@/lib/db";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
-import { healingValidator, manaValidator } from "@/data/validators/validators";
+import {
+  experienceAndLevelValidator,
+  healingValidator,
+  manaValidator,
+} from "@/data/validators/validators";
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
 
@@ -24,7 +29,7 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
  * - If the user does not have enough mana to use the ability, a message is returned.
  * - Depending on the type of ability, the appropriate function is called to handle the ability usage.
  */
-export const useAbility = async (
+export const selectAbility = async (
   user: User,
   targetUserId: string,
   ability: Ability,
@@ -57,12 +62,6 @@ export const useAbility = async (
         case "Transfer":
           return await useTransferAbility(db, user, targetUserId, ability);
       }
-
-      finalizeAbilityUsage(db, user, ability);
-
-      logger.info(
-        `User ${user.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
-      );
     });
   } catch (error) {
     logger.error(
@@ -83,35 +82,7 @@ const finalizeAbilityUsage = async (
   ability: Ability,
 ) => {
   try {
-    const xpMultipler = await getUserPassiveEffect(db, user.id, "Experience");
-    const newUserXp = user.xp + ability.xpGiven! * (xpMultipler + 1);
-    const abilityCost = ability.manaCost ? "mana" : "hp";
-
-    // subtract mana cost and add xp. Levels the user up if they have enough xp
-    const levelDifference = Math.floor(newUserXp / 1000) + 1 - user.level;
-
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        [abilityCost]: {
-          decrement:
-            abilityCost === "mana" ? ability.manaCost : ability.healthCost,
-        },
-        xp: { increment: ability.xpGiven || 0 },
-        ...(levelDifference > 0
-          ? {
-              level: { increment: levelDifference },
-              gemstones: {
-                increment: gemstonesOnLevelUp * levelDifference,
-              },
-            }
-          : {}),
-      },
-    });
-    levelDifference > 0 &&
-      logger.info(
-        `LEVEL UP: User ${user.id} leveled up to level ${user.level}`,
-      );
+    await experienceAndLevelValidator(db, user, ability.xpGiven!);
   } catch (error) {
     logger.error(
       "Error finalizing ability usage by user " + user.id + ": " + error,
@@ -154,6 +125,12 @@ const useHealAbility = async (
       },
     });
 
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    );
+
     return "Target healed for " + valueToHeal;
   } catch (error) {
     logger.error("Error using heal ability: " + error);
@@ -188,6 +165,12 @@ const useManaAbility = async (
         },
       },
     });
+
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    );
 
     return "Target given " + value + " mana";
   } catch (error) {
@@ -236,6 +219,12 @@ const useTransferAbility = async (
         },
       },
     });
+
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    );
 
     return "Target given " + value + " from your " + fieldToUpdate;
   } catch (error) {

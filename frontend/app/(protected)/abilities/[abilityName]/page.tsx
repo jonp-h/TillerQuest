@@ -23,7 +23,7 @@ export default async function AbilityNamePage({
   const session = await auth();
 
   if (!ability || !session?.user.id) {
-    console.error("Ability not found or user not logged in.");
+    console.error("Ability" + abilityName + "not found or user not logged in.");
     notFound();
   }
 
