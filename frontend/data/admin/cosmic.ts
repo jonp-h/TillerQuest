@@ -1,9 +1,15 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
 // outdated code. updated in backend
 export const randomCosmic = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     const now = new Date();
     const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
@@ -57,6 +63,11 @@ export const randomCosmic = async () => {
 };
 
 export const setSelectedCosmic = async (cosmicName: string) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     return await db.$transaction(async (db) => {
       // Unselect all events
@@ -97,6 +108,11 @@ export const setSelectedCosmic = async (cosmicName: string) => {
 };
 
 export const getAllCosmicEvents = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   const cosmicEvents = await db.cosmicEvent.findMany({
     orderBy: {
       selected: "desc",

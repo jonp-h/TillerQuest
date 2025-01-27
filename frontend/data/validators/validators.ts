@@ -5,12 +5,21 @@ import { PrismaTransaction } from "@/types/prismaTransaction";
 import { getUserPassiveEffect } from "../passives/getPassive";
 import { User } from "@prisma/client";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
+import { auth } from "@/auth";
 
 export const healingValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
   hpValue: number,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    return "Not authorized";
+  }
+
   // check if user has any health passives to add to the healing value
   const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
   hpValue += healthBonus;
@@ -39,26 +48,19 @@ export const healingValidator = async (
   }
 };
 
-// old healing validator
-
-// export const healingValidator = async (
-//     usersCurrentHealth: number,
-//     healingValue: number,
-//     usersMaxHealth: number,
-//   ) => {
-//     // if the healing puts the user above the health treshhold, return the healing to get to the health treshold instead, else return healing
-//     if (usersCurrentHealth + healingValue >= usersMaxHealth) {
-//       return usersMaxHealth - usersCurrentHealth;
-//     } else {
-//       return healingValue;
-//     }
-//   };
-
 export const manaValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
   manaValue: number,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    return "Not authorized";
+  }
+
   // check if user has any mana passives to add to the mana value
   const manaBonus = await getUserPassiveEffect(db, targetUserId, "Mana");
   manaValue += manaBonus;
@@ -87,7 +89,6 @@ export const manaValidator = async (
   }
 };
 
-//TODO: confirm it has necessary changes
 /**
  * Validates and calculates the damage to be applied to a user, considering passive effects and health thresholds.
  *
@@ -105,6 +106,14 @@ export const damageValidator = async (
   damage: number,
   healthTreshold: number = 0,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    return 0;
+  }
+
   // reduce the damage by the passive effects
   const reducedDamage = await getUserPassiveEffect(db, targetUserId, "Damage");
   const newDamage = damage - reducedDamage;
@@ -125,24 +134,20 @@ export const experienceAndLevelValidator = async (
   user: User,
   xp: number,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const xpMultipler = await getUserPassiveEffect(db, user.id, "Experience");
-    console.log("xpMultipler", xpMultipler);
     const xpToGive = Math.round(xp * (xpMultipler + 1));
     const levelDifference = Math.floor(
       (user.xp + xpToGive) / 1000 - user.level,
     );
-
-    console.log("userxp", user.xp);
-    console.log("xpToGive", xpToGive);
-    console.log("userlevel", user.level);
-    console.log((user.xp + xpToGive) / 1000 - user.level);
-    console.log("without floor", (user.xp + xpToGive) / 1000 - user.level);
-    console.log(
-      "with floor",
-      Math.floor((user.xp + xpToGive) / 1000 - user.level),
-    );
-    console.log("levelDifference", levelDifference);
 
     let levelUpData = {};
     if (levelDifference > 0) {
@@ -153,7 +158,6 @@ export const experienceAndLevelValidator = async (
         },
       };
     }
-    console.log(JSON.stringify(levelUpData));
 
     await db.user.update({
       where: { id: user.id },

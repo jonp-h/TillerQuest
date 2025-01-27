@@ -1,11 +1,20 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { $Enums } from "@prisma/client";
 
 export const getUserPassives = async (userId: string) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const passives = await db.userPassive.findMany({
       where: {
@@ -40,6 +49,14 @@ export const getUserPassiveEffect = async (
   userId: string,
   type: $Enums.AbilityType,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const userPassives = await db.userPassive.findMany({
       where: {

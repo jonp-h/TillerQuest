@@ -23,6 +23,7 @@ import { getGuildNames } from "@/data/guilds/getGuilds";
 import ClassGuilds from "./ClassGuilds";
 
 export default function CreateUserForm() {
+  // TODO: switch to unstable_update in auth.ts?
   const { update, data } = useSession();
 
   const [secret, setSecret] = useState("");

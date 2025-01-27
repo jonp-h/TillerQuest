@@ -8,6 +8,7 @@ import {
 import { AbilityType } from "@prisma/client";
 import { getMembersByCurrentUserGuild } from "../user/getGuildmembers";
 import { damageValidator } from "../validators/validators";
+import { auth } from "@/auth";
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
@@ -17,6 +18,11 @@ export const resurrectUsers = async ({
   userId: string;
   effect: string;
 }) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     // if the effect is free, the user will be resurrected without any consequences
     if (effect === "free") {

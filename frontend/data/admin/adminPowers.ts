@@ -11,8 +11,14 @@ import { logger } from "@/lib/logger";
 import { User } from "@prisma/client";
 import { getUserPassiveEffect } from "../passives/getPassive";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
+import { auth } from "@/auth";
 
 export const healUsers = async (users: { id: string }[], value: number) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -50,6 +56,11 @@ export const healUsers = async (users: { id: string }[], value: number) => {
 };
 
 export const damageUsers = async (users: { id: string }[], value: number) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -93,6 +104,11 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
  * @returns A string indicating the result of the operation.
  */
 export const giveXpToUsers = async (users: User[], xp: number) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -109,6 +125,11 @@ export const giveXpToUsers = async (users: User[], xp: number) => {
 };
 
 export const giveManaToUsers = async (users: User[], mana: number) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
   try {
     return await db.$transaction(async (db) => {
       await Promise.all(

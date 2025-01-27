@@ -36,7 +36,7 @@ export default function AbilityForm({
     guildMembers?.[0].id || "",
   );
 
-  const [error, setError] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   // If mana cost is null, the ability is a passive ability
   const lackingMana = user.mana < (ability.manaCost || 0);
@@ -54,7 +54,14 @@ export default function AbilityForm({
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    setError((await selectAbility(user, selectedUser, ability)) ?? null);
+    let targetUsers = [selectedUser];
+
+    if (ability.aoe) {
+      targetUsers = guildMembers?.map((member) => member.id) || [];
+    }
+
+    const result = await selectAbility(user, targetUsers, ability);
+    setFeedback(typeof result === "string" ? result : null);
   };
 
   // ---------------- Buy ability ----------------
@@ -63,16 +70,16 @@ export default function AbilityForm({
     event.preventDefault();
 
     if (missingParentAbility) {
-      setError("Buy the necessary parent ability first.");
+      setFeedback("Buy the necessary parent ability first.");
       return;
     }
 
     if (user.gemstones < ability.gemstoneCost) {
-      setError("You don't have enough gemstones to buy this ability.");
+      setFeedback("You don't have enough gemstones to buy this ability.");
       return;
     }
 
-    setError(await buyAbility(user, ability));
+    setFeedback(await buyAbility(user, ability));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
@@ -82,9 +89,9 @@ export default function AbilityForm({
 
   return (
     <>
-      {error && (
+      {feedback && (
         <Typography variant="body1" color="error">
-          {error}
+          {feedback}
         </Typography>
       )}
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
@@ -97,6 +104,7 @@ export default function AbilityForm({
           >
             {guildMembers && (
               <AbilityUserSelect
+                aoe={ability.aoe}
                 selectedUser={selectedUser}
                 setSelectedUser={setSelectedUser}
                 guildMembers={guildMembers}

@@ -1,5 +1,7 @@
 "use server";
 
+import { auth } from "@/auth";
+import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { Ability, User } from "@prisma/client";
@@ -12,6 +14,11 @@ import { Ability, User } from "@prisma/client";
  * @returns A promise that resolves to "Success" if the ability is successfully bought, or a string indicating an error if something goes wrong.
  */
 export const buyAbility = async (user: User, ability: Ability) => {
+  const session = await auth();
+  if (session?.user?.id !== user.id) {
+    throw new Error("Not authorized");
+  }
+
   try {
     return db.$transaction(async (db) => {
       // check if user has enough gemstones
@@ -71,6 +78,57 @@ export const buyAbility = async (user: User, ability: Ability) => {
               : undefined, //TODO: datetime?
           },
         });
+
+        // if the ability is aoe, all guildmembers should also recieve the passive
+        if (ability.aoe) {
+          const guildmembers =
+            (await getMembersByCurrentUserGuild(user.guildName || "")) || [];
+
+          await db.userPassive.createMany({
+            data: guildmembers.map((member) => ({
+              userId: member.id,
+              effectType: ability.type,
+              abilityName: ability.name,
+              value: ability.value ?? 0,
+              endTime: ability.duration
+                ? new Date(Date.now() + ability.duration * 60000).toISOString()
+                : undefined,
+            })),
+          });
+
+          // Check if the passive also increases stats
+          if (ability.type === "IncreaseHealth") {
+            await db.user.updateMany({
+              data: guildmembers.map((member) => {
+                return {
+                  where: {
+                    id: member.id,
+                  },
+                  data: {
+                    hp: {
+                      increment: ability.value ?? 0,
+                    },
+                  },
+                };
+              }),
+            });
+          } else if (ability.type === "IncreaseMana") {
+            await db.user.updateMany({
+              data: guildmembers.map((member) => {
+                return {
+                  where: {
+                    id: member.id,
+                  },
+                  data: {
+                    mana: {
+                      increment: ability.value ?? 0,
+                    },
+                  },
+                };
+              }),
+            });
+          }
+        }
       }
       logger.info(
         `User ${user.id} bought ability ${ability.name}` +

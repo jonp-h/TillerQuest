@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -13,6 +14,14 @@ import { logger } from "@/lib/logger";
  * A promise that resolves to an array of root abilities with their hierarchical children, or null if an error occurs.
  */
 export const getAbilityHierarchy = async () => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     // gets all abilities that have no parents, and their children
     const roots = await db.ability.findMany({
@@ -61,6 +70,14 @@ export const getAbilityHierarchy = async () => {
  * @throws Will log an error message if the retrieval fails.
  */
 export const getUserAbilities = async (userId: string) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const abilities = await db.userAbility.findMany({
       where: {
@@ -81,6 +98,14 @@ export const getUserAbilities = async (userId: string) => {
  * @returns {Promise<object | null>} A promise that resolves to the ability object if found, or null if not found or an error occurs.
  */
 export const getAbilityByName = async (abilityName: string) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const ability = await db.ability.findFirst({
       where: {
@@ -105,6 +130,14 @@ export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string,
 ) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
   try {
     const ability = await db.userAbility.findFirst({
       where: {

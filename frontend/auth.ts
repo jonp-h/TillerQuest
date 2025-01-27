@@ -6,7 +6,7 @@ import { Class, UserRole } from "@prisma/client";
 import { getUserById } from "./data/user/getUser";
 import { updateUser } from "./data/user/updateUser";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   ...authConfig,

@@ -59,6 +59,7 @@ enum AbilityType {
   Cosmic
   Health
   Heal
+  Swap
   Mana
   Experience
   Damage
@@ -67,9 +68,12 @@ enum AbilityType {
   Trickery
   Magic
   Adventurer
+  Arena
   Transfer
   Trade
-  IncreaseMax
+  Convert
+  IncreaseHealth
+  IncreaseMana
   Revive
 }
 
@@ -92,8 +96,9 @@ model User {
   manaMax  Int      @default(40)
   lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
 
-  gemstones Int @default(1)
-  gold      Int @default(0)
+  gemstones   Int @default(1)
+  gold        Int @default(0)
+  arenaTokens Int @default(0)
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
   // abilityNames String[]
@@ -133,6 +138,7 @@ model Ability {
   name         String          @id @default(cuid())
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
+  aoe          Boolean         @default(false)
   isPassive    Boolean         @default(false)
   description  String?
   duration     Int?
@@ -200,6 +206,7 @@ model CosmicEvent {
   name        String    @id
   description String
   // icon        String
+  suggested   Boolean   @default(false)
   selected    Boolean   @default(false)
   presetDate  DateTime?
   occurrences Int       @default(0)

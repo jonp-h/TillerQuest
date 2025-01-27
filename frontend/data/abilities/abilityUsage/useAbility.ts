@@ -3,7 +3,6 @@
 
 import { Ability, User } from "@prisma/client";
 import { db as prisma } from "@/lib/db";
-import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import {
@@ -12,7 +11,6 @@ import {
   manaValidator,
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
-import { getUserPassiveEffect } from "@/data/passives/getPassive";
 
 //FIXME: implement session in all functions
 
@@ -31,13 +29,12 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
  */
 export const selectAbility = async (
   user: User,
-  targetUserId: string,
+  targetUsersId: string[],
   ability: Ability,
 ) => {
   const session = await auth();
-
   if (session?.user?.id !== user.id) {
-    return "Not authorized";
+    throw new Error("Not authorized");
   }
 
   if (user.hp === 0) {
@@ -50,17 +47,26 @@ export const selectAbility = async (
 
   try {
     return await prisma.$transaction(async (db) => {
+      // check if ability is AoE. If not the targetUsersId will only have one element
+      if (ability.aoe) {
+        return await useAOEAbility(db, user, targetUsersId, ability);
+      }
+
       // check ability type and call the appropriate function
       switch (ability.type) {
         // heal the target
         case "Heal":
-          return await useHealAbility(db, user, targetUserId, ability);
+          return await useHealAbility(db, user, targetUsersId[0], ability);
+        case "Revive":
+          return "Revive is not implemented yet";
         // give mana to the target
         case "Mana":
-          return await useManaAbility(db, user, targetUserId, ability);
+          return await useManaAbility(db, user, targetUsersId[0], ability);
         // transfer a resource from one player to another player
         case "Transfer":
-          return await useTransferAbility(db, user, targetUserId, ability);
+          return await useTransferAbility(db, user, targetUsersId[0], ability);
+        case "Trickery":
+          return "Trickery is not implemented yet";
       }
     });
   } catch (error) {
@@ -90,8 +96,37 @@ const finalizeAbilityUsage = async (
   }
 };
 
-// ---------------------------- Helper functions for specific ability types ----------------------------
+// ---------------------------- Helper functions for AoE abilities ----------------------------
 
+const useAOEAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUsersId: string[],
+  ability: Ability,
+) => {
+  return await Promise.all(
+    targetUsersId.map(async (targetUserId) => {
+      switch (ability.type) {
+        // heal the target
+        case "Heal":
+          return await useHealAbility(db, castingUser, targetUserId, ability);
+        // give mana to the target
+        case "Mana":
+          return await useManaAbility(db, castingUser, targetUserId, ability);
+        // transfer a resource from one player to another player
+        case "Transfer":
+          return await useTransferAbility(
+            db,
+            castingUser,
+            targetUserId,
+            ability,
+          );
+      }
+    }),
+  );
+};
+
+// ---------------------------- Helper functions for specific ability types ----------------------------
 const useHealAbility = async (
   db: PrismaTransaction,
   castingUser: User,
