@@ -62,10 +62,11 @@ enum AbilityType {
   Swap
   Mana
   Experience
-  Damage
+  Protection
   Strength
   Agility
   Trickery
+  Postpone
   Magic
   Adventurer
   Arena

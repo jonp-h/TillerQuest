@@ -115,7 +115,11 @@ export const damageValidator = async (
   }
 
   // reduce the damage by the passive effects
-  const reducedDamage = await getUserPassiveEffect(db, targetUserId, "Damage");
+  const reducedDamage = await getUserPassiveEffect(
+    db,
+    targetUserId,
+    "Protection",
+  );
   const newDamage = damage - reducedDamage;
 
   // ensure the damage does not become negative

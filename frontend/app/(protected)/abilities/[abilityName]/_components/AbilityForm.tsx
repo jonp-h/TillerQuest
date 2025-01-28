@@ -6,6 +6,7 @@ import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
+import { usePassive } from "@/data/passives/usePassive";
 
 type guildMembers =
   | {
@@ -25,12 +26,14 @@ export default function AbilityForm({
   userOwnsAbility,
   missingParentAbility,
   guildMembers,
+  activePassive,
 }: {
   ability: Ability;
   user: User;
   userOwnsAbility: boolean;
   missingParentAbility: boolean;
   guildMembers: guildMembers;
+  activePassive: boolean;
 }) {
   const [selectedUser, setSelectedUser] = React.useState<string>(
     guildMembers?.[0].id || "",
@@ -61,6 +64,21 @@ export default function AbilityForm({
     }
 
     const result = await selectAbility(user, targetUsers, ability);
+    setFeedback(typeof result === "string" ? result : null);
+  };
+
+  // ---------------- Use passive ----------------
+
+  const handleUsePassive = async (event: React.SyntheticEvent) => {
+    event.preventDefault();
+
+    let targetUsers = [selectedUser];
+
+    if (ability.aoe) {
+      targetUsers = guildMembers?.map((member) => member.id) || [];
+    }
+
+    const result = await usePassive(user, ability);
     setFeedback(typeof result === "string" ? result : null);
   };
 
@@ -125,8 +143,8 @@ export default function AbilityForm({
               Use
             </Button>
           </form>
-        ) : (
-          // Rendered when user owns passive ability
+        ) : // Rendered when user owns passive ability
+        activePassive ? (
           <Button
             variant="contained"
             color="primary"
@@ -136,6 +154,20 @@ export default function AbilityForm({
           >
             Activated
           </Button>
+        ) : (
+          <form
+            onSubmit={handleUsePassive}
+            className="flex flex-col gap-4 items-center"
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              type="submit"
+            >
+              Activate passive for {ability.duration} minutes
+            </Button>
+          </form>
         )
       ) : // Rendered when user does not own ability
 

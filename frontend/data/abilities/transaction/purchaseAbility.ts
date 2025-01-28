@@ -19,13 +19,13 @@ export const buyAbility = async (user: User, ability: Ability) => {
     throw new Error("Not authorized");
   }
 
+  // check if user has enough gemstones
+  if (user.gemstones < 0) {
+    throw new Error("Insufficient gemstones");
+  }
+
   try {
     return db.$transaction(async (db) => {
-      // check if user has enough gemstones
-      if (user.gemstones < 0) {
-        throw new Error("Insufficient gemstones");
-      }
-
       // decrement the cost from the user's gemstones
       await db.user.update({
         where: {
@@ -55,6 +55,8 @@ export const buyAbility = async (user: User, ability: Ability) => {
           },
           select: {
             id: true,
+            effectType: true,
+            value: true,
           },
         });
 
@@ -66,79 +68,37 @@ export const buyAbility = async (user: User, ability: Ability) => {
           });
         }
 
-        // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
-        await db.userPassive.create({
-          data: {
-            userId: user.id,
-            effectType: ability.type,
-            abilityName: ability.name,
-            value: ability.value ?? 0,
-            endTime: ability.duration
-              ? new Date(Date.now() + ability.duration * 60000).toISOString()
-              : undefined, //TODO: datetime?
-          },
-        });
-
-        // if the ability is aoe, all guildmembers should also recieve the passive
-        if (ability.aoe) {
-          const guildmembers =
-            (await getMembersByCurrentUserGuild(user.guildName || "")) || [];
-
-          await db.userPassive.createMany({
-            data: guildmembers.map((member) => ({
-              userId: member.id,
-              effectType: ability.type,
-              abilityName: ability.name,
-              value: ability.value ?? 0,
-              endTime: ability.duration
-                ? new Date(Date.now() + ability.duration * 60000).toISOString()
-                : undefined,
-            })),
+        // check if the passive has increased health or mana, if so decrement the old value
+        if (parentPassive?.effectType === "IncreaseHealth") {
+          await db.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              hpMax: {
+                decrement: parentPassive.value ?? 0,
+              },
+            },
           });
-
-          // Check if the passive also increases stats
-          if (ability.type === "IncreaseHealth") {
-            await db.user.updateMany({
-              data: guildmembers.map((member) => {
-                return {
-                  where: {
-                    id: member.id,
-                  },
-                  data: {
-                    hp: {
-                      increment: ability.value ?? 0,
-                    },
-                  },
-                };
-              }),
-            });
-          } else if (ability.type === "IncreaseMana") {
-            await db.user.updateMany({
-              data: guildmembers.map((member) => {
-                return {
-                  where: {
-                    id: member.id,
-                  },
-                  data: {
-                    mana: {
-                      increment: ability.value ?? 0,
-                    },
-                  },
-                };
-              }),
-            });
-          }
+        } else if (parentPassive?.effectType === "IncreaseMana") {
+          await db.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              manaMax: {
+                decrement: parentPassive.value ?? 0,
+              },
+            },
+          });
         }
       }
-      logger.info(
-        `User ${user.id} bought ability ${ability.name}` +
-          (ability.isPassive ? " and activated it" : ""),
-      );
-      return "Success";
+      logger.info(`User ${user.id} bought ability ${ability.name}`);
+      return "Bought " + ability.name + " successfully!";
     });
   } catch (error) {
     logger.error(
-      `Error buying ability ${ability.name} by user ${user.id}: ${error}`,
+      `Error buying ability ${ability.name} by user ${user.username}: ${error}`,
     );
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +

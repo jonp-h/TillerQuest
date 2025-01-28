@@ -6,7 +6,7 @@ import { Tooltip, Zoom } from "@mui/material";
 const classes = [
   {
     name: "Wizard1",
-    src: "/classes/Wizard.png",
+    src: "/classes/Wizard1.png",
     description: "Lorem ipsum solar sit amet cleric",
   },
   {
@@ -21,7 +21,7 @@ const classes = [
   },
   {
     name: "Barbarian1",
-    src: "/classes/Barbarian.png",
+    src: "/classes/Barbarian1.png",
     description: "Lorem ipsum solar sit amet cleric",
   },
   {
@@ -36,7 +36,7 @@ const classes = [
   },
   {
     name: "Druid1",
-    src: "/classes/Druid.png",
+    src: "/classes/Druid1.png",
     description: "Lorem ipsum solar sit amet druid",
   },
   {
@@ -51,7 +51,7 @@ const classes = [
   },
   {
     name: "BloodMage1",
-    src: "/classes/BloodMage.png",
+    src: "/classes/BloodMage1.png",
     description: "Lorem ipsum solar sit amet druid",
   },
   {
@@ -66,7 +66,7 @@ const classes = [
   },
   {
     name: "Bard1",
-    src: "/classes/Bard.png",
+    src: "/classes/Bard1.png",
     description: "Lorem ipsum solar sit amet druid",
   },
   {

@@ -12,6 +12,7 @@ import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
+import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
 
 export default async function AbilityNamePage({
   params,
@@ -31,6 +32,8 @@ export default async function AbilityNamePage({
   if (!user) {
     notFound();
   }
+
+  const activePassive = await checkIfPassiveIsActive(user, ability);
 
   const userIsCorrectClass =
     !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
@@ -52,7 +55,9 @@ export default async function AbilityNamePage({
     ));
   }
 
-  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  let guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  // remove user from guildMembers
+  guildMembers = guildMembers?.filter((member) => member.id !== user.id) || [];
 
   return (
     <MainContainer>
@@ -113,6 +118,7 @@ export default async function AbilityNamePage({
             userOwnsAbility={userOwnsAbility}
             missingParentAbility={missingParentAbility}
             guildMembers={guildMembers}
+            activePassive={activePassive}
           />
         </Paper>
       </div>

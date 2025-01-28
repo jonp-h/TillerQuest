@@ -67,6 +67,13 @@ export const selectAbility = async (
           return await useTransferAbility(db, user, targetUsersId[0], ability);
         case "Trickery":
           return "Trickery is not implemented yet";
+        case "Protection":
+          return await useProtectionAbility(
+            db,
+            user,
+            targetUsersId[0],
+            ability,
+          );
       }
     });
   } catch (error) {
@@ -264,6 +271,51 @@ const useTransferAbility = async (
     return "Target given " + value + " from your " + fieldToUpdate;
   } catch (error) {
     logger.error("Error using transfer ability " + error);
+    return (
+      "Something went wrong. Please notify a game master of this timestamp: " +
+      Date.now()
+    );
+  }
+};
+
+const useProtectionAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  try {
+    // check if user already has passive
+    let targetHasPassive = await db.userPassive.findFirst({
+      where: {
+        userId: targetUserId,
+        abilityName: ability.name,
+      },
+    });
+
+    if (targetHasPassive) {
+      return "Target already has this passive";
+    }
+
+    await db.userPassive.create({
+      data: {
+        userId: targetUserId,
+        effectType: ability.type,
+        abilityName: ability.name,
+        value: ability.value ?? 0,
+        endTime: ability.duration
+          ? new Date(Date.now() + ability.duration * 60000).toISOString()
+          : undefined, // 1 * 60000 = 1 minute
+      },
+    });
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    );
+
+    return "Target recieved " + ability.name;
+  } catch (error) {
+    logger.error("Error using protection ability: " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
       Date.now()

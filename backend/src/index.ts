@@ -72,7 +72,7 @@ cron.schedule(
         for (const passive of usersWithIncreasedHealth) {
           await db.user.update({
             where: { id: passive.userId },
-            data: { hp: { decrement: passive.value || 0 } },
+            data: { hpMax: { decrement: passive.value || 0 } },
           });
         }
 
@@ -89,7 +89,7 @@ cron.schedule(
         for (const passive of usersWithIncreaseMana) {
           await db.user.update({
             where: { id: passive.userId },
-            data: { mana: { decrement: passive.value || 0 } },
+            data: { manaMax: { decrement: passive.value || 0 } },
           });
         }
 
@@ -107,9 +107,11 @@ cron.schedule(
 
 // Schedule a job to run every day at midnight to generate a random cosmic event
 cron.schedule(
-  "* * * * *",
+  "0 0 * * *",
   async () => {
     try {
+      //TODO: remove all arena tokens
+
       await randomCosmic();
       console.log("Generated random cosmic event");
     } catch (error) {

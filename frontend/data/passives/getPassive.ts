@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
-import { $Enums } from "@prisma/client";
+import { $Enums, Ability, User } from "@prisma/client";
 
 export const getUserPassives = async (userId: string) => {
   const session = await auth();
@@ -78,6 +78,27 @@ export const getUserPassiveEffect = async (
   } catch (error) {
     logger.error("Error getting user passive by type " + type + ": " + error);
     return 0;
+  }
+};
+
+export const checkIfPassiveIsActive = async (user: User, ability: Ability) => {
+  const session = await auth();
+  if (session?.user?.id !== user.id) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const activePassive = await db.userPassive.findFirst({
+      where: {
+        userId: user.id,
+        abilityName: ability.name,
+      },
+    });
+
+    return !!activePassive;
+  } catch (error) {
+    logger.error("Error checking if active passive: " + error);
+    return false;
   }
 };
 
