@@ -6,11 +6,13 @@ import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import {
+  damageValidator,
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
+import { getUserPassiveEffect } from "@/data/passives/getPassive";
 
 //FIXME: implement session in all functions
 
@@ -57,6 +59,7 @@ export const selectAbility = async (
         // heal the target
         case "Heal":
           return await useHealAbility(db, user, targetUsersId[0], ability);
+        // revive a dead target without negative consequences
         case "Revive":
           throw new Error("Revive is not implemented yet");
         // give mana to the target
@@ -65,12 +68,15 @@ export const selectAbility = async (
         // transfer a resource from one player to another player
         case "Transfer":
           return await useTransferAbility(db, user, targetUsersId[0], ability);
+        // swap a resource between two players
         case "Swap":
-          throw new Error("Swap is not implemented yet");
-        case "Convert":
-          throw new Error("Convert is not implemented yet");
+          return await useSwapAbility(db, user, targetUsersId[0], ability);
+        // converts a resource from one type to another
+        case "Trade":
+          return await useTradeAbility(db, user, targetUsersId[0], ability);
         case "Trickery":
-          return "Trickery is not implemented yet";
+          throw new Error("Trickery is not implemented yet");
+        // shields a target from damage
         case "Protection":
           return await useProtectionAbility(
             db,
@@ -187,7 +193,7 @@ const useHealAbility = async (
     logger.error("Error using heal ability: " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      new Date().toISOString()
     );
   }
 };
@@ -228,7 +234,7 @@ const useManaAbility = async (
     logger.error("Error using mana ability: " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      new Date().toISOString()
     );
   }
 };
@@ -282,7 +288,120 @@ const useTransferAbility = async (
     logger.error("Error using transfer ability " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      new Date().toISOString()
+    );
+  }
+};
+
+const useSwapAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  try {
+    const targetUser = await db.user.findUnique({
+      where: {
+        id: targetUserId,
+      },
+      select: {
+        hp: true,
+        hpMax: true,
+      },
+    });
+    if (!targetUser || targetUser.hp === 0) {
+      return "Target is dead";
+    }
+
+    if (castingUser.hp < targetUser.hp) {
+      return "You cannot swap health with a target that has more health than you";
+    }
+
+    // swap should not exceed the max health of the users
+    const newHealthForTarget =
+      castingUser.hp > targetUser?.hpMax ? targetUser.hpMax : castingUser.hp;
+    const newHealthForCastingUser =
+      targetUser.hp > castingUser.hpMax ? castingUser.hpMax : targetUser.hp;
+
+    await db.user.update({
+      where: {
+        id: castingUser.id,
+      },
+      data: {
+        hp: newHealthForCastingUser,
+      },
+    });
+
+    await db.user.update({
+      where: {
+        id: targetUserId,
+      },
+      data: {
+        hp: newHealthForTarget,
+      },
+    });
+
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    );
+
+    return "You swapped health with the target";
+  } catch (error) {
+    logger.error("Error using swap ability: " + error);
+    return (
+      "Something went wrong. Please notify a game master of this timestamp: " +
+      new Date().toISOString()
+    );
+  }
+};
+
+const useTradeAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  try {
+    // At the moment the trade ability is only used to trade health to mana
+    let value = await damageValidator(
+      db,
+      targetUserId,
+      castingUser.hp,
+      ability.healthCost!,
+    );
+    const passiveMana = await getUserPassiveEffect(db, targetUserId, "Mana");
+    const manaToRecieve = value + passiveMana;
+
+    await db.user.update({
+      where: {
+        id: targetUserId,
+      },
+      data: {
+        hp: {
+          decrement: value,
+        },
+        mana: {
+          increment: manaToRecieve,
+        },
+      },
+    });
+
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    logger.info(
+      `User ${castingUser.id} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
+    );
+
+    return (
+      "You traded " + value + " health, and recieved " + manaToRecieve + " mana"
+    );
+  } catch (error) {
+    logger.error("Error using trade ability: " + error);
+    return (
+      "Something went wrong. Please notify a game master of this timestamp: " +
+      new Date().toISOString()
     );
   }
 };
@@ -318,6 +437,8 @@ const useProtectionAbility = async (
       },
     });
 
+    await finalizeAbilityUsage(db, castingUser, ability);
+
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
     );
@@ -327,7 +448,7 @@ const useProtectionAbility = async (
     logger.error("Error using protection ability: " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      new Date().toISOString()
     );
   }
 };
