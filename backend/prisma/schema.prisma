@@ -72,7 +72,6 @@ enum AbilityType {
   Arena
   Transfer
   Trade
-  Convert
   IncreaseHealth
   IncreaseMana
   Revive
@@ -139,8 +138,7 @@ model Ability {
   name         String          @id @default(cuid())
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
-  aoe          Boolean         @default(false)
-  isPassive    Boolean         @default(false)
+  target       Int?            @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
   description  String?
   duration     Int?
   icon         String?

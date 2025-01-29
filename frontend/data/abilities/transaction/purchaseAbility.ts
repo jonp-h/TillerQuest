@@ -45,7 +45,9 @@ export const buyAbility = async (user: User, ability: Ability) => {
         },
       });
 
-      if (ability.isPassive) {
+      //TODO: double check improvements to other targeting passives?
+      // check if ability is a self-targeting ability with upgrades
+      if (ability.target === -1) {
         // user can only have one passive of each type (mana, health, xp)
         // delete the old one, before adding the upgraded version
         const parentPassive = await db.userPassive.findFirst({

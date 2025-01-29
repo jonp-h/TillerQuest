@@ -6,7 +6,16 @@ import {
 } from "@/data/abilities/getters/getAbilities";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { getUserById } from "@/data/user/getUser";
-import { Paper, Typography } from "@mui/material";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
 import AbilityForm from "./_components/AbilityForm";
@@ -24,7 +33,9 @@ export default async function AbilityNamePage({
   const session = await auth();
 
   if (!ability || !session?.user.id) {
-    console.error("Ability" + abilityName + "not found or user not logged in.");
+    console.error(
+      "Ability " + abilityName + " not found or user not logged in.",
+    );
     notFound();
   }
 
@@ -56,8 +67,14 @@ export default async function AbilityNamePage({
   }
 
   let guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
-  // remove user from guildMembers
-  guildMembers = guildMembers?.filter((member) => member.id !== user.id) || [];
+  if (ability.target > 0) {
+    // remove user from guildMembers
+    guildMembers =
+      guildMembers?.filter((member) => member.id !== user.id) || [];
+  } else {
+    guildMembers =
+      guildMembers?.filter((member) => member.id === user.id) || [];
+  }
 
   return (
     <MainContainer>
@@ -81,45 +98,52 @@ export default async function AbilityNamePage({
             </div>
           </div>
           <Typography variant="h3">{ability.name.replace("-", " ")}</Typography>
-          <div className="flex justify-around mb-3">
-            <Typography variant="h6" color="aquamarine">
-              {ability.category}
-            </Typography>
-            <Typography variant="h6" color="error">
-              Gemstone cost: {ability.gemstoneCost}
-            </Typography>
-            {!ability.isPassive && (
-              <Typography variant="h6" color="orange">
-                XP: {ability.xpGiven}
-              </Typography>
-            )}
+          <Typography variant="body1" className="py-5">
+            {ability.description}
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell align="right">Category</TableCell>
+                  <TableCell align="right">Duration</TableCell>
+                  <TableCell align="right">Gemstone cost</TableCell>
+                  <TableCell align="right">Health cost</TableCell>
+                  <TableCell align="right">Mana cost</TableCell>
+                  <TableCell align="right">Value</TableCell>
+                  <TableCell align="right">XP</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {ability.name}
+                  </TableCell>
+                  <TableCell align="right">{ability.category}</TableCell>
+                  <TableCell align="right">{ability.duration}</TableCell>
+                  <TableCell align="right">{ability.gemstoneCost}</TableCell>
+                  <TableCell align="right">{ability.healthCost}</TableCell>
+                  <TableCell align="right">{ability.manaCost}</TableCell>
+                  <TableCell align="right">{ability.value}</TableCell>
+                  <TableCell align="right">{ability.xpGiven}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className="my-5">
+            <AbilityForm
+              ability={ability}
+              user={user}
+              guildMembers={guildMembers}
+              userOwnsAbility={userOwnsAbility}
+              userIsCorrectClass={userIsCorrectClass}
+              missingParentAbility={missingParentAbility}
+              activePassive={activePassive}
+            />
           </div>
-          <Typography variant="body1">{ability.description}</Typography>
-          <div className="flex justify-around my-3">
-            {ability.manaCost && (
-              <Typography variant="h6" color="cyan">
-                Mana cost: {ability.manaCost}
-              </Typography>
-            )}
-
-            <Typography variant="h6" color="cyan">
-              Value: {ability.value}
-            </Typography>
-          </div>
-          <div></div>
-          {missingParentAbility && userIsCorrectClass && (
-            <Typography variant="body1" color="error">
-              You don&apos;t own the necessary parent abilities.
-            </Typography>
-          )}
-          <AbilityForm
-            ability={ability}
-            user={user}
-            userOwnsAbility={userOwnsAbility}
-            missingParentAbility={missingParentAbility}
-            guildMembers={guildMembers}
-            activePassive={activePassive}
-          />
         </Paper>
       </div>
     </MainContainer>

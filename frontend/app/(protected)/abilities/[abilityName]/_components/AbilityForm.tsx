@@ -31,6 +31,7 @@ export default function AbilityForm({
   ability: Ability;
   user: User;
   userOwnsAbility: boolean;
+  userIsCorrectClass: boolean;
   missingParentAbility: boolean;
   guildMembers: guildMembers;
   activePassive: boolean;
@@ -41,14 +42,7 @@ export default function AbilityForm({
 
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  // If mana cost is null, the ability is a passive ability
   const lackingMana = user.mana < (ability.manaCost || 0);
-
-  // const userIsCorrectClass = user.class === (ability.type as $Enums.Class);
-
-  const userIsCorrectClass =
-    !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
-    user.class === ability.category;
 
   const router = useRouter();
 
@@ -57,29 +51,25 @@ export default function AbilityForm({
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    let targetUsers = [selectedUser];
+    let targetUsers;
 
-    if (ability.aoe) {
-      targetUsers = guildMembers?.map((member) => member.id) || [];
+    switch (ability.target) {
+      case -1:
+        targetUsers = [user.id];
+        break;
+      case 0:
+        targetUsers = guildMembers?.map((member) => member.id) || [];
+        break;
+      case 1:
+        targetUsers = [selectedUser];
+        break;
     }
 
     const result = await selectAbility(user, targetUsers, ability);
     setFeedback(typeof result === "string" ? result : null);
-  };
 
-  // ---------------- Use passive ----------------
-
-  const handleUsePassive = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-
-    let targetUsers = [selectedUser];
-
-    if (ability.aoe) {
-      targetUsers = guildMembers?.map((member) => member.id) || [];
-    }
-
-    const result = await usePassive(user, ability);
-    setFeedback(typeof result === "string" ? result : null);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    router.refresh();
   };
 
   // ---------------- Buy ability ----------------
@@ -114,80 +104,52 @@ export default function AbilityForm({
       )}
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
-        !ability.isPassive ? (
-          // Rendered when user owns active ability
-          <form
-            onSubmit={handleUseAbility}
-            className="flex flex-col gap-4 items-center"
-          >
-            {guildMembers && (
-              <AbilityUserSelect
-                aoe={ability.aoe}
-                selectedUser={selectedUser}
-                setSelectedUser={setSelectedUser}
-                guildMembers={guildMembers}
-              />
-            )}
-            {lackingMana && (
-              <Typography variant="body1" color="error">
-                You don&apos;t have enough mana to use this ability.
-              </Typography>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              type="submit"
-              disabled={lackingMana}
-            >
-              Use
-            </Button>
-          </form>
-        ) : // Rendered when user owns passive ability
-        activePassive ? (
+        <>
+          <AbilityUserSelect
+            target={ability.target}
+            selectedUser={selectedUser}
+            setSelectedUser={setSelectedUser}
+            guildMembers={guildMembers}
+          />
+          {lackingMana && (
+            <Typography variant="body1" color="error">
+              Not enough mana to use this ability.
+            </Typography>
+          )}
           <Button
             variant="contained"
-            color="primary"
-            size="large"
-            type="submit"
-            disabled={true}
+            onClick={handleUseAbility}
+            disabled={lackingMana || activePassive}
           >
-            Activated
+            {!activePassive
+              ? ability.duration === null
+                ? "Use ability"
+                : "Use ability for " + ability.duration + " minutes"
+              : "Activated"}
           </Button>
-        ) : (
-          <form
-            onSubmit={handleUsePassive}
-            className="flex flex-col gap-4 items-center"
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              type="submit"
-            >
-              Activate passive for {ability.duration} minutes
-            </Button>
-          </form>
-        )
-      ) : // Rendered when user does not own ability
-
-      userIsCorrectClass ? (
-        <form
-          onSubmit={handleBuyAbility}
-          className="flex flex-col gap-4 items-center"
-        >
-          <Typography variant="body1" color="error">
-            You don&apos;t own this ability.
-          </Typography>
-
-          <Button variant="contained" color="error" type="submit">
-            Buy ability
-          </Button>
-        </form>
+        </>
       ) : (
-        <Typography variant="body1" color="error">
-          You&apos;re not the correct class to buy this ability.
-        </Typography>
+        <>
+          {user.gemstones < ability.gemstoneCost && (
+            <Typography variant="body1" color="error">
+              You don't have enough gemstones to buy this ability.
+            </Typography>
+          )}
+          {missingParentAbility && (
+            <Typography variant="body1" color="error">
+              Buy the necessary parent ability first.
+            </Typography>
+          )}
+          <Button
+            disabled={
+              user.gemstones < ability.gemstoneCost || missingParentAbility
+            }
+            variant="contained"
+            onClick={handleBuyAbility}
+          >
+            Buy
+          </Button>
+        </>
       )}
     </>
   );

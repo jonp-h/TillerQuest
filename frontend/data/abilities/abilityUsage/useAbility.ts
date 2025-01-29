@@ -13,6 +13,7 @@ import {
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
+import { usePassive } from "@/data/passives/usePassive";
 
 //FIXME: implement session in all functions
 
@@ -31,7 +32,7 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
  */
 export const selectAbility = async (
   user: User,
-  targetUsersId: string[],
+  targetUsersId: string[] = [],
   ability: Ability,
 ) => {
   const session = await auth();
@@ -46,12 +47,19 @@ export const selectAbility = async (
   if (user.mana < (ability.manaCost || 0)) {
     return "Insufficient mana";
   }
+  if (user.hp < (ability.healthCost || 0)) {
+    return "Insufficient health";
+  }
 
   try {
     return await prisma.$transaction(async (db) => {
       // check if ability is AoE. If not the targetUsersId will only have one element
-      if (ability.aoe) {
+      if (ability.target > 1) {
         return await useAOEAbility(db, user, targetUsersId, ability);
+      }
+
+      if (ability.target === -1) {
+        return usePassive(db, user, ability);
       }
 
       // check ability type and call the appropriate function

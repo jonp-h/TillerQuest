@@ -17,23 +17,27 @@ type guildMembers =
   | null;
 
 interface Props {
-  aoe: boolean;
+  target: number;
   selectedUser: string | undefined;
   setSelectedUser: React.Dispatch<React.SetStateAction<string>>;
   guildMembers: guildMembers;
 }
 
 function AbilityUserSelect({
-  aoe,
+  target,
   selectedUser,
   setSelectedUser,
   guildMembers,
 }: Props) {
   return (
     <>
-      {aoe ? (
+      {target === 0 ? (
         <Typography variant="h6" color="violet">
           All guildmembers are affected by this ability.
+        </Typography>
+      ) : target === -1 ? (
+        <Typography variant="h6" color="violet">
+          Target self.
         </Typography>
       ) : (
         <div className="flex justify-center my-5 gap-10">
