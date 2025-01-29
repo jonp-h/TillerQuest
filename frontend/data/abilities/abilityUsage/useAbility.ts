@@ -58,13 +58,17 @@ export const selectAbility = async (
         case "Heal":
           return await useHealAbility(db, user, targetUsersId[0], ability);
         case "Revive":
-          return "Revive is not implemented yet";
+          throw new Error("Revive is not implemented yet");
         // give mana to the target
         case "Mana":
           return await useManaAbility(db, user, targetUsersId[0], ability);
         // transfer a resource from one player to another player
         case "Transfer":
           return await useTransferAbility(db, user, targetUsersId[0], ability);
+        case "Swap":
+          throw new Error("Swap is not implemented yet");
+        case "Convert":
+          throw new Error("Convert is not implemented yet");
         case "Trickery":
           return "Trickery is not implemented yet";
         case "Protection":
@@ -74,6 +78,8 @@ export const selectAbility = async (
             targetUsersId[0],
             ability,
           );
+        case "Arena":
+          throw new Error("Arena is not implemented yet");
       }
     });
   } catch (error) {
@@ -84,7 +90,7 @@ export const selectAbility = async (
       "Something went wrong using " +
       ability.name +
       ". Please notify a game master of this timestamp: " +
-      Date.now()
+      new Date().toLocaleString()
     );
   }
 };
@@ -128,6 +134,9 @@ const useAOEAbility = async (
             targetUserId,
             ability,
           );
+        case "Arena":
+          console.log("Arena is not implemented yet");
+          throw new Error("Arena is not implemented yet");
       }
     }),
   );
