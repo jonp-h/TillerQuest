@@ -40,3 +40,24 @@ export const getUserByUsername = async (username: string) => {
     return null;
   }
 };
+
+export const getLeaderboard = async () => {
+  // unstable_noStore();
+
+  const session = await auth();
+  if (!session) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const users = await db.user.findMany({
+      where: { publicHighscore: true },
+      orderBy: { xp: "desc" },
+      take: 10,
+    });
+
+    return users;
+  } catch {
+    return null;
+  }
+};
