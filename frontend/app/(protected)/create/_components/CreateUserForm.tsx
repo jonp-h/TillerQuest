@@ -10,17 +10,17 @@ import {
   AccordionDetails,
   RadioGroup,
   FormControlLabel,
-  FormLabel,
   Radio,
 } from "@mui/material";
 import React, { useState } from "react";
 import Classes from "./Classes";
 import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/createUser";
-import { $Enums, SchoolClass } from "@prisma/client";
+import { SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
-import { getGuildNames } from "@/data/guilds/getGuilds";
 import ClassGuilds from "./ClassGuilds";
+import { z } from "zod";
+import { escapeHtml, newUserSchema } from "@/lib/newUserValidation";
 
 export default function CreateUserForm() {
   // TODO: switch to unstable_update in auth.ts?
@@ -30,7 +30,7 @@ export default function CreateUserForm() {
   const [username, setUsername] = useState(data?.user.username);
   const [name, setName] = useState(data?.user.name);
   const [lastname, setLastname] = useState(data?.user.lastname);
-  const [playerClass, setPlayerClass] = useState<string>("Barbarian1");
+  const [playerClass, setPlayerClass] = useState<string>("");
   const [guild, setGuild] = useState("");
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
@@ -46,25 +46,54 @@ export default function CreateUserForm() {
       return;
     }
 
-    // update the role from NEW to USER
-    // add initial username, name, lastname, class and class image
-    // sends to auth.ts, which updates the token and the db
-    await update({
-      role: "USER",
-      username: username,
-      name: name,
-      lastname: lastname,
-      class: playerClass.slice(0, -1),
-      image: playerClass,
-      guild: guild,
-      schoolClass: schoolClass,
-      publicHighscore: publicHighscore,
-    });
+    const formValues = {
+      username,
+      name,
+      lastname,
+      playerClass,
+      guild,
+      schoolClass,
+      publicHighscore,
+    };
 
-    // call update to refresh session before redirecting to main page
-    await update().then(() => {
-      location.reload();
-    });
+    try {
+      const validatedData = newUserSchema.parse(formValues);
+
+      // Sanitize inputs
+      const sanitizedData = {
+        ...validatedData,
+        username: escapeHtml(validatedData.username),
+        name: escapeHtml(validatedData.name),
+        lastname: escapeHtml(validatedData.lastname),
+        playerClass: escapeHtml(validatedData.playerClass),
+        guild: escapeHtml(validatedData.guild),
+        schoolClass: escapeHtml(validatedData.schoolClass),
+      };
+
+      // update the role from NEW to USER
+      // add initial username, name, lastname, class and class image
+      // sends to auth.ts, which updates the token and the db
+      await update({
+        role: "USER",
+        username: sanitizedData.username,
+        name: sanitizedData.name,
+        lastname: sanitizedData.lastname,
+        class: sanitizedData.playerClass.slice(0, -1),
+        image: sanitizedData.playerClass,
+        guild: sanitizedData.guild,
+        schoolClass: sanitizedData.schoolClass,
+        publicHighscore: sanitizedData.publicHighscore,
+      });
+
+      // call update to refresh session before redirecting to main page
+      await update().then(() => {
+        location.reload();
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setErrorMessage(error.errors.map((e) => e.message).join(", "));
+      }
+    }
   };
 
   return (
@@ -82,7 +111,6 @@ export default function CreateUserForm() {
           size="small"
           required
           helperText="Enter the secret code given from a game master"
-          error={!!errorMessage}
           autoComplete="off"
         />
         <Typography variant="body1">Enter Username</Typography>
@@ -93,7 +121,6 @@ export default function CreateUserForm() {
           onChange={(e) => setUsername(e.target.value)}
           size="small"
           required
-          helperText="Must be unique"
         />
         <Typography variant="body1">Enter Name</Typography>
         <TextField
@@ -131,18 +158,18 @@ export default function CreateUserForm() {
         <ClassGuilds guild={guild} setGuild={setGuild} />
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
-        {errorMessage && (
-          <Typography variant="body1" color="error">
-            {errorMessage}
-          </Typography>
-        )}
         <Typography variant="body1">
           Do you want to be visible on public highscore lists?
         </Typography>
-        <Switch
-          checked={publicHighscore}
-          onChange={() => setPublicHighscore(!publicHighscore)}
-        />
+        <div>
+          <Switch
+            checked={publicHighscore}
+            onChange={() => setPublicHighscore(!publicHighscore)}
+          />
+          <Typography variant="body1">
+            {publicHighscore ? "Yes" : "No"}
+          </Typography>
+        </div>
         <Accordion sx={{ width: "40%" }}>
           <AccordionSummary
             expandIcon={<ArrowDownward />}
@@ -164,6 +191,11 @@ export default function CreateUserForm() {
             </Typography>
           </AccordionDetails>
         </Accordion>
+        {errorMessage && (
+          <Typography variant="body1" color="error">
+            {errorMessage}
+          </Typography>
+        )}
         <Button
           type="submit"
           variant="contained"

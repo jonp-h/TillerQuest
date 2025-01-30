@@ -132,7 +132,7 @@ export default function AbilityForm({
         <>
           {user.gemstones < ability.gemstoneCost && (
             <Typography variant="body1" color="error">
-              You don't have enough gemstones to buy this ability.
+              You don&apos;t have enough gemstones to buy this ability.
             </Typography>
           )}
           {missingParentAbility && (

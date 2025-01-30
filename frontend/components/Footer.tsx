@@ -1,13 +1,25 @@
 export default function Footer() {
   return (
-    <div className="flex flex-col w-full py-10 items-center bg-gradient-to-r from-slate-900 to-slate-950">
+    <div className="flex flex-col w-full py-5 gap-2 items-center bg-gradient-to-r from-slate-900 to-slate-950">
+      <h2>
+        Report a bug or issue {""}
+        <a
+          href="https://github.com/jonp-h/TillerQuest/issues/new/choose"
+          className="text-red-400 hover:text-red-500 hover:underline"
+        >
+          here 🪲
+        </a>
+      </h2>
       <h2>
         Made with ❤️ by {}
-        <a href="https://github.com/jonp-h" className="text-blue-400">
+        <a
+          href="https://github.com/jonp-h"
+          className="text-blue-400 hover:text-blue-500 hover:underline"
+        >
           Pape
         </a>
       </h2>
-      <p>2024</p>
+      <p>2025</p>
     </div>
   );
 }
