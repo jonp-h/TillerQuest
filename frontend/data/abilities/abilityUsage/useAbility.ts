@@ -53,14 +53,19 @@ export const selectAbility = async (
 
   try {
     return await prisma.$transaction(async (db) => {
+      //TODO: implement further checks for more than one target
       // check if ability is AoE. If not the targetUsersId will only have one element
-      if (ability.target > 1) {
+      if (ability.target === 0) {
         return await useAOEAbility(db, user, targetUsersId, ability);
       }
 
       if (ability.target === -1) {
         return usePassive(db, user, ability);
       }
+
+      //TODO: remove checks for targeting before usage. giant switch statement for type.
+      // ! in schema differentiate between passive and ability type
+      // ! all useAbilities functions must accept many targets. must finish up with finalizeCheckFunction.
 
       // check ability type and call the appropriate function
       switch (ability.type) {
@@ -115,6 +120,21 @@ const finalizeAbilityUsage = async (
   ability: Ability,
 ) => {
   try {
+    // decrement cost of ability from user
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        mana: {
+          decrement: ability.manaCost || 0,
+        },
+        hp: {
+          decrement: ability.healthCost || 0,
+        },
+      },
+    });
+
     await experienceAndLevelValidator(db, user, ability.xpGiven!);
   } catch (error) {
     logger.error(
@@ -140,6 +160,8 @@ const useAOEAbility = async (
         // give mana to the target
         case "Mana":
           return await useManaAbility(db, castingUser, targetUserId, ability);
+        case "ManaPassive":
+          return await usePassive(db, castingUser, ability);
         // transfer a resource from one player to another player
         case "Transfer":
           return await useTransferAbility(

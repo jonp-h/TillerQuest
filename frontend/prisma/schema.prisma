@@ -61,6 +61,7 @@ enum AbilityType {
   Heal
   Swap
   Mana
+  ManaPassive
   Experience
   Protection
   Strength

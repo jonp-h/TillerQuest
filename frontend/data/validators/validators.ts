@@ -62,7 +62,7 @@ export const manaValidator = async (
   }
 
   // check if user has any mana passives to add to the mana value
-  const manaBonus = await getUserPassiveEffect(db, targetUserId, "Mana");
+  const manaBonus = await getUserPassiveEffect(db, targetUserId, "ManaPassive");
   manaValue += manaBonus;
 
   try {

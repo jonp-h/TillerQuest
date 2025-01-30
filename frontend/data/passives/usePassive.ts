@@ -17,7 +17,7 @@ export const usePassive = async (
   if (session?.user?.id !== user.id) {
     throw new Error("Not authorized");
   }
-
+  //FIXME: remove this. use existing target logic
   try {
     // return db.$transaction(async (db) => {
     // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)

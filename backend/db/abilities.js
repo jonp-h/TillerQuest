@@ -67,7 +67,7 @@ const mana = [
   {
     name: "Arcane-Focus",
     category: "Mana",
-    type: "Mana",
+    type: "ManaPassive",
     target: -1,
     description: "Every time you gain mana, you gain 1 extra mana.",
     duration: null,
@@ -82,7 +82,7 @@ const mana = [
   {
     name: "Arcane-Recovery",
     category: "Mana",
-    type: "Mana",
+    type: "ManaPassive",
     target: -1,
     description: "Every time you gain mana, you gain 3 extra mana.",
     duration: null,
@@ -216,7 +216,7 @@ const wizard = [
   {
     name: "Arcane-Gift",
     category: "Wizard",
-    type: "Mana",
+    type: "ManaPassive",
     target: -1,
     description:
       "Every time you gain mana, you gain 1 extra mana. This ability stacks.",
@@ -262,7 +262,7 @@ const wizard = [
   {
     name: "Arcane-Guidance",
     category: "Wizard",
-    type: "Mana",
+    type: "ManaPassive",
     target: 0,
     description:
       "You show your guildmates the secrets of the arcane. All guildmembers gain an addition 2 mana every time they gain mana.",
