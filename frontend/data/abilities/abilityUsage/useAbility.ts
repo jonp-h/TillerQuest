@@ -61,6 +61,10 @@ export const selectAbility = async (
         // heal the target
         case "Heal":
           return await useHealAbility(db, user, targetUsersIds, ability);
+        case "IncreaseHealth":
+          return await usePassive(db, user, ability);
+        case "IncreaseMana":
+          return await usePassive(db, user, ability);
         // revive a dead target without negative consequences
         case "Revive":
           throw new Error("Revive is not implemented yet");
