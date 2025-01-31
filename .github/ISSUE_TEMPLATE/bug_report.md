@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: "[BUG]"
+labels: bug
+assignees: ''
+
+---
+
 ## Subject of the issue
 <!-- Describe your issue here. Please also include error message and exact time of incident. -->
 
