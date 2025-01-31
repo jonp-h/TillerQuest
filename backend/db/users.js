@@ -37,7 +37,7 @@ const users = [
     name: "Karld",
     lastname: "Kai",
     email: "kai@example.com",
-    image: "Bloodmage1",
+    image: "BloodMage1",
     hp: 10,
     hpMax: 100,
     mana: 20,

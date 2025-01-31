@@ -24,6 +24,7 @@ export default function AbilityForm({
   ability,
   user,
   userOwnsAbility,
+  userIsCorrectClass,
   missingParentAbility,
   guildMembers,
   activePassive,
@@ -78,6 +79,11 @@ export default function AbilityForm({
 
   const handleBuyAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+
+    if (!userIsCorrectClass) {
+      setFeedback("You are not the correct class to buy this ability.");
+      return;
+    }
 
     if (missingParentAbility) {
       setFeedback("Buy the necessary parent ability first.");
