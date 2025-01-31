@@ -54,13 +54,20 @@ enum AbilityCategory {
 }
 
 // The ability-logic to be used
+// The ability-logic to be used
 enum AbilityType {
-  Deathsave
-  Cosmic
-  Health
+  // Abilities
   Heal
   Swap
   Mana
+  Transfer
+  Trade
+  Revive
+
+  // Passives
+  Deathsave
+  Cosmic
+  Health
   ManaPassive
   Experience
   Protection
@@ -71,11 +78,8 @@ enum AbilityType {
   Magic
   Adventurer
   Arena
-  Transfer
-  Trade
   IncreaseHealth
   IncreaseMana
-  Revive
 }
 
 model User {

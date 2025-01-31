@@ -67,14 +67,6 @@ export default async function AbilityNamePage({
   }
 
   let guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
-  if (ability.target > 0) {
-    // remove user from guildMembers
-    guildMembers =
-      guildMembers?.filter((member) => member.id !== user.id) || [];
-  } else {
-    guildMembers =
-      guildMembers?.filter((member) => member.id === user.id) || [];
-  }
 
   return (
     <MainContainer>

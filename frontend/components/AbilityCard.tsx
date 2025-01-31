@@ -20,7 +20,7 @@ export default function AbilityCard({ ability }: AbilityProps) {
             <Image
               className="rounded-full border-slate-700 border-2"
               src={"/abilities/" + ability?.abilityName + ".png"}
-              alt={ability?.abilityName ?? "ability"}
+              alt={""}
               draggable={false}
               width={50}
               height={50}

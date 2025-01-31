@@ -51,14 +51,16 @@ export default function AbilityForm({
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    let targetUsers;
+    let targetUsers = [selectedUser];
 
     switch (ability.target) {
       case -1:
         targetUsers = [user.id];
         break;
       case 0:
-        targetUsers = guildMembers?.map((member) => member.id) || [];
+        targetUsers = guildMembers
+          ? guildMembers.map((member) => member.id)
+          : [];
         break;
       case 1:
         targetUsers = [selectedUser];
