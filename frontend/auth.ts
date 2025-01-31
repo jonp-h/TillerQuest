@@ -3,9 +3,10 @@ import { db } from "./lib/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config";
 import { Class, UserRole } from "@prisma/client";
-import { getUserById, updateUser } from "./data/user";
+import { getUserById } from "./data/user/getUser";
+import { updateUser } from "./data/user/updateUser";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   ...authConfig,
@@ -58,6 +59,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           lastname: session.lastname,
           class: session.class,
           image: session.image,
+          guildName: session.guild,
+          schoolClass: session.schoolClass,
+          publicHighscore: session.publicHighscore,
         });
       }
 

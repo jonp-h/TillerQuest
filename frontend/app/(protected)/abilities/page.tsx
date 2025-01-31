@@ -1,7 +1,10 @@
 import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
 import React from "react";
-import { getAbilityHierarchy, getOwnedAbilities } from "@/data/abilities";
+import {
+  getAbilityHierarchy,
+  getUserAbilities,
+} from "@/data/abilities/getters/getAbilities";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
@@ -14,7 +17,7 @@ export default async function AbilitiesPage() {
     return notFound();
   }
 
-  const userAbilities = await getOwnedAbilities(user?.user?.id);
+  const userAbilities = await getUserAbilities(user?.user?.id);
 
   return (
     <MainContainer>

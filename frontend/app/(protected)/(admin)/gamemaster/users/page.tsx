@@ -2,7 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { Box, Paper } from "@mui/material";
 import React from "react";
 
-import { getAllUsers } from "@/data/admin";
+import { getAllUsers } from "@/data/admin/adminUserInteractions";
 import ListControls from "./_components/ListControls";
 
 export default async function UsersPage() {

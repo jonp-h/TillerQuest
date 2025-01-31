@@ -15,11 +15,11 @@ interface MiniatureProfileProps {
 }
 
 export default function MiniatureProfile({ member }: MiniatureProfileProps) {
-  const image = member.hp !== 0 ? member.image + ".jpg" : "grave.jpg";
+  const image = member.hp !== 0 ? member.image + ".png" : "grave.png";
   return (
     <Link key={member.username} href={"/profile/" + member.username}>
       <div className="flex flex-col justify-center">
-        <div className="from-zinc-600 to-zinc-700 bg-gradient-radial p-1.5 rounded-full">
+        <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-gradient-radial p-1.5 rounded-full">
           <Image
             className="rounded-full"
             draggable="false"
@@ -35,6 +35,7 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
           </Typography>
           {/* Health bar */}
           <LinearProgress
+            className="w-32 self-center"
             variant="determinate"
             value={(member.hp / member.hpMax) * 100}
             color="health"
@@ -42,6 +43,7 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
 
           {/* Mana bar */}
           <LinearProgress
+            className="w-32 self-center"
             variant="determinate"
             value={(member.mana / member.manaMax) * 100}
             color="mana"

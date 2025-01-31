@@ -17,8 +17,8 @@ export const AbilityNodes = (
         <stop offset="100%" stopColor="#3f3f46" />
       </radialGradient>
       <radialGradient id="ownedGradient">
-        <stop offset="50%" stopColor="purple" stopOpacity={0.5} />
-        <stop offset="100%" stopColor="purple" stopOpacity={0} />
+        <stop offset="50%" stopColor="white" stopOpacity={0.3} />
+        <stop offset="100%" stopColor="white" stopOpacity={0} />
       </radialGradient>
       <radialGradient id="wrongClassGradient">
         <stop offset="70%" stopColor="grey" />
@@ -73,7 +73,7 @@ export const AbilityNodes = (
       strokeWidth="0"
       x="80"
       y="5"
-      fontSize={30}
+      fontSize={25}
       onClick={() => handleNodeClick(nodeDatum)}
     >
       {nodeDatum.name.replace(/-/g, " ")}

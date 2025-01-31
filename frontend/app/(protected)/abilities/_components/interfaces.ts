@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 
 export interface RootAbilities {
   name: string;
-  type: $Enums.AbilityType;
+  category: $Enums.AbilityCategory;
   children: {
     name: string;
     children: {

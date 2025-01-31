@@ -8,7 +8,7 @@ import {
   giveManaToUsers,
   giveXpToUsers,
   healUsers,
-} from "@/data/admin";
+} from "@/data/admin/adminPowers";
 import { useRouter } from "next/navigation";
 
 export default function ListControls({ users }: { users: User[] }) {

@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getAllCosmicEvents, randomCosmic } from "@/data/admin";
+import { getAllCosmicEvents } from "@/data/admin/cosmic";
 import {
   Button,
   Paper,

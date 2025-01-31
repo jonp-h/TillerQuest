@@ -19,8 +19,8 @@ export default function AbilityCard({ ability }: AbilityProps) {
           <div className="flex justify-center">
             <Image
               className="rounded-full border-slate-700 border-2"
-              src={"/abilities/" + ability?.abilityName + ".jpg"}
-              alt={ability?.abilityName ?? "ability"}
+              src={"/abilities/" + ability?.abilityName + ".png"}
+              alt={""}
               draggable={false}
               width={50}
               height={50}

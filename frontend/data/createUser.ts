@@ -1,7 +1,12 @@
 "use server";
 
-const newUserSecret = process.env.NEW_USER_SECRET;
+import { auth } from "@/auth";
 
 export const checkNewUserSecret = async (secret: string) => {
-  return secret !== newUserSecret;
+  // should be available to users with a valid session
+  const session = await auth();
+  if (!session) {
+    throw new Error("Not authorized");
+  }
+  return secret == process.env.NEW_USER_SECRET;
 };

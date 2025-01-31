@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getAllDeadUsers } from "@/data/admin";
+import { getAllDeadUsers } from "@/data/admin/adminUserInteractions";
 import { Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";

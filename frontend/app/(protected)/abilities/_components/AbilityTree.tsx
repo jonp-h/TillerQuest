@@ -31,7 +31,7 @@ export default function AbilityTree({
         containerElem: {
           // Typescript does not recognize width and height
           getBoundingClientRect: () => { width: any; height: any };
-        } | null
+        } | null,
       ) => {
         if (containerElem !== null) {
           const { width, height } = containerElem.getBoundingClientRect();
@@ -39,7 +39,7 @@ export default function AbilityTree({
           setTranslate({ x: width / 2, y: height - 1500 / 2 });
         }
       },
-      []
+      [],
     );
     return [dimensions, translate, containerRef];
   };
@@ -47,8 +47,9 @@ export default function AbilityTree({
   const [dimensions, translate, containerRef] = useCenteredTree({ x: 0, y: 0 });
 
   const userIsNotClass = !(
-    Object.values($Enums.Class).includes(rootAbilities?.type as $Enums.Class) &&
-    userClass != (rootAbilities?.type as $Enums.Class)
+    Object.values($Enums.Class).includes(
+      rootAbilities?.category as $Enums.Class,
+    ) && userClass != (rootAbilities?.category as $Enums.Class)
   );
 
   return (
@@ -66,6 +67,7 @@ export default function AbilityTree({
         {/* @ts-ignore */}
         <Tree
           data={rootAbilities}
+          // This is the distance between nodes vertically
           depthFactor={250}
           dimensions={dimensions}
           translate={translate}
@@ -74,7 +76,8 @@ export default function AbilityTree({
           pathClassFunc={() => "linkClass"}
           draggable={true}
           zoomable={false}
-          nodeSize={{ x: 350, y: 350 }}
+          // The nodeSize prop is used to determine the spacing between nodes
+          nodeSize={{ x: 400, y: 350 }}
           renderCustomNodeElement={(rd3tProps) =>
             AbilityNodes(userIsNotClass, userAbilities, {
               ...rd3tProps,

@@ -1,5 +1,6 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserGuild, getUserByUsername } from "@/data/user";
+import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getUserByUsername } from "@/data/user/getUser";
 import { Button, LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
@@ -7,11 +8,12 @@ import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { getUserAbilities } from "@/data/abilities";
-import { getUserEffects } from "@/data/effects";
+import { getUserAbilities } from "@/data/abilities/getters/getAbilities";
+import { getUserPassives } from "@/data/passives/getPassive";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
+import Link from "next/link";
 
 export default async function ProfilePage({
   params,
@@ -28,7 +30,7 @@ export default async function ProfilePage({
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   const userAbilities = await getUserAbilities(user.id);
-  const userEffects = await getUserEffects(user.id);
+  const passives = await getUserPassives(user.id);
 
   return (
     <MainContainer>
@@ -58,8 +60,8 @@ export default async function ProfilePage({
               className="rounded-full"
               src={
                 user.hp !== 0
-                  ? "/classes/" + user.image + ".jpg"
-                  : "/classes/Grave.jpg"
+                  ? "/classes/" + user.image + ".png"
+                  : "/classes/Grave.png"
               }
               alt={user.username || ""}
               width={250}
@@ -93,12 +95,12 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.xp} / {user.xpToLevel}
+                XP: {user.xp} / {Math.ceil(user.xp / 1000) * 1000}
               </Typography>
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.xp / user.xpToLevel) * 100}
+                value={(user.xp % 1000) / 10}
               />
             </div>
             <div>
@@ -138,39 +140,45 @@ export default async function ProfilePage({
                 Gemstones: {user.gemstones}
                 <Diamond />
               </Typography>
-              <Button variant="contained" color="secondary">
-                Level up
-              </Button>
+              <Link href="/abilities">
+                <Button variant="contained" color="secondary">
+                  Level up
+                </Button>
+              </Link>
             </div>
           </Paper>
           <Paper className=" items-center p-5 w-full h-3/4" elevation={6}>
             <Typography variant="h4" align="center">
-              Active effects
+              Passives
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
-              {userEffects?.map(
-                (effect) =>
-                  effect.ability !== null && (
-                    <Paper
-                      elevation={10}
-                      key={effect.ability.name}
-                      className=" flex flex-col justify-center text-center items-center p-2"
+              {passives?.map(
+                (passive) =>
+                  passive.ability !== null && (
+                    <Link
+                      href={"/abilities/" + passive.ability.name}
+                      key={passive.ability.name}
                     >
-                      <Image
-                        className="rounded-full border-slate-700 border-2"
-                        src={"/abilities/" + effect.ability.name + ".jpg"}
-                        alt={effect.ability.name}
-                        draggable={false}
-                        width={50}
-                        height={50}
-                      />
-                      <Typography variant="h6">
-                        {effect.ability.name.replace("-", " ")}
-                      </Typography>
-                      {effect.endTime && (
-                        <TimeLeft endTime={new Date(effect.endTime)} />
-                      )}
-                    </Paper>
+                      <Paper
+                        elevation={10}
+                        className=" flex flex-col justify-center text-center items-center p-2"
+                      >
+                        <Image
+                          className="rounded-full border-slate-700 border-2"
+                          src={"/abilities/" + passive.ability.name + ".png"}
+                          alt={""}
+                          draggable={false}
+                          width={50}
+                          height={50}
+                        />
+                        <Typography variant="h6">
+                          {passive.ability.name.replace("-", " ")}
+                        </Typography>
+                        {passive.endTime && (
+                          <TimeLeft endTime={new Date(passive.endTime)} />
+                        )}
+                      </Paper>
+                    </Link>
                   ),
               )}
             </div>

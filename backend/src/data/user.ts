@@ -1,7 +1,6 @@
 import { db } from "../lib/db.js";
 import { User } from "@prisma/client";
 import { dailyMana } from "../gameSettings.js";
-import { checkMana } from "./helpers.js";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -60,13 +59,13 @@ export const getMembersByCurrentUserGuild = async (guildName: string) => {
   }
 };
 
-export const getMana = async (user: User) => {
-  // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
-  let manaValue = (await checkMana(user.id, dailyMana)) ?? 0;
+// export const getMana = async (user: User) => {
+//   // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
+//   let manaValue = (await checkMana(user.id, dailyMana)) ?? 0;
 
-  // use get mana
-  return db.user.update({
-    where: { id: user.id },
-    data: { mana: { increment: manaValue }, lastMana: new Date() },
-  });
-};
+//   // use get mana
+//   return db.user.update({
+//     where: { id: user.id },
+//     data: { mana: { increment: manaValue }, lastMana: new Date() },
+//   });
+// };

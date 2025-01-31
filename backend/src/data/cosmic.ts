@@ -3,10 +3,19 @@ import { db } from "../lib/db.js";
 export const randomCosmic = async () => {
   try {
     const now = new Date();
-    const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+    const today = now.toISOString(); // Get current date in YYYY-MM-DD format
 
-    return await db.$transaction(async (db) => {
-      // Unselect all events
+    const suggestedCosmic = await db.$transaction(async (db) => {
+      // Unselect and remove suggestion from all events
+      await db.cosmicEvent.updateMany({
+        where: {
+          suggested: true,
+        },
+        data: {
+          suggested: false,
+        },
+      });
+
       await db.cosmicEvent.updateMany({
         where: {
           selected: true,
@@ -56,6 +65,20 @@ export const randomCosmic = async () => {
       // Fallback in case no event is selected (should not happen)
       return events[0];
     });
+
+    if (!suggestedCosmic) {
+      throw new Error("No cosmic event selected");
+    }
+
+    await db.cosmicEvent.update({
+      where: {
+        name: suggestedCosmic.name,
+      },
+      data: {
+        suggested: true,
+      },
+    });
+    return suggestedCosmic;
   } catch (error) {
     console.error("Unable to get random cosmic:", error);
     throw new Error("Unable to get random cosmic");

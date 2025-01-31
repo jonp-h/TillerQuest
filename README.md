@@ -29,12 +29,13 @@
 
 ### This project uses:
 
-- [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) for type safety.
+- [TypeScript](https://www.typescriptlang.org/) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
 - [Auth.js](https://authjs.dev/) for authentication.
 - [Dice-Box](https://fantasticdice.games) for dice animations.
+- [Winston](https://github.com/winstonjs/winston/) for server-side logging.
 
 ## How To Use
 
@@ -43,7 +44,7 @@
 $ git clone
 
 # Enter the repository
-$ cd /tillerquest/
+$ cd /frontend/
 
 # Install dependencies
 $ npm i
@@ -55,8 +56,8 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-- 
-- Setup a local PostegreSQL instance with Docker in the mocking folder [here](/tillerquest/data/mocking/docker/).
+  
+- Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
 
 - Create .env inside project folder (same folder as app/)
   - Create the following variables and replace the "..."
@@ -72,25 +73,20 @@ AUTH_GITHUB_SECRET=...
 # Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
 
 DATABASE_URL=...
-# Your connection string from mongodb. Should contain username and password. (https://www.mongodb.com/docs/manual/reference/connection-string/)
+# Your connection string to the postgresql database. Should contain username and password.
 
 NEXT_PUBLIC_NEW_USER_SECRET=...
 # Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
 
 NEXT_PUBLIC_MAGICAL_AREA=...
-
 #IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
-
-DATABASE_URL=...
-#Your connection string from mongodb. Should contain username and password in docker-compose. (https://www.mongodb.com/docs/manual/reference/connection-string/)
-# Example: mongodb://username:password@localhost:27018/TQ?retryWrites=true&w=majority&appName=TQ&authSource=admin
 
 ```
 
 ```ps
-$ cd /data/mocking/
+$ cd backend/
 
-$ node generate.mjs #To mock an example database
+$ node generate.js #To mock an example database
 
 ```
 
@@ -114,6 +110,7 @@ $ node generate.mjs #To mock an example database
 - Components should be kept close to the page they are used in. Eg. in a "\_components" folder within that pagefolder.
 - Global and reusable components should be kept in the components folder at the root of the project.
 - Remember to use Pascal-case for components.
+
 ```
 tillerquest/
 ├── .env
@@ -199,7 +196,3 @@ TillerQuest is an application made for darkmode. Background and colors should th
 ## Credits
 
 - Based on [Heimdallsquest](https://heimdallsquest.biz/)
-
-This software uses the following open source packages:
-
-- [Node.js](https://nodejs.org/)

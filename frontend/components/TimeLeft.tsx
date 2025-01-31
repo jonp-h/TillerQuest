@@ -23,10 +23,10 @@ export default function TimeLeft({ endTime }: { endTime: Date }) {
     return () => clearInterval(interval);
   });
 
-  return (
+  return days + hours + minutes + seconds > 0 ? (
     <Typography variant="body1">
       {days !== 0 && days + "d"} {hours !== 0 && hours + "h"}{" "}
       {minutes !== 0 && minutes + "m"} {seconds !== 0 && seconds + "s"}
     </Typography>
-  );
+  ) : null;
 }

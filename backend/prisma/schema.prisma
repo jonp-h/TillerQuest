@@ -20,27 +20,24 @@ enum SchoolClass {
   IM4
   IT1
   IT2
-  IT3
   MP1
-  MP2
-  MP3
 }
 
 enum Class {
   Druid
   Wizard
   Barbarian
+  BloodMage
+  Bard
 }
 
-enum AbilityType {
-  // System types
-  Deathsave
-  Cosmic
-
+// Categories used for ability tabs and tree-grouping
+enum AbilityCategory {
   // Generic types
   Health
   Mana
-  // Experience // This is considered as a passive ability. Requires larges changes in the codebase
+  Experience
+  Damage
   Strength
   Agility
   Trickery
@@ -52,35 +49,67 @@ enum AbilityType {
   Druid
   Wizard
   Barbarian
+  BloodMage
+  Bard
+}
+
+// The ability-logic to be used
+// The ability-logic to be used
+enum AbilityType {
+  // Abilities
+  Heal
+  Swap
+  Mana
+  Transfer
+  Trade
+  Revive
+
+  // Passives
+  Deathsave
+  Cosmic
+  Health
+  ManaPassive
+  Experience
+  Protection
+  Strength
+  Agility
+  Trickery
+  Postpone
+  Magic
+  Adventurer
+  Arena
+  IncreaseHealth
+  IncreaseMana
 }
 
 model User {
-  id          String       @id @default(cuid())
-  name        String?
-  username    String?      @unique
-  lastname    String?
-  title       String?      @default("Newborn")
-  schoolClass SchoolClass?
-  class       Class?
-  image       String?
+  id              String       @id @default(cuid())
+  name            String?
+  username        String?      @unique
+  lastname        String?
+  title           String?      @default("Newborn")
+  schoolClass     SchoolClass?
+  class           Class?
+  image           String?
+  publicHighscore Boolean      @default(false)
 
-  level     Int      @default(1)
-  xp        Int      @default(1)
-  xpToLevel Int      @default(100)
-  hp        Int      @default(40)
-  hpMax     Int      @default(40)
-  mana      Int      @default(0)
-  manaMax   Int      @default(40)
-  lastMana  DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
+  level    Int      @default(1)
+  xp       Int      @default(1)
+  hp       Int      @default(40)
+  hpMax    Int      @default(40)
+  mana     Int      @default(0)
+  manaMax  Int      @default(40)
+  lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
 
-  gemstones Int @default(1)
-  gold      Int @default(0)
+  gemstones   Int @default(1)
+  gold        Int @default(0)
+  arenaTokens Int @default(0)
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
   // abilityNames String[]
 
-  effects EffectsOnUser[]
-  // m-n relation to effects on users. A user can have many effects
+  passives UserPassive[]
+  // m-n relation to user passives. A user can have many passives
   // effectId String[] @db.ObjectId
 
   guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
@@ -111,16 +140,17 @@ model Guild {
 // current limitations with prisma studio make the admin unable to add new records in models with many-to-many relationships
 // https://github.com/prisma/studio/issues/980
 model Ability {
-  name         String      @id @default(cuid())
-  type         AbilityType // Can be generic or class specific
-  isPassive    Boolean     @default(false)
+  name         String          @id @default(cuid())
+  category     AbilityCategory // Can be generic or class specific
+  type         AbilityType
+  target       Int?            @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
   description  String?
   duration     Int?
   icon         String?
-  gemstoneCost Int         @default(1)
-  manaCost     Int?        @default(2)
-  healthCost   Int?        @default(2)
-  xpGiven      Int?        @default(0)
+  gemstoneCost Int             @default(1)
+  manaCost     Int?            @default(2)
+  healthCost   Int?            @default(2)
+  xpGiven      Int?            @default(0)
   value        Int?
   cosmicEvent  String?
 
@@ -129,8 +159,8 @@ model Ability {
   // childAbilities String[] // m-n relation to child abilities. An ability can have many child abilities
   children      Ability[] @relation("AbilityHierarchy")
 
-  users       UserAbility[] // m-n relation to users. An ability can be owned by many users 
-  userEffects EffectsOnUser[] // m-n relation to effects on users. An ability can have effects on many users 
+  users        UserAbility[] // m-n relation to users. An ability can be owned by many users 
+  userPassives UserPassive[] // m-n relation to user passives. An ability can have passives on many users 
 
   cosmic CosmicEvent? @relation(fields: [cosmicEvent], references: [name], onUpdate: Cascade, onDelete: Cascade)
 }
@@ -159,10 +189,10 @@ model UserAbility {
 // }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
-model EffectsOnUser {
+model UserPassive {
   id          String      @id @default(cuid())
   userId      String
-  abilityName String?
+  abilityName String
   effectType  AbilityType
   endTime     DateTime?
   value       Int?
@@ -180,13 +210,14 @@ model CosmicEvent {
   name        String    @id
   description String
   // icon        String
+  suggested   Boolean   @default(false)
   selected    Boolean   @default(false)
   presetDate  DateTime?
   occurrences Int       @default(0)
   frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
 
   ability Ability[]
-  effect  EffectsOnUser[]
+  passive UserPassive[]
 }
 
 // 3rd party authentication. OAuth

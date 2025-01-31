@@ -9,10 +9,10 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Casino, ErrorOutline } from "@mui/icons-material";
-import { CosmicEvent, User } from "@prisma/client";
-import { randomCosmic, resurrectUsers, setSelectedCosmic } from "@/data/admin";
+import React, { useState } from "react";
+import { CosmicEvent } from "@prisma/client";
+import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
+import { resurrectUsers } from "@/data/admin/resurrectUser";
 import DiceBox from "@3d-dice/dice-box";
 
 export default function RerollCosmic() {

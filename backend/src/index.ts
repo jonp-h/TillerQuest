@@ -16,10 +16,10 @@ import { exec } from "child_process";
 
 const app = express();
 
-// Rate limiting to prevent abuse and DDoS attacks
+// Rate limiting to prevent abuse and DoS attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 70, // limit each IP to 100 requests per windowMs
+  max: 70, // limit each IP to 70 requests per windowMs
 });
 
 app.use(
@@ -37,15 +37,20 @@ app.use(currentSession);
 
 const server = http.createServer(app);
 
-app.get("/gm", authenticatedGameMaster, async (req, res) => {
-  const users = await db.user.findMany();
-  res.json(users);
-});
+// app.get("/gm", authenticatedGameMaster, async (req, res) => {
+//   const users = await db.user.findMany();
+//   res.json(users);
+// });
 
-app.get("/users", authenticatedUser, async (req, res) => {
-  const users = await db.user.findMany();
-  res.json(users);
-});
+// app.get("/users", authenticatedUser, async (req, res) => {
+//   const users = await db.user.findMany();
+//   res.json(users);
+// });
+
+// app.get("/", (req, res) => {
+//   const { session } = res.locals;
+//   res.send({ user: res.locals });
+// });
 
 // Schedule a job to run every minute to remove expired abilities
 cron.schedule(
@@ -53,8 +58,44 @@ cron.schedule(
   async () => {
     const now = new Date();
     try {
-      // await db.collection("passives").deleteMany({ endTime: { $lte: now } });
-      console.log("Expired passives removed");
+      await db.$transaction(async (db) => {
+        const usersWithIncreasedHealth = await db.userPassive.findMany({
+          where: {
+            effectType: "IncreaseHealth",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithIncreasedHealth) {
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { hpMax: { decrement: passive.value || 0 } },
+          });
+        }
+
+        const usersWithIncreaseMana = await db.userPassive.findMany({
+          where: {
+            effectType: "IncreaseMana",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithIncreaseMana) {
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { manaMax: { decrement: passive.value || 0 } },
+          });
+        }
+
+        await db.userPassive.deleteMany({ where: { endTime: { lte: now } } });
+        console.log("Expired passives removed");
+      });
     } catch (error) {
       console.error("Error removing expired passives:", error);
     }
@@ -64,11 +105,13 @@ cron.schedule(
   }
 );
 
-// Schedule a job to run every minute to change
+// Schedule a job to run every day at midnight to generate a random cosmic event
 cron.schedule(
   "0 0 * * *",
   async () => {
     try {
+      //TODO: remove all arena tokens
+
       await randomCosmic();
       console.log("Generated random cosmic event");
     } catch (error) {
@@ -119,11 +162,6 @@ cron.schedule(
 console.log("Started cron jobs:");
 cron.getTasks().forEach((task, name) => {
   console.log(` - ${name}`);
-});
-
-app.get("/", (req, res) => {
-  const { session } = res.locals;
-  res.send({ user: res.locals });
 });
 
 server.listen(8080, () => {

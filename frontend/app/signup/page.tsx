@@ -1,7 +1,7 @@
 "use client";
 import MainContainer from "@/components/MainContainer";
 import { GitHub } from "@mui/icons-material";
-import { IconButton, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import { signIn } from "next-auth/react";
 import React from "react";
 

@@ -11,9 +11,10 @@ interface TabPanelProps {
   value: number;
 }
 
+// Accessibility helper function
 function a11yProps(index: number) {
   return {
-    id: `simple-tab-${index}`,
+    id: `ability-tab-${index}`,
     "aria-controls": `ability-tabpanel-${index}`,
   };
 }
@@ -59,12 +60,12 @@ export default function AbilityTabs({
         {rootAbilities?.map((ability, index) => (
           <Tab
             key={ability.name}
-            label={ability.type}
+            label={ability.category}
             sx={{
               color:
                 Object.values($Enums.Class).includes(
-                  ability.type as $Enums.Class
-                ) && userClass != (ability.type as $Enums.Class)
+                  ability.category as $Enums.Class,
+                ) && userClass != (ability.category as $Enums.Class)
                   ? "salmon"
                   : "primary",
             }}
