@@ -13,7 +13,6 @@ import {
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
-import { usePassive } from "@/data/passives/usePassive";
 
 //FIXME: implement session in all functions
 
@@ -40,24 +39,24 @@ export const selectAbility = async (
     throw new Error("Not authorized");
   }
 
-  const user = await prisma.user.findUnique({
+  const castingUser = await prisma.user.findUnique({
     where: {
       id: userId,
     },
   });
 
-  if (!user) {
+  if (!castingUser) {
     throw new Error("Something went wrong. Please notify a game master.");
   }
 
-  if (user.hp === 0) {
+  if (castingUser.hp === 0) {
     return "You can't use abilities while dead";
   }
 
-  if (user.mana < (ability.manaCost || 0)) {
+  if (castingUser.mana < (ability.manaCost || 0)) {
     return "Insufficient mana";
   }
-  if (user.hp < (ability.healthCost || 0)) {
+  if (castingUser.hp < (ability.healthCost || 0)) {
     return "Insufficient health";
   }
 
@@ -66,51 +65,98 @@ export const selectAbility = async (
       // ! usePassives must use finalizerFunction.
       // ! May create useAbility functions here for Passives as well
 
+      await db.user.update({
+        where: {
+          id: castingUser.id,
+        },
+        data: {
+          mana: {
+            decrement: ability.manaCost || 0,
+          },
+          hp: {
+            decrement: ability.healthCost || 0,
+          },
+        },
+      });
+
+      await experienceAndLevelValidator(db, castingUser, ability.xpGiven!);
+
       // check ability type and call the appropriate function
       switch (ability.type) {
-        // heal the target
-        case "Heal":
-          return await useHealAbility(db, user, targetUsersIds, ability);
-        case "IncreaseHealth":
-          return await usePassive(db, user, ability);
-        case "IncreaseMana":
-          return await usePassive(db, user, ability);
-        // revive a dead target without negative consequences
-        case "Revive":
-          throw new Error("Revive is not implemented yet");
-        case "Health":
-          return await usePassive(db, user, ability);
-        case "Experience":
-          return await usePassive(db, user, ability);
+        // ---------------------------- Passive abilities ----------------------------
 
-        // give mana to the target
-        case "Mana":
-          return await useManaAbility(db, user, targetUsersIds, ability);
-        // give mana passive to target
-        case "ManaPassive":
-          return await usePassive(db, user, ability);
-        // transfer a resource from one player to another player
-        case "Transfer":
-          return await useTransferAbility(db, user, targetUsersIds, ability);
-        // swap a resource between two players
-        case "Swap":
-          return await useSwapAbility(db, user, targetUsersIds, ability);
-        // TODO: validate to only target self?
-        // converts a resource from one type to another
-        case "Trade":
-          return await useTradeAbility(db, user, targetUsersIds[0], ability);
+        case "IncreaseHealth":
+          return await usePassive(db, targetUsersIds, ability);
+
+        case "IncreaseMana":
+          return await usePassive(db, targetUsersIds, ability);
+
+        case "ManaPassive": // give mana passive to target
+          return await usePassive(db, targetUsersIds, ability);
+
+        case "Health":
+          return await usePassive(db, targetUsersIds, ability);
+
+        case "Experience":
+          return await usePassive(db, targetUsersIds, ability);
+
         case "Trickery":
-          throw new Error("Trickery is not implemented yet");
-        // shields a target from damage
-        case "Protection":
-          return await useProtectionAbility(db, user, targetUsersIds, ability);
+          return await usePassive(db, targetUsersIds, ability);
+
+        case "Postpone":
+          return await usePassive(db, targetUsersIds, ability);
+
+        // ---------------------------- Active abilities ----------------------------
+
+        case "Heal": // heal the target
+          return await useHealAbility(db, castingUser, targetUsersIds, ability);
+
+        case "Revive": // revive a dead target without negative consequences
+          throw new Error("Revive is not implemented yet");
+
+        case "Mana": // give mana to the target
+          return await useManaAbility(db, castingUser, targetUsersIds, ability);
+
+        case "Transfer": // transfer a resource from one player to another player
+          return await useTransferAbility(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+
+        case "Swap": // swap a resource between two players
+          return await useSwapAbility(db, castingUser, targetUsersIds, ability);
+
+        // TODO: validate to only target self?
+        case "Trade": // converts a resource from one type to another
+          return await useTradeAbility(
+            db,
+            castingUser,
+            targetUsersIds[0],
+            ability,
+          );
+
+        case "Protection": // shields a target from damage
+          return await useProtectionAbility(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+
         case "Arena":
           throw new Error("Arena is not implemented yet");
       }
     });
   } catch (error) {
     logger.error(
-      "Error using" + ability.name + " by user " + user.id + ": " + error,
+      "Error using" +
+        ability.name +
+        " by user " +
+        castingUser.username +
+        ": " +
+        error,
     );
     return (
       "Something went wrong using " +
@@ -121,36 +167,36 @@ export const selectAbility = async (
   }
 };
 
-const finalizeAbilityUsage = async (
-  db: PrismaTransaction,
-  user: User,
-  ability: Ability,
-) => {
-  try {
-    // decrement cost of ability from user
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        mana: {
-          decrement: ability.manaCost || 0,
-        },
-        hp: {
-          decrement: ability.healthCost || 0,
-        },
-      },
-    });
+// const finalizeAbilityUsage = async (
+//   db: PrismaTransaction,
+//   user: User,
+//   ability: Ability,
+// ) => {
+//   try {
+//     // decrement cost of ability from user
+//     await db.user.update({
+//       where: {
+//         id: user.id,
+//       },
+//       data: {
+//         mana: {
+//           decrement: ability.manaCost || 0,
+//         },
+//         hp: {
+//           decrement: ability.healthCost || 0,
+//         },
+//       },
+//     });
 
-    await experienceAndLevelValidator(db, user, ability.xpGiven!);
-  } catch (error) {
-    logger.error(
-      "Error finalizing ability usage by user " + user.id + ": " + error,
-    );
-  }
-};
+//     await experienceAndLevelValidator(db, user, ability.xpGiven!);
+//   } catch (error) {
+//     logger.error(
+//       "Error finalizing ability usage by user " + user.id + ": " + error,
+//     );
+//   }
+// };
 
-// ---------------------------- Helper functions for AoE abilities ----------------------------
+// ---------------------------- Helper function for AoE abilities ----------------------------
 
 // const useAOEAbility = async (
 //   db: PrismaTransaction,
@@ -184,6 +230,80 @@ const finalizeAbilityUsage = async (
 //     }),
 //   );
 // };
+
+// ---------------------------- Helper function for passive abilities ----------------------------
+
+const usePassive = async (
+  db: PrismaTransaction,
+  targetUsersIds: string[],
+  ability: Ability,
+) => {
+  try {
+    await Promise.all(
+      targetUsersIds.map(async (targetUserId) => {
+        let targetHasPassive = await db.userPassive.findFirst({
+          where: {
+            userId: targetUserId,
+            abilityName: ability.name,
+          },
+        });
+
+        if (targetHasPassive) {
+          return "Target already has this passive";
+        }
+
+        // return db.$transaction(async (db) => {
+        // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
+        await db.userPassive.create({
+          data: {
+            userId: targetUserId,
+            effectType: ability.type,
+            abilityName: ability.name,
+            value: ability.value ?? 0,
+            endTime: ability.duration
+              ? new Date(Date.now() + ability.duration * 60000).toISOString()
+              : undefined, // 1 * 60000 = 1 minute
+          },
+        });
+
+        if (ability.type === "IncreaseHealth") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              hpMax: {
+                increment: ability.value ?? 0,
+              },
+            },
+          });
+        } else if (ability.type === "IncreaseMana") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              manaMax: {
+                increment: ability.value ?? 0,
+              },
+            },
+          });
+        }
+        return "Activated " + ability.name + "!";
+      }),
+    );
+  } catch (error) {
+    logger.error(
+      "Error trying to use passive " + ability.name,
+      "for users " + targetUsersIds,
+      ": " + error,
+    );
+    return (
+      "Something went wrong. Please notify a game master of this timestamp: " +
+      new Date().toISOString()
+    );
+  }
+};
 
 // ---------------------------- Helper functions for specific ability types ----------------------------
 const useHealAbility = async (
@@ -222,8 +342,6 @@ const useHealAbility = async (
         });
       }),
     );
-
-    await finalizeAbilityUsage(db, castingUser, ability);
 
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
@@ -267,8 +385,6 @@ const useManaAbility = async (
         });
       }),
     );
-
-    await finalizeAbilityUsage(db, castingUser, ability);
 
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
@@ -333,8 +449,6 @@ const useTransferAbility = async (
         });
       }),
     );
-
-    await finalizeAbilityUsage(db, castingUser, ability);
 
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
@@ -404,8 +518,6 @@ const useSwapAbility = async (
       }),
     );
 
-    await finalizeAbilityUsage(db, castingUser, ability);
-
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
     );
@@ -450,8 +562,6 @@ const useTradeAbility = async (
         },
       },
     });
-
-    await finalizeAbilityUsage(db, castingUser, ability);
 
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
@@ -503,8 +613,6 @@ const useProtectionAbility = async (
         });
       }),
     );
-
-    await finalizeAbilityUsage(db, castingUser, ability);
 
     logger.info(
       `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,

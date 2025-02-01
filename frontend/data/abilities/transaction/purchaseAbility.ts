@@ -5,6 +5,7 @@ import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { Ability, User } from "@prisma/client";
+import { selectAbility } from "../abilityUsage/useAbility";
 
 /**
  * Buys an ability for a user.
@@ -55,8 +56,18 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         },
       });
 
+      // ease of use for passive abilities with unlimited duration
+      const useAbilityImmediately =
+        ability.target === -1 && ability.duration === null;
+
+      if (useAbilityImmediately) {
+        selectAbility(user.id, [user.id], ability);
+      }
+
       logger.info(`User ${user.id} bought ability ${ability.name}`);
-      return "Bought " + ability.name + " successfully!";
+      return "Bought " + ability.name + " successfully!" + useAbilityImmediately
+        ? " Ability activated."
+        : "";
     });
   } catch (error) {
     logger.error(

@@ -11,7 +11,7 @@ export default function Footer() {
         </a>
       </h2>
       <h2>
-        Made with ❤️ by {}
+        Made with ☕ by {}
         <a
           href="https://github.com/jonp-h"
           className="text-blue-400 hover:text-blue-500 hover:underline"

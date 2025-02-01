@@ -8,6 +8,7 @@ import {
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
+import { RootAbilities } from "./_components/interfaces";
 
 export default async function AbilitiesPage() {
   const user = await auth();
@@ -26,7 +27,7 @@ export default async function AbilitiesPage() {
       </Typography>
       <AbilityTabs
         userClass={user.user.class}
-        rootAbilities={abilities}
+        rootAbilities={abilities as RootAbilities[]}
         userAbilities={userAbilities}
       />
     </MainContainer>

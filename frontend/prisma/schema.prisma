@@ -14,13 +14,14 @@ enum UserRole {
 }
 
 enum SchoolClass {
-  IM1
-  IM2
-  IM3
-  IM4
-  IT1
-  IT2
-  MP1
+  Class_1IM1
+  Class_1IM2
+  Class_1IM3
+  Class_1IM4
+  Class_2IT1
+  Class_2IT2
+  Class_2IT3
+  Class_2MP1
 }
 
 enum Class {

@@ -149,7 +149,7 @@ export default function CreateUserForm() {
               value={schoolClass}
               key={schoolClass}
               control={<Radio />}
-              label={schoolClass}
+              label={schoolClass.split("_")[1]}
               onClick={() => setSchoolClass(schoolClass)}
             />
           ))}

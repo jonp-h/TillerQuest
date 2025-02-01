@@ -36,7 +36,7 @@ const health = [
     category: "Health",
     type: "Health",
     target: -1,
-    description: "Every time you are healed, you gain 1 extra health.",
+    description: "Every time you are healed, you gain another 1 extra health.",
     duration: null,
     icon: "Enhanced-Vigor.png",
     gemstoneCost: 1,
@@ -119,7 +119,7 @@ const trickery = [
     target: -1,
     description:
       "Roll a d6. On a 6, today's event is rerolled. You may only use this ability once per day.",
-    duration: null,
+    duration: 1440, // 24 hours
     icon: "Twist-of-Fate.png",
     gemstoneCost: 1,
     manaCost: 8,
