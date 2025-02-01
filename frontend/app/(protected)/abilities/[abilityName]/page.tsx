@@ -89,7 +89,9 @@ export default async function AbilityNamePage({
               )}
             </div>
           </div>
-          <Typography variant="h3">{ability.name.replace("-", " ")}</Typography>
+          <Typography variant="h3">
+            {ability.name.replace(/-/g, " ")}
+          </Typography>
           <Typography variant="body1" className="py-5">
             {ability.description}
           </Typography>
@@ -112,7 +114,7 @@ export default async function AbilityNamePage({
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {ability.name}
+                    {ability.name.replace(/-/g, " ")}
                   </TableCell>
                   <TableCell align="right">{ability.category}</TableCell>
                   <TableCell align="right">{ability.duration}</TableCell>

@@ -31,13 +31,23 @@ import { usePassive } from "@/data/passives/usePassive";
  * - Depending on the type of ability, the appropriate function is called to handle the ability usage.
  */
 export const selectAbility = async (
-  user: User,
+  userId: string,
   targetUsersIds: string[],
   ability: Ability,
 ) => {
   const session = await auth();
-  if (session?.user?.id !== user.id) {
+  if (session?.user?.id !== userId) {
     throw new Error("Not authorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Something went wrong. Please notify a game master.");
   }
 
   if (user.hp === 0) {

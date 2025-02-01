@@ -49,9 +49,9 @@ const users = [
   },
   {
     id: "99994",
-    username: "OlaLANGTNAVNmedMANGEtegn",
-    name: "olafortsattLangtNavn",
-    lastname: "VELDIGLANGTNAVN",
+    username: "OlaLANGTNAVN123",
+    name: "OlaLANGTNAVN123",
+    lastname: "OlaLANGTNAVN123",
     email: "ola@example.com",
     image: "Wizard2",
     hp: 33,

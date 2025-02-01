@@ -41,7 +41,11 @@ export default function AbilityForm({
     guildMembers?.[0].id || "",
   );
 
+  const guildMembersWithoutUser =
+    guildMembers?.filter((member) => member.id !== user.id) || [];
+
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const lackingMana = user.mana < (ability.manaCost || 0);
 
@@ -51,6 +55,7 @@ export default function AbilityForm({
 
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     let targetUsers = [selectedUser];
 
@@ -68,17 +73,19 @@ export default function AbilityForm({
         break;
     }
 
-    const result = await selectAbility(user, targetUsers, ability);
+    const result = await selectAbility(user.id, targetUsers, ability);
     setFeedback(typeof result === "string" ? result : null);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
+    setIsLoading(false);
   };
 
   // ---------------- Buy ability ----------------
 
   const handleBuyAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     if (!userIsCorrectClass) {
       setFeedback("You are not the correct class to buy this ability.");
@@ -95,10 +102,14 @@ export default function AbilityForm({
       return;
     }
 
-    setFeedback(await buyAbility(user, ability));
+    // when buying an abillity, check passive. if passive immediatly use.
+    // if passive, disable use button
+
+    setFeedback(await buyAbility(user.id, ability));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
+    setIsLoading(false);
   };
 
   // -----------------------
@@ -106,7 +117,7 @@ export default function AbilityForm({
   return (
     <>
       {feedback && (
-        <Typography variant="body1" color="error">
+        <Typography variant="body1" color="info">
           {feedback}
         </Typography>
       )}
@@ -117,7 +128,7 @@ export default function AbilityForm({
             target={ability.target}
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
-            guildMembers={guildMembers}
+            guildMembers={guildMembersWithoutUser}
           />
           {lackingMana && (
             <Typography variant="body1" color="error">
@@ -127,7 +138,7 @@ export default function AbilityForm({
           <Button
             variant="contained"
             onClick={handleUseAbility}
-            disabled={lackingMana || activePassive}
+            disabled={lackingMana || activePassive || isLoading}
           >
             {!activePassive
               ? ability.duration === null
@@ -150,7 +161,9 @@ export default function AbilityForm({
           )}
           <Button
             disabled={
-              user.gemstones < ability.gemstoneCost || missingParentAbility
+              user.gemstones < ability.gemstoneCost ||
+              missingParentAbility ||
+              isLoading
             }
             variant="contained"
             onClick={handleBuyAbility}

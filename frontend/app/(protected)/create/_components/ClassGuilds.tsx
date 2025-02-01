@@ -30,7 +30,7 @@ function ClassGuilds({
   };
 
   return (
-    <div>
+    <div className="w-1/2">
       <RadioGroup row name="row-radio-buttons-group">
         {guilds.map((guildWithCount) => (
           <FormControlLabel

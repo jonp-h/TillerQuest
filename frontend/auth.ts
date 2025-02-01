@@ -62,6 +62,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
           guildName: session.guild,
           schoolClass: session.schoolClass,
           publicHighscore: session.publicHighscore,
+          lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
         });
       }
 
