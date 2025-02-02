@@ -57,6 +57,9 @@ export const getAbilityHierarchy = async () => {
           },
         },
       },
+      orderBy: {
+        name: "asc",
+      },
     });
 
     return roots;
