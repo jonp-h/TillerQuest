@@ -60,16 +60,37 @@ export default function UserList({
           </div>
         }
         secondary={
-          <>
+          <div className="flex flex-col">
+            <span className="text-base text-red-400">
+              HP: {user.hp} / {user.hpMax}
+            </span>
             <LinearProgress
               variant="determinate"
               value={(user.hp / user.hpMax) * 100}
               color="health"
             />
-            <span className=" text-base text-green-400">
-              Level: {user.level}
+            <span className="text-base text-blue-400">
+              HP: {user.mana} / {user.manaMax}
             </span>
-          </>
+            <LinearProgress
+              variant="determinate"
+              value={(user.mana / user.manaMax) * 100}
+              color="mana"
+            />
+            <div className="flex gap-5">
+              <span className="text-base text-orange-400">
+                XP: {user.xp} / {Math.ceil(user.xp / 1000) * 1000}
+              </span>
+              <span className=" text-base text-green-400">
+                Level: {user.level}
+              </span>
+            </div>
+            <LinearProgress
+              variant="determinate"
+              value={(user.xp % 1000) / 10}
+              color="experience"
+            />
+          </div>
         }
       />
     </ListItemButton>
