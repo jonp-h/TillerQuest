@@ -58,34 +58,24 @@ export const manaValidator = async (
     !session ||
     (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
   ) {
-    return "Not authorized";
+    throw new Error("Not authorized");
   }
 
   // check if user has any mana passives to add to the mana value
   const manaBonus = await getUserPassiveEffect(db, targetUserId, "ManaPassive");
   manaValue += manaBonus;
 
-  try {
-    const targetMana = await db.user.findFirst({
-      where: {
-        id: targetUserId,
-      },
-      select: { mana: true, manaMax: true },
-    });
+  const targetMana = await db.user.findFirst({
+    where: {
+      id: targetUserId,
+    },
+    select: { mana: true, manaMax: true },
+  });
 
-    if (targetMana && targetMana?.mana + manaValue >= targetMana?.manaMax) {
-      return targetMana?.manaMax - targetMana?.mana;
-    } else {
-      return manaValue;
-    }
-  } catch (error) {
-    logger.error(
-      "Error validating mana for user " + targetUserId + ": " + error,
-    );
-    return (
-      "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
-    );
+  if (targetMana && targetMana?.mana + manaValue >= targetMana?.manaMax) {
+    return targetMana?.manaMax - targetMana?.mana;
+  } else {
+    return manaValue;
   }
 };
 
@@ -111,7 +101,7 @@ export const damageValidator = async (
     !session ||
     (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
   ) {
-    return 0;
+    throw new Error("Not authorized");
   }
 
   // reduce the damage by the passive effects
@@ -147,11 +137,11 @@ export const experienceAndLevelValidator = async (
   }
 
   try {
-    const xpMultipler = await getUserPassiveEffect(db, user.id, "Experience");
-    const xpToGive = Math.round(xp * (xpMultipler + 1));
-    const levelDifference = Math.floor(
-      (user.xp + xpToGive) / 1000 - user.level,
-    );
+    const xpMultipler =
+      (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
+    const xpToGive = Math.round(xp * (1 + xpMultipler));
+    const levelDifference =
+      Math.floor((user.xp + xpToGive) / 1000) - user.level;
 
     let levelUpData = {};
     if (levelDifference > 0) {

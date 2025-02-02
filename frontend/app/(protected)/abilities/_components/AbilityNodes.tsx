@@ -36,7 +36,7 @@ export const AbilityNodes = (
 
     <image
       clipPath="inset(0% round 50%)"
-      href={`/abilities/${nodeDatum.name}.png`}
+      href={`/abilities/${nodeDatum.icon}`}
       x="-60"
       y="-60"
       height="120"

@@ -147,7 +147,7 @@ export default async function ProfilePage({
               </Link>
             </div>
           </Paper>
-          <Paper className=" items-center p-5 w-full h-3/4" elevation={6}>
+          <Paper className=" items-center p-5 w-full min-h-3/4" elevation={6}>
             <Typography variant="h4" align="center">
               Passives
             </Typography>

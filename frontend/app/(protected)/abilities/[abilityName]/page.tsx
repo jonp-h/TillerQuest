@@ -22,6 +22,8 @@ import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
 import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
+import Link from "next/link";
+import { ArrowBack } from "@mui/icons-material";
 
 export default async function AbilityNamePage({
   params,
@@ -75,9 +77,21 @@ export default async function AbilityNamePage({
           elevation={5}
           className=" text-center items-center p-5 w-full md:w-1/2"
         >
+          {/* back button */}
+          <div className="flex justify-start w-full">
+            <Link href="/abilities">
+              <ArrowBack
+                sx={{
+                  fontSize: "3rem",
+                  ":hover": { color: "white", cursor: "pointer" },
+                  color: "grey",
+                }}
+                className="cursor-pointer"
+              />
+            </Link>
+          </div>
           <div className="flex justify-center">
             <div className="flex justify-center rounded-full mb-3 p-5 from-zinc-600 to-zinc-700 bg-gradient-radial">
-              {/* TODO: change to/from icon? */}
               {ability.name && (
                 <Image
                   className="rounded-full"
@@ -89,7 +103,9 @@ export default async function AbilityNamePage({
               )}
             </div>
           </div>
-          <Typography variant="h3">{ability.name.replace("-", " ")}</Typography>
+          <Typography variant="h3">
+            {ability.name.replace(/-/g, " ")}
+          </Typography>
           <Typography variant="body1" className="py-5">
             {ability.description}
           </Typography>
@@ -112,7 +128,7 @@ export default async function AbilityNamePage({
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {ability.name}
+                    {ability.name.replace(/-/g, " ")}
                   </TableCell>
                   <TableCell align="right">{ability.category}</TableCell>
                   <TableCell align="right">{ability.duration}</TableCell>

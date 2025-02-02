@@ -30,19 +30,24 @@ export const getAbilityHierarchy = async () => {
       },
       select: {
         name: true,
+        icon: true,
         category: true,
         children: {
           select: {
             name: true,
+            icon: true,
             children: {
               select: {
                 name: true,
+                icon: true,
                 children: {
                   select: {
                     name: true,
+                    icon: true,
                     children: {
                       select: {
                         name: true,
+                        icon: true,
                       },
                     },
                   },
@@ -51,6 +56,9 @@ export const getAbilityHierarchy = async () => {
             },
           },
         },
+      },
+      orderBy: {
+        name: "asc",
       },
     });
 

@@ -41,16 +41,51 @@ export default function AbilityForm({
     guildMembers?.[0].id || "",
   );
 
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const guildMembersWithoutUser =
+    guildMembers?.filter((member) => member.id !== user.id) || [];
 
-  const lackingMana = user.mana < (ability.manaCost || 0);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const lackingResource =
+    user.mana < (ability.manaCost || 0) ||
+    user.hp < (ability.healthCost || 0 + 1);
 
   const router = useRouter();
+
+  const getBuyButtonText = () => {
+    if (!userIsCorrectClass) {
+      return "You are the wrong class to buy this ability.";
+    }
+    if (missingParentAbility) {
+      return "Buy the necessary parent ability first.";
+    }
+    if (user.gemstones < ability.gemstoneCost) {
+      return "You don't have enough gemstones to buy this ability.";
+    }
+    return "Buy Ability";
+  };
+
+  const getOwnedButtonText = () => {
+    if (activePassive) {
+      return "Activated";
+    } else if (lackingResource) {
+      return (
+        "Not enough " +
+        (user.hp < (ability.healthCost || 0 + 1) ? "health" : "mana") +
+        " to use this ability."
+      );
+    }
+    return ability.duration === null
+      ? "Use ability"
+      : "Use ability for " + ability.duration + " minutes";
+  };
 
   // ---------------- Use ability ----------------
 
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     let targetUsers = [selectedUser];
 
@@ -68,17 +103,19 @@ export default function AbilityForm({
         break;
     }
 
-    const result = await selectAbility(user, targetUsers, ability);
+    const result = await selectAbility(user.id, targetUsers, ability);
     setFeedback(typeof result === "string" ? result : null);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
+    setIsLoading(false);
   };
 
   // ---------------- Buy ability ----------------
 
   const handleBuyAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     if (!userIsCorrectClass) {
       setFeedback("You are not the correct class to buy this ability.");
@@ -95,10 +132,14 @@ export default function AbilityForm({
       return;
     }
 
-    setFeedback(await buyAbility(user, ability));
+    // when buying an abillity, check passive. if passive immediatly use.
+    // if passive, disable use button
+
+    setFeedback(await buyAbility(user.id, ability));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
+    setIsLoading(false);
   };
 
   // -----------------------
@@ -106,7 +147,7 @@ export default function AbilityForm({
   return (
     <>
       {feedback && (
-        <Typography variant="body1" color="error">
+        <Typography variant="body1" color="info">
           {feedback}
         </Typography>
       )}
@@ -117,23 +158,14 @@ export default function AbilityForm({
             target={ability.target}
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
-            guildMembers={guildMembers}
+            guildMembers={guildMembersWithoutUser}
           />
-          {lackingMana && (
-            <Typography variant="body1" color="error">
-              Not enough mana to use this ability.
-            </Typography>
-          )}
           <Button
             variant="contained"
             onClick={handleUseAbility}
-            disabled={lackingMana || activePassive}
+            disabled={lackingResource || activePassive || isLoading}
           >
-            {!activePassive
-              ? ability.duration === null
-                ? "Use ability"
-                : "Use ability for " + ability.duration + " minutes"
-              : "Activated"}
+            {getOwnedButtonText()}
           </Button>
         </>
       ) : (
@@ -150,12 +182,15 @@ export default function AbilityForm({
           )}
           <Button
             disabled={
-              user.gemstones < ability.gemstoneCost || missingParentAbility
+              user.gemstones < ability.gemstoneCost ||
+              missingParentAbility ||
+              !userIsCorrectClass ||
+              isLoading
             }
             variant="contained"
             onClick={handleBuyAbility}
           >
-            Buy
+            {getBuyButtonText()}
           </Button>
         </>
       )}

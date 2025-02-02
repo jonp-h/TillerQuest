@@ -42,7 +42,15 @@ export default function AbilityTabs({
   rootAbilities: RootAbilities[] | null;
   userAbilities: UserAbilities[] | null;
 }) {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(() => {
+    const storedValue = sessionStorage.getItem("abilityTab");
+    return storedValue !== null ? Number(storedValue) : 0;
+  });
+
+  // Save the value state to sessionStorage whenever it changes
+  React.useEffect(() => {
+    sessionStorage.setItem("abilityTab", String(value));
+  }, [value]);
 
   // Handle tab change between ability types
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

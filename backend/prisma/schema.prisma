@@ -14,13 +14,14 @@ enum UserRole {
 }
 
 enum SchoolClass {
-  IM1
-  IM2
-  IM3
-  IM4
-  IT1
-  IT2
-  MP1
+  Class_1IM1
+  Class_1IM2
+  Class_1IM3
+  Class_1IM4
+  Class_2IT1
+  Class_2IT2
+  Class_2IT3
+  Class_2MP1
 }
 
 enum Class {
@@ -53,7 +54,6 @@ enum AbilityCategory {
   Bard
 }
 
-// The ability-logic to be used
 // The ability-logic to be used
 enum AbilityType {
   // Abilities
@@ -143,14 +143,14 @@ model Ability {
   name         String          @id @default(cuid())
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
-  target       Int?            @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
+  target       Int             @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
   description  String?
   duration     Int?
   icon         String?
   gemstoneCost Int             @default(1)
-  manaCost     Int?            @default(2)
-  healthCost   Int?            @default(2)
-  xpGiven      Int?            @default(0)
+  manaCost     Int?
+  healthCost   Int?
+  xpGiven      Int?
   value        Int?
   cosmicEvent  String?
 
