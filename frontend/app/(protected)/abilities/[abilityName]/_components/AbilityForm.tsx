@@ -47,9 +47,39 @@ export default function AbilityForm({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const lackingMana = user.mana < (ability.manaCost || 0);
+  const lackingResource =
+    user.mana < (ability.manaCost || 0) ||
+    user.hp < (ability.healthCost || 0 + 1);
 
   const router = useRouter();
+
+  const getBuyButtonText = () => {
+    if (!userIsCorrectClass) {
+      return "You are the wrong class to buy this ability.";
+    }
+    if (missingParentAbility) {
+      return "Buy the necessary parent ability first.";
+    }
+    if (user.gemstones < ability.gemstoneCost) {
+      return "You don't have enough gemstones to buy this ability.";
+    }
+    return "Buy Ability";
+  };
+
+  const getOwnedButtonText = () => {
+    if (activePassive) {
+      return "Activated";
+    } else if (lackingResource) {
+      return (
+        "Not enough " +
+        (user.hp < (ability.healthCost || 0 + 1) ? "health" : "mana") +
+        " to use this ability."
+      );
+    }
+    return ability.duration === null
+      ? "Use ability"
+      : "Use ability for " + ability.duration + " minutes";
+  };
 
   // ---------------- Use ability ----------------
 
@@ -130,21 +160,12 @@ export default function AbilityForm({
             setSelectedUser={setSelectedUser}
             guildMembers={guildMembersWithoutUser}
           />
-          {lackingMana && (
-            <Typography variant="body1" color="error">
-              Not enough mana to use this ability.
-            </Typography>
-          )}
           <Button
             variant="contained"
             onClick={handleUseAbility}
-            disabled={lackingMana || activePassive || isLoading}
+            disabled={lackingResource || activePassive || isLoading}
           >
-            {!activePassive
-              ? ability.duration === null
-                ? "Use ability"
-                : "Use ability for " + ability.duration + " minutes"
-              : "Activated"}
+            {getOwnedButtonText()}
           </Button>
         </>
       ) : (
@@ -163,12 +184,13 @@ export default function AbilityForm({
             disabled={
               user.gemstones < ability.gemstoneCost ||
               missingParentAbility ||
+              !userIsCorrectClass ||
               isLoading
             }
             variant="contained"
             onClick={handleBuyAbility}
           >
-            Buy
+            {getBuyButtonText()}
           </Button>
         </>
       )}
