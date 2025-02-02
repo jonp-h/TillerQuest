@@ -23,4 +23,4 @@ assignees: ''
 <!-- Tell us what happens instead -->
 
 ### Screenshots / Other
-<!-- If applicable, add screenshots or more context to help explain your problem. -->
+<!-- If applicable, add screenshots or more context to help explain your problem. PLEASE DO NOT INCLUDE IMAGES WITH SENSITIVE INFORMATION -->
