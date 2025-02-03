@@ -15,21 +15,35 @@ export default function AbilityCard({ ability }: AbilityProps) {
   return (
     <div className="flex flex-col justify-center" key={ability?.abilityName}>
       <Link href={"/abilities/" + ability?.abilityName} passHref>
-        <Paper elevation={10} className="text-center items-center p-2">
-          <div className="flex justify-center">
-            <Image
-              className="rounded-full border-slate-700 border-2"
-              src={"/abilities/" + ability?.abilityName + ".png"}
-              alt={""}
-              draggable={false}
-              width={50}
-              height={50}
-            />
-          </div>
-          <Typography variant="h6">
-            {ability?.abilityName.replace("-", " ")}
+        <div className="flex flex-col items-center text-center gap-2">
+          <Link
+            href={"/abilities/" + ability?.abilityName}
+            key={ability?.abilityName}
+          >
+            <Paper
+              elevation={10}
+              sx={{
+                minHeight: "8rem",
+                minWidth: "8rem",
+                borderRadius: "9999px",
+                transition: "transform 0.3s ease-in-out",
+              }}
+              className="flex flex-col justify-center text-center items-center p-2 hover:scale-110"
+            >
+              <Image
+                className="rounded-full border-slate-700 border-2"
+                src={"/abilities/" + ability?.abilityName + ".png"}
+                alt={""}
+                draggable={false}
+                width={120}
+                height={120}
+              />
+            </Paper>
+          </Link>
+          <Typography variant="subtitle1">
+            {ability?.abilityName.replace(/-/g, " ")}
           </Typography>
-        </Paper>
+        </div>
       </Link>
     </div>
   );

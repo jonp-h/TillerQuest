@@ -51,6 +51,8 @@ export default function AbilityForm({
     user.mana < (ability.manaCost || 0) ||
     user.hp < (ability.healthCost || 0 + 1);
 
+  const isDead = user.hp === 0;
+
   const router = useRouter();
 
   const getBuyButtonText = () => {
@@ -69,6 +71,8 @@ export default function AbilityForm({
   const getOwnedButtonText = () => {
     if (activePassive) {
       return "Activated";
+    } else if (isDead) {
+      return "You cannot use abilities while dead";
     } else if (lackingResource) {
       return (
         "Not enough " +
@@ -163,7 +167,7 @@ export default function AbilityForm({
           <Button
             variant="contained"
             onClick={handleUseAbility}
-            disabled={lackingResource || activePassive || isLoading}
+            disabled={lackingResource || activePassive || isLoading || isDead}
           >
             {getOwnedButtonText()}
           </Button>

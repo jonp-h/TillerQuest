@@ -155,30 +155,38 @@ export default async function ProfilePage({
               {passives?.map(
                 (passive) =>
                   passive.ability !== null && (
-                    <Link
-                      href={"/abilities/" + passive.ability.name}
-                      key={passive.ability.name}
-                    >
-                      <Paper
-                        elevation={10}
-                        className=" flex flex-col justify-center text-center items-center p-2"
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <Link
+                        href={"/abilities/" + passive.ability.name}
+                        key={passive.ability.name}
                       >
-                        <Image
-                          className="rounded-full border-slate-700 border-2"
-                          src={"/abilities/" + passive.ability.name + ".png"}
-                          alt={""}
-                          draggable={false}
-                          width={50}
-                          height={50}
-                        />
-                        <Typography variant="h6">
-                          {passive.ability.name.replace("-", " ")}
-                        </Typography>
-                        {passive.endTime && (
-                          <TimeLeft endTime={new Date(passive.endTime)} />
-                        )}
-                      </Paper>
-                    </Link>
+                        <Paper
+                          elevation={10}
+                          sx={{
+                            minHeight: "8rem",
+                            minWidth: "8rem",
+                            borderRadius: "9999px",
+                            transition: "transform 0.3s ease-in-out",
+                          }}
+                          className="flex flex-col justify-center text-center items-center p-2 hover:scale-110"
+                        >
+                          <Image
+                            className="rounded-full border-slate-700 border-2"
+                            src={"/abilities/" + passive.ability.name + ".png"}
+                            alt={""}
+                            draggable={false}
+                            width={120}
+                            height={120}
+                          />
+                        </Paper>
+                      </Link>
+                      <Typography variant="subtitle1">
+                        {passive.ability.name.replace(/-/g, " ")}
+                      </Typography>
+                      {passive.endTime && (
+                        <TimeLeft endTime={new Date(passive.endTime)} />
+                      )}
+                    </div>
                   ),
               )}
             </div>
@@ -190,7 +198,7 @@ export default async function ProfilePage({
           Abilities
         </Typography>
         {user.hp !== 0 ? (
-          <div className="grid grid-cols-6 gap-3 p-5">
+          <div className="grid grid-cols-2 gap-3 p-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
             {userAbilities?.map((ability) => (
               <AbilityCard key={ability.id} ability={ability} />
             ))}
