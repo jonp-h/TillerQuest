@@ -1,5 +1,5 @@
 import { RawNodeDatum } from "react-d3-tree";
-import { UserAbilities } from "./interfaces";
+import { ExtendedRawNodeDatum, UserAbilities } from "./interfaces";
 import { $Enums } from "@prisma/client";
 
 export const AbilityNodes = (
@@ -8,7 +8,10 @@ export const AbilityNodes = (
   {
     nodeDatum,
     handleNodeClick,
-  }: { nodeDatum: RawNodeDatum; handleNodeClick: (node: RawNodeDatum) => void },
+  }: {
+    nodeDatum: ExtendedRawNodeDatum;
+    handleNodeClick: (node: RawNodeDatum) => void;
+  },
 ) => (
   <g>
     <defs>

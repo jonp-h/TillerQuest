@@ -3,7 +3,11 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
 import Tree, { RawNodeDatum } from "react-d3-tree";
 import { AbilityNodes } from "./AbilityNodes";
-import { RootAbilities, UserAbilities } from "./interfaces";
+import {
+  ExtendedRawNodeDatum,
+  RootAbilities,
+  UserAbilities,
+} from "./interfaces";
 import { $Enums } from "@prisma/client";
 
 export default function AbilityTree({
@@ -78,12 +82,19 @@ export default function AbilityTree({
           zoomable={false}
           // The nodeSize prop is used to determine the spacing between nodes
           nodeSize={{ x: 400, y: 350 }}
-          renderCustomNodeElement={(rd3tProps) =>
-            AbilityNodes(userIsNotClass, userAbilities, {
+          renderCustomNodeElement={(rd3tProps) => {
+            const extendedProps = {
               ...rd3tProps,
+              nodeDatum: {
+                ...rd3tProps.nodeDatum,
+                icon:
+                  (rd3tProps.nodeDatum as unknown as ExtendedRawNodeDatum)
+                    .icon || "",
+              },
               handleNodeClick,
-            })
-          }
+            };
+            return AbilityNodes(userIsNotClass, userAbilities, extendedProps);
+          }}
           collapsible={false}
         />
       </div>

@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { RawNodeDatum } from "react-d3-tree";
 
 export interface RootAbilities {
   name: string;
@@ -24,4 +25,8 @@ export interface RootAbilities {
 
 export interface UserAbilities {
   abilityName: string;
+}
+
+export interface ExtendedRawNodeDatum extends RawNodeDatum {
+  icon: string;
 }

@@ -155,11 +155,11 @@ export default async function ProfilePage({
               {passives?.map(
                 (passive) =>
                   passive.ability !== null && (
-                    <div className="flex flex-col items-center text-center gap-2">
-                      <Link
-                        href={"/abilities/" + passive.ability.name}
-                        key={passive.ability.name}
-                      >
+                    <div
+                      className="flex flex-col items-center text-center gap-2"
+                      key={passive.ability.name}
+                    >
+                      <Link href={"/abilities/" + passive.ability.name}>
                         <Paper
                           elevation={10}
                           sx={{
