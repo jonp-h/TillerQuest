@@ -614,6 +614,24 @@ const cosmic = [
     cosmicEvent: ["Poor-Harvest"],
     parentAbility: null,
   },
+  {
+    name: "Troubled-Waters",
+    category: "Cosmic",
+    type: "Damage",
+    target: 0,
+    description:
+      "A storm is crashing down upon us. All take 5 damage. No healing may occur today.",
+    duration: null,
+    icon: "Cosmic.png",
+    gemstoneCost: 0,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    value: 5,
+    purchaseable: false,
+    cosmicEvent: ["Poor-Harvest"],
+    parentAbility: null,
+  },
 ];
 
 const abilities = [

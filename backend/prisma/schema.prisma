@@ -65,6 +65,8 @@ enum AbilityType {
   Transfer
   Trade
   Revive
+  Damage
+  ArenaToken
 
   // Passives
   Deathsave
@@ -207,8 +209,10 @@ model CosmicEvent {
   occurrences Int       @default(0)
   frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
 
-  automatic Boolean @default(false)
-  active    Boolean @default(false)
+  automatic        Boolean      @default(false)
+  blockAbilityType AbilityType? // if the cosmic event should block ability types
+  triggerAtNoon    Boolean      @default(false)
+  grantAbility     Boolean      @default(false)
 
   abilityName String? // if the cosmic event should grant an ability or passive
 

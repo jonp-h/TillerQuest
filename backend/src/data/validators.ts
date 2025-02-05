@@ -1,25 +1,52 @@
-"use server";
+import { $Enums, Prisma, PrismaClient, User } from "@prisma/client";
+import { DefaultArgs } from "@prisma/client/runtime/library";
 
-import { logger } from "@/lib/logger";
-import { PrismaTransaction } from "@/types/prismaTransaction";
-import { getUserPassiveEffect } from "../passives/getPassive";
-import { User } from "@prisma/client";
-import { gemstonesOnLevelUp } from "@/lib/gameSetting";
-import { auth } from "@/auth";
+type PrismaTransaction = Omit<
+  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;
+
+/**
+ * Retrieves the passive value for a specific user, based on passive type. Returns all the values added together.
+ *
+ * @param userId - The ID of the user.
+ * @param type - The type of the passive.
+ * @returns The value of the passive of a given type, or 0 if no passive is found.
+ */
+const getUserPassiveEffect = async (
+  db: PrismaTransaction,
+  userId: string,
+  type: $Enums.AbilityType
+) => {
+  try {
+    const userPassives = await db.userPassive.findMany({
+      where: {
+        userId,
+        effectType: type as $Enums.AbilityType,
+      },
+    });
+
+    if (!userPassives) {
+      return 0;
+    }
+
+    let value = 0;
+    userPassives.map((effect) => {
+      value += effect.value ?? 0;
+    });
+
+    return value;
+  } catch (error) {
+    console.error("Error getting user passive by type " + type + ": " + error);
+    return 0;
+  }
+};
 
 export const healingValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
-  hpValue: number,
+  hpValue: number
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    return "Not authorized";
-  }
-
   // check if user has any health passives to add to the healing value
   const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
   hpValue += healthBonus;
@@ -40,7 +67,9 @@ export const healingValidator = async (
       return hpValue;
     }
   } catch (error) {
-    logger.error("Error validating HP for user " + targetUserId + ": " + error);
+    console.error(
+      "Error validating HP for user " + targetUserId + ": " + error
+    );
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
       Date.now()
@@ -51,16 +80,8 @@ export const healingValidator = async (
 export const manaValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
-  manaValue: number,
+  manaValue: number
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   // check if user has any mana passives to add to the mana value
   const manaBonus = await getUserPassiveEffect(db, targetUserId, "ManaPassive");
   manaValue += manaBonus;
@@ -92,23 +113,25 @@ export const manaValidator = async (
 export const damageValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
-  targetUserHp: number,
   damage: number,
-  healthTreshold: number = 0,
+  healthTreshold: number = 0
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
+  const targetUser = await db.user.findFirst({
+    where: {
+      id: targetUserId,
+    },
+    select: { hp: true },
+  });
+
+  if (!targetUser) {
+    return 0;
   }
 
   // reduce the damage by the passive effects
   const reducedDamage = await getUserPassiveEffect(
     db,
     targetUserId,
-    "Protection",
+    "Protection"
   );
   const newDamage = damage - reducedDamage;
 
@@ -116,8 +139,8 @@ export const damageValidator = async (
   const finalDamage = newDamage < 0 ? 0 : newDamage;
 
   // return the damage to take, unless it brings the user below the health treshhold, then return the damage to bring the user to the health treshold
-  if (targetUserHp - finalDamage <= healthTreshold) {
-    return targetUserHp - healthTreshold;
+  if (targetUser.hp - finalDamage <= healthTreshold) {
+    return targetUser.hp - healthTreshold;
   } else {
     return finalDamage;
   }
@@ -125,19 +148,19 @@ export const damageValidator = async (
 
 export const experienceAndLevelValidator = async (
   db: PrismaTransaction,
-  user: User,
-  xp: number,
+  userId: string,
+  xp: number
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
-    // TODO: fetch user from only id
+    const user = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: { id: true, xp: true, level: true },
+    });
+    if (!user) {
+      return;
+    }
     const xpMultipler =
       (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
     const xpToGive = Math.round(xp * (1 + xpMultipler));
@@ -149,7 +172,8 @@ export const experienceAndLevelValidator = async (
       levelUpData = {
         level: { increment: levelDifference },
         gemstones: {
-          increment: gemstonesOnLevelUp * levelDifference,
+          // TODO: add reference to gamesettings file in backend
+          increment: 2 * levelDifference,
         },
       };
     }
@@ -162,13 +186,17 @@ export const experienceAndLevelValidator = async (
       },
     });
     if (levelDifference > 0) {
-      logger.info(
-        `LEVEL UP: User ${user.username} leveled up to level ${user.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+      console.info(
+        `LEVEL UP: User ${user.id} leveled up to level ${
+          user.level + levelDifference
+        }. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${
+          2 * levelDifference
+        } gemstones.`
       );
     }
     return "Successfully gave XP to user";
   } catch (error) {
-    logger.error("Validating experience and leveling up failed: " + error);
+    console.error("Validating experience and leveling up failed: " + error);
     return "Something went wrong at " + Date.now() + " with error: " + error;
   }
 };

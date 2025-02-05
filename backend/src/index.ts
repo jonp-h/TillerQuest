@@ -13,6 +13,12 @@ import rateLimit from "express-rate-limit";
 import cron from "node-cron";
 import { randomCosmic } from "./data/cosmic.js";
 import { exec } from "child_process";
+import {
+  damageValidator,
+  experienceAndLevelValidator,
+  healingValidator,
+  manaValidator,
+} from "./data/validators.js";
 
 const app = express();
 
@@ -115,7 +121,7 @@ cron.schedule(
           selected: true,
         },
         select: {
-          active: true,
+          triggerAtNoon: true,
           ability: {
             select: {
               name: true,
@@ -127,7 +133,7 @@ cron.schedule(
       });
 
       // if cosmic should not activate
-      if (!cosmic?.active) {
+      if (!cosmic?.triggerAtNoon) {
         return;
       }
 
@@ -141,25 +147,81 @@ cron.schedule(
         },
       });
 
-      const type = cosmic.ability?.type.toString().toLowerCase() || "";
+      // either hp, damage, mana or xp
+      const fieldToUpdate = cosmic.ability?.type.toString().toLowerCase() || "";
 
-      usersWithCosmicPassive.forEach(async (user) => {
-        console.log("User with cosmic passive:", user.userId);
-        await db.user.update({
-          where: { id: user.userId },
-          data: {
-            [type]: { increment: cosmic.ability?.value || 0 },
-          },
-        });
+      await db.$transaction(async (db) => {
+        await Promise.all(
+          usersWithCosmicPassive.map(async (user) => {
+            // validate value and passives
+            let value = cosmic.ability?.value;
+            if (fieldToUpdate === "hp") {
+              let targetUser = await healingValidator(
+                db,
+                user.userId,
+                cosmic.ability?.value!
+              );
+              // check if user is dead and return error message
+              if (typeof targetUser === "string") {
+                return targetUser;
+              }
+              value = targetUser;
+            } else if (fieldToUpdate === "mana") {
+              let targetUser = await manaValidator(
+                db,
+                user.userId,
+                cosmic.ability?.value!
+              );
+              // return error message if user cannot recieve mana
+              if (targetUser === 0) {
+                return "Target is already at full mana";
+              } else if (typeof targetUser === "string") {
+                return targetUser;
+              }
+              value = targetUser;
+            } else if (fieldToUpdate === "xp") {
+              await experienceAndLevelValidator(
+                db,
+                user.userId,
+                cosmic.ability?.value!
+              );
+              console.log("Experience added");
+              return;
+            } else if (fieldToUpdate === "damage") {
+              const damageToTake = await damageValidator(
+                db,
+                user.userId,
+                cosmic.ability?.value!
+              );
+
+              await db.user.update({
+                where: { id: user.userId },
+                data: {
+                  hp: { decrement: damageToTake },
+                },
+              });
+              return;
+            }
+            console.log("Value:", value);
+            console.log("Field to update:", fieldToUpdate);
+            console.log("User with cosmic passive:", user.userId);
+            await db.user.update({
+              where: { id: user.userId },
+              data: {
+                [fieldToUpdate]: { increment: value },
+              },
+            });
+          })
+        );
       });
 
-      console.log("Activated cosmic event");
+      console.log("Triggered cosmic event");
     } catch (error) {
-      console.error("Error activating cosmic event:", error);
+      console.error("Error triggering cosmic event:", error);
     }
   },
   {
-    name: "activateCosmicEventService",
+    name: "triggerCosmicEventService",
   }
 );
 
