@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import guilds from "./guilds.js";
 import users from "./users.js";
 import abilities from "./abilities.js";
+import cosmic from "./cosmic.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -30,6 +31,20 @@ async function main() {
   });
 
   console.info("Abilities have been added to the database.");
+
+  cosmic.forEach(async (cosmic) => {
+    try {
+      await db.cosmicEvent.upsert({
+        where: { name: cosmic.name },
+        update: cosmic,
+        create: cosmic,
+      });
+    } catch (error) {
+      console.error("Error adding", cosmic.name + ": ", error);
+    }
+  });
+
+  console.info("Cosmic events have been added to the database.");
 
   try {
     await db.user.createMany({

@@ -596,6 +596,26 @@ const bard = [
   },
 ];
 
+const cosmic = [
+  {
+    name: "Poor-Harvest",
+    category: "Cosmic",
+    type: "XP",
+    target: 0,
+    description: "Everyone gains 1 XP",
+    duration: null,
+    icon: "Cosmic.png",
+    gemstoneCost: 0,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    value: 1,
+    purchaseable: false,
+    cosmicEvent: ["Poor-Harvest"],
+    parentAbility: null,
+  },
+];
+
 const abilities = [
   ...health,
   ...mana,
@@ -606,5 +626,6 @@ const abilities = [
   ...barbarian,
   ...bloodMage,
   ...bard,
+  ...cosmic,
 ];
 export default abilities;

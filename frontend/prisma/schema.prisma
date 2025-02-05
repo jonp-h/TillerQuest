@@ -45,6 +45,7 @@ enum AbilityCategory {
   Magic
   Heal
   Adventurer
+  Cosmic
 
   // Class specific types
   Druid
@@ -58,8 +59,9 @@ enum AbilityCategory {
 enum AbilityType {
   // Abilities
   Heal
-  Swap
+  XP
   Mana
+  Swap
   Transfer
   Trade
   Revive
@@ -132,7 +134,8 @@ model User {
 }
 
 model Guild {
-  name String @id
+  name String  @id
+  icon String?
 
   members User[]
 }
@@ -152,7 +155,9 @@ model Ability {
   healthCost   Int?
   xpGiven      Int?
   value        Int?
-  cosmicEvent  String?
+
+  purchaseable Boolean  @default(true)
+  cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
   parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: NoAction, onUpdate: NoAction)
@@ -162,7 +167,7 @@ model Ability {
   users        UserAbility[] // m-n relation to users. An ability can be owned by many users 
   userPassives UserPassive[] // m-n relation to user passives. An ability can have passives on many users 
 
-  cosmic CosmicEvent? @relation(fields: [cosmicEvent], references: [name], onUpdate: Cascade, onDelete: Cascade)
+  cosmic CosmicEvent[]
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
@@ -170,23 +175,12 @@ model UserAbility {
   id          String  @id @default(cuid())
   userId      String
   abilityName String
+  fromCosmic  Boolean @default(false)
   user        User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   ability     Ability @relation(fields: [abilityName], references: [name], onUpdate: Cascade, onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
-
-// model Effect {
-//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-//   userIds     String[] @db.ObjectId
-//   abilityName String?
-//   value       Int?
-
-//   ability Ability? @relation(fields: [abilityName], references: [name])
-//   // cosmic
-
-//   onUser EffectsOnUser[] // m-n relation to users. An effect can have many users
-// }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
 model UserPassive {
@@ -196,12 +190,9 @@ model UserPassive {
   effectType  AbilityType
   endTime     DateTime?
   value       Int?
-  cosmicEvent String?
 
   user    User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade, onDelete: Cascade)
-
-  cosmic CosmicEvent? @relation(fields: [cosmicEvent], references: [name], onUpdate: Cascade, onDelete: Cascade)
 
   @@unique([userId, abilityName])
 }
@@ -216,8 +207,12 @@ model CosmicEvent {
   occurrences Int       @default(0)
   frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
 
-  ability Ability[]
-  passive UserPassive[]
+  automatic Boolean @default(false)
+  active    Boolean @default(false)
+
+  abilityName String? // if the cosmic event should grant an ability or passive
+
+  ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade)
 }
 
 // 3rd party authentication. OAuth

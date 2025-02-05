@@ -6,7 +6,7 @@ import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
-import { Circle, Diamond } from "@mui/icons-material";
+import { Circle, Diamond, Stadium } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserAbilities } from "@/data/abilities/getters/getAbilities";
 import { getUserPassives } from "@/data/passives/getPassive";
@@ -136,15 +136,14 @@ export default async function ProfilePage({
                 Gold: {user.gold}
                 <Circle />
               </Typography>
+              <Typography variant="h5" color="orange">
+                Tokens: {user.arenaTokens}
+                <Stadium />
+              </Typography>
               <Typography variant="h5" color="cyan">
                 Gemstones: {user.gemstones}
                 <Diamond />
               </Typography>
-              <Link href="/abilities">
-                <Button variant="contained" color="secondary">
-                  Level up
-                </Button>
-              </Link>
             </div>
           </Paper>
           <Paper className=" items-center p-5 w-full min-h-3/4" elevation={6}>

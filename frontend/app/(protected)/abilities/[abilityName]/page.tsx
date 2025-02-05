@@ -146,6 +146,7 @@ export default async function AbilityNamePage({
               ability={ability}
               user={user}
               guildMembers={guildMembers}
+              isPurchaseable={ability.purchaseable}
               userOwnsAbility={userOwnsAbility}
               userIsCorrectClass={userIsCorrectClass}
               missingParentAbility={missingParentAbility}

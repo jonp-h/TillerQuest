@@ -27,6 +27,9 @@ export const getAbilityHierarchy = async () => {
     const roots = await db.ability.findMany({
       where: {
         parent: null,
+        category: {
+          not: "Cosmic", // exclude cosmic abilities
+        },
       },
       select: {
         name: true,

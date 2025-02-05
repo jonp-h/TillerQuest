@@ -23,6 +23,7 @@ type guildMembers =
 export default function AbilityForm({
   ability,
   user,
+  isPurchaseable,
   userOwnsAbility,
   userIsCorrectClass,
   missingParentAbility,
@@ -31,6 +32,7 @@ export default function AbilityForm({
 }: {
   ability: Ability;
   user: User;
+  isPurchaseable: boolean;
   userOwnsAbility: boolean;
   userIsCorrectClass: boolean;
   missingParentAbility: boolean;
@@ -56,13 +58,13 @@ export default function AbilityForm({
   const router = useRouter();
 
   const getBuyButtonText = () => {
-    if (!userIsCorrectClass) {
+    if (!isPurchaseable) {
+      return "This ability is not available.";
+    } else if (!userIsCorrectClass) {
       return "You are the wrong class to buy this ability.";
-    }
-    if (missingParentAbility) {
+    } else if (missingParentAbility) {
       return "Buy the necessary parent ability first.";
-    }
-    if (user.gemstones < ability.gemstoneCost) {
+    } else if (user.gemstones < ability.gemstoneCost) {
       return "You don't have enough gemstones to buy this ability.";
     }
     return "Buy Ability";
@@ -187,6 +189,7 @@ export default function AbilityForm({
           <Button
             disabled={
               user.gemstones < ability.gemstoneCost ||
+              !isPurchaseable ||
               missingParentAbility ||
               !userIsCorrectClass ||
               isLoading

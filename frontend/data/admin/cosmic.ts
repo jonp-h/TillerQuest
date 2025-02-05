@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getAllUsers } from "./adminUserInteractions";
 
 // outdated code. updated in backend
 export const randomCosmic = async () => {
@@ -93,16 +94,61 @@ export const setSelectedCosmic = async (cosmicName: string) => {
         },
       });
 
-      // add selected passive or abilities to users
+      // add passives to all users
+      if (cosmic.abilityName) {
+        const users = await getAllUsers();
 
-      if (!cosmic) {
-        throw new Error("Cosmic not found");
+        for (const user of users) {
+          // user should recieve a passive with a ticking bomb, and it should enable itself at 11:40
+          // evade shold remove passive at a great mana cost
+
+          await db.userPassive.create({
+            data: {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              effectType: "Cosmic", // should be cosmic when there is no effect (manual)
+              ability: {
+                connect: {
+                  name: cosmic.abilityName,
+                },
+              },
+            },
+          });
+        }
+
+        // if active, grant user active ability
+        if (cosmic.active) {
+          for (const user of users) {
+            await db.userAbility.create({
+              data: {
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+                ability: {
+                  connect: {
+                    name: cosmic.abilityName,
+                  },
+                },
+                fromCosmic: true,
+              },
+            });
+          }
+        }
+
+        if (!cosmic) {
+          throw new Error("Cosmic not found");
+        }
+
+        return cosmic;
       }
-
-      return cosmic;
     });
   } catch (error) {
-    console.error("Unable to select cosmic:", error);
+    console.error(error);
     throw new Error("Unable to select cosmic");
   }
 };

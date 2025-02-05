@@ -105,6 +105,91 @@ cron.schedule(
   }
 );
 
+// Schedule a job to run every day at 11:20 to activate cosmic event
+cron.schedule(
+  "20 11 * * *",
+  async () => {
+    try {
+      const cosmic = await db.cosmicEvent.findFirst({
+        where: {
+          selected: true,
+        },
+        select: {
+          active: true,
+          ability: {
+            select: {
+              name: true,
+              type: true,
+              value: true,
+            },
+          },
+        },
+      });
+
+      // if cosmic should not activate
+      if (!cosmic?.active) {
+        return;
+      }
+
+      const usersWithCosmicPassive = await db.userPassive.findMany({
+        where: {
+          effectType: "Cosmic",
+          abilityName: cosmic.ability?.name,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      const type = cosmic.ability?.type.toString().toLowerCase() || "";
+
+      usersWithCosmicPassive.forEach(async (user) => {
+        console.log("User with cosmic passive:", user.userId);
+        await db.user.update({
+          where: { id: user.userId },
+          data: {
+            [type]: { increment: cosmic.ability?.value || 0 },
+          },
+        });
+      });
+
+      console.log("Activated cosmic event");
+    } catch (error) {
+      console.error("Error activating cosmic event:", error);
+    }
+  },
+  {
+    name: "activateCosmicEventService",
+  }
+);
+
+// Schedule a job to run every day before midnight to remove all cosmic passives and abilities
+cron.schedule(
+  "59 23 * * *",
+  async () => {
+    try {
+      await db.userPassive.deleteMany({
+        where: {
+          effectType: "Cosmic",
+        },
+      });
+
+      await db.userAbility.deleteMany({
+        where: {
+          fromCosmic: true,
+        },
+      });
+
+      console.log("Removed cosmic passives and abilities");
+    } catch (error) {
+      console.error("Error removing cosmic passives and abilities:", error);
+    }
+  },
+  {
+    name: "generateRandomCosmicEventService",
+  }
+);
+
 // Schedule a job to run every day at midnight to generate a random cosmic event
 cron.schedule(
   "0 0 * * *",

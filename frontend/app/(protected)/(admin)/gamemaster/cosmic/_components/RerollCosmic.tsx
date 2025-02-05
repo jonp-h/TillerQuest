@@ -14,13 +14,22 @@ import { CosmicEvent } from "@prisma/client";
 import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
 import { resurrectUsers } from "@/data/admin/resurrectUser";
 import DiceBox from "@3d-dice/dice-box";
+import { useRouter } from "next/navigation";
 
 export default function RerollCosmic() {
   const [cosmicEvent, setCosmicEvent] = useState<CosmicEvent | null>(null);
 
+  const router = useRouter();
+
   const handleReroll = async () => {
     const cosmic = await randomCosmic();
     if (cosmic) setCosmicEvent(cosmic);
+  };
+
+  const handleSetSelectedCosmic = async (name: string) => {
+    await setSelectedCosmic(name).then(() => {
+      router.refresh();
+    });
   };
 
   return (
@@ -40,7 +49,7 @@ export default function RerollCosmic() {
             <Button
               className="w-30"
               variant="contained"
-              onClick={() => setSelectedCosmic(cosmicEvent?.name)}
+              onClick={() => handleSetSelectedCosmic(cosmicEvent?.name)}
             >
               Select cosmic
             </Button>

@@ -31,6 +31,9 @@ export default async function CosmicPage() {
                 <TableCell>Name</TableCell>
                 <TableCell align="right">Description</TableCell>
                 <TableCell align="right">Presetdate</TableCell>
+                <TableCell align="right">Automatic</TableCell>
+                <TableCell align="right">Gives active ability</TableCell>
+                <TableCell align="right">Ability / Passive</TableCell>
                 <TableCell align="right">Occurrences</TableCell>
                 <TableCell align="right">Frequency</TableCell>
                 {/* <TableCell align="right">Ability</TableCell>
@@ -54,6 +57,9 @@ export default async function CosmicPage() {
                   <TableCell align="right">
                     {cosmic.presetDate?.toDateString()}
                   </TableCell>
+                  <TableCell align="right">{cosmic.automatic}</TableCell>
+                  <TableCell align="right">{cosmic.active}</TableCell>
+                  <TableCell align="right">{cosmic.abilityName}</TableCell>
                   <TableCell align="right">{cosmic.occurrences}</TableCell>
                   <TableCell align="right">{cosmic.frequency}</TableCell>
                   {/* <TableCell align="right">{cosmic.}</TableCell>
