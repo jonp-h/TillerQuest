@@ -120,7 +120,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
         }
 
         // if active, grant user active ability
-        if (cosmic.active) {
+        if (cosmic.grantAbility) {
           for (const user of users) {
             await db.userAbility.create({
               data: {

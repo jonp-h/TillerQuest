@@ -53,15 +53,28 @@ export const selectAbility = async (
   if (castingUser.mana < (ability.manaCost || 0)) {
     return "Insufficient mana";
   }
-  if (castingUser.hp < (ability.healthCost || 0)) {
+  if (castingUser.hp <= (ability.healthCost || 0)) {
     return "Insufficient health";
+  }
+
+  const cosmicBlock = await prisma.cosmicEvent.findFirst({
+    where: {
+      selected: true,
+      blockAbilityType: {
+        not: null,
+      },
+    },
+    select: {
+      blockAbilityType: true,
+    },
+  });
+
+  if (cosmicBlock?.blockAbilityType === ability.type) {
+    return "This ability is blocked by a cosmic event";
   }
 
   try {
     return await prisma.$transaction(async (db) => {
-      // ! usePassives must use finalizerFunction.
-      // ! May create useAbility functions here for Passives as well
-
       // check ability type and call the appropriate function
       switch (ability.type) {
         // ---------------------------- Passive abilities ----------------------------
@@ -141,6 +154,9 @@ export const selectAbility = async (
 
         case "Arena":
           throw new Error("Arena is not implemented yet");
+
+        case "XP":
+          return await useXPAbility(db, castingUser, ability);
       }
     });
   } catch (error) {
@@ -560,4 +576,17 @@ const useProtectionAbility = async (
 
   await finalizeAbilityUsage(db, castingUser, ability);
   return results.toString();
+};
+
+const useXPAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  ability: Ability,
+) => {
+  logger.info(
+    `User ${castingUser.id} used ability ${ability.name} on themselves and gained ${ability.xpGiven} XP`,
+  );
+
+  await finalizeAbilityUsage(db, castingUser, ability);
+  return "You gained " + ability.xpGiven + " XP";
 };

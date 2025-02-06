@@ -51,7 +51,7 @@ export default function AbilityForm({
 
   const lackingResource =
     user.mana < (ability.manaCost || 0) ||
-    user.hp < (ability.healthCost || 0 + 1);
+    user.hp <= (ability.healthCost || 0 + 1);
 
   const isDead = user.hp === 0;
 
@@ -78,7 +78,7 @@ export default function AbilityForm({
     } else if (lackingResource) {
       return (
         "Not enough " +
-        (user.hp < (ability.healthCost || 0 + 1) ? "health" : "mana") +
+        (user.hp <= (ability.healthCost || 0 + 1) ? "health" : "mana") +
         " to use this ability."
       );
     }

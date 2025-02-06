@@ -632,6 +632,24 @@ const cosmic = [
     cosmicEvent: ["Poor-Harvest"],
     parentAbility: null,
   },
+  {
+    name: "Sacrificial-Lamb",
+    category: "Cosmic",
+    type: "XP",
+    target: -1,
+    description:
+      "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 100 XP. '",
+    duration: null,
+    icon: "Cosmic.png",
+    gemstoneCost: 0,
+    manaCost: null,
+    healthCost: 5,
+    xpGiven: 100,
+    value: null,
+    purchaseable: false,
+    cosmicEvent: ["Sacrificial-Lamb"],
+    parentAbility: null,
+  },
 ];
 
 const abilities = [

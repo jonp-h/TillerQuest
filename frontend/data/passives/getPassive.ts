@@ -81,6 +81,14 @@ export const getUserPassiveEffect = async (
   }
 };
 
+/**
+ * Checks if a passive ability is active for a given user. Does not return cosmic passives.
+ *
+ * @param user - The user whose passive abilities are being checked.
+ * @param ability - The ability to check for active status.
+ * @returns A promise that resolves to a boolean indicating whether the passive ability is active. Does not return cosmic passives.
+ * @throws Will throw an error if the user is not authorized.
+ */
 export const checkIfPassiveIsActive = async (user: User, ability: Ability) => {
   const session = await auth();
   if (session?.user?.id !== user.id) {
@@ -92,6 +100,9 @@ export const checkIfPassiveIsActive = async (user: User, ability: Ability) => {
       where: {
         userId: user.id,
         abilityName: ability.name,
+        effectType: {
+          not: "Cosmic",
+        },
       },
     });
 

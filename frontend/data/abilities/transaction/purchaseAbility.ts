@@ -65,9 +65,12 @@ export const buyAbility = async (userId: string, ability: Ability) => {
       }
 
       logger.info(`User ${user.id} bought ability ${ability.name}`);
-      return "Bought " + ability.name + " successfully!" + useAbilityImmediately
-        ? " Ability activated."
-        : "";
+      return (
+        "Bought " +
+        ability.name +
+        " successfully!" +
+        (useAbilityImmediately ? " Ability activated." : "")
+      );
     });
   } catch (error) {
     logger.error(
