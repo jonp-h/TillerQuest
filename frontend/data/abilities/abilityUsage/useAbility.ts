@@ -50,27 +50,39 @@ export const selectAbility = async (
     return "You can't use abilities while dead";
   }
 
-  if (castingUser.mana < (ability.manaCost || 0)) {
-    return "Insufficient mana";
-  }
-  if (castingUser.hp <= (ability.healthCost || 0)) {
-    return "Insufficient health";
-  }
-
-  const cosmicBlock = await prisma.cosmicEvent.findFirst({
+  const cosmic = await prisma.cosmicEvent.findFirst({
     where: {
       selected: true,
-      blockAbilityType: {
-        not: null,
-      },
     },
     select: {
+      increaseCostType: true,
       blockAbilityType: true,
     },
   });
 
-  if (cosmicBlock?.blockAbilityType === ability.type) {
+  if (cosmic?.blockAbilityType === ability.type) {
     return "This ability is blocked by a cosmic event";
+  }
+
+  // check if the user has a cosmic event passive that increases the cost. If the type is all, all abilities cost more
+  const increasedCostType =
+    cosmic?.increaseCostType === "All" ? "All" : ability.type;
+  const increasedCost =
+    (await getUserPassiveEffect(
+      prisma,
+      castingUser.id,
+      increasedCostType,
+      true,
+    )) / 100;
+
+  ability.manaCost = ability.manaCost! * (1 + increasedCost);
+  ability.healthCost = ability.healthCost! * (1 + increasedCost);
+
+  if (castingUser.mana < (ability.manaCost || 0)) {
+    return "Insufficient mana. The cost is " + ability.manaCost;
+  }
+  if (castingUser.hp <= (ability.healthCost || 0)) {
+    return "Insufficient health. The cost is " + ability.healthCost;
   }
 
   try {
@@ -229,6 +241,7 @@ const usePassive = async (
         data: {
           userId: targetUserId,
           effectType: ability.type,
+          passiveName: ability.name,
           abilityName: ability.name,
           value: ability.value ?? 0,
           endTime: ability.duration
@@ -370,7 +383,7 @@ const useManaAbility = async (
           },
         },
       });
-      return "Successfully gave mana " + ability.value;
+      return "Successfully gave " + value + " mana";
     }),
   );
 
@@ -558,6 +571,7 @@ const useProtectionAbility = async (
         data: {
           userId: targetUserId,
           effectType: ability.type,
+          passiveName: ability.name,
           abilityName: ability.name,
           value: ability.value ?? 0,
           endTime: ability.duration

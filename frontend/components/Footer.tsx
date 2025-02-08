@@ -16,7 +16,7 @@ export default function Footer() {
           href="https://github.com/jonp-h"
           className="text-blue-400 hover:text-blue-500 hover:underline"
         >
-          Pape
+          jonp-h
         </a>
       </h2>
       <p>2025</p>

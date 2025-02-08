@@ -185,7 +185,6 @@ cron.schedule(
                 user.userId,
                 cosmic.ability?.value!
               );
-              console.log("Experience added");
               return;
             } else if (fieldToUpdate === "damage") {
               const damageToTake = await damageValidator(
@@ -202,9 +201,7 @@ cron.schedule(
               });
               return;
             }
-            console.log("Value:", value);
-            console.log("Field to update:", fieldToUpdate);
-            console.log("User with cosmic passive:", user.userId);
+
             await db.user.update({
               where: { id: user.userId },
               data: {

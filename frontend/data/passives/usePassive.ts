@@ -33,6 +33,7 @@ export const usePassive = async (
           data: {
             userId: userId,
             effectType: ability.type,
+            passiveName: ability.name,
             abilityName: ability.name,
             value: ability.value ?? 0,
             endTime: ability.duration

@@ -22,6 +22,7 @@ export const getUserPassives = async (userId: string) => {
       },
       select: {
         endTime: true,
+        passiveName: true,
         ability: {
           select: {
             name: true,
@@ -42,12 +43,14 @@ export const getUserPassives = async (userId: string) => {
  *
  * @param userId - The ID of the user.
  * @param type - The type of the passive.
- * @returns The value of the passive of a given type, or 0 if no passive is found.
+ * @param cosmic - Whether to include cosmic passives in the search.
+ * @returns The value of the passive of a given type, or 0 if no passive is found. If cosmic is true, only cosmic passives are returned.
  */
 export const getUserPassiveEffect = async (
   db: PrismaTransaction,
   userId: string,
   type: $Enums.AbilityType,
+  cosmic = false,
 ) => {
   const session = await auth();
   if (
@@ -57,11 +60,14 @@ export const getUserPassiveEffect = async (
     throw new Error("Not authorized");
   }
 
+  const cosmicData = cosmic ? { cosmicEvent: true } : null;
+
   try {
     const userPassives = await db.userPassive.findMany({
       where: {
         userId,
         effectType: type as $Enums.AbilityType,
+        ...cosmicData,
       },
     });
 

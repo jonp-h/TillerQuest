@@ -81,6 +81,19 @@ export const setSelectedCosmic = async (cosmicName: string) => {
         },
       });
 
+      // Remove all earlier cosmic passives and abilities
+      await db.userPassive.deleteMany({
+        where: {
+          cosmicEvent: true,
+        },
+      });
+
+      await db.userAbility.deleteMany({
+        where: {
+          fromCosmic: true,
+        },
+      });
+
       // update cosmic with 1 occurrence and set it to selected
       const cosmic = await db.cosmicEvent.update({
         where: {
@@ -95,13 +108,13 @@ export const setSelectedCosmic = async (cosmicName: string) => {
       });
 
       // add passives to all users
-      if (cosmic.abilityName) {
-        const users = await getAllUsers();
+      const users = await getAllUsers();
 
-        for (const user of users) {
-          // user should recieve a passive with a ticking bomb, and it should enable itself at 11:40
-          // evade shold remove passive at a great mana cost
+      for (const user of users) {
+        // user should recieve a passive with a ticking bomb, and it should enable itself at 11:40
+        // evade shold remove passive at a great mana cost
 
+        if (cosmic.abilityName) {
           await db.userPassive.create({
             data: {
               user: {
@@ -109,7 +122,9 @@ export const setSelectedCosmic = async (cosmicName: string) => {
                   id: user.id,
                 },
               },
+              passiveName: cosmic.name,
               effectType: "Cosmic", // should be cosmic when there is no effect (manual)
+              cosmicEvent: true,
               ability: {
                 connect: {
                   name: cosmic.abilityName,
@@ -117,11 +132,8 @@ export const setSelectedCosmic = async (cosmicName: string) => {
               },
             },
           });
-        }
 
-        // if active, grant user active ability
-        if (cosmic.grantAbility) {
-          for (const user of users) {
+          if (cosmic.grantAbility) {
             await db.userAbility.create({
               data: {
                 user: {
@@ -138,14 +150,29 @@ export const setSelectedCosmic = async (cosmicName: string) => {
               },
             });
           }
+        } else {
+          console.log("No ability found for cosmic");
+          await db.userPassive.create({
+            data: {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              cosmicEvent: true,
+              passiveName: cosmic.name,
+              effectType: cosmic.increaseCostType || "Cosmic", // should be cosmic when there is no effect (manual)
+              value: cosmic.increaseCostValue,
+            },
+          });
         }
-
-        if (!cosmic) {
-          throw new Error("Cosmic not found");
-        }
-
-        return cosmic;
       }
+
+      if (!cosmic) {
+        throw new Error("Cosmic not found");
+      }
+
+      return cosmic;
     });
   } catch (error) {
     console.error(error);

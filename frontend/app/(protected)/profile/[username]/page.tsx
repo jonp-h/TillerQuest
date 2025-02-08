@@ -151,43 +151,49 @@ export default async function ProfilePage({
               Passives
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
-              {passives?.map(
-                (passive) =>
-                  passive.ability !== null && (
-                    <div
-                      className="flex flex-col items-center text-center gap-2"
-                      key={passive.ability.name}
+              {passives?.map((passive) => (
+                <div
+                  className="flex flex-col items-center text-center gap-2"
+                  key={passive.passiveName}
+                >
+                  <Link
+                    href={
+                      passive.ability
+                        ? "/abilities/" + passive.ability.name
+                        : ""
+                    }
+                    className={
+                      passive.ability ? "cursor-pointer" : "cursor-default"
+                    }
+                  >
+                    <Paper
+                      elevation={10}
+                      sx={{
+                        minHeight: "8rem",
+                        minWidth: "8rem",
+                        borderRadius: "9999px",
+                        transition: "transform 0.3s ease-in-out",
+                      }}
+                      className="flex flex-col justify-center text-center items-center p-2 hover:scale-110"
                     >
-                      <Link href={"/abilities/" + passive.ability.name}>
-                        <Paper
-                          elevation={10}
-                          sx={{
-                            minHeight: "8rem",
-                            minWidth: "8rem",
-                            borderRadius: "9999px",
-                            transition: "transform 0.3s ease-in-out",
-                          }}
-                          className="flex flex-col justify-center text-center items-center p-2 hover:scale-110"
-                        >
-                          <Image
-                            className="rounded-full border-slate-700 border-2"
-                            src={"/abilities/" + passive.ability.name + ".png"}
-                            alt={""}
-                            draggable={false}
-                            width={120}
-                            height={120}
-                          />
-                        </Paper>
-                      </Link>
-                      <Typography variant="subtitle1">
-                        {passive.ability.name.replace(/-/g, " ")}
-                      </Typography>
-                      {passive.endTime && (
-                        <TimeLeft endTime={new Date(passive.endTime)} />
-                      )}
-                    </div>
-                  ),
-              )}
+                      <Image
+                        className="rounded-full border-slate-700 border-2"
+                        src={"/abilities/" + passive.ability?.icon}
+                        alt={""}
+                        draggable={false}
+                        width={120}
+                        height={120}
+                      />
+                    </Paper>
+                  </Link>
+                  <Typography variant="subtitle1">
+                    {passive.passiveName.replace(/-/g, " ")}
+                  </Typography>
+                  {passive.endTime && (
+                    <TimeLeft endTime={new Date(passive.endTime)} />
+                  )}
+                </div>
+              ))}
             </div>
           </Paper>
         </div>

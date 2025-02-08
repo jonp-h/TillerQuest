@@ -22,54 +22,7 @@ export default async function CosmicPage() {
       <Typography variant="h1" align="center">
         Cosmic Events
       </Typography>
-      <RerollCosmic />
-      <div className="m-auto w-2/3 mt-5">
-        <TableContainer component={Paper} elevation={3}>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Description</TableCell>
-                <TableCell align="right">Presetdate</TableCell>
-                <TableCell align="right">Automatic</TableCell>
-                <TableCell align="right">Gives active ability</TableCell>
-                <TableCell align="right">Ability / Passive</TableCell>
-                <TableCell align="right">Occurrences</TableCell>
-                <TableCell align="right">Frequency</TableCell>
-                {/* <TableCell align="right">Ability</TableCell>
-            <TableCell align="right">Passive</TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {cosmicEvents.map((cosmic) => (
-                <TableRow
-                  key={cosmic.name}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                    ":hover": { cursor: "pointer" },
-                    backgroundColor: cosmic.selected ? "darkviolet" : "inherit",
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {cosmic.name}
-                  </TableCell>
-                  <TableCell align="right">{cosmic.description}</TableCell>
-                  <TableCell align="right">
-                    {cosmic.presetDate?.toDateString()}
-                  </TableCell>
-                  <TableCell align="right">{cosmic.automatic}</TableCell>
-                  <TableCell align="right">{cosmic.active}</TableCell>
-                  <TableCell align="right">{cosmic.abilityName}</TableCell>
-                  <TableCell align="right">{cosmic.occurrences}</TableCell>
-                  <TableCell align="right">{cosmic.frequency}</TableCell>
-                  {/* <TableCell align="right">{cosmic.}</TableCell>
-              <TableCell align="right">{cosmic.}</TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+      <RerollCosmic cosmicEvents={cosmicEvents} />
     </MainContainer>
   );
 }

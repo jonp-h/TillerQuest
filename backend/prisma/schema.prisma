@@ -71,6 +71,8 @@ enum AbilityType {
   // Passives
   Deathsave
   Cosmic
+  All
+
   Health
   ManaPassive
   Experience
@@ -110,11 +112,8 @@ model User {
   arenaTokens Int @default(0)
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
-  // abilityNames String[]
 
-  passives UserPassive[]
-  // m-n relation to user passives. A user can have many passives
-  // effectId String[] @db.ObjectId
+  passives UserPassive[] // m-n relation to user passives. A user can have many passives
 
   guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   guildName String?
@@ -163,7 +162,6 @@ model Ability {
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
   parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: NoAction, onUpdate: NoAction)
-  // childAbilities String[] // m-n relation to child abilities. An ability can have many child abilities
   children      Ability[] @relation("AbilityHierarchy")
 
   users        UserAbility[] // m-n relation to users. An ability can be owned by many users 
@@ -188,7 +186,10 @@ model UserAbility {
 model UserPassive {
   id          String      @id @default(cuid())
   userId      String
-  abilityName String
+  passiveName String
+  abilityName String?
+  cosmicEvent Boolean     @default(false)
+  icon        String?
   effectType  AbilityType
   endTime     DateTime?
   value       Int?
@@ -202,19 +203,20 @@ model UserPassive {
 model CosmicEvent {
   name        String    @id
   description String
-  // icon        String
+  icon        String    @default("Cosmic.png")
   suggested   Boolean   @default(false)
   selected    Boolean   @default(false)
   presetDate  DateTime?
   occurrences Int       @default(0)
   frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
 
-  automatic        Boolean      @default(false)
-  blockAbilityType AbilityType? // if the cosmic event should block ability types
-  triggerAtNoon    Boolean      @default(false)
-  grantAbility     Boolean      @default(false)
-
-  abilityName String? // if the cosmic event should grant an ability or passive
+  automatic         Boolean      @default(false)
+  increaseCostType  AbilityType? // if the cosmic event should increase stats or ability values
+  increaseCostValue Int? // the value to increase
+  blockAbilityType  AbilityType? // if the cosmic event should block ability types
+  triggerAtNoon     Boolean      @default(false)
+  grantAbility      Boolean      @default(false)
+  abilityName       String? // if the cosmic event should grant an ability or passive
 
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade)
 }

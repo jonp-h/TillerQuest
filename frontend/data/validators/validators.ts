@@ -60,10 +60,16 @@ export const manaValidator = async (
   ) {
     throw new Error("Not authorized");
   }
-
-  // check if user has any mana passives to add to the mana value
-  const manaBonus = await getUserPassiveEffect(db, targetUserId, "ManaPassive");
-  manaValue += manaBonus;
+  // if mana is subtracted, skip passive effects
+  if (manaValue > 0) {
+    // check if user has any mana passives to add to the mana value
+    const manaBonus = await getUserPassiveEffect(
+      db,
+      targetUserId,
+      "ManaPassive",
+    );
+    manaValue += manaBonus;
+  }
 
   const targetMana = await db.user.findFirst({
     where: {
@@ -72,10 +78,19 @@ export const manaValidator = async (
     select: { mana: true, manaMax: true },
   });
 
-  if (targetMana && targetMana?.mana + manaValue >= targetMana?.manaMax) {
-    return targetMana?.manaMax - targetMana?.mana;
+  if (!targetMana) {
+    return 0;
+  }
+
+  if (manaValue > 0) {
+    if (targetMana.mana + manaValue >= targetMana.manaMax) {
+      return targetMana.manaMax - targetMana.mana;
+    } else {
+      return manaValue;
+    }
   } else {
-    return manaValue;
+    const newMana = targetMana.mana + manaValue;
+    return newMana < 0 ? -targetMana.mana : manaValue;
   }
 };
 
@@ -104,6 +119,13 @@ export const damageValidator = async (
     throw new Error("Not authorized");
   }
 
+  // user has a cosmic event that increases damage
+  const increasedDamage =
+    (await getUserPassiveEffect(db, targetUserId, "Damage", true)) / 100;
+
+  damage = damage * (1 + increasedDamage);
+
+  console.log("Increased damage: ", damage);
   // reduce the damage by the passive effects
   const reducedDamage = await getUserPassiveEffect(
     db,
