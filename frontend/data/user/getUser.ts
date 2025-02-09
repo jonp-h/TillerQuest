@@ -41,7 +41,27 @@ export const getUserByUsername = async (username: string) => {
   }
 };
 
-export const getLeaderboard = async () => {
+export const getUserInventory = async (id: string) => {
+  // unstable_noStore();
+
+  const session = await auth();
+  if (session?.user.id !== id) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const inventory = await db.user.findFirst({
+      where: { id },
+      select: { id: true, title: true, inventory: true },
+    });
+
+    return inventory;
+  } catch {
+    return null;
+  }
+};
+
+export const getVg1Leaderboard = async () => {
   // unstable_noStore();
 
   const session = await auth();
@@ -51,7 +71,47 @@ export const getLeaderboard = async () => {
 
   try {
     const users = await db.user.findMany({
-      where: { publicHighscore: true },
+      where: {
+        publicHighscore: true,
+        schoolClass: {
+          in: ["Class_1IM1", "Class_1IM2", "Class_1IM3", "Class_1IM4"],
+        },
+      },
+      orderBy: { xp: "desc" },
+      take: 10,
+      select: {
+        xp: true,
+        title: true,
+        username: true,
+        image: true,
+        level: true,
+        class: true,
+        guildName: true,
+        schoolClass: true,
+      },
+    });
+
+    return users;
+  } catch {
+    return null;
+  }
+};
+export const getVg2Leaderboard = async () => {
+  // unstable_noStore();
+
+  const session = await auth();
+  if (!session) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const users = await db.user.findMany({
+      where: {
+        publicHighscore: true,
+        schoolClass: {
+          in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
+        },
+      },
       orderBy: { xp: "desc" },
       take: 10,
     });

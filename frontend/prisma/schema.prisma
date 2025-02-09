@@ -88,6 +88,12 @@ enum AbilityType {
   IncreaseMana
 }
 
+enum ShopItemType {
+  Title
+  Access
+  Badge
+}
+
 model User {
   id              String       @id @default(cuid())
   name            String?
@@ -107,9 +113,10 @@ model User {
   manaMax  Int      @default(40)
   lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format. User should not get more mana on account creation. 
 
-  gemstones   Int @default(1)
-  gold        Int @default(0)
-  arenaTokens Int @default(0)
+  gemstones   Int        @default(1)
+  gold        Int        @default(0)
+  arenaTokens Int        @default(0)
+  inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 
@@ -123,14 +130,12 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   accounts      Account[] // Relation to OAuth account
-  // sessions      Session[]      FIXME: Removed?
+  // sessions      Session[]      
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  // Authenticator Authenticator[]
-  // Session   Session[]          FIXME: Removed?
   Session   Session[]
 }
 
@@ -141,8 +146,6 @@ model Guild {
   members User[]
 }
 
-// current limitations with prisma studio make the admin unable to add new records in models with many-to-many relationships
-// https://github.com/prisma/studio/issues/980
 model Ability {
   name         String          @id @default(cuid())
   category     AbilityCategory // Can be generic or class specific
@@ -219,6 +222,19 @@ model CosmicEvent {
   abilityName       String? // if the cosmic event should grant an ability or passive
 
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade)
+}
+
+model ShopItem {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  // icon        String
+  price       Int
+  type        ShopItemType
+  levelReq    Int?
+  classReq    Class?
+  specialReq  String? //TODO: Add special requirements for items
+  users       User[] // m-n relation to users. An item can be owned by many users
 }
 
 // 3rd party authentication. OAuth

@@ -1,0 +1,97 @@
+"use server";
+import { auth } from "@/auth";
+import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
+
+export const getAllShopItems = async () => {
+  try {
+    return await db.shopItem.findMany();
+  } catch (error) {
+    logger.error("Error fetching shopitems: " + error);
+    return null;
+  }
+};
+
+export const purchaseItem = async (userId: string, itemId: string) => {
+  const session = await auth();
+  if (userId !== session?.user.id) {
+    return "Unauthorized";
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { gold: true, inventory: true, class: true, level: true },
+  });
+
+  if (!user) {
+    return "Something went wrong";
+  }
+
+  const item = await db.shopItem.findUnique({ where: { id: itemId } });
+
+  if (!item) {
+    return "Something went wrong";
+  }
+
+  if (user.gold < item.price) {
+    return "Not enough gold";
+  }
+
+  if (item.classReq && item.classReq !== user.class) {
+    return "Class requirement not met";
+  }
+
+  if (item.levelReq && item.levelReq > user.level) {
+    return "Level requirement not met";
+  }
+
+  if (item.specialReq) {
+    // TODO: Check if user has special requirement
+  }
+
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      gold: user.gold - item.price,
+      inventory: {
+        connect: { id: itemId },
+      },
+    },
+  });
+
+  return "Sucessfully bought " + item.name;
+};
+
+export const equipItem = async (userId: string, itemId: string) => {
+  const session = await auth();
+  if (userId !== session?.user.id) {
+    return "Unauthorized";
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { title: true, inventory: true },
+  });
+
+  if (!user) {
+    return "Something went wrong";
+  }
+
+  const item = await db.shopItem.findUnique({ where: { id: itemId } });
+
+  if (!item) {
+    return "Something went wrong";
+  }
+
+  if (!user.inventory.some((inventoryItem) => inventoryItem.id === item.id)) {
+    return "You don't own this item";
+  }
+
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      title: item.name,
+    },
+  });
+  return "Sucessfully equipped " + item.name;
+};

@@ -15,7 +15,7 @@ export const getAllUsers = async () => {
 
 export const getAllDeadUsers = async () => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session) {
     throw new Error("Not authorized");
   }
 
