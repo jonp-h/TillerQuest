@@ -49,7 +49,9 @@ function ManaForm({
       try {
         await getDailyMana(user);
         setLoading(false);
-        setFeedback("And as you focus, you feel your mana restoring.");
+        setFeedback(
+          "And as you focus, you feel your mana restoring. You also find a token in your pocket.",
+        );
       } catch (error) {
         console.error(error);
         setFeedback(

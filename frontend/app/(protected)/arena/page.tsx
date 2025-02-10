@@ -5,7 +5,7 @@ import Leaderboard from "./_components/Leaderboard";
 import { getVg1Leaderboard, getVg2Leaderboard } from "@/data/user/getUser";
 import { getAllDeadUsers } from "@/data/admin/adminUserInteractions";
 import Image from "next/image";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Link from "next/link";
 
 async function ArenaPage() {
@@ -16,9 +16,14 @@ async function ArenaPage() {
   return (
     <MainContainer>
       <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="my-10 text-5xl text-red-400 text-center">
-          Arena games coming soon
+        <h1 className="my-10 text-5xl text-red-400 text-center ">
+          Arena games
         </h1>
+        <Link href={"arena/games"}>
+          <Button variant="contained" size="large">
+            Go to arena games
+          </Button>
+        </Link>
         {deadUsers.length > 0 && (
           <>
             <h1 className="my-10 text-2xl text-red-400 text-center">

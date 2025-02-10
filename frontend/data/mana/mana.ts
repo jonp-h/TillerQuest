@@ -19,7 +19,11 @@ export const getDailyMana = async (user: User) => {
     // use get mana
     return db.user.update({
       where: { id: user.id },
-      data: { mana: { increment: manaValue }, lastMana: new Date() },
+      data: {
+        mana: { increment: manaValue },
+        arenaTokens: { increment: 1 },
+        lastMana: new Date(),
+      },
     });
   } else {
     logger.error("Error getting daily " + manaValue + " mana: " + user.id);
