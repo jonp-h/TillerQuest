@@ -57,7 +57,7 @@ async function ArenaPage() {
             </div>
           </>
         )}
-        <div className="flex flex-col mt-10 w-full justify-center lg:flex-row">
+        <div className="flex flex-col mt-10 w-full gap-3 justify-center lg:flex-row">
           <Leaderboard title={"Vg1"} users={usersVg1} />
           <Leaderboard title={"Vg2"} users={usersVg2} />
         </div>

@@ -18,7 +18,7 @@ import { User } from "@prisma/client";
 async function Leaderboard({ users, title }: { users: any; title: string }) {
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <h1 className="text-3xl">Top 10 {title}</h1>
+      <h1 className="text-3xl">Top 10 Leaderboard {title}</h1>
       <TableContainer component={Paper} elevation={2} className="p-3 my-2">
         <Table sx={{ minWidth: 650 }} aria-label="leaderboard">
           <TableHead>

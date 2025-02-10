@@ -20,7 +20,13 @@ export const purchaseItem = async (userId: string, itemId: string) => {
 
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: { gold: true, inventory: true, class: true, level: true },
+    select: {
+      gold: true,
+      inventory: true,
+      class: true,
+      level: true,
+      special: true,
+    },
   });
 
   if (!user) {
@@ -46,7 +52,9 @@ export const purchaseItem = async (userId: string, itemId: string) => {
   }
 
   if (item.specialReq) {
-    // TODO: Check if user has special requirement
+    if (!user.special.includes(item.specialReq)) {
+      return "Special requirement not met";
+    }
   }
 
   await db.user.update({

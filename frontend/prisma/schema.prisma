@@ -116,6 +116,7 @@ model User {
   gemstones   Int        @default(1)
   gold        Int        @default(0)
   arenaTokens Int        @default(0)
+  special     String[] // notes and other information
   inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
@@ -227,13 +228,13 @@ model CosmicEvent {
 model ShopItem {
   id          String       @id @default(cuid())
   name        String
-  description String
+  description String?
   // icon        String
   price       Int
   type        ShopItemType
   levelReq    Int?
   classReq    Class?
-  specialReq  String? //TODO: Add special requirements for items
+  specialReq  String?
   users       User[] // m-n relation to users. An item can be owned by many users
 }
 

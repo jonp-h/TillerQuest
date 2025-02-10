@@ -37,13 +37,14 @@ function ShopCard({
       <Typography variant="h5" className="text-2xl" color="lightgreen">
         {item.name}
       </Typography>
-      <Typography variant="subtitle2" className="text-lg">
-        {item.description}
-      </Typography>
+      {item.specialReq && (
+        <Typography variant="subtitle2" className="text-lg">
+          {item.description}
+        </Typography>
+      )}
       <Typography variant="subtitle2" className="text-lg">
         {item.classReq ? "Class requirement: " + item.classReq : null}{" "}
         {item.levelReq ? "Level requirement: " + item.levelReq : null}{" "}
-        {item.specialReq ? "Special requirement: " + item.specialReq : null}
       </Typography>
       {user.inventory.some((inventoryItem) => inventoryItem.id === item.id) ? (
         <Button
