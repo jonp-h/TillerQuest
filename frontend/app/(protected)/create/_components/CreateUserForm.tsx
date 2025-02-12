@@ -15,15 +15,14 @@ import {
 import React, { useState } from "react";
 import Classes from "./Classes";
 import { useSession } from "next-auth/react";
-import { checkNewUserSecret } from "@/data/createUser";
+import { checkNewUserSecret } from "@/data/update/secretValidation";
 import { SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { z } from "zod";
-import { escapeHtml, newUserSchema } from "@/lib/newUserValidation";
+import { validateUserUpdate } from "@/data/update/userUpdateValidation";
 
 export default function CreateUserForm() {
-  // TODO: switch to unstable_update in auth.ts?
+  // FIXME: switch to unstable_update in auth.ts when unstable_update is released
   const { update, data } = useSession();
 
   const [secret, setSecret] = useState("");
@@ -39,7 +38,10 @@ export default function CreateUserForm() {
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    const isCorrectSecret = await checkNewUserSecret(secret);
+    if (!data?.user.id) {
+      return;
+    }
+    const isCorrectSecret = await checkNewUserSecret(data.user.id, secret);
 
     if (!isCorrectSecret) {
       setErrorMessage("Secret code is incorrect");
@@ -57,32 +59,25 @@ export default function CreateUserForm() {
     };
 
     try {
-      const validatedData = newUserSchema.parse(formValues);
+      const validatedData = await validateUserUpdate(data.user.id, formValues);
 
-      // Sanitize inputs
-      const sanitizedData = {
-        ...validatedData,
-        username: escapeHtml(validatedData.username),
-        name: escapeHtml(validatedData.name),
-        lastname: escapeHtml(validatedData.lastname),
-        playerClass: escapeHtml(validatedData.playerClass),
-        guild: escapeHtml(validatedData.guild),
-        schoolClass: escapeHtml(validatedData.schoolClass),
-      };
+      if (!validatedData) {
+        return;
+      }
 
       // update the role from NEW to USER
-      // add initial username, name, lastname, class and class image
+      // add initial username, class and class image
       // sends to auth.ts, which updates the token and the db
       await update({
         role: "USER",
-        username: sanitizedData.username,
-        name: sanitizedData.name,
-        lastname: sanitizedData.lastname,
-        class: sanitizedData.playerClass.slice(0, -1),
-        image: sanitizedData.playerClass,
-        guild: sanitizedData.guild,
-        schoolClass: sanitizedData.schoolClass,
-        publicHighscore: sanitizedData.publicHighscore,
+        username: validatedData.username,
+        name: validatedData.name,
+        lastname: validatedData.lastname,
+        class: validatedData.playerClass.slice(0, -1),
+        image: validatedData.playerClass,
+        guild: validatedData.guild,
+        schoolClass: validatedData.schoolClass,
+        publicHighscore: validatedData.publicHighscore,
       });
 
       // call update to refresh session before redirecting to main page
@@ -90,9 +85,7 @@ export default function CreateUserForm() {
         location.reload();
       });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrorMessage(error.errors.map((e) => e.message).join(", "));
-      }
+      setErrorMessage((error as Error).message);
     }
   };
 
@@ -155,7 +148,11 @@ export default function CreateUserForm() {
           ))}
         </RadioGroup>
         <Typography variant="h5">Choose Guild</Typography>
-        <ClassGuilds guild={guild} setGuild={setGuild} />
+        <ClassGuilds
+          userId={data?.user.id || ""}
+          guild={guild}
+          setGuild={setGuild}
+        />
         <Typography variant="h5">Choose class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
         <Typography variant="body1">

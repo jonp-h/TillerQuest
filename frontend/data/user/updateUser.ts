@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 // TODO: consider implementation of typesafety from auth.ts
 export const updateUser = async (id: string, data: any) => {
   const session = await auth();
-  if (session?.user?.id !== id) {
+  if (session?.user?.id !== id || session?.user?.role !== "NEW") {
     throw new Error("Not authorized");
   }
 

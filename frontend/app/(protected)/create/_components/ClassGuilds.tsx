@@ -8,9 +8,11 @@ interface Guild {
 }
 
 function ClassGuilds({
+  userId,
   guild,
   setGuild,
 }: {
+  userId: string;
   guild: string;
   setGuild: (guild: string) => void;
 }) {
@@ -18,7 +20,7 @@ function ClassGuilds({
 
   useEffect(() => {
     const fetchGuildNames = async () => {
-      const guilds = await getGuilds();
+      const guilds = await getGuilds(userId);
       setGuilds(guilds.map((guild) => guild));
     };
 
@@ -37,7 +39,6 @@ function ClassGuilds({
             value={guildWithCount.name}
             key={guildWithCount.name}
             control={<Radio />}
-            // TODO: fix for returning user with a guild already selected
             disabled={guildWithCount.memberCount > 4}
             label={
               guildWithCount.name +

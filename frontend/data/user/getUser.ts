@@ -6,14 +6,41 @@ import { db } from "@/lib/db";
 export const getUserById = async (id: string) => {
   // unstable_noStore();
 
+  const session = await auth();
+  if (session?.user.role === "NEW" || !session) {
+    return null;
+  }
+
+  try {
+    const user = await db.user.findUnique({
+      where: { id },
+    });
+
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+// Only used by auth.ts
+export const getUserAuthById = async (id: string) => {
+  // unstable_noStore();
+
   // TODO: improve authentication by reworking creation page useSession
   // const session = await auth();
-  // if (!session) {
+  // if (session?.user.role === "NEW" || !session) {
   //   return null;
   // }
 
   try {
-    const user = await db.user.findUnique({ where: { id } });
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        username: true,
+        class: true,
+        role: true,
+      },
+    });
 
     return user;
   } catch {
