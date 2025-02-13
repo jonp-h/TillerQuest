@@ -273,14 +273,12 @@ cron.schedule(
   async () => {
     try {
       exec(
-        "docker exec -t postgres_container pg_dumpall -U tillerquest > dump_backup.sql && docker cp postgres_container:dump_backup.sql db/backup/TQ_backup_" +
-          new Date()
-            .toISOString()
-            .replace(/[:.]/g, "-")
-            .replace("T", "_")
-            .replace("Z", "")
-            .slice(0, -7) +
-          ".sql",
+        `docker exec -t postgres_container bash -c "pg_dumpall -U tillerquest > /dump_backup.sql" && docker cp postgres_container:/dump_backup.sql db/backup/TQ_backup_${new Date()
+          .toISOString()
+          .replace(/[:.]/g, "-")
+          .replace("T", "_")
+          .replace("Z", "")
+          .slice(0, -7)}.sql"`,
         (error, stdout, stderr) => {
           if (error) {
             console.error(`Error creating database backup: ${error.message}`);
@@ -291,6 +289,22 @@ cron.schedule(
             return;
           }
           console.log(`Database backup created: ${stdout}`);
+
+          // Remove old backups, keeping only the 30 most recent (does not work on Windows)
+          exec(
+            `ls -t db/backup/*.sql | tail -n +31 | xargs rm --`,
+            (error, stdout, stderr) => {
+              if (error) {
+                console.error(`Error removing old backups: ${error.message}`);
+                return;
+              }
+              if (stderr) {
+                console.error(`Remove old backups stderr: ${stderr}`);
+                return;
+              }
+              console.log(`Old backups removed: ${stdout}`);
+            }
+          );
         }
       );
     } catch (error) {
