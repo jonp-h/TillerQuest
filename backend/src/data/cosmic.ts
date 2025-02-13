@@ -6,35 +6,27 @@ export const randomCosmic = async () => {
     const today = now.toISOString(); // Get current date in YYYY-MM-DD format
 
     const suggestedCosmic = await db.$transaction(async (db) => {
-      // Unselect and remove suggestion from all events
       await db.cosmicEvent.updateMany({
         where: {
-          suggested: true,
+          recommended: true,
         },
         data: {
-          suggested: false,
+          recommended: false,
         },
       });
 
-      await db.cosmicEvent.updateMany({
-        where: {
-          selected: true,
-        },
-        data: {
-          selected: false,
-        },
-      });
-
+      let cosmic;
+      //TODO: Implement preset events
       // Check for events with date equal to the current date
-      const presetEvents = await db.cosmicEvent.findFirst({
-        where: {
-          presetDate: today,
-        },
-      });
+      // const presetEvents = await db.cosmicEvent.findFirst({
+      //   where: {
+      //     presetDate: today,
+      //   },
+      // });
 
-      if (presetEvents) {
-        return presetEvents;
-      }
+      // if (presetEvents) {
+      //   return presetEvents;
+      // }
 
       // Get all events
       const events = await db.cosmicEvent.findMany();
@@ -57,27 +49,26 @@ export const randomCosmic = async () => {
 
       for (const { event, weight } of weights) {
         if (randomValue < weight) {
-          return event;
+          cosmic = event;
         }
         randomValue -= weight;
       }
 
       // Fallback in case no event is selected (should not happen)
-      return events[0];
+      cosmic = events[0];
+
+      await db.cosmicEvent.update({
+        where: {
+          name: cosmic.name,
+        },
+        data: {
+          recommended: true,
+        },
+      });
+
+      return cosmic;
     });
 
-    if (!suggestedCosmic) {
-      throw new Error("No cosmic event selected");
-    }
-
-    await db.cosmicEvent.update({
-      where: {
-        name: suggestedCosmic.name,
-      },
-      data: {
-        suggested: true,
-      },
-    });
     return suggestedCosmic;
   } catch (error) {
     console.error("Unable to get random cosmic:", error);

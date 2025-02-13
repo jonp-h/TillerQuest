@@ -189,7 +189,7 @@ const cosmic = [
     abilityName: null,
   },
   {
-    name: "Sól-worship.",
+    name: "Sól-worship",
     description:
       "If it is sunny outside the first time this event is revealed, everyone gains 5 HP.",
     // icon: ".png"
@@ -583,6 +583,21 @@ const cosmic = [
     name: "Garbage-control",
     description:
       "The Game Masters will examine the hub for garbage. Everyone will lose 1 HP for each garbage item that's at an improper place. The procedure will be repeated at the end of the day",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 20,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    name: "But-can-your-chair-do-this",
+    description:
+      "The Game Masters will examine the chairs of the hub. Everyone will lose 1 HP for each chair that's not properly put up at the end of the day.",
     // icon: ".png"
     // presetDate: "",
     frequency: 20,

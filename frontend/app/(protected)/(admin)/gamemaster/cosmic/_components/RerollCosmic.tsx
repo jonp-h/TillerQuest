@@ -1,11 +1,8 @@
 "use client";
 import {
-  Box,
   Button,
   Card,
   CardContent,
-  CardMedia,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -15,11 +12,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CosmicEvent } from "@prisma/client";
 import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
-import { resurrectUsers } from "@/data/admin/resurrectUser";
-import DiceBox from "@3d-dice/dice-box";
 import { useRouter } from "next/navigation";
 
 export default function RerollCosmic({
@@ -27,13 +22,27 @@ export default function RerollCosmic({
 }: {
   cosmicEvents: CosmicEvent[];
 }) {
-  const [cosmicEvent, setCosmicEvent] = useState<CosmicEvent | null>(null);
+  const [recommendedCosmicEvent, setRecommendedCosmicEvent] =
+    useState<CosmicEvent | null>(null);
+  const [selectedCosmicEvent, setSelectedCosmicEvent] =
+    useState<CosmicEvent | null>(null);
 
   const router = useRouter();
 
+  useEffect(() => {
+    const recommendedCosmic = cosmicEvents.find((cosmic) => cosmic.recommended);
+    if (recommendedCosmic) {
+      setRecommendedCosmicEvent(recommendedCosmic);
+    }
+    const selectedCosmic = cosmicEvents.find((cosmic) => cosmic.selected);
+    if (selectedCosmic) {
+      setSelectedCosmicEvent(selectedCosmic);
+    }
+  }, [cosmicEvents]);
+
   const handleReroll = async () => {
     const cosmic = await randomCosmic();
-    if (cosmic) setCosmicEvent(cosmic);
+    if (cosmic) setRecommendedCosmicEvent(cosmic);
   };
 
   const handleSetSelectedCosmic = async (name: string) => {
@@ -45,29 +54,61 @@ export default function RerollCosmic({
   return (
     <>
       <div className="flex flex-col justify-center w-2/3 m-auto">
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => handleReroll()}
-        >
-          Reroll
-        </Button>
-        {cosmicEvent && (
-          <Card>
+        {selectedCosmicEvent && (
+          <Card elevation={8}>
             <CardContent className="flex flex-col items-center gap-5">
               <Typography variant="h4" align="center">
-                <strong>Cosmic: </strong> {cosmicEvent?.name}
+                <strong>Selected Cosmic: </strong>
               </Typography>
-              <Typography variant="h6" align="center">
-                {cosmicEvent?.description}
+              <Typography variant="h4" align="center" color="primary">
+                {selectedCosmicEvent?.name.replace(/-/g, " ")}
               </Typography>
-              <Button
-                className="w-30"
-                variant="contained"
-                onClick={() => handleSetSelectedCosmic(cosmicEvent?.name)}
-              >
-                Select cosmic
-              </Button>
+              <Typography variant="h6" align="center" color="textSecondary">
+                {selectedCosmicEvent?.description}
+              </Typography>
+              <Typography variant="h6" align="center" color="info">
+                {selectedCosmicEvent?.automatic
+                  ? "This event will trigger automatically"
+                  : "This event requires manual triggering"}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
+        {recommendedCosmicEvent && (
+          <Card elevation={3} className="mt-20">
+            <CardContent className="flex flex-col items-center gap-5">
+              <Typography variant="h4" align="center">
+                <strong>Recommended Cosmic: </strong>
+              </Typography>
+              <Typography variant="h4" align="center" color="primary">
+                {recommendedCosmicEvent?.name.replace(/-/g, " ")}
+              </Typography>
+              <Typography variant="h6" align="center" color="textSecondary">
+                {recommendedCosmicEvent?.description}
+              </Typography>
+              <Typography variant="h6" align="center" color="info">
+                {selectedCosmicEvent?.automatic
+                  ? "This event will trigger automatically"
+                  : "This event requires manual triggering"}
+              </Typography>
+              <div className="flex gap-5">
+                <Button
+                  className="w-30"
+                  variant="contained"
+                  onClick={() =>
+                    handleSetSelectedCosmic(recommendedCosmicEvent?.name)
+                  }
+                >
+                  Select cosmic
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleReroll()}
+                >
+                  Reroll
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -99,28 +140,38 @@ export default function RerollCosmic({
                     backgroundColor: cosmic.selected ? "darkviolet" : "inherit",
                   }}
                 >
-                  <TableCell
-                    onClick={() => setCosmicEvent(cosmic)}
-                    sx={{ cursor: "pointer" }}
-                    component="th"
-                    scope="row"
-                  >
-                    {cosmic.name}
+                  <TableCell component="th" scope="row">
+                    <Button
+                      variant={cosmic.selected ? "contained" : "outlined"}
+                      onClick={() => setRecommendedCosmicEvent(cosmic)}
+                    >
+                      {cosmic.name.replace(/-/g, " ")}
+                    </Button>
                   </TableCell>
                   <TableCell align="right">{cosmic.description}</TableCell>
                   <TableCell align="right">
                     {cosmic.presetDate?.toDateString()}
                   </TableCell>
-                  <TableCell align="right">{cosmic.automatic}</TableCell>
-                  <TableCell align="right">{cosmic.blockAbilityType}</TableCell>
-                  <TableCell align="right">{cosmic.triggerAtNoon}</TableCell>
-                  <TableCell align="right">{cosmic.grantAbility}</TableCell>
-                  <TableCell align="right">{cosmic.abilityName}</TableCell>
                   <TableCell align="right">
-                    {cosmic.increaseCostType +
-                      ": " +
-                      cosmic.increaseCostValue +
-                      "%"}
+                    {cosmic.automatic ? "True" : "False"}
+                  </TableCell>
+                  <TableCell align="right">{cosmic.blockAbilityType}</TableCell>
+                  <TableCell align="right">
+                    {cosmic.triggerAtNoon ? "True" : "False"}
+                  </TableCell>
+                  <TableCell align="right">
+                    {cosmic.grantAbility ? "True" : "False"}
+                  </TableCell>
+                  <TableCell align="right">
+                    {cosmic.abilityName?.replace(/-/g, " ")}
+                  </TableCell>
+                  <TableCell align="right">
+                    {cosmic.increaseCostType
+                      ? cosmic.increaseCostType +
+                        ": " +
+                        cosmic.increaseCostValue +
+                        "%"
+                      : null}
                   </TableCell>
                   <TableCell align="right">{cosmic.occurrences}</TableCell>
                   <TableCell align="right">{cosmic.frequency}</TableCell>

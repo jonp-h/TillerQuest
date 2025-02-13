@@ -208,7 +208,7 @@ model CosmicEvent {
   name        String    @id
   description String
   icon        String    @default("Cosmic.png")
-  suggested   Boolean   @default(false)
+  recommended Boolean   @default(false)
   selected    Boolean   @default(false)
   presetDate  DateTime?
   occurrences Int       @default(0)

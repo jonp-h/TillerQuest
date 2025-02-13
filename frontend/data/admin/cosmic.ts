@@ -16,6 +16,16 @@ export const randomCosmic = async () => {
     const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
     return await db.$transaction(async (db) => {
+      await db.cosmicEvent.updateMany({
+        where: {
+          recommended: true,
+        },
+        data: {
+          recommended: false,
+        },
+      });
+
+      let cosmic;
       //TODO: Implement preset events
       // Check for events with date equal to the current date
       // const presetEvents = await db.cosmicEvent.findFirst({
@@ -49,13 +59,24 @@ export const randomCosmic = async () => {
 
       for (const { event, weight } of weights) {
         if (randomValue < weight) {
-          return event;
+          cosmic = event;
         }
         randomValue -= weight;
       }
 
       // Fallback in case no event is selected (should not happen)
-      return events[0];
+      cosmic = events[0];
+
+      await db.cosmicEvent.update({
+        where: {
+          name: cosmic.name,
+        },
+        data: {
+          recommended: true,
+        },
+      });
+
+      return cosmic;
     });
   } catch (error) {
     console.error("Unable to get random cosmic:", error);
