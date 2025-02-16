@@ -109,7 +109,9 @@ export const getVg1Leaderboard = async () => {
       select: {
         xp: true,
         title: true,
+        name: true,
         username: true,
+        lastname: true,
         image: true,
         level: true,
         class: true,

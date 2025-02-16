@@ -9,7 +9,19 @@ export const getAllUsers = async () => {
     throw new Error("Not authorized");
   }
 
-  const users = await db.user.findMany();
+  const users = await db.user.findMany({
+    orderBy: [
+      {
+        schoolClass: "asc",
+      },
+      {
+        name: "asc",
+      },
+      {
+        lastname: "asc",
+      },
+    ],
+  });
   return users;
 };
 

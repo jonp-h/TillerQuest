@@ -120,6 +120,7 @@ const resurrectUser = async (userId: string, effects: string[]) => {
             data: {
               userId: userId,
               abilityName: effect,
+              passiveName: effect,
               endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
               effectType: "Deathsave" as AbilityType,
             },

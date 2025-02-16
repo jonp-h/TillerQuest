@@ -32,7 +32,7 @@ function ShopCard({
   return (
     <Paper
       elevation={3}
-      className="max-w-1/3 min-h-24 text-center p-4 rounded-3xl hover:scale-105 hover:cursor-pointer transform duration-500 ease-in-out"
+      className="max-w-1/3 min-h-24 text-center p-4 rounded-3xl hover:bg-inherit"
     >
       <Typography variant="h5" className="text-2xl" color="lightgreen">
         {item.name}

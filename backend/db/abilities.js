@@ -102,15 +102,32 @@ const trickery = [
     category: "Trickery",
     type: "Trickery",
     target: -1,
-    description: "You may evade the effects of today's cosmic event.",
+    description:
+      "You may evade the effects of today's cosmic event, exchange for mana.",
     duration: 480, // 8 hours
     icon: "Evade.png",
     gemstoneCost: 1,
-    manaCost: null,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 50,
     value: null,
     parentAbility: null,
+  },
+  {
+    name: "Devilish-Deal",
+    category: "Trickery",
+    type: "Trickery",
+    target: -1,
+    description:
+      "You may evade the effects of today's cosmic event, in exchange for health.",
+    duration: 480, // 8 hours
+    icon: "Devilish-Deal.png",
+    gemstoneCost: 1,
+    manaCost: 0,
+    healthCost: 15,
+    xpGiven: 50,
+    value: null,
+    parentAbility: "Evade",
   },
   {
     name: "Twist-of-Fate",
@@ -126,7 +143,7 @@ const trickery = [
     healthCost: null,
     xpGiven: 100,
     value: null,
-    parentAbility: "Evade",
+    parentAbility: "Devilish-Deal",
   },
   {
     name: "Postpone",
@@ -152,7 +169,7 @@ const trickery = [
     description:
       "You appeal to the game master, and plead for 24 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 1440, // 24 hours
-    icon: "Postpone.png",
+    icon: "Greater-Postpone.png",
     gemstoneCost: 1,
     manaCost: 15,
     healthCost: null,
@@ -168,7 +185,7 @@ const trickery = [
     description:
       "You appeal to the game master, and plead for 48 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 2880, // 48 hours
-    icon: "Postpone.png",
+    icon: "Superior-Postpone.png",
     gemstoneCost: 1,
     manaCost: 20,
     healthCost: null,
@@ -397,7 +414,7 @@ const barbarian = [
     icon: "Battle-Ready.png",
     gemstoneCost: 1,
     manaCost: null,
-    healthCost: null,
+    healthCost: 5,
     xpGiven: 50,
     value: 1,
     parentAbility: "Toughness",
@@ -565,34 +582,34 @@ const bard = [
   {
     name: "Feast-of-Heroes",
     category: "Bard",
+    type: "IncreaseHealth",
+    target: 0,
+    description:
+      "You conjure a feast, temporarily increasing the max health of all guildmembers by 5 for 2 days.",
+    duration: 480, // 8 hours
+    icon: "Feast-of-Heroes.png",
+    gemstoneCost: 1,
+    manaCost: 2,
+    healthCost: null,
+    xpGiven: 100,
+    value: 5,
+    parentAbility: "Performance",
+  },
+  {
+    name: "Heartfelt-Performance",
+    category: "Bard",
     type: "Experience",
     target: 0,
     description:
-      "You conjure a feast, increasing experience gained for all guildmembers for the day by 25%. This ability stacks.",
-    duration: 480, // 8 hours
-    icon: "Hearty-Performance.png",
+      "You perform a heartfelt song, increasing experience gained for all guildmembers for the day by 25%. This ability stacks.",
+    duration: 2880, // 48 hours
+    icon: "Heartfelt-Performance.png",
     gemstoneCost: 1,
     manaCost: 3,
     healthCost: null,
     xpGiven: 100,
     value: 25,
     parentAbility: "Performance",
-  },
-  {
-    name: "Hearty-Performance",
-    category: "Bard",
-    type: "IncreaseHealth",
-    target: 0,
-    description:
-      "You perform a song, temporarily increasing the max health of all guildmembers by 5 for 2 days.",
-    duration: 2880, // 48 hours
-    icon: "Hearty-Performance.png",
-    gemstoneCost: 1,
-    manaCost: 2,
-    healthCost: null,
-    xpGiven: 100,
-    value: 5,
-    parentAbility: "Hearty-Performance",
   },
 ];
 

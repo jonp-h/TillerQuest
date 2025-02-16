@@ -1,4 +1,3 @@
-import MiniatureProfile from "@/components/MiniatureProfile";
 import {
   Paper,
   Table,
@@ -9,7 +8,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { getVg1Leaderboard, getVg2Leaderboard } from "@/data/user/getUser";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,12 +32,12 @@ async function Leaderboard({ users, title }: { users: any; title: string }) {
           <TableBody>
             {users?.map((user: User) => (
               <TableRow
-                key={user.name}
+                key={user.username}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell align="right">
                   <Link key={user.username} href={"/profile/" + user.username}>
-                    <div className="flex flex-col text-purple-400 text-center text-xl items-center gap-2">
+                    <div className="flex text-purple-400 text-center text-lg items-center gap-2">
                       <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-gradient-radial p-1.5 rounded-full">
                         <Image
                           className="rounded-full"
@@ -50,26 +48,35 @@ async function Leaderboard({ users, title }: { users: any; title: string }) {
                           height={100}
                         />
                       </div>
-                      {user.title} {user.username}
+                      <div>
+                        <Typography variant="overline" color="primary">
+                          {user.title}
+                        </Typography>
+                        <Typography>{user.name}</Typography>
+                        <Typography variant="h6" color="Highlight">
+                          "{user.username}"
+                        </Typography>
+                        <Typography>{user.lastname}</Typography>
+                      </div>
                     </div>
                   </Link>
                 </TableCell>
                 <TableCell
-                  sx={{ fontSize: "200%", color: "lightgreen" }}
+                  sx={{ fontSize: "125%", color: "lightgreen" }}
                   align="center"
                 >
                   {user.xp}
                 </TableCell>
-                <TableCell sx={{ fontSize: "150%" }} align="center">
+                <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.class}
                 </TableCell>
-                <TableCell sx={{ fontSize: "150%" }} align="center">
+                <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.level}
                 </TableCell>
-                <TableCell sx={{ fontSize: "150%" }} align="center">
+                <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.guildName}
                 </TableCell>
-                <TableCell sx={{ fontSize: "150%" }} align="center">
+                <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.schoolClass?.split("_")[1]}
                 </TableCell>
               </TableRow>

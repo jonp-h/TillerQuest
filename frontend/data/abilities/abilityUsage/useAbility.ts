@@ -107,6 +107,9 @@ export const selectAbility = async (
           return await usePassive(db, castingUser, targetUsersIds, ability);
 
         case "Trickery":
+          if (ability.name === "Evade") {
+            return useEvadeAbility(db, castingUser, ability);
+          }
           return await usePassive(db, castingUser, targetUsersIds, ability);
 
         case "Postpone":
@@ -165,7 +168,12 @@ export const selectAbility = async (
           );
 
         case "Arena":
-          throw new Error("Arena is not implemented yet");
+          return await useArenaAbility(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "XP":
           return await useXPAbility(db, castingUser, ability);
@@ -232,7 +240,7 @@ const usePassive = async (
       });
 
       if (targetHasPassive) {
-        return "Target already has this passive";
+        throw new Error("Target already has this passive");
       }
 
       // return db.$transaction(async (db) => {
@@ -603,4 +611,64 @@ const useXPAbility = async (
 
   await finalizeAbilityUsage(db, castingUser, ability);
   return "You gained " + ability.xpGiven + " XP";
+};
+
+const useArenaAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserIds: string[],
+  ability: Ability,
+) => {
+  await Promise.all(
+    targetUserIds.map(async (targetUserId) => {
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          arenaTokens: {
+            increment: ability.value!,
+          },
+        },
+      });
+    }),
+  );
+
+  logger.info(
+    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+  );
+
+  await finalizeAbilityUsage(db, castingUser, ability);
+  return "Guild recieved " + ability.value + " arena tokens";
+};
+
+// ---------------------------- Helper functions for specific ability types ----------------------------
+
+const useEvadeAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  ability: Ability,
+) => {
+  // checks if user has passive, decrements cost and gives xp
+  await usePassive(db, castingUser, [castingUser.id], ability);
+
+  await db.userPassive.deleteMany({
+    where: {
+      userId: castingUser.id,
+      cosmicEvent: true,
+    },
+  });
+
+  await db.userAbility.deleteMany({
+    where: {
+      userId: castingUser.id,
+      fromCosmic: true,
+    },
+  });
+
+  logger.info(
+    `User ${castingUser.id} evaded daily cosmic event and gained ${ability.xpGiven} XP`,
+  );
+
+  return "Cosmic event evaded!";
 };

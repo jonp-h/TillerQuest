@@ -2,7 +2,6 @@
 import { Button, List, Paper, TextField, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
-import UserList from "./UserList";
 import {
   damageUsers,
   giveManaToUsers,
@@ -10,6 +9,7 @@ import {
   healUsers,
 } from "@/data/admin/adminPowers";
 import { useRouter } from "next/navigation";
+import UserList from "./UserList";
 
 export default function ListControls({ users }: { users: User[] }) {
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
@@ -18,14 +18,6 @@ export default function ListControls({ users }: { users: User[] }) {
   const [isPending, startTransition] = React.useTransition();
 
   const router = useRouter();
-
-  const selectAllUsers = () => {
-    if (users.length === selectedUsers.length) {
-      setSelectedUsers([]);
-      return;
-    }
-    setSelectedUsers(users);
-  };
 
   const handleAdminAction = async (action: string, value: number) => {
     startTransition(async () => {
@@ -45,33 +37,25 @@ export default function ListControls({ users }: { users: User[] }) {
         default:
           setFeedback("No action selected");
       }
-      setTimeout(() => {
-        router.refresh();
-      }, 3000);
+      router.refresh();
     });
   };
 
   return (
     <>
-      <Paper elevation={3}>
-        <div className="flex justify-center py-3">
-          <Button variant="text" color="secondary" onClick={selectAllUsers}>
-            Select all users
-          </Button>
-        </div>
-      </Paper>
-      <List>
-        <div className="flex flex-col w-3/4 overflow-auto m-auto">
-          {users.map((user) => (
-            <UserList
-              key={user.id}
-              user={user}
-              selectedUsers={selectedUsers}
-              setSelectedUsers={setSelectedUsers}
-            />
-          ))}
-        </div>
-      </List>
+      <div className="flex flex-col w-full my-5 m-auto">
+        <UserList
+          users={users}
+          selectedUsers={selectedUsers}
+          setSelectedUsers={setSelectedUsers}
+        />
+      </div>
+      {feedback && (
+        <Paper elevation={5} className="flex justify-center my-2 p-2">
+          <Typography color="info">{feedback}</Typography>
+        </Paper>
+      )}
+
       <Paper elevation={5}>
         <Typography className=" text-center" variant="h6">
           Quick XP actions
@@ -97,7 +81,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="contained"
-            onClick={() => handleAdminAction("xp", 500)}
+            onClick={() => handleAdminAction("xp", 1000)}
           >
             Event (1000)
           </Button>
@@ -116,48 +100,47 @@ export default function ListControls({ users }: { users: User[] }) {
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleAdminAction("damage", 5)}
+            onClick={() => handleAdminAction("damage", 10)}
           >
             Standard (10)
           </Button>
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleAdminAction("damage", 5)}
+            onClick={() => handleAdminAction("damage", 15)}
           >
             Serious (15)
           </Button>
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleAdminAction("damage", 5)}
+            onClick={() => handleAdminAction("damage", 20)}
           >
-            Bad (15)
+            Bad (20)
           </Button>
           <Button
             variant="contained"
             color="error"
-            onClick={() => handleAdminAction("damage", 5)}
+            onClick={() => handleAdminAction("damage", 99)}
           >
             Extreme (99)
           </Button>
         </div>
+        <hr className="my-5" />
 
         <Typography className=" text-center" variant="h6">
           Custom value
         </Typography>
         <div className="flex flex-col w-1/3 m-auto text-center items-center justify-center py-3">
-          {feedback && <p className="text-green-500">{feedback}</p>}
           <TextField
             className="w-2/3"
             type="number"
             required
-            autoFocus
-            value={value}
             onChange={(e) => setValue(+e.target.value)}
+            onFocus={(e) => e.target.select()}
           />
         </div>
-        <div className="flex gap-5 py-5 px-1">
+        <div className="flex justify-center gap-5 py-5 px-1">
           <Button
             variant="outlined"
             color="error"

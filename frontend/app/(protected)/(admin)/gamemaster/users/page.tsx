@@ -10,7 +10,7 @@ export default async function UsersPage() {
 
   return (
     <MainContainer>
-      <Paper elevation={2} className="w-2/5 m-auto">
+      <Paper elevation={2} className="w-4/6 m-auto">
         <ListControls users={users} />
       </Paper>
     </MainContainer>

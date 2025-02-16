@@ -1,4 +1,4 @@
-import { getGuilds } from "@/data/guilds/getGuilds";
+import { getGuildsAndMemberCount } from "@/data/guilds/getGuilds";
 import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -20,12 +20,12 @@ function ClassGuilds({
 
   useEffect(() => {
     const fetchGuildNames = async () => {
-      const guilds = await getGuilds(userId);
+      const guilds = await getGuildsAndMemberCount(userId);
       setGuilds(guilds.map((guild) => guild));
     };
 
     fetchGuildNames();
-  }, [setGuild]);
+  }, [setGuild, userId]);
 
   const handleClick = (guildName: string) => {
     setGuild(guildName);

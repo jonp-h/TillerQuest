@@ -1,9 +1,9 @@
 {
   "name": "frontend",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3005",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3005",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
@@ -16,8 +16,9 @@
     "@mui/icons-material": "^6.1.6",
     "@mui/material": "^6.1.6",
     "@mui/material-nextjs": "^6.1.6",
+    "@mui/x-data-grid": "^7.26.0",
     "@prisma/client": "^5.22.0",
-    "next": "^15.0.3",
+    "next": "^15.1.7",
     "next-auth": "^5.0.0-beta.25",
     "react": "^18.3.1",
     "react-d3-tree": "^3.6.2",

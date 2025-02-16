@@ -72,5 +72,5 @@ export default middleware(async (req): Promise<any> => {
 
 // better matcher from clerk.com, which runs middleware on all pages except static assets and api routes
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.+\\.[\\w]+$|_next|robots\\.txt).*)", "/", "/(api|trpc)(.*)"],
 };
