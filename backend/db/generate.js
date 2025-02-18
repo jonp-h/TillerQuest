@@ -3,6 +3,7 @@ import guilds from "./guilds.js";
 import users from "./users.js";
 import abilities from "./abilities.js";
 import cosmic from "./cosmic.js";
+import shopItem from "./shopItem.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -45,6 +46,20 @@ async function main() {
   });
 
   console.info("Cosmic events have been added to the database.");
+
+  shopItem.forEach(async (shopItem) => {
+    try {
+      await db.shopItem.upsert({
+        where: { name: shopItem.name },
+        update: shopItem,
+        create: shopItem,
+      });
+    } catch (error) {
+      console.error("Error adding", cosmic.name + ": ", error);
+    }
+  });
+
+  console.info("Shop items have been added to the database.");
 
   try {
     await db.user.createMany({
