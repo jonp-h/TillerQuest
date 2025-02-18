@@ -49,10 +49,9 @@ async function main() {
 
   shopItem.forEach(async (shopItem) => {
     try {
-      await db.shopItem.upsert({
-        where: { id: shopItem.id },
-        update: shopItem,
-        create: shopItem,
+      await db.shopItem.createMany({
+        data: shopItem,
+        skipDuplicates: true,
       });
     } catch (error) {
       console.error("Error adding", cosmic.name + ": ", error);
