@@ -50,7 +50,7 @@ async function main() {
   shopItem.forEach(async (shopItem) => {
     try {
       await db.shopItem.upsert({
-        where: { name: shopItem.name },
+        where: { id: shopItem.id },
         update: shopItem,
         create: shopItem,
       });
