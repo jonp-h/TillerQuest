@@ -61,7 +61,9 @@ export default function CreateUserForm() {
     try {
       const validatedData = await validateUserUpdate(data.user.id, formValues);
 
-      if (!validatedData) {
+      // if the data is a string, it is an error message
+      if (typeof validatedData == "string") {
+        setErrorMessage(validatedData);
         return;
       }
 
