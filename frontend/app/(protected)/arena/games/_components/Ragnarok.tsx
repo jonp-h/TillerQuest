@@ -2,7 +2,7 @@
 import { Circle } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const width = 8;
 const runes = [
@@ -31,7 +31,7 @@ export default function Ragnarok({
   const [squareBeingDragged, setSquareBeingDragged] = useState(Object);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(Object);
 
-  const checkForColumnOfFive = () => {
+  const checkForColumnOfFive = useCallback(() => {
     // only need to check until the 5th bottom row
     for (let i = 0; i <= 31; i++) {
       // the indexes in columnOfFour are the indexes of the rows below
@@ -59,9 +59,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore, maxMoves, setMaxMoves]);
 
-  const checkForRowOfFive = () => {
+  const checkForRowOfFive = useCallback(() => {
     for (let i = 0; i < 64; i++) {
       // the indexes in rowOfFive are the indexes to the right
       const rowOfFive = [i, i + 1, i + 2, i + 3, i + 4];
@@ -88,9 +88,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore, maxMoves, setMaxMoves]);
 
-  const checkForColumnOfFour = () => {
+  const checkForColumnOfFour = useCallback(() => {
     // only need to check until the 4th bottom row
     for (let i = 0; i <= 39; i++) {
       // the indexes in columnOfFour are the indexes of the rows below
@@ -110,9 +110,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore]);
 
-  const checkForRowOfFour = () => {
+  const checkForRowOfFour = useCallback(() => {
     for (let i = 0; i < 64; i++) {
       // the indexes in rowOfFour are the indexes to the right
       const rowOfFour = [i, i + 1, i + 2, i + 3];
@@ -137,9 +137,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore]);
 
-  const checkForColumnOfThree = () => {
+  const checkForColumnOfThree = useCallback(() => {
     // only need to check until the 3th bottom row
     for (let i = 0; i <= 47; i++) {
       // the indexes in columnOfThree are the indexes of the rows below
@@ -159,9 +159,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore]);
 
-  const checkForRowOfThree = () => {
+  const checkForRowOfThree = useCallback(() => {
     // only need to check until the 3rd bottom row
     for (let i = 0; i < 64; i++) {
       // the indexes in rowOfThree are the indexes to the right
@@ -186,9 +186,9 @@ export default function Ragnarok({
         return true;
       }
     }
-  };
+  }, [currentRuneArrangement, score, setScore]);
 
-  const moveIntoSquareBelow = () => {
+  const moveIntoSquareBelow = useCallback(() => {
     for (let i = 0; i <= 55; i++) {
       const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
       const isFirstRow = firstRow.includes(i);
@@ -203,7 +203,7 @@ export default function Ragnarok({
         currentRuneArrangement[i] = "/ragnarok/blank.png";
       }
     }
-  };
+  }, [currentRuneArrangement]);
 
   // e is the event
   const dragStart = (e: React.DragEvent<HTMLImageElement>) => {

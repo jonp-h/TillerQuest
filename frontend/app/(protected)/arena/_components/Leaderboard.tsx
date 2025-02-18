@@ -54,7 +54,7 @@ async function Leaderboard({ users, title }: { users: any; title: string }) {
                         </Typography>
                         <Typography>{user.name}</Typography>
                         <Typography variant="h6" color="Highlight">
-                          "{user.username}"
+                          &quot;{user.username}&quot;
                         </Typography>
                         <Typography>{user.lastname}</Typography>
                       </div>

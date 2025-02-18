@@ -3,7 +3,7 @@ import guilds from "./guilds.js";
 import users from "./users.js";
 import abilities from "./abilities.js";
 import cosmic from "./cosmic.js";
-import shopItem from "./shopItem.js";
+import shopItem from "./shopItems.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();

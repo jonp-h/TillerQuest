@@ -1,7 +1,7 @@
 "use client";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Ragnarok from "./Ragnarok";
 import { finishGame, startGame } from "@/data/games/game";
 
@@ -10,13 +10,6 @@ function GameForm({ user }: { user: User }) {
   const [score, setScore] = useState(0);
   const [maxMoves, setMaxMoves] = useState(6);
   const [feedback, setFeedback] = useState("");
-
-  // Effect to finish game when maxMoves reaches zero
-  useEffect(() => {
-    if (maxMoves === 0) {
-      handleFinishGame();
-    }
-  }, [maxMoves]);
 
   const handleStartGame = async () => {
     if (await startGame(user)) {
@@ -27,14 +20,21 @@ function GameForm({ user }: { user: User }) {
     }
   };
 
-  const handleFinishGame = async () => {
+  const handleFinishGame = useCallback(async () => {
     setTimeout(async () => {
       setFeedback(await finishGame(user.id, score));
       setScore(0);
       setMaxMoves(6);
       setGameStarted(false);
     }, 3000);
-  };
+  }, [user.id, score]);
+
+  // Effect to finish game when maxMoves reaches zero
+  useEffect(() => {
+    if (maxMoves === 0) {
+      handleFinishGame();
+    }
+  }, [maxMoves, handleFinishGame]);
 
   return (
     <div className="flex flex-col mt-5 text-center justify-center">
