@@ -119,13 +119,17 @@ export const damageValidator = async (
     throw new Error("Not authorized");
   }
 
+  // if the target user is already dead, return 0
+  if (targetUserHp === 0) {
+    return 0;
+  }
+
   // user has a cosmic event that increases damage
   const increasedDamage =
     (await getUserPassiveEffect(db, targetUserId, "Damage", true)) / 100;
 
   damage = damage * (1 + increasedDamage);
 
-  console.log("Increased damage: ", damage);
   // reduce the damage by the passive effects
   const reducedDamage = await getUserPassiveEffect(
     db,

@@ -145,6 +145,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
               },
               passiveName: cosmic.name,
               effectType: "Cosmic", // should be cosmic when there is no effect (manual)
+              icon: cosmic.icon,
               cosmicEvent: true,
               ability: {
                 connect: {
@@ -182,6 +183,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
               },
               cosmicEvent: true,
               passiveName: cosmic.name,
+              icon: cosmic.icon,
               effectType: cosmic.increaseCostType || "Cosmic", // should be cosmic when there is no effect (manual)
               value: cosmic.increaseCostValue,
             },

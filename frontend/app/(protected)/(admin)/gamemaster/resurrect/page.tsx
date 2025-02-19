@@ -25,7 +25,7 @@ export default async function ResurrectPage() {
           But resurrection comes at a cost...
         </Typography>
       </div>
-      <div>
+      <div className="flex flex-wrap justify-center gap-4">
         {deadUsers.map((user) => (
           <DeathCard key={user.name} user={user} />
         ))}

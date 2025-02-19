@@ -178,7 +178,7 @@ export default async function ProfilePage({
                     >
                       <Image
                         className="rounded-full border-slate-700 border-2"
-                        src={"/abilities/" + passive.ability?.icon}
+                        src={"/abilities/" + passive.icon || "Test.jpg"}
                         alt={""}
                         draggable={false}
                         width={120}
@@ -205,7 +205,10 @@ export default async function ProfilePage({
         {user.hp !== 0 ? (
           <div className="grid grid-cols-2 gap-3 p-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
             {userAbilities?.map((ability) => (
-              <AbilityCard key={ability.id} ability={ability} />
+              <AbilityCard
+                key={ability.ability.name}
+                ability={ability.ability}
+              />
             ))}
           </div>
         ) : (

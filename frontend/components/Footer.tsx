@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <div className="flex flex-col w-full py-5 gap-2 items-center bg-gradient-to-r from-slate-900 to-slate-950">
       <h2>
-        Report a bug or issue {""}
+        Want a feature? Found a bug? Report issue {""}
         <a
           href="https://github.com/jonp-h/TillerQuest/issues/new/choose"
           className="text-red-400 hover:text-red-500 hover:underline"

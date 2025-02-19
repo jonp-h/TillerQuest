@@ -142,7 +142,12 @@ export default function RerollCosmic({
                 >
                   <TableCell component="th" scope="row">
                     <Button
-                      variant={cosmic.selected ? "contained" : "outlined"}
+                      variant={
+                        recommendedCosmicEvent === cosmic || cosmic.selected
+                          ? "contained"
+                          : "outlined"
+                      }
+                      color={cosmic.selected ? "primary" : "secondary"}
                       onClick={() => setRecommendedCosmicEvent(cosmic)}
                     >
                       {cosmic.name.replace(/-/g, " ")}

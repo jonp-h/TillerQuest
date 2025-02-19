@@ -94,6 +94,14 @@ export const getUserAbilities = async (userId: string) => {
       where: {
         userId,
       },
+      select: {
+        ability: {
+          select: {
+            name: true,
+            icon: true,
+          },
+        },
+      },
     });
     return abilities;
   } catch {

@@ -14,15 +14,17 @@ import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin/resurrectUser";
 import DiceBox from "@3d-dice/dice-box";
+import { useRouter } from "next/navigation";
 
 export default function DeathCard({ user }: { user: User }) {
   const [number, setNumber] = React.useState<number | null>(0);
+  const router = useRouter();
 
   const handleRessurect = async (effect: string) => {
     resurrectUsers({
       userId: user.id,
       effect: effect,
-    });
+    }).then(() => router.refresh());
   };
 
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);

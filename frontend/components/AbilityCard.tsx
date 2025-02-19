@@ -5,16 +5,15 @@ import Image from "next/image";
 
 interface AbilityProps {
   ability: {
-    id: string;
-    userId: string;
-    abilityName: string;
-  } | null;
+    icon: string | null;
+    name: string;
+  };
 }
 
 export default function AbilityCard({ ability }: AbilityProps) {
   return (
-    <div className="flex flex-col justify-center" key={ability?.abilityName}>
-      <Link href={"/abilities/" + ability?.abilityName} passHref>
+    <div className="flex flex-col justify-center" key={ability?.name}>
+      <Link href={"/abilities/" + ability?.name} passHref>
         <div className="flex flex-col items-center text-center gap-2">
           <Paper
             elevation={10}
@@ -28,7 +27,7 @@ export default function AbilityCard({ ability }: AbilityProps) {
           >
             <Image
               className="rounded-full border-slate-700 border-2"
-              src={"/abilities/" + ability?.abilityName + ".png"}
+              src={"/abilities/" + ability?.icon}
               alt={""}
               draggable={false}
               width={120}
@@ -36,7 +35,7 @@ export default function AbilityCard({ ability }: AbilityProps) {
             />
           </Paper>
           <Typography variant="subtitle1">
-            {ability?.abilityName.replace(/-/g, " ")}
+            {ability?.name.replace(/-/g, " ")}
           </Typography>
         </div>
       </Link>

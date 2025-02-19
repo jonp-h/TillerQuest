@@ -23,11 +23,11 @@ export const getUserPassives = async (userId: string) => {
       select: {
         endTime: true,
         passiveName: true,
+        icon: true,
         ability: {
           select: {
             name: true,
             description: true,
-            icon: true,
           },
         },
       },
