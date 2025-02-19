@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -82,6 +83,11 @@ export default function RerollCosmic({
               </Typography>
               <Typography variant="h4" align="center" color="primary">
                 {recommendedCosmicEvent?.name.replace(/-/g, " ")}
+                <Tooltip title="This number represents the number of times this cosmic event has occurred in the past.">
+                  <span className="cursor-help">
+                    {" (" + recommendedCosmicEvent?.occurrences + ")"}
+                  </span>
+                </Tooltip>
               </Typography>
               <Typography variant="h6" align="center" color="textSecondary">
                 {recommendedCosmicEvent?.description}

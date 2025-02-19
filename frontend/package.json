@@ -1,9 +1,9 @@
 {
   "name": "frontend",
   "scripts": {
-    "dev": "next dev -p 3005",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3005",
+    "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },

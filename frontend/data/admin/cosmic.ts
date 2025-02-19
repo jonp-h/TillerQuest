@@ -47,25 +47,32 @@ export const randomCosmic = async () => {
 
       // Calculate weights based on frequency and occurrences
       const weights = events.map((event) => {
-        const weight = event.frequency / (event.occurrences + 1);
+        const weight = event.frequency / 100 / (event.occurrences + 1);
         return { event, weight };
       });
 
-      // Calculate total weight
+      // Normalize weights to sum up to 1
       const totalWeight = weights.reduce((sum, { weight }) => sum + weight, 0);
+      const normalizedWeights = weights.map(({ event, weight }) => ({
+        event,
+        weight: weight / totalWeight,
+      }));
 
-      // Select an event based on weights
-      let randomValue = Math.random() * totalWeight;
+      // Select an event based on normalized weights
+      let randomValue = Math.random();
 
-      for (const { event, weight } of weights) {
+      for (const { event, weight } of normalizedWeights) {
         if (randomValue < weight) {
           cosmic = event;
+          break;
         }
         randomValue -= weight;
       }
 
       // Fallback in case no event is selected (should not happen)
-      cosmic = events[0];
+      if (!cosmic) {
+        cosmic = events[0];
+      }
 
       await db.cosmicEvent.update({
         where: {
