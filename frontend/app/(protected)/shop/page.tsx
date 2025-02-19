@@ -24,7 +24,7 @@ async function Shop() {
     <MainContainer>
       <h1 className=" text-6xl text-center mt-5">Shop</h1>
 
-      <div className="m-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <div className="m-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
         {shopItems?.map((item) => (
           <ShopCard key={item.name} user={user} item={item} />
         ))}

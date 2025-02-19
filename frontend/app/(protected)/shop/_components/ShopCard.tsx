@@ -33,16 +33,21 @@ function ShopCard({
     <Paper
       elevation={3}
       className="max-w-1/3 min-h-24 text-center p-4 rounded-3xl hover:bg-inherit"
+      // sx={item.specialReq ? { backgroundColor: "rgba(0, 0, 400, 0.15)" } : {}}
     >
-      <Typography variant="h5" className="text-2xl" color="lightgreen">
+      <Typography
+        variant="h5"
+        className="text-2xl"
+        color={item.specialReq ? "violet" : "lightgreen"}
+      >
         {item.name}
       </Typography>
       {item.specialReq && (
-        <Typography variant="subtitle2" className="text-lg">
+        <Typography variant="body1" color="textSecondary" className="text-lg">
           {item.description}
         </Typography>
       )}
-      <Typography variant="subtitle2" className="text-lg">
+      <Typography variant="body2" color="error" className="text-lg pt-3">
         {item.classReq ? "Class requirement: " + item.classReq : null}{" "}
         {item.levelReq ? "Level requirement: " + item.levelReq : null}{" "}
       </Typography>

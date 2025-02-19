@@ -195,7 +195,7 @@ const users = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    specialReq: "ctf-winner",
+    specialReq: "student-council",
   },
   {
     name: "Queen",
@@ -205,6 +205,33 @@ const users = [
     levelReq: null,
     classReq: null,
     specialReq: "student-council",
+  },
+  {
+    name: "Installation Wizard",
+    description: "Gain permanent access to a computer in the computer lab",
+    price: 25000,
+    type: "Access",
+    levelReq: 10,
+    classReq: null,
+    specialReq: "trusted",
+  },
+  {
+    name: "Lab Assistant",
+    description: "Gain a card to the computer lab",
+    price: 25000,
+    type: "Access",
+    levelReq: 15,
+    classReq: null,
+    specialReq: "trusted",
+  },
+  {
+    name: "Creator",
+    description: "Gain a card to MakerSpace",
+    price: 25000,
+    type: "Access",
+    levelReq: 15,
+    classReq: null,
+    specialReq: "trusted",
   },
 ];
 
