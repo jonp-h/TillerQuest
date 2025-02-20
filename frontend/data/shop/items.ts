@@ -5,7 +5,9 @@ import { logger } from "@/lib/logger";
 
 export const getAllShopItems = async () => {
   try {
-    return await db.shopItem.findMany();
+    return await db.shopItem.findMany({
+      orderBy: [{ specialReq: "asc" }, { levelReq: "asc" }, { price: "asc" }],
+    });
   } catch (error) {
     logger.error("Error fetching shopitems: " + error);
     return null;
