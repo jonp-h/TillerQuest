@@ -29,10 +29,10 @@ async function ArenaPage() {
             <h1 className="my-10 text-2xl text-red-400 text-center">
               Naughty people
             </h1>
-            <div className="bg-red-900/50 w-1/2 p-5 rounded-lg flex flex-row gap-5 justify-evenly">
+            <div className="bg-red-900/50 lg:w-1/2 p-5 rounded-lg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {deadUsers.map((user) => (
                 <Link key={user.id} href={"/profile/" + user.username}>
-                  <div className="flex flex-col justify-center">
+                  <div className="flex flex-col items-center">
                     <div
                       className={
                         "from-red-600 to-red-700 bg-gradient-radial p-1.5 rounded-full"
@@ -44,14 +44,14 @@ async function ArenaPage() {
                         src={
                           user.hp !== 0
                             ? "/classes/" + user.image + ".png"
-                            : "/classes/grave.png"
+                            : "/classes/Grave.png"
                         }
                         alt={user.username || "Guild user"}
                         width={100}
                         height={100}
                       />
                     </div>
-                    <div className="flex flex-col gap-1 text-center">
+                    <div className="flex flex-col gap-1 text-center mt-2">
                       <Typography variant="body1" flexWrap="wrap">
                         {user.username}
                       </Typography>

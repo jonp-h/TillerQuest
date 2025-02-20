@@ -1,24 +1,48 @@
 "use client";
 import { getDailyMana } from "@/data/mana/mana";
+import { magicalArea } from "@/lib/gameSetting";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
-import React, { SyntheticEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 interface ManaFormProps {
   user: User;
   isWeekend: boolean;
   currentDate: Date;
-  correctLocation: boolean;
 }
 
-function ManaForm({
-  user,
-  isWeekend,
-  currentDate,
-  correctLocation,
-}: ManaFormProps) {
+function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [location, setLocation] = useState<null | {
+    latitude: number;
+    longitude: number;
+  }>(null);
+  const [correctLocation, setCorrectLocation] = useState<boolean>(false);
+  const router = useRouter();
+
+  function checkCorrectLocation(latitude: number, longtitude: number) {
+    return (
+      Math.abs(
+        longtitude - Number(process.env.NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE),
+      ) < magicalArea &&
+      Math.abs(
+        latitude - Number(process.env.NEXT_PUBLIC_MAGICAL_AREA_LATITUDE),
+      ) < magicalArea
+    );
+  }
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
+      navigator.geolocation.getCurrentPosition(({ coords }) => {
+        const { latitude, longitude } = coords;
+        setLocation({ latitude, longitude });
+        setCorrectLocation(checkCorrectLocation(latitude, longitude));
+      });
+    }
+  }, []);
 
   const handleGetMana = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -48,12 +72,12 @@ function ManaForm({
     } else {
       try {
         await getDailyMana(user);
-        setLoading(false);
         setFeedback(
           "And as you focus, you feel your mana restoring. You also find a token in your pocket.",
         );
+        setLoading(false);
+        router.refresh();
       } catch (error) {
-        console.error(error);
         setFeedback(
           "But attuning to the magic fails, you feel no connection - and you feel the need to tell an adult.",
         );
@@ -65,20 +89,25 @@ function ManaForm({
   return (
     <div>
       {feedback && (
-        <Typography variant="h5" align="center" color={"red"}>
+        <Typography variant="h5" align="center" color="info">
           {feedback}
         </Typography>
       )}
-      <form onSubmit={handleGetMana}>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Get mana"}
-        </Button>
-      </form>
+      {location && (
+        <p>
+          Your current location is: {location.latitude}, {location.longitude}.
+          And you are {correctLocation ? "in" : "not in"} the magical area.
+        </p>
+      )}
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        disabled={loading}
+        onClick={handleGetMana}
+      >
+        {loading ? "Loading... Please enable browser location" : "Get mana"}
+      </Button>
     </div>
   );
 }

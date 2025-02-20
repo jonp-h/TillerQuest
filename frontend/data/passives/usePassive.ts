@@ -34,6 +34,7 @@ export const usePassive = async (
             userId: userId,
             effectType: ability.type,
             passiveName: ability.name,
+            icon: ability.icon,
             abilityName: ability.name,
             value: ability.value ?? 0,
             endTime: ability.duration

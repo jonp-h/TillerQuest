@@ -581,6 +581,7 @@ const useProtectionAbility = async (
           effectType: ability.type,
           passiveName: ability.name,
           abilityName: ability.name,
+          icon: ability.icon,
           value: ability.value ?? 0,
           endTime: ability.duration
             ? new Date(Date.now() + ability.duration * 60000).toISOString()

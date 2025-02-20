@@ -5,7 +5,7 @@ import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
-import Location from "@/lib/Location";
+import ManaForm from "./_components/ManaForm";
 
 export default async function ManaPage() {
   const session = await auth();
@@ -45,7 +45,7 @@ export default async function ManaPage() {
         <Typography variant="h5" align="center">
           You attempt to attune to the magic around you
         </Typography>
-        <Location user={user} currentDate={currentDate} isWeekend={isWeekend} />
+        <ManaForm user={user} currentDate={currentDate} isWeekend={isWeekend} />
       </Paper>
     </MainContainer>
   );

@@ -13,6 +13,21 @@ const columns: GridColDef[] = [
   },
   { field: "lastname", headerName: "Last name", width: 160 },
   {
+    field: "hp",
+    headerName: "HP",
+    cellClassName: "text-red-400",
+  },
+  { field: "mana", headerName: "MP", cellClassName: "text-blue-400" },
+  { field: "xp", headerName: "XP", cellClassName: "text-orange-400" },
+  { field: "level", headerName: "Level", cellClassName: "text-green-300" },
+  { field: "class", headerName: "Class", cellClassName: "text-purple-400" },
+  {
+    field: "guildName",
+    headerName: "Guild",
+    cellClassName: "text-yellow-400",
+    width: 200,
+  },
+  {
     field: "schoolClass",
     headerName: "School Class",
     type: "string",
@@ -20,12 +35,6 @@ const columns: GridColDef[] = [
     width: 150,
     valueGetter: (params: string) => params && params.split("_")[1],
   },
-  { field: "xp", headerName: "XP", cellClassName: "text-orange-400" },
-  { field: "level", headerName: "Level", cellClassName: "text-green-300" },
-  { field: "hp", headerName: "HP", cellClassName: "text-red-400" },
-  { field: "mana", headerName: "MP", cellClassName: "text-blue-400" },
-  { field: "class", headerName: "Class", cellClassName: "text-purple-400" },
-  { field: "guildName", headerName: "Guild", cellClassName: "text-yellow-400" },
 ];
 
 const paginationModel = { page: 0, pageSize: 5 };
@@ -48,7 +57,7 @@ export default function NewUserList({
         rows={users}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[15, 30, 45, 60, 120]}
         checkboxSelection
         onRowSelectionModelChange={(newSelection) => {
           const selectedUsernames = newSelection.map(

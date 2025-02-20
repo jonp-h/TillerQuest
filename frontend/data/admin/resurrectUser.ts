@@ -110,7 +110,7 @@ const resurrectUser = async (
           data: {
             userId: member.id,
             passiveName: "Sacrifice",
-            icon: "Sacrifice",
+            icon: "Sacrifice.png",
             endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
             effectType: "Deathsave",
           },
@@ -136,7 +136,7 @@ const resurrectUser = async (
             data: {
               userId: userId,
               passiveName: effect,
-              icon: effect,
+              icon: effect + ".png",
               endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
               effectType: "Experience",
               value: -50,
@@ -147,7 +147,7 @@ const resurrectUser = async (
             data: {
               userId: userId,
               passiveName: effect,
-              icon: effect,
+              icon: effect + ".png",
               endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
               effectType: "Deathsave",
             },
