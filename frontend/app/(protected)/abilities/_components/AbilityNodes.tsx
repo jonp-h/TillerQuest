@@ -48,7 +48,7 @@ export const AbilityNodes = (
     />
 
     {userAbilities &&
-    userAbilities.some((ability) => ability.abilityName === nodeDatum.name) ? (
+    userAbilities.some((ability) => ability.ability.name === nodeDatum.name) ? (
       <circle
         r="60"
         fill="url(#ownedGradient)"

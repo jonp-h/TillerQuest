@@ -24,7 +24,10 @@ export interface RootAbilities {
 }
 
 export interface UserAbilities {
-  abilityName: string;
+  ability: {
+    name: string;
+    icon: string | null;
+  };
 }
 
 export interface ExtendedRawNodeDatum extends RawNodeDatum {
