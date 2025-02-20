@@ -4,8 +4,15 @@ import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getAllShopItems = async () => {
+  const session = await auth();
+  if (session?.user.role === "NEW") {
+    return "Unauthorized";
+  }
+
   try {
-    return await db.shopItem.findMany();
+    return await db.shopItem.findMany({
+      orderBy: [{ specialReq: "asc" }, { levelReq: "asc" }, { price: "asc" }],
+    });
   } catch (error) {
     logger.error("Error fetching shopitems: " + error);
     return null;
