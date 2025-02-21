@@ -164,11 +164,23 @@ export const experienceAndLevelValidator = async (
 
   try {
     // TODO: fetch user from only id
+    const targetUser = await db.user.findFirst({
+      where: {
+        id: user.id,
+      },
+      select: { xp: true, level: true },
+    });
+
+    if (!targetUser) {
+      return "User not found";
+    }
+
     const xpMultipler =
       (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
     const xpToGive = Math.round(xp * (1 + xpMultipler));
     const levelDifference =
-      Math.floor((user.xp + xpToGive) / 1000) - user.level;
+      Math.floor((targetUser.xp + xpToGive) / 1000) -
+      Math.floor(targetUser.xp / 1000);
 
     let levelUpData = {};
     if (levelDifference > 0) {
@@ -189,7 +201,7 @@ export const experienceAndLevelValidator = async (
     });
     if (levelDifference > 0) {
       logger.info(
-        `LEVEL UP: User ${user.username} leveled up to level ${user.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+        `LEVEL UP: User ${user.username} leveled up to level ${targetUser.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );
     }
     return "Successfully gave XP to user";
