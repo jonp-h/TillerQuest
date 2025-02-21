@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 export const getAllShopItems = async () => {
   const session = await auth();
   if (session?.user.role === "NEW") {
-    return "Unauthorized";
+    return null;
   }
 
   try {
