@@ -4,12 +4,14 @@ import { User } from "@prisma/client";
 import { useEffect, useState, useCallback } from "react";
 import Ragnarok from "./Ragnarok";
 import { finishGame, startGame } from "@/data/games/game";
+import { useRouter } from "next/navigation";
 
 function GameForm({ user }: { user: User }) {
   const [gameStarted, setGameStarted] = useState(false);
   const [score, setScore] = useState(0);
   const [maxMoves, setMaxMoves] = useState(6);
   const [feedback, setFeedback] = useState("");
+  const router = useRouter();
 
   const handleStartGame = async () => {
     if (await startGame(user)) {
@@ -21,10 +23,11 @@ function GameForm({ user }: { user: User }) {
   };
 
   const handleFinishGame = useCallback(async () => {
+    setFeedback(await finishGame(user.id, score));
+    setScore(0);
+    setMaxMoves(6);
+    router.refresh();
     setTimeout(async () => {
-      setFeedback(await finishGame(user.id, score));
-      setScore(0);
-      setMaxMoves(6);
       setGameStarted(false);
     }, 3000);
   }, [user.id, score]);
@@ -43,7 +46,7 @@ function GameForm({ user }: { user: User }) {
           <Button
             variant="contained"
             size="large"
-            disabled={user.arenaTokens < 1}
+            disabled={user.arenaTokens < 1 || gameStarted}
             onClick={handleStartGame}
           >
             Start Ragnarok game (1 Arenatoken)

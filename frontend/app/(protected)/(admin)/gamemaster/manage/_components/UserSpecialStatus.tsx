@@ -1,5 +1,8 @@
 "use client";
-import { updateUserSpecialStatus } from "@/data/admin/adminUserInteractions";
+import {
+  updateRole,
+  updateUserSpecialStatus,
+} from "@/data/admin/adminUserInteractions";
 import {
   Typography,
   TextField,
@@ -49,7 +52,10 @@ function UserSpecialStatus(user: {
           labelId="demo-simple-select-autowidth-label"
           id="demo-simple-select-autowidth"
           value={role}
-          onChange={(value) => setRole(value.target.value as UserRole)}
+          onChange={(value) => {
+            setRole(value.target.value as UserRole);
+            updateRole(user.id, value.target.value as UserRole);
+          }}
           autoWidth
           label="Role"
         >
