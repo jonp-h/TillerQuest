@@ -92,7 +92,7 @@ export const getVg1Leaderboard = async () => {
   // unstable_noStore();
 
   const session = await auth();
-  if (!session) {
+  if (!session || session?.user.role === "NEW") {
     throw new Error("Not authorized");
   }
 
@@ -129,7 +129,7 @@ export const getVg2Leaderboard = async () => {
   // unstable_noStore();
 
   const session = await auth();
-  if (!session) {
+  if (!session || session?.user.role === "NEW") {
     throw new Error("Not authorized");
   }
 

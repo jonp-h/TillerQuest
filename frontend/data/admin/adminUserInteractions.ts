@@ -28,7 +28,7 @@ export const getAllUsers = async () => {
 
 export const getAllDeadUsers = async () => {
   const session = await auth();
-  if (!session) {
+  if (!session || session?.user.role === "NEW") {
     throw new Error("Not authorized");
   }
 

@@ -155,15 +155,11 @@ export const experienceAndLevelValidator = async (
   xp: number,
 ) => {
   const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
+  if (session?.user.role === "NEW" || !session) {
     throw new Error("Not authorized");
   }
 
   try {
-    // TODO: fetch user from only id
     const targetUser = await db.user.findFirst({
       where: {
         id: user.id,
@@ -178,9 +174,12 @@ export const experienceAndLevelValidator = async (
     const xpMultipler =
       (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
     const xpToGive = Math.round(xp * (1 + xpMultipler));
-    const levelDifference =
-      Math.floor((targetUser.xp + xpToGive) / 1000) -
-      Math.floor(targetUser.xp / 1000);
+
+    // Calculate the new XP and level
+    const newXp = targetUser.xp + xpToGive;
+    const currentLevel = targetUser.level;
+    const newLevel = Math.floor(newXp / 1000) + 1;
+    const levelDifference = newLevel - currentLevel;
 
     let levelUpData = {};
     if (levelDifference > 0) {
