@@ -143,7 +143,7 @@ export default function ListControls({ users }: { users: User[] }) {
         <div className="flex justify-center gap-5 py-5 px-1">
           <Button
             variant="outlined"
-            color="error"
+            color="info"
             disabled={isPending}
             onClick={() => handleAdminAction("damage", value)}
           >
@@ -151,7 +151,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="error"
+            color="info"
             disabled={isPending}
             onClick={() => handleAdminAction("heal", value)}
           >
@@ -159,7 +159,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="error"
+            color="info"
             disabled={isPending}
             onClick={() => handleAdminAction("xp", value)}
           >
@@ -167,7 +167,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="error"
+            color="info"
             disabled={isPending}
             onClick={() => handleAdminAction("mana", value)}
           >

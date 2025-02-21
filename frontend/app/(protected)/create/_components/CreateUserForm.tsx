@@ -137,7 +137,7 @@ export default function CreateUserForm() {
           required
           helperText="Enter your lastname"
         />
-        <Typography variant="h5">Choose school class</Typography>
+        <Typography variant="h5">Choose class</Typography>
         <RadioGroup row name="row-radio-buttons-group">
           {Object.values(SchoolClass).map((schoolClass) => (
             <FormControlLabel
@@ -155,7 +155,7 @@ export default function CreateUserForm() {
           guild={guild}
           setGuild={setGuild}
         />
-        <Typography variant="h5">Choose class</Typography>
+        <Typography variant="h5">Choose player class</Typography>
         <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
         <Typography variant="body1">
           Do you want to be visible on public highscore lists?

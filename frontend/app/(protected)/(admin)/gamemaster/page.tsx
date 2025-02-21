@@ -37,6 +37,11 @@ export default async function GameMasterPage() {
             Guilds
           </Button>
         </Link>
+        <Link href="/gamemaster/manage">
+          <Button color="secondary" variant="contained">
+            Manage users
+          </Button>
+        </Link>
         <Link href="/gamemaster/cosmic">
           <Button color="secondary" variant="contained">
             Cosmic
@@ -44,7 +49,7 @@ export default async function GameMasterPage() {
         </Link>
         <Link href="/gamemaster/users">
           <Button color="secondary" variant="contained">
-            All users
+            Game master powers
           </Button>
         </Link>
         <Link href="/gamemaster/abilities">
