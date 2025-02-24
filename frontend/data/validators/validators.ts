@@ -178,7 +178,7 @@ export const experienceAndLevelValidator = async (
     // Calculate the new XP and level
     const newXp = targetUser.xp + xpToGive;
     const currentLevel = targetUser.level;
-    const newLevel = Math.floor(newXp / 1000) + 1;
+    const newLevel = Math.floor(newXp / 1000);
     const levelDifference = newLevel - currentLevel;
 
     let levelUpData = {};

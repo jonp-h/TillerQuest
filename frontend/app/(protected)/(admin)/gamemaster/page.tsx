@@ -49,7 +49,7 @@ export default async function GameMasterPage() {
         </Link>
         <Link href="/gamemaster/users">
           <Button color="secondary" variant="contained">
-            Game master powers
+            GM powers
           </Button>
         </Link>
         <Link href="/gamemaster/abilities">

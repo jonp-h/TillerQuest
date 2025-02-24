@@ -3,10 +3,11 @@
 import { auth } from "@/auth";
 import { escapeHtml, newUserSchema } from "@/lib/newUserValidation";
 import { getGuildmemberCount } from "../guilds/getGuilds";
+import { db } from "@/lib/db";
 
 export const validateUserUpdate = async (id: string, data: any) => {
   const session = await auth();
-  if (session?.user.id !== id || session?.user.role !== "NEW") {
+  if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {
     return "Not authorized";
   }
 
@@ -20,6 +21,22 @@ export const validateUserUpdate = async (id: string, data: any) => {
   const guildCount = await getGuildmemberCount(id, validatedData.data.guild);
   if (guildCount >= 5) {
     return "Guild is full";
+  }
+
+  const userNameTaken = await db.user.findFirst({
+    where: {
+      username: {
+        equals: validatedData.data.username,
+        mode: "insensitive",
+      },
+      NOT: {
+        id: id,
+      },
+    },
+  });
+
+  if (userNameTaken) {
+    return "Try a different username";
   }
 
   // Sanitize inputs

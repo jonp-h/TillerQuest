@@ -47,7 +47,7 @@ export const resurrectUsers = async ({
             "Phone-loss",
             "Reduced-xp-gain",
             "Hat-of-shame",
-            "Sudden-pop-quiz",
+            "Pop-quiz",
           ]);
           break;
         case "phone":
