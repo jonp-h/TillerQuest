@@ -105,7 +105,7 @@ model User {
   image           String?
   publicHighscore Boolean      @default(false)
 
-  level    Int      @default(1)
+  level    Int      @default(0)
   xp       Int      @default(1)
   hp       Int      @default(40)
   hpMax    Int      @default(40)
