@@ -27,8 +27,10 @@ function GameForm({ user }: { user: User }) {
   };
 
   const handleFinishGame = async () => {
+    if (gameEnabled === true) {
+      await finishGame(user.id, moneyReward);
+    }
     setGameEnabled(false);
-    await finishGame(user.id, moneyReward);
     router.refresh();
   };
 

@@ -4,7 +4,7 @@ import { magicalArea } from "@/lib/gameSetting";
 import { Button, Tooltip, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 interface ManaFormProps {
   user: User;
@@ -33,7 +33,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
     );
   }
 
-  function updatePosition() {
+  const updatePosition = useCallback(() => {
     if ("geolocation" in navigator) {
       // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
       navigator.geolocation.getCurrentPosition(({ coords }) => {
@@ -42,11 +42,11 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
         setCorrectLocation(checkCorrectLocation(latitude, longitude));
       });
     }
-  }
+  }, []);
 
   useEffect(() => {
     updatePosition();
-  }, []);
+  }, [updatePosition]);
 
   const handleGetMana = async (event: SyntheticEvent) => {
     event.preventDefault();
