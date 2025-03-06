@@ -4,6 +4,8 @@ import { User } from "@prisma/client";
 import React from "react";
 import {
   damageUsers,
+  giveArenatokenToUsers,
+  giveGoldToUsers,
   giveManaToUsers,
   giveXpToUsers,
   healUsers,
@@ -20,6 +22,14 @@ export default function ListControls({ users }: { users: User[] }) {
   const router = useRouter();
 
   const handleAdminAction = async (action: string, value: number) => {
+    if (selectedUsers.length === 0) {
+      setFeedback("No users selected");
+      return;
+    }
+    if (value <= 0) {
+      setFeedback("Value must be greater than 0");
+      return;
+    }
     startTransition(async () => {
       switch (action) {
         case "heal":
@@ -33,6 +43,12 @@ export default function ListControls({ users }: { users: User[] }) {
           break;
         case "mana":
           setFeedback(await giveManaToUsers(selectedUsers, value));
+          break;
+        case "arenatoken":
+          setFeedback(await giveArenatokenToUsers(selectedUsers, value));
+          break;
+        case "gold":
+          setFeedback(await giveGoldToUsers(selectedUsers, value));
           break;
         default:
           setFeedback("No action selected");
@@ -52,7 +68,7 @@ export default function ListControls({ users }: { users: User[] }) {
       </div>
       {feedback && (
         <Paper elevation={5} className="flex justify-center my-2 p-2">
-          <Typography color="info">{feedback}</Typography>
+          <Typography color="warning">{feedback}</Typography>
         </Paper>
       )}
 
@@ -140,10 +156,10 @@ export default function ListControls({ users }: { users: User[] }) {
             onFocus={(e) => e.target.select()}
           />
         </div>
-        <div className="flex justify-center gap-5 py-5 px-1">
+        <div className="grid grid-cols-3 gap-5 py-5 px-5">
           <Button
             variant="outlined"
-            color="info"
+            color="health"
             disabled={isPending}
             onClick={() => handleAdminAction("damage", value)}
           >
@@ -151,7 +167,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="info"
+            color="success"
             disabled={isPending}
             onClick={() => handleAdminAction("heal", value)}
           >
@@ -159,7 +175,7 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="info"
+            color="experience"
             disabled={isPending}
             onClick={() => handleAdminAction("xp", value)}
           >
@@ -167,11 +183,27 @@ export default function ListControls({ users }: { users: User[] }) {
           </Button>
           <Button
             variant="outlined"
-            color="info"
+            color="mana"
             disabled={isPending}
             onClick={() => handleAdminAction("mana", value)}
           >
             Give mana to selected users
+          </Button>
+          <Button
+            variant="outlined"
+            color="arenatoken"
+            disabled={isPending}
+            onClick={() => handleAdminAction("arenatoken", value)}
+          >
+            Give arenatokens to selected users
+          </Button>
+          <Button
+            variant="outlined"
+            color="gold"
+            disabled={isPending}
+            onClick={() => handleAdminAction("gold", value)}
+          >
+            Give gold to selected users
           </Button>
         </div>
       </Paper>

@@ -59,6 +59,7 @@ export default function NewUserList({
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[15, 30, 45, 60, 120]}
         checkboxSelection
+        classes={{ cell: " cursor-pointer" }}
         onRowSelectionModelChange={(newSelection) => {
           const selectedUsernames = newSelection.map(
             (id) => users.find((user) => user.id === id)?.username,

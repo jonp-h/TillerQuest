@@ -10,7 +10,7 @@ export default async function ResurrectPage() {
 
   return (
     <MainContainer>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center ">
         <Image
           className="rounded-full"
           alt="deadly-gm"
@@ -25,7 +25,7 @@ export default async function ResurrectPage() {
           But resurrection comes at a cost...
         </Typography>
       </div>
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="flex flex-wrap justify-center gap-4 py-6">
         {deadUsers.map((user) => (
           <DeathCard key={user.name} user={user} />
         ))}

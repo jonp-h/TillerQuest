@@ -100,9 +100,9 @@ export default function DeathCard({ user }: { user: User }) {
             image={"/classes/" + user.image + ".png"}
             alt={user.username ?? "user"}
           />
-          <CardContent sx={{ flex: "1 0 auto" }}>
+          <CardContent sx={{ flex: "1 0 auto", textAlign: "center" }}>
             <Typography component="div" variant="h5">
-              {user.name} {user.username} {user.lastname}
+              {user.name} <br /> {user.username} <br /> {user.lastname}
             </Typography>
             <Typography
               className="rounded-full"
@@ -113,7 +113,7 @@ export default function DeathCard({ user }: { user: User }) {
               Level: {user.level}
             </Typography>
           </CardContent>
-          <div className="flex flex-col items-center px-2 gap-2">
+          <div className="flex flex-col items-center p-4 gap-2">
             <Button
               variant="contained"
               color="error"
