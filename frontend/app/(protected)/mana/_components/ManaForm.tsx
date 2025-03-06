@@ -1,7 +1,7 @@
 "use client";
 import { getDailyMana } from "@/data/mana/mana";
 import { magicalArea } from "@/lib/gameSetting";
-import { Button, Typography } from "@mui/material";
+import { Button, Tooltip, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useEffect, useState } from "react";
@@ -33,7 +33,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
     );
   }
 
-  useEffect(() => {
+  function updatePosition() {
     if ("geolocation" in navigator) {
       // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
       navigator.geolocation.getCurrentPosition(({ coords }) => {
@@ -42,11 +42,17 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
         setCorrectLocation(checkCorrectLocation(latitude, longitude));
       });
     }
+  }
+
+  useEffect(() => {
+    updatePosition();
   }, []);
 
   const handleGetMana = async (event: SyntheticEvent) => {
     event.preventDefault();
     setLoading(true);
+
+    updatePosition();
 
     if (
       user.lastMana.toISOString().slice(0, 10) ===
@@ -65,7 +71,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else if (!correctLocation) {
       setFeedback(
-        "But you feel no magic around you. You must be in the wrong place.",
+        "But you feel no magic around you. You must be in the wrong place. Make sure location services are enabled.",
       );
       setLoading(false);
       return;
@@ -93,21 +99,30 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
           {feedback}
         </Typography>
       )}
-      {location && (
-        <p>
-          Your current location is: {location.latitude}, {location.longitude}.
-          And you are {correctLocation ? "in" : "not in"} the magical area.
-        </p>
+      {!location && (
+        <Typography variant="h5" align="center" color="info">
+          Loading location...
+        </Typography>
       )}
-      <Button
-        variant="contained"
-        color="primary"
-        type="submit"
-        disabled={loading}
-        onClick={handleGetMana}
+      <Tooltip
+        title={
+          location &&
+          `Your current location is: ${location.latitude}, ${location.longitude}.
+          And you are currently ${correctLocation ? "in" : "not in"} the magical area.`
+        }
+        enterDelay={1500}
+        leaveDelay={200}
       >
-        {loading ? "Loading... Please enable browser location" : "Get mana"}
-      </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={loading}
+          onClick={handleGetMana}
+        >
+          {loading ? "Loading..." : "Get mana"}
+        </Button>
+      </Tooltip>
     </div>
   );
 }

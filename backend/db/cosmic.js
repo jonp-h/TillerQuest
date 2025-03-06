@@ -785,6 +785,5 @@ const cosmic = [
   //   abilityName: null,
   // },
 ];
-
-const abilities = [...cosmic];
-export default abilities;
+const cosmics = [...cosmic];
+export default cosmics;

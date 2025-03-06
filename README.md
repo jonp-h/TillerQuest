@@ -36,6 +36,8 @@
 - [Auth.js](https://authjs.dev/) for authentication.
 - [Dice-Box](https://fantasticdice.games) for dice animations.
 - [Winston](https://github.com/winstonjs/winston/) for server-side logging.
+- [Zod](https://zod.dev/) for validation.
+- [D3](https://d3js.org/) for data visualization.
 
 ## How To Use
 
@@ -56,7 +58,6 @@ $ npm run dev
 #### Setup test env
 
 - First complete the above instructions
-  
 - Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
 
 - Create .env inside project folder (same folder as app/)
@@ -78,19 +79,22 @@ DATABASE_URL=...
 NEXT_PUBLIC_NEW_USER_SECRET=...
 # Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
 
-NEXT_PUBLIC_MAGICAL_AREA=...
-#IP-address of which user's are allowed to gain mana from. For testing this can be "::ffff:127.0.0.1".
-
+NEXT_PUBLIC_MAGICAL_AREA_LATITUDE=...
+# Latitude coordinates of where users are allowed to gain mana from.".
+NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
+# Longitude coordinates of where users are allowed to gain mana from.".
 ```
 
 ```ps
 $ cd backend/
 
-$ node generate.js #To mock an example database
+$ npx prisma db push
+
+$ node db/generate.js #To mock an example database
 
 ```
 
-- Inspect the database at the database website or with "npx prisma studio"
+- You can inspect the database with "npx prisma studio"
   - If the mocking was successful the database should have example data
 - Create your own user by signing in with GitHub OAuth and creating a user
 - Happy testing!
