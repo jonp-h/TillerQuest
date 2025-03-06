@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="flex flex-col w-full py-5 gap-2 items-center bg-gradient-to-r from-slate-900 to-slate-950">
+    <div className="flex flex-col w-full py-5 gap-2 items-center bg-linear-to-r from-slate-900 to-slate-950">
       <h2>
         Want a feature? Found a bug? Report issue {""}
         <a
