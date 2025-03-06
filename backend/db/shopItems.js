@@ -29,7 +29,7 @@ const users = [
   {
     name: "Magical",
     description: null,
-    price: 1000,
+    price: 2000,
     type: "Title",
     levelReq: 10,
     classReq: null,
@@ -38,7 +38,7 @@ const users = [
   {
     name: "Stormcaller",
     description: null,
-    price: 1000,
+    price: 2000,
     type: "Title",
     levelReq: 5,
     classReq: null,
@@ -47,7 +47,7 @@ const users = [
   {
     name: "Lover of fine arts",
     description: null,
-    price: 3000,
+    price: 8000,
     type: "Title",
     levelReq: 5,
     classReq: null,
@@ -56,7 +56,7 @@ const users = [
   {
     name: "Nerd",
     description: null,
-    price: 1000,
+    price: 2000,
     type: "Title",
     levelReq: 5,
     classReq: null,
@@ -65,7 +65,7 @@ const users = [
   {
     name: "Geek",
     description: null,
-    price: 1000,
+    price: 2000,
     type: "Title",
     levelReq: 5,
     classReq: null,
@@ -74,7 +74,7 @@ const users = [
   {
     name: "Weeb",
     description: null,
-    price: 10000,
+    price: 12000,
     type: "Title",
     levelReq: 10,
     classReq: null,
@@ -83,7 +83,7 @@ const users = [
   {
     name: "Cat person",
     description: null,
-    price: 1000,
+    price: 3000,
     type: "Title",
     levelReq: 10,
     classReq: null,
@@ -92,7 +92,7 @@ const users = [
   {
     name: "Dog person",
     description: null,
-    price: 1000,
+    price: 3000,
     type: "Title",
     levelReq: 10,
     classReq: null,
@@ -110,7 +110,7 @@ const users = [
   {
     name: "HACKZOR",
     description: null,
-    price: 10000,
+    price: 12000,
     type: "Title",
     levelReq: 15,
     classReq: null,
@@ -162,9 +162,9 @@ const users = [
     specialReq: null,
   },
   {
-    name: "Upcoming Game Master",
+    name: "Mini-GM",
     description: null,
-    price: 10000,
+    price: 25000,
     type: "Title",
     levelReq: 30,
     classReq: null,
@@ -209,7 +209,7 @@ const users = [
   {
     name: "Installation Wizard",
     description: "Gain permanent access to a computer in the computer lab",
-    price: 25000,
+    price: 30000,
     type: "Access",
     levelReq: 10,
     classReq: null,
@@ -218,7 +218,7 @@ const users = [
   {
     name: "Lab Assistant",
     description: "Gain a card to the computer lab",
-    price: 25000,
+    price: 30000,
     type: "Access",
     levelReq: 15,
     classReq: null,
@@ -227,7 +227,7 @@ const users = [
   {
     name: "Creator",
     description: "Gain a card to MakerSpace",
-    price: 25000,
+    price: 30000,
     type: "Access",
     levelReq: 15,
     classReq: null,
