@@ -27,6 +27,9 @@ declare module "@mui/material/styles" {
     experience?: PaletteOptions["primary"];
     mana?: PaletteOptions["primary"];
     health?: PaletteOptions["primary"];
+    gold?: PaletteOptions["primary"];
+    arenatoken?: PaletteOptions["primary"];
+    gemstones?: PaletteOptions["primary"];
   }
 }
 
@@ -37,21 +40,35 @@ declare module "@mui/material/LinearProgress" {
     health: true;
   }
 }
+declare module "@mui/material/Button" {
+  interface ButtonPropsColorOverrides {
+    experience: true;
+    mana: true;
+    health: true;
+    gold: true;
+    arenatoken: true;
+    gemstones: true;
+  }
+}
 
 export const TillerQuestTheme = createTheme({
   palette: {
     mode: "dark",
-    //orange
     experience: {
       // dark orange
       main: "#f97316",
     },
-    // blue
     mana: {
       main: "#2196f3",
     },
     health: {
       main: "#f44336",
+    },
+    gold: {
+      main: "#FFD700",
+    },
+    arenatoken: {
+      main: "#FFA500",
     },
   },
   typography: {

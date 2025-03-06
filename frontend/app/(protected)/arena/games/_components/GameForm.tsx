@@ -1,7 +1,7 @@
 "use client";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { finishGame, startGame } from "@/data/games/game";
 import { useRouter } from "next/navigation";
 import TypeQuest from "./TypeQuest";
@@ -31,6 +31,10 @@ function GameForm({ user }: { user: User }) {
     await finishGame(user.id, moneyReward);
     router.refresh();
   };
+
+  const memoizedSetMoneyReward = useCallback((reward: number) => {
+    setMoneyReward(reward);
+  }, []);
 
   return (
     <div className="flex flex-col mt-5 text-center justify-center">
@@ -77,7 +81,7 @@ function GameForm({ user }: { user: User }) {
           <TypeQuest
             gameEnabled={gameEnabled}
             handleFinishGame={handleFinishGame}
-            setMoneyReward={setMoneyReward}
+            setMoneyReward={memoizedSetMoneyReward}
           />
         )}
         <div className="mt-5">

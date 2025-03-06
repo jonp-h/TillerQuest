@@ -79,7 +79,14 @@ export const getUserInventory = async (id: string) => {
   try {
     const inventory = await db.user.findFirst({
       where: { id },
-      select: { id: true, title: true, inventory: true },
+      select: {
+        id: true,
+        title: true,
+        class: true,
+        gold: true,
+        level: true,
+        inventory: true,
+      },
     });
 
     return inventory;

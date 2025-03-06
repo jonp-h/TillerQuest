@@ -159,3 +159,62 @@ export const giveManaToUsers = async (users: User[], mana: number) => {
     return "Something went wrong at " + Date.now() + " with error: " + error;
   }
 };
+
+export const giveArenatokenToUsers = async (
+  users: User[],
+  arenatoken: number,
+) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    return await db.$transaction(async (db) => {
+      await Promise.all(
+        users.map(async (user) => {
+          await db.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              arenaTokens: { increment: arenatoken },
+            },
+          });
+        }),
+      );
+      return "Arenatoken given successfully";
+    });
+  } catch (error) {
+    logger.error("A game master failed to give arenatoken to users: " + error);
+    return "Something went wrong at " + Date.now() + " with error: " + error;
+  }
+};
+
+export const giveGoldToUsers = async (users: User[], gold: number) => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    return await db.$transaction(async (db) => {
+      await Promise.all(
+        users.map(async (user) => {
+          await db.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              gold: { increment: gold },
+            },
+          });
+        }),
+      );
+      return "Gold given successfully";
+    });
+  } catch (error) {
+    logger.error("A game master failed to give gold to users: " + error);
+    return "Something went wrong at " + Date.now() + " with error: " + error;
+  }
+};

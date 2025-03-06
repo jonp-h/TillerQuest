@@ -1,3 +1,5 @@
+/* eslint-disable */
+// Currently unused
 "use client";
 import { Circle } from "@mui/icons-material";
 import { Button } from "@mui/material";

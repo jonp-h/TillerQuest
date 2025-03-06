@@ -40,7 +40,7 @@ function TypeQuest({
 }: {
   gameEnabled: boolean;
   handleFinishGame: () => void;
-  setMoneyReward: React.Dispatch<React.SetStateAction<number>>;
+  setMoneyReward: (reward: number) => void;
 }) {
   const maxTime = 60;
   const [time, setTime] = React.useState(maxTime);
@@ -99,6 +99,7 @@ function TypeQuest({
       handleFinishGame();
     }
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTyping, time]);
 
   useEffect(() => {
