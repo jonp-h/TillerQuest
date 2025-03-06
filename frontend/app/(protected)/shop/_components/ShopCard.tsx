@@ -2,7 +2,7 @@
 import { equipItem, purchaseItem } from "@/data/shop/items";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
-import { ShopItem } from "@prisma/client";
+import { Class, ShopItem } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -12,7 +12,9 @@ function ShopCard({
 }: {
   user: {
     id: string;
+    level: number;
     title: string | null;
+    class: Class | null;
     inventory: ShopItem[];
   };
   item: ShopItem;
@@ -33,7 +35,6 @@ function ShopCard({
     <Paper
       elevation={3}
       className="max-w-1/3 min-h-24 text-center p-4 rounded-3xl hover:bg-inherit"
-      // sx={item.specialReq ? { backgroundColor: "rgba(0, 0, 400, 0.15)" } : {}}
     >
       <Typography
         variant="h5"
@@ -47,10 +48,24 @@ function ShopCard({
           {item.description}
         </Typography>
       )}
-      <Typography variant="body2" color="error" className="text-lg pt-3">
-        {item.classReq ? "Class requirement: " + item.classReq : null}{" "}
-        {item.levelReq ? "Level requirement: " + item.levelReq : null}{" "}
-      </Typography>
+      {item.classReq && (
+        <Typography
+          variant="body2"
+          color={user.class === item.classReq ? "info" : "error"}
+          className="text-lg pt-3"
+        >
+          {"Class requirement: " + item.classReq}
+        </Typography>
+      )}
+      {item.levelReq && (
+        <Typography
+          variant="body2"
+          color={user.level >= item.levelReq ? "info" : "error"}
+          className="text-lg pt-3"
+        >
+          {"Level requirement: " + item.levelReq}
+        </Typography>
+      )}
       {user.inventory.some((inventoryItem) => inventoryItem.id === item.id) ? (
         <Button
           variant="contained"

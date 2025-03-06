@@ -23,7 +23,14 @@ import Image from "next/image";
 import { $Enums } from "@prisma/client";
 import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
 import Link from "next/link";
-import { ArrowBack } from "@mui/icons-material";
+import {
+  ArrowBack,
+  Diamond,
+  Favorite,
+  Flare,
+  Spa,
+  WaterDrop,
+} from "@mui/icons-material";
 
 export default async function AbilityNamePage({
   params,
@@ -75,10 +82,10 @@ export default async function AbilityNamePage({
       <div className="flex justify-center">
         <Paper
           elevation={5}
-          className=" text-center items-center p-5 w-full md:w-1/2"
+          className=" text-center items-center p-5 w-full md:w-2/3 xl:w-1/2"
         >
           {/* back button */}
-          <div className="flex justify-start w-full">
+          <div className="flex justify-between w-full">
             <Link href="/abilities">
               <ArrowBack
                 sx={{
@@ -89,6 +96,29 @@ export default async function AbilityNamePage({
                 className="cursor-pointer"
               />
             </Link>
+
+            <div
+              className={
+                ability.manaCost
+                  ? "bg-blue-800 p-3 rounded-xl"
+                  : "bg-red-800 p-3 rounded-xl"
+              }
+            >
+              {!userOwnsAbility ? (
+                <Typography variant="body1" color="white">
+                  {user.gemstones} <Diamond htmlColor="white" />
+                </Typography>
+              ) : ability.manaCost ? (
+                <Typography variant="body1" color="white">
+                  {user.mana}
+                  <WaterDrop htmlColor="white" />
+                </Typography>
+              ) : (
+                <Typography variant="body1" color="white">
+                  {user.hp} <Favorite htmlColor="white" />
+                </Typography>
+              )}
+            </div>
           </div>
           <div className="flex justify-center">
             <div className="flex justify-center rounded-full mb-3 p-5 from-zinc-600 to-zinc-700 bg-gradient-radial">
