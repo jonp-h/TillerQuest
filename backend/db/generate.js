@@ -99,15 +99,18 @@ async function addCosmicEvents() {
 }
 
 async function addShopItems() {
-  try {
-    await db.shopItem.createMany({
-      data: shopItem,
-      skipDuplicates: true,
-    });
-    console.info("Shop items have been added to the database.");
-  } catch (error) {
-    console.error("Error: ", error);
+  for (const item of shopItem) {
+    try {
+      await db.shopItem.upsert({
+        where: { name: item.name },
+        update: item,
+        create: item,
+      });
+    } catch (error) {
+      console.error("Error adding", item.name + ": ", error);
+    }
   }
+  console.info("Shop items have been added to the database.");
 }
 
 async function addUsers() {

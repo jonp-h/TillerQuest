@@ -3,6 +3,7 @@ import { equipItem, purchaseItem } from "@/data/shop/items";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import { Class, ShopItem } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -29,6 +30,7 @@ function ShopCard({
 
   const handleEquip = async (itemId: string) => {
     setFeedback(await equipItem(user.id, itemId));
+    router.refresh();
   };
 
   return (
@@ -36,65 +38,79 @@ function ShopCard({
       elevation={3}
       className="min-h-24 text-center p-4 rounded-3xl hover:bg-inherit"
     >
-      <Typography
-        variant="h5"
-        className="text-2xl"
-        color={item.specialReq ? "violet" : "lightgreen"}
-      >
-        {item.name}
-      </Typography>
       {item.specialReq && (
-        <Typography variant="body1" color="textSecondary" className="text-lg">
-          {item.description}
-        </Typography>
+        <Image
+          className="mx-auto my-2"
+          src={"/badges/" + item.specialReq + ".png"}
+          width={125}
+          height={125}
+          alt={item.name}
+          draggable={false}
+        />
       )}
-      {item.classReq && (
+      <div className="flex flex-col items-center gap-2">
         <Typography
-          variant="body2"
-          color={user.class === item.classReq ? "info" : "error"}
-          className="text-lg pt-3"
+          variant="h5"
+          className="text-2xl"
+          color={item.specialReq ? "violet" : "lightgreen"}
         >
-          {"Class requirement: " + item.classReq}
+          {item.name}
         </Typography>
-      )}
-      {item.levelReq && (
-        <Typography
-          variant="body2"
-          color={user.level >= item.levelReq ? "info" : "error"}
-          className="text-lg pt-3"
-        >
-          {"Level requirement: " + item.levelReq}
-        </Typography>
-      )}
-      {user.inventory.some((inventoryItem) => inventoryItem.id === item.id) ? (
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={user.title === item.name}
-          onClick={() => {
-            handleEquip(item.id);
-          }}
-        >
-          {user.title === item.name ? "Equipped" : "Equip"}
-        </Button>
-      ) : (
-        <Button
-          variant="text"
-          color="primary"
-          disabled={user.inventory.includes(item)}
-          onClick={() => handlePurchase(item.id)}
-        >
-          <Typography variant="body1" className="text-xl" color="gold">
-            Buy for {item.price}
-            <Circle />
+        {item.specialReq && (
+          <Typography variant="body1" color="textSecondary" className="text-lg">
+            {item.description}
           </Typography>
-        </Button>
-      )}
-      {feedback && (
-        <Typography variant="subtitle2" color="info">
-          {feedback}
-        </Typography>
-      )}
+        )}
+        {item.classReq && (
+          <Typography
+            variant="body2"
+            color={user.class === item.classReq ? "info" : "error"}
+            className="text-lg pt-3"
+          >
+            {"Class requirement: " + item.classReq}
+          </Typography>
+        )}
+        {item.levelReq && (
+          <Typography
+            variant="body2"
+            color={user.level >= item.levelReq ? "info" : "error"}
+            className="text-lg pt-3"
+          >
+            {"Level requirement: " + item.levelReq}
+          </Typography>
+        )}
+        {user.inventory.some(
+          (inventoryItem) => inventoryItem.id === item.id,
+        ) ? (
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={user.title === item.name}
+            onClick={() => {
+              handleEquip(item.id);
+            }}
+          >
+            {user.title === item.name ? "Equipped" : "Equip title"}
+          </Button>
+        ) : (
+          <Button
+            variant="text"
+            color="primary"
+            disabled={user.inventory.includes(item)}
+            onClick={() => handlePurchase(item.id)}
+          >
+            <Typography variant="body1" className="text-xl" color="gold">
+              Buy for {item.price}
+              <Circle />
+            </Typography>
+          </Button>
+        )}
+        {feedback && (
+          <Typography variant="subtitle2" color="info">
+            {feedback}
+          </Typography>
+        )}
+      </div>
     </Paper>
   );
 }

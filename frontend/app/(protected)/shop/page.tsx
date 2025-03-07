@@ -25,8 +25,8 @@ async function Shop() {
     <MainContainer>
       <h1 className=" text-6xl text-center mt-5">Shop</h1>
       <h2 className="text-2xl text-center mt-5 text-green-400">
-        Buy items to help you on your journey. Some items have requirements, and
-        require participation in certain IRL events.
+        Buy items to help you on your journey. Some items require participation
+        in certain IRL events.
       </h2>
       <h3 className="text-xl text-center mt-5">
         You have {user.gold} <Circle htmlColor="gold" /> gold

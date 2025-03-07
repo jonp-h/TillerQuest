@@ -60,6 +60,24 @@ export const getUsersSpecialStatus = async () => {
   });
   return users;
 };
+export const getSpecialStatuses = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    return null;
+  }
+
+  const specialReqs = await db.shopItem.findMany({
+    where: {
+      specialReq: {
+        not: null,
+      },
+    },
+    select: {
+      specialReq: true,
+    },
+  });
+  return specialReqs;
+};
 
 export const updateUserSpecialStatus = async (
   userId: string,

@@ -1,13 +1,7 @@
 import MainContainer from "@/components/MainContainer";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
-import { getUserByUsername } from "@/data/user/getUser";
-import {
-  Badge,
-  Button,
-  LinearProgress,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { getUserProfileByUsername } from "@/data/user/getUser";
+import { Button, LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -20,7 +14,8 @@ import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
-import SpecialBadge from "./_components/SpecialBadge";
+import SpecialBadge from "./_components/ProfileBadge";
+import ProfileBadge from "./_components/ProfileBadge";
 
 export default async function ProfilePage({
   params,
@@ -28,7 +23,7 @@ export default async function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const user = await getUserByUsername(username);
+  const user = await getUserProfileByUsername(username);
 
   if (!user) {
     notFound();
@@ -38,7 +33,6 @@ export default async function ProfilePage({
 
   const userAbilities = await getUserAbilities(user.id);
   const passives = await getUserPassives(user.id);
-
   return (
     <MainContainer>
       <InformationBox user={user} />
@@ -134,8 +128,13 @@ export default async function ProfilePage({
             </div>
           </div>
           <div className="flex w-full mt-3 justify-evenly gap-3 flex-wrap">
-            {user.special.map((special) => (
-              <SpecialBadge key={special} badgeTitle={special} />
+            {user.inventory.map((badge) => (
+              <ProfileBadge
+                key={badge.name}
+                badgeTitle={badge.name}
+                badgeSpecialReq={badge.specialReq}
+                badgeDescription={badge.description}
+              />
             ))}
           </div>
         </Paper>

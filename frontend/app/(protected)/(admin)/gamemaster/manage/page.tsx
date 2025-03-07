@@ -1,11 +1,15 @@
 import MainContainer from "@/components/MainContainer";
-import { getUsersSpecialStatus } from "@/data/admin/adminUserInteractions";
+import {
+  getSpecialStatuses,
+  getUsersSpecialStatus,
+} from "@/data/admin/adminUserInteractions";
 import { Typography } from "@mui/material";
 import React from "react";
 import UserSpecialStatus from "./_components/UserSpecialStatus";
 
 async function Manage() {
   const userSpecialStatus = await getUsersSpecialStatus();
+  const specialStatues = await getSpecialStatuses();
 
   return (
     <MainContainer>
@@ -16,10 +20,10 @@ async function Manage() {
         Write special statuses separated by space
       </Typography>
       <Typography variant="body1" align="center">
-        OPTIONS: student-council, ctf, ctf-winner, trusted
+        OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
       </Typography>
       {userSpecialStatus?.map((user) => (
-        <div key={user.username} className="flex justify-center">
+        <div key={user.username} className="flex justify-center mt-2">
           <UserSpecialStatus
             name={user.name}
             id={user.id}

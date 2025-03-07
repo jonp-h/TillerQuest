@@ -1,4 +1,5 @@
 import { getCosmic } from "@/data/cosmic/getCosmic";
+import { UserProfile } from "@/types/users";
 import { WaterDrop } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import { User } from "@prisma/client";
@@ -8,7 +9,7 @@ import React, { JSX } from "react";
 export default async function InformationBox({
   user,
 }: {
-  user: User;
+  user: UserProfile;
 }): Promise<JSX.Element> {
   const cosmic = await getCosmic();
 

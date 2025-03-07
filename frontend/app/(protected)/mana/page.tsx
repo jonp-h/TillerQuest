@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
-import { getUserByUsername } from "@/data/user/getUser";
+import { getUserById } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -10,11 +10,11 @@ import ManaForm from "./_components/ManaForm";
 export default async function ManaPage() {
   const session = await auth();
 
-  if (!session) {
+  if (!session?.user.id) {
     return null;
   }
 
-  const user = await getUserByUsername(session?.user.username);
+  const user = await getUserById(session.user.id);
 
   if (!user) {
     notFound();

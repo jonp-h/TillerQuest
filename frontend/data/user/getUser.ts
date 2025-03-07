@@ -48,19 +48,48 @@ export const getUserAuthById = async (id: string) => {
   }
 };
 
-export const getUserByUsername = async (username: string) => {
+export const getUserProfileByUsername = async (username: string) => {
   // unstable_noStore();
 
   const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
+  if (!session || session?.user.role === "NEW") {
     throw new Error("Not authorized");
   }
 
   try {
-    const user = await db.user.findUnique({ where: { username } });
+    const user = await db.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        title: true,
+        name: true,
+        username: true,
+        lastname: true,
+        class: true,
+        gold: true,
+        hp: true,
+        hpMax: true,
+        mana: true,
+        manaMax: true,
+        xp: true,
+        gemstones: true,
+        arenaTokens: true,
+        level: true,
+        image: true,
+        guildName: true,
+        lastMana: true,
+        inventory: {
+          where: {
+            specialReq: { not: null },
+          },
+          select: {
+            name: true,
+            specialReq: true,
+            description: true,
+          },
+        },
+      },
+    });
 
     return user;
   } catch {
