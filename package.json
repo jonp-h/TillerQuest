@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "frontend/**/*.{js,jsx,ts,tsx}": [
@@ -18,10 +18,12 @@
     ]
   },
   "devDependencies": {
-    "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "commitlint": "^17.0.3",
     "eslint": "^9.21.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3"
   }
 }
