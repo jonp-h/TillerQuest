@@ -45,7 +45,7 @@ export default function AbilityTree({
       },
       [],
     );
-    return [dimensions, translate, containerRef];
+    return [dimensions, translate, containerRef] as const;
   };
 
   const [dimensions, translate, containerRef] = useCenteredTree({ x: 0, y: 0 });
@@ -70,10 +70,14 @@ export default function AbilityTree({
       <div className="h-screen w-full" ref={containerRef}>
         {/* @ts-ignore */}
         <Tree
-          data={rootAbilities}
+          data={rootAbilities || undefined}
           // This is the distance between nodes vertically
           depthFactor={250}
-          dimensions={dimensions}
+          dimensions={
+            dimensions && "width" in dimensions && "height" in dimensions
+              ? dimensions
+              : undefined
+          }
           translate={translate}
           orientation="vertical"
           pathFunc={"diagonal"}
@@ -81,7 +85,7 @@ export default function AbilityTree({
           draggable={true}
           zoomable={false}
           // The nodeSize prop is used to determine the spacing between nodes
-          nodeSize={{ x: 400, y: 350 }}
+          nodeSize={{ x: 475, y: 350 }}
           renderCustomNodeElement={(rd3tProps) => {
             const extendedProps = {
               ...rd3tProps,

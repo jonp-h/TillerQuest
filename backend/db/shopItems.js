@@ -225,7 +225,7 @@ const users = [
     specialReq: "trusted",
   },
   {
-    name: "Creator",
+    name: "Maker",
     description: "Gain a card to MakerSpace",
     price: 30000,
     type: "Access",

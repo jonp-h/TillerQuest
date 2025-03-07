@@ -38,7 +38,7 @@ async function Leaderboard({ users, title }: { users: any; title: string }) {
                 <TableCell align="right">
                   <Link key={user.username} href={"/profile/" + user.username}>
                     <div className="flex text-purple-400 text-center text-lg items-center gap-2">
-                      <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-gradient-radial p-1.5 rounded-full">
+                      <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-radial p-1.5 rounded-full">
                         <Image
                           className="rounded-full"
                           draggable="false"

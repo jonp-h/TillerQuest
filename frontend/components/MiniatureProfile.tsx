@@ -19,7 +19,7 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
   return (
     <Link key={member.username} href={"/profile/" + member.username}>
       <div className="flex flex-col justify-center">
-        <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-gradient-radial p-1.5 rounded-full">
+        <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-radial p-1.5 rounded-full">
           <Image
             className="rounded-full"
             draggable="false"

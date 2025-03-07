@@ -536,7 +536,7 @@ const bloodMage = [
     target: -1,
     description: "You may trade 10 health to recieve 5 mana.",
     duration: null,
-    icon: "Bloodgift.png",
+    icon: "Gift-of-Life.png",
     gemstoneCost: 1,
     manaCost: 0,
     healthCost: 10,

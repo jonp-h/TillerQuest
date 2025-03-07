@@ -49,7 +49,7 @@ function AbilityUserSelect({
             >
               <div
                 className={clsx(
-                  "from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full",
+                  "from-zinc-600 to-zinc-700 bg-radial p-3 rounded-full",
                   selectedUser === member.id && "border-2 border-purple-600",
                 )}
               >

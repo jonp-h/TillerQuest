@@ -35,7 +35,7 @@ async function ArenaPage() {
                   <div className="flex flex-col items-center">
                     <div
                       className={
-                        "from-red-600 to-red-700 bg-gradient-radial p-1.5 rounded-full"
+                        "from-red-600 to-red-700 bg-radial p-1.5 rounded-full"
                       }
                     >
                       <Image

@@ -99,9 +99,11 @@ export default async function AbilityNamePage({
 
             <div
               className={
-                ability.manaCost
-                  ? "bg-blue-800 p-3 rounded-xl"
-                  : "bg-red-800 p-3 rounded-xl"
+                !userOwnsAbility
+                  ? "bg-blue-400 p-3 rounded-xl"
+                  : ability.manaCost
+                    ? "bg-blue-800 p-3 rounded-xl"
+                    : "bg-red-800 p-3 rounded-xl"
               }
             >
               {!userOwnsAbility ? (
@@ -121,7 +123,7 @@ export default async function AbilityNamePage({
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="flex justify-center rounded-full mb-3 p-5 from-zinc-600 to-zinc-700 bg-gradient-radial">
+            <div className="flex justify-center rounded-full mb-3 p-5 from-zinc-600 to-zinc-700 bg-radial">
               {ability.name && (
                 <Image
                   className="rounded-full"

@@ -1,8 +1,9 @@
 import { getCosmic } from "@/data/cosmic/getCosmic";
+import { WaterDrop } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import Link from "next/link";
-import React from "react";
+import React, { JSX } from "react";
 
 export default async function InformationBox({
   user,

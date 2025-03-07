@@ -1,7 +1,13 @@
 import MainContainer from "@/components/MainContainer";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { getUserByUsername } from "@/data/user/getUser";
-import { Button, LinearProgress, Paper, Typography } from "@mui/material";
+import {
+  Badge,
+  Button,
+  LinearProgress,
+  Paper,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -14,6 +20,7 @@ import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
+import SpecialBadge from "./_components/SpecialBadge";
 
 export default async function ProfilePage({
   params,
@@ -35,27 +42,29 @@ export default async function ProfilePage({
   return (
     <MainContainer>
       <InformationBox user={user} />
-      <div className="flex flex-col justify-center md:flex-row">
+      <div className="flex flex-col justify-center lg:flex-row">
         {user.guildName && (
           <Paper
             elevation={6}
-            className="flex flex-col m-3 gap-3 items-center p-5 md:w-2/12 w-full order-2 md:order-1"
+            className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
           >
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
-            {guildMembers?.map((member) =>
-              member.username !== user.username ? (
-                <MiniatureProfile key={member.id} member={member} />
-              ) : null,
-            )}
+            <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-3 items-center p-5">
+              {guildMembers?.map((member) =>
+                member.username !== user.username ? (
+                  <MiniatureProfile key={member.id} member={member} />
+                ) : null,
+              )}
+            </div>
           </Paper>
         )}
         <Paper
-          className="flex flex-col m-3 gap-3 items-center p-5 md:w-5/12 w-full order-first md:order-2"
+          className="flex flex-col m-3 gap-3 items-center p-5 lg:w-5/12 w-full order-first lg:order-2"
           elevation={5}
         >
-          <div className="from-zinc-600 to-zinc-700 bg-gradient-radial p-3 rounded-full">
+          <div className="from-zinc-600 to-zinc-700 bg-radial p-3 rounded-full">
             <Image
               className="rounded-full"
               src={
@@ -124,8 +133,13 @@ export default async function ProfilePage({
               />
             </div>
           </div>
+          <div className="flex w-full mt-3 justify-evenly gap-3 flex-wrap">
+            {user.special.map((special) => (
+              <SpecialBadge key={special} badgeTitle={special} />
+            ))}
+          </div>
         </Paper>
-        <div className="flex flex-col m-3 gap-3 items-center md:w-5/12 w-full order-3 md:order-2">
+        <div className="flex flex-col m-3 gap-3 items-center lg:w-5/12 w-full order-3 lg:order-2">
           <Paper
             className="flex flex-col items-center p-5 w-full h-1/4"
             elevation={5}
@@ -203,7 +217,7 @@ export default async function ProfilePage({
           Abilities
         </Typography>
         {user.hp !== 0 ? (
-          <div className="grid grid-cols-2 gap-3 p-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+          <div className="grid grid-cols-2 gap-3 p-5 lg:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
             {userAbilities?.map((ability) => (
               <AbilityCard
                 key={ability.ability.name}
