@@ -20,13 +20,17 @@
     "nodemon": "^3.1.9"
   },
   "devDependencies": {
+    "@eslint/js": "^9.22.0",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
     "@types/node-cron": "^3.0.11",
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
     "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   }
 }
