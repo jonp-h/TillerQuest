@@ -4,7 +4,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon"
+    "start": "nodemon",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "prettier": "prettier --write ."
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
     "@auth/express": "^0.8.4",

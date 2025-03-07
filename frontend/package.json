@@ -4,8 +4,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint && eslint . --ext .js,.jsx,.ts,.tsx",
     "postinstall": "prisma generate"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
     "@3d-dice/dice-box": "^1.1.4",
@@ -41,9 +45,5 @@
     "prisma": "^6.4.1",
     "tailwindcss": "^4.0.11",
     "typescript": "^5.8.2"
-  },
-  "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
   }
 }

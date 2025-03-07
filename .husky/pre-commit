@@ -1,1 +1,8 @@
 # initial start in project root folder
+
+#!/bin/sh
+. "$(dirname "$0")/\_/husky.sh"
+
+# Run lint-staged
+
+npx lint-staged
