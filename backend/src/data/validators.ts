@@ -1,4 +1,4 @@
-import { $Enums, Prisma, PrismaClient, User } from "@prisma/client";
+import { $Enums, Prisma, PrismaClient } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 
 type PrismaTransaction = Omit<
@@ -16,7 +16,7 @@ type PrismaTransaction = Omit<
 const getUserPassiveEffect = async (
   db: PrismaTransaction,
   userId: string,
-  type: $Enums.AbilityType
+  type: $Enums.AbilityType,
 ) => {
   try {
     const userPassives = await db.userPassive.findMany({
@@ -45,7 +45,7 @@ const getUserPassiveEffect = async (
 export const healingValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
-  hpValue: number
+  hpValue: number,
 ) => {
   // check if user has any health passives to add to the healing value
   const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
@@ -68,7 +68,7 @@ export const healingValidator = async (
     }
   } catch (error) {
     console.error(
-      "Error validating HP for user " + targetUserId + ": " + error
+      "Error validating HP for user " + targetUserId + ": " + error,
     );
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
@@ -80,14 +80,14 @@ export const healingValidator = async (
 export const manaValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
-  manaValue: number
+  manaValue: number,
 ) => {
   if (manaValue > 0) {
     // check if user has any mana passives to add to the mana value
     const manaBonus = await getUserPassiveEffect(
       db,
       targetUserId,
-      "ManaPassive"
+      "ManaPassive",
     );
     manaValue += manaBonus;
   }
@@ -129,7 +129,7 @@ export const damageValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
   damage: number,
-  healthTreshold: number = 0
+  healthTreshold: number = 0,
 ) => {
   const targetUser = await db.user.findFirst({
     where: {
@@ -146,7 +146,7 @@ export const damageValidator = async (
   const reducedDamage = await getUserPassiveEffect(
     db,
     targetUserId,
-    "Protection"
+    "Protection",
   );
   const newDamage = damage - reducedDamage;
 
@@ -164,7 +164,7 @@ export const damageValidator = async (
 export const experienceAndLevelValidator = async (
   db: PrismaTransaction,
   userId: string,
-  xp: number
+  xp: number,
 ) => {
   try {
     const user = await db.user.findFirst({
@@ -206,7 +206,7 @@ export const experienceAndLevelValidator = async (
           user.level + levelDifference
         }. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${
           2 * levelDifference
-        } gemstones.`
+        } gemstones.`,
       );
     }
     return "Successfully gave XP to user";

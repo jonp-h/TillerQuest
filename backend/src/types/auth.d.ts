@@ -1,5 +1,5 @@
 import { UserRole } from "@prisma/client";
-import ExpressAuth, { type DefaultSession } from "@auth/express";
+import { type DefaultSession } from "@auth/express";
 import { Class } from "@prisma/client";
 
 // This file extends the default types provided by NextAuth.js to include additional properties.
