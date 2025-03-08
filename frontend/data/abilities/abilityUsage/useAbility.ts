@@ -91,31 +91,71 @@ export const selectAbility = async (
         // ---------------------------- Passive abilities ----------------------------
 
         case "IncreaseHealth":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "IncreaseMana":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "ManaPassive": // give mana passive to target
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "Health":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "Experience":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "Trickery":
           if (ability.name === "Evade") {
             return useEvadeAbility(db, castingUser, ability);
           }
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "Postpone":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         case "Experience":
-          return await usePassive(db, castingUser, targetUsersIds, ability);
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 
@@ -223,7 +263,8 @@ const finalizeAbilityUsage = async (
 
 // ---------------------------- Helper function for passive abilities ----------------------------
 
-const usePassive = async (
+// eslint-disable react-hooks/rules-of-hooks
+const activatePassive = async (
   db: PrismaTransaction,
   castingUser: User,
   targetUsersIds: string[],
@@ -651,7 +692,7 @@ const useEvadeAbility = async (
   ability: Ability,
 ) => {
   // checks if user has passive, decrements cost and gives xp
-  await usePassive(db, castingUser, [castingUser.id], ability);
+  await activatePassive(db, castingUser, [castingUser.id], ability);
 
   await db.userPassive.deleteMany({
     where: {

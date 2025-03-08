@@ -2,8 +2,8 @@ import { db } from "../lib/db.js";
 
 export const randomCosmic = async () => {
   try {
-    const now = new Date();
-    const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+    // const now = new Date();
+    // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
     return await db.$transaction(async (db) => {
       await db.cosmicEvent.updateMany({

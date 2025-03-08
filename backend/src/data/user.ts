@@ -1,6 +1,4 @@
 import { db } from "../lib/db.js";
-import { User } from "@prisma/client";
-import { dailyMana } from "../gameSettings.js";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -26,6 +24,7 @@ export const getUserByUsername = async (username: string) => {
 
 // used on account creation page
 // TODO: consider implementation of typesafety from auth.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateUser = async (id: string, data: any) => {
   try {
     await db.user.update({

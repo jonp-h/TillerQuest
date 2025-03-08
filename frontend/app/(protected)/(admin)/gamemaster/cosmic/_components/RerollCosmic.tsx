@@ -70,7 +70,7 @@ export default function RerollCosmic({
               <Typography variant="h6" align="center" color="info">
                 {selectedCosmicEvent?.automatic
                   ? "This event will trigger automatically"
-                  : "This event requires manual triggering"}
+                  : "This event requires manual triggering "}
               </Typography>
             </CardContent>
           </Card>

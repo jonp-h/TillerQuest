@@ -134,7 +134,7 @@ export default function AbilityForm({
     }
 
     if (user.gemstones < ability.gemstoneCost) {
-      setFeedback("You don't have enough gemstones to buy this ability.");
+      setFeedback("You don't have enough gemstones to buy this ability. ");
       return;
     }
 

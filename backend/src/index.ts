@@ -4,8 +4,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { db } from "./lib/db.js";
 import {
-  authenticatedGameMaster,
-  authenticatedUser,
+  // authenticatedGameMaster,
+  // authenticatedUser,
   currentSession,
 } from "./middleware/auth.js";
 import { auth } from "./middleware/auth.js";
@@ -32,7 +32,7 @@ app.use(
   cors({
     origin: "http://localhost:3000", // only allow requests from localhost
     credentials: true, // include cookies in requests
-  })
+  }),
 );
 app.use(bodyParser.json()); // Middleware to parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); //  URL-encoded data, allowing for rich objects and arrays to be encoded into the URL-encoded format.
@@ -108,7 +108,7 @@ cron.schedule(
   },
   {
     name: "removeExpiredPassivesService",
-  }
+  },
 );
 
 // Schedule a job to run every day at 11:20 to activate cosmic event
@@ -155,51 +155,60 @@ cron.schedule(
           usersWithCosmicPassive.map(async (user) => {
             // validate value and passives
             let value = cosmic.ability?.value;
-            if (fieldToUpdate === "hp") {
-              let targetUser = await healingValidator(
-                db,
-                user.userId,
-                cosmic.ability?.value!
-              );
-              // check if user is dead and return error message
-              if (typeof targetUser === "string") {
-                return targetUser;
+            switch (fieldToUpdate) {
+              case "hp": {
+                const targetUserHp = await healingValidator(
+                  db,
+                  user.userId,
+                  cosmic.ability?.value ?? 0,
+                );
+                // check if user is dead and return error message
+                if (typeof targetUserHp === "string") {
+                  return targetUserHp;
+                }
+                value = targetUserHp;
+                break;
               }
-              value = targetUser;
-            } else if (fieldToUpdate === "mana") {
-              let targetUser = await manaValidator(
-                db,
-                user.userId,
-                cosmic.ability?.value!
-              );
-              // return error message if user cannot recieve mana
-              if (targetUser === 0) {
-                return "Target is already at full mana";
-              } else if (typeof targetUser === "string") {
-                return targetUser;
+              case "mana": {
+                const targetUserMana = await manaValidator(
+                  db,
+                  user.userId,
+                  cosmic.ability?.value ?? 0,
+                );
+                // return error message if user cannot receive mana
+                if (targetUserMana === 0) {
+                  return "Target is already at full mana";
+                } else if (typeof targetUserMana === "string") {
+                  return targetUserMana;
+                }
+                value = targetUserMana;
+                break;
               }
-              value = targetUser;
-            } else if (fieldToUpdate === "xp") {
-              await experienceAndLevelValidator(
-                db,
-                user.userId,
-                cosmic.ability?.value!
-              );
-              return;
-            } else if (fieldToUpdate === "damage") {
-              const damageToTake = await damageValidator(
-                db,
-                user.userId,
-                cosmic.ability?.value!
-              );
+              case "xp": {
+                await experienceAndLevelValidator(
+                  db,
+                  user.userId,
+                  cosmic.ability?.value ?? 0,
+                );
+                break;
+              }
+              case "damage": {
+                const damageToTake = await damageValidator(
+                  db,
+                  user.userId,
+                  cosmic.ability?.value ?? 0,
+                );
 
-              await db.user.update({
-                where: { id: user.userId },
-                data: {
-                  hp: { decrement: damageToTake },
-                },
-              });
-              return;
+                await db.user.update({
+                  where: { id: user.userId },
+                  data: {
+                    hp: { decrement: damageToTake },
+                  },
+                });
+                break;
+              }
+              default:
+                break;
             }
 
             await db.user.update({
@@ -208,7 +217,7 @@ cron.schedule(
                 [fieldToUpdate]: { increment: value },
               },
             });
-          })
+          }),
         );
       });
 
@@ -219,7 +228,7 @@ cron.schedule(
   },
   {
     name: "triggerCosmicEventService",
-  }
+  },
 );
 
 // Schedule a job to run every day before midnight to remove all cosmic passives and abilities
@@ -246,7 +255,7 @@ cron.schedule(
   },
   {
     name: "generateRandomCosmicEventService",
-  }
+  },
 );
 
 // Schedule a job to run every day at midnight to generate a random cosmic event
@@ -264,7 +273,7 @@ cron.schedule(
   },
   {
     name: "generateRandomCosmicEventService",
-  }
+  },
 );
 
 // Schedule a job to run every day at midnight to backup the database
@@ -303,9 +312,9 @@ cron.schedule(
                 return;
               }
               console.log(`Old backups removed: ${stdout}`);
-            }
+            },
           );
-        }
+        },
       );
     } catch (error) {
       console.error("Error during database backup:", error);
@@ -313,7 +322,7 @@ cron.schedule(
   },
   {
     name: "databaseBackupService",
-  }
+  },
 );
 
 // print out scheduled tasks

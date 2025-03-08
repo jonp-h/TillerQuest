@@ -36,6 +36,7 @@ const authSettings: ExpressAuthConfig = {
 
       return session;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, trigger, session }): Promise<any> {
       if (!token.sub) return token;
 
@@ -74,7 +75,7 @@ export const auth = ExpressAuth(authSettings);
 export async function authenticatedUser(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const session =
     res.locals.session ?? (await getSession(req, authSettings)) ?? undefined;
@@ -91,7 +92,7 @@ export async function authenticatedUser(
 export async function authenticatedGameMaster(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const session =
     res.locals.session ?? (await getSession(req, authSettings)) ?? undefined;
@@ -108,7 +109,7 @@ export async function authenticatedGameMaster(
 export async function currentSession(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const session = await getSession(req, authSettings);
   res.locals.session = session;

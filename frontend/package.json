@@ -7,10 +7,6 @@
     "lint": "next lint && eslint . --ext .js,.jsx,.ts,.tsx",
     "postinstall": "prisma generate"
   },
-  "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
-  },
   "dependencies": {
     "@3d-dice/dice-box": "^1.1.4",
     "@auth/prisma-adapter": "^2.7.3",
