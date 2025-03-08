@@ -4,7 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint && eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "next lint && eslint",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -35,7 +35,6 @@
     "eslint-config-next": "^15.2.1",
     "eslint-config-prettier": "^10.0.2",
     "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
     "postcss": "^8.5.3",
     "prettier": "^3.3.3",
     "prisma": "^6.4.1",
