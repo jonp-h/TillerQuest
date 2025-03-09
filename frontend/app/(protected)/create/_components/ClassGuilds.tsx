@@ -9,7 +9,6 @@ interface Guild {
 
 function ClassGuilds({
   userId,
-  guild,
   setGuild,
 }: {
   userId: string;

@@ -1,7 +1,7 @@
 import MainContainer from "@/components/MainContainer";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
-import { Button, LinearProgress, Paper, Typography } from "@mui/material";
+import { LinearProgress, Paper, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -14,7 +14,6 @@ import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
-import SpecialBadge from "./_components/ProfileBadge";
 import ProfileBadge from "./_components/ProfileBadge";
 
 export default async function ProfilePage({

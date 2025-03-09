@@ -1,6 +1,5 @@
 import { RawNodeDatum } from "react-d3-tree";
 import { ExtendedRawNodeDatum, UserAbilities } from "./interfaces";
-import { $Enums } from "@prisma/client";
 
 export const AbilityNodes = (
   userIsNotClass: boolean,

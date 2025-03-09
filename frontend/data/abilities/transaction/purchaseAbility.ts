@@ -1,10 +1,9 @@
 "use server";
 
 import { auth } from "@/auth";
-import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { Ability, User } from "@prisma/client";
+import { Ability } from "@prisma/client";
 import { selectAbility } from "../abilityUsage/useAbility";
 
 /**

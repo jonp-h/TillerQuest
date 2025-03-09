@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 
 // used on account creation page
 // TODO: consider implementation of typesafety from auth.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateUser = async (id: string, data: any) => {
   const session = await auth();
   if (session?.user?.id !== id || session?.user?.role !== "NEW") {

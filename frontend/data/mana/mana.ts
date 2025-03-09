@@ -30,7 +30,7 @@ export const getDailyMana = async (user: User) => {
   }
 
   // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
-  let manaValue = await manaValidator(db, user.id, dailyMana);
+  const manaValue = await manaValidator(db, user.id, dailyMana);
 
   if (typeof manaValue === "number") {
     // use get mana

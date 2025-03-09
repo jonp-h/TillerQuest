@@ -1,6 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { getAllDeadUsers } from "@/data/admin/adminUserInteractions";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
 import DeathCard from "./_components/DeathCard";
 import Image from "next/image";

@@ -23,14 +23,7 @@ import Image from "next/image";
 import { $Enums } from "@prisma/client";
 import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
 import Link from "next/link";
-import {
-  ArrowBack,
-  Diamond,
-  Favorite,
-  Flare,
-  Spa,
-  WaterDrop,
-} from "@mui/icons-material";
+import { ArrowBack, Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 
 export default async function AbilityNamePage({
   params,
@@ -75,7 +68,7 @@ export default async function AbilityNamePage({
     ));
   }
 
-  let guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   return (
     <MainContainer>

@@ -10,7 +10,6 @@ import { damageValidator } from "../validators/validators";
 import { auth } from "@/auth";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
-import { effect } from "zod";
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
@@ -92,9 +91,9 @@ const resurrectUser = async (
 
   if (user.guildName) {
     // get all guildmembers and remove the resurrected user from the guildmembers array
-    let guildMembers = await getMembersByCurrentUserGuild(user.guildName).then(
-      (member) => member!.filter((member) => member.id !== userId),
-    );
+    const guildMembers = await getMembersByCurrentUserGuild(
+      user.guildName,
+    ).then((member) => member!.filter((member) => member.id !== userId));
 
     await Promise.all(
       guildMembers?.map(async (member) => {

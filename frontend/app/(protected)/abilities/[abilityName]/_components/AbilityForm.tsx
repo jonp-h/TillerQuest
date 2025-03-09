@@ -2,11 +2,10 @@
 import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
 import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
-import { $Enums, Ability, User } from "@prisma/client";
+import { Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
-import { usePassive } from "@/data/passives/usePassive";
 
 type guildMembers =
   | {

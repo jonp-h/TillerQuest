@@ -11,6 +11,7 @@ declare module "@3d-dice/dice-box" {
     });
 
     init(): Promise<void>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     roll(diceNotation: string): Promise<any>;
     // {
     //   data: {

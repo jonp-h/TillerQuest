@@ -1,9 +1,6 @@
-import { auth } from "@/auth";
 import Image from "next/image";
 
 export default async function Home() {
-  const session = await auth();
-
   return (
     <main className=" bg-linear-to-b from-violet-900 to-slate-950 w-screen min-h-screen">
       <div className="w-screen flex justify-center text-center">
@@ -25,14 +22,6 @@ export default async function Home() {
           </h2>
         </div>
       </div>
-      {/* <Image
-        src="/background-image.jpg"
-        alt="background"
-        className="-z-10 opacity-80"
-        layout="fill"
-        objectFit="cover"
-        quality={100}
-      /> */}
     </main>
   );
 }

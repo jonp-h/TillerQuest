@@ -11,9 +11,27 @@ import {
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { User } from "@prisma/client";
+import { Class, SchoolClass } from "@prisma/client";
 
-async function Leaderboard({ users, title }: { users: any; title: string }) {
+interface LeaderboardUser {
+  image: string | null;
+  title: string | null;
+  name: string | null;
+  guildName: string | null;
+  username: string | null;
+  lastname: string | null;
+  schoolClass: SchoolClass | null;
+  class: Class | null;
+  level: number;
+  xp: number;
+}
+
+interface LeaderboardProps {
+  users: LeaderboardUser[] | null;
+  title: string;
+}
+
+async function Leaderboard({ users, title }: LeaderboardProps) {
   return (
     <div className="flex flex-col justify-center items-center h-full">
       <h1 className="text-3xl">Top 10 Leaderboard {title}</h1>
@@ -30,7 +48,7 @@ async function Leaderboard({ users, title }: { users: any; title: string }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users?.map((user: User) => (
+            {users?.map((user: LeaderboardUser) => (
               <TableRow
                 key={user.username}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

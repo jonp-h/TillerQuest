@@ -34,6 +34,7 @@ export default function AbilityTree({
       (
         containerElem: {
           // Typescript does not recognize width and height
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           getBoundingClientRect: () => { width: any; height: any };
         } | null,
       ) => {
@@ -66,9 +67,7 @@ export default function AbilityTree({
       }
       `}
       </style>
-      {/* @ts-ignore */}
       <div className="h-screen w-full" ref={containerRef}>
-        {/* @ts-ignore */}
         <Tree
           data={rootAbilities || undefined}
           // This is the distance between nodes vertically

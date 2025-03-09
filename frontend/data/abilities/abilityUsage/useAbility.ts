@@ -272,7 +272,7 @@ const activatePassive = async (
 ) => {
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
-      let targetHasPassive = await db.userPassive.findFirst({
+      const targetHasPassive = await db.userPassive.findFirst({
         where: {
           userId: targetUserId,
           abilityName: ability.name,
@@ -338,7 +338,7 @@ const useHealAbility = async (
   const results = await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       // validate health to heal and passives
-      let valueToHeal = await healingValidator(
+      const valueToHeal = await healingValidator(
         db,
         targetUserId,
         ability.value ?? 0,
@@ -416,7 +416,7 @@ const useManaAbility = async (
   // validate mana value and passives
   const results = await Promise.all(
     targetUserIds.map(async (targetUserId) => {
-      let value = await manaValidator(db, targetUserId, ability.value!);
+      const value = await manaValidator(db, targetUserId, ability.value!);
 
       // if the value is a string, it's an error message
       if (typeof value === "string") {
@@ -457,7 +457,7 @@ const useTransferAbility = async (
       // validate value and passives
       let value = ability.value;
       if (fieldToUpdate === "hp") {
-        let targetUser = await healingValidator(
+        const targetUser = await healingValidator(
           db,
           targetUserId,
           ability.value!,
@@ -468,7 +468,11 @@ const useTransferAbility = async (
         }
         value = targetUser;
       } else {
-        let targetUser = await manaValidator(db, targetUserId, ability.value!);
+        const targetUser = await manaValidator(
+          db,
+          targetUserId,
+          ability.value!,
+        );
         // return error message if user cannot recieve mana
         if (targetUser === 0) {
           return "Target is already at full mana";
@@ -605,7 +609,7 @@ const useProtectionAbility = async (
   const results = await Promise.all(
     targetUserIds.map(async (targetUserId) => {
       // check if user already has passive
-      let targetHasPassive = await db.userPassive.findFirst({
+      const targetHasPassive = await db.userPassive.findFirst({
         where: {
           userId: targetUserId,
           abilityName: ability.name,

@@ -29,6 +29,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
 
       return session;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, trigger, session }): Promise<any> {
       if (!token.sub) return token;
 

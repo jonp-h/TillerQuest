@@ -1,5 +1,5 @@
 "use client";
-import { Button, List, Paper, TextField, Typography } from "@mui/material";
+import { Button, Paper, TextField, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
 import {
@@ -60,11 +60,7 @@ export default function ListControls({ users }: { users: User[] }) {
   return (
     <>
       <div className="flex flex-col w-full my-5 m-auto">
-        <UserList
-          users={users}
-          selectedUsers={selectedUsers}
-          setSelectedUsers={setSelectedUsers}
-        />
+        <UserList users={users} setSelectedUsers={setSelectedUsers} />
       </div>
       {feedback && (
         <Paper elevation={5} className="flex justify-center my-2 p-2">

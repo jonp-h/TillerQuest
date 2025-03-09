@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { Box, Paper } from "@mui/material";
+import { Paper } from "@mui/material";
 import React from "react";
 
 import { getAllUsers } from "@/data/admin/adminUserInteractions";

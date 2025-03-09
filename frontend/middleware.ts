@@ -13,11 +13,13 @@ import {
 } from "./routes";
 import { auth as middleware } from "./auth";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { auth } = NextAuth(authConfig);
+
 // middleware function which runs on all pages
 // changed from auth to middleware to fulfill auth import
 // this gives access to req.auth
-// export default auth(async function middleware(req): Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default middleware(async (req): Promise<any> => {
   const { nextUrl } = req;
   // double negation to convert to boolean
@@ -58,13 +60,15 @@ export default middleware(async (req): Promise<any> => {
     }
   }
 
+  // FIXME: currently unused callbackUrl
+  // Could potentially use callback to give not authorized redirect information
   // if user is not logged in and route is not public, redirect to login
   if (!isLoggedIn && !isPublicRoute) {
-    let callbackUrl = nextUrl.pathname;
+    // let callbackUrl = nextUrl.pathname;
     if (nextUrl.search) {
-      callbackUrl += nextUrl.search;
+      // callbackUrl += nextUrl.search;
     }
-    return Response.redirect(new URL("/?redirected=true", nextUrl));
+    return Response.redirect(new URL("/", nextUrl));
   }
 
   return null;

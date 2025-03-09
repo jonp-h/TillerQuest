@@ -1,6 +1,10 @@
 import { UserRole } from "@prisma/client";
-import NextAuth, { type DefaultSession } from "next-auth";
 import { Class } from "@prisma/client";
+// eslint doesn't recognize usage of the following imports
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import NextAuth, { type DefaultSession } from "next-auth";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { JWT } from "next-auth/jwt";
 
 // This file extends the default types provided by NextAuth.js to include additional properties.
 // Specifically, it adds a 'role' property to the 'User' object, which is part of the 'Session' object.
@@ -21,8 +25,6 @@ declare module "next-auth" {
     user: ExtendedUser;
   }
 }
-
-import { JWT } from "next-auth/jwt";
 
 declare module "auth/core/jwt" {
   interface JWT {

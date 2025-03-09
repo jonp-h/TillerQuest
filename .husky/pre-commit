@@ -1,2 +1,2 @@
-npx lint-staged --quiet --cwd frontend
-npx lint-staged --quiet --cwd backend
+npx lint-staged --quiet --cwd frontend -c frontend/.lintstagedrc.mjs
+npx lint-staged --quiet --cwd backend -c backend/.lintstagedrc.js

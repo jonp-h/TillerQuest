@@ -41,11 +41,9 @@ const paginationModel = { page: 0, pageSize: 15 };
 
 export default function NewUserList({
   users,
-  selectedUsers,
   setSelectedUsers,
 }: {
   users: User[];
-  selectedUsers: User[];
   setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }) {
   const [rowSelectionModel, setRowSelectionModel] =

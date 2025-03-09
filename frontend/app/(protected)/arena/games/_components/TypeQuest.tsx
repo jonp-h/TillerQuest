@@ -130,8 +130,8 @@ function TypeQuest({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const characters = charRefs.current;
-    let currentChar = charRefs.current[charIndex];
-    let typedChar = e.target.value.slice(-1);
+    const currentChar = charRefs.current[charIndex];
+    const typedChar = e.target.value.slice(-1);
     if (!isTyping) {
       return;
     }

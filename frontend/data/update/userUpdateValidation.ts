@@ -5,6 +5,7 @@ import { escapeHtml, newUserSchema } from "@/lib/newUserValidation";
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserUpdate = async (id: string, data: any) => {
   const session = await auth();
   if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {

@@ -83,7 +83,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
         );
         setLoading(false);
         router.refresh();
-      } catch (error) {
+      } catch {
         setFeedback(
           "But attuning to the magic fails, you feel no connection - and you feel the need to tell an adult.",
         );

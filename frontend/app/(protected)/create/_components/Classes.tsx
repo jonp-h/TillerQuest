@@ -124,7 +124,7 @@ const classes = [
 
 interface ClassesProps {
   playerClass: string;
-  setPlayerClass: any; // TODO: Fix this type to extend enum
+  setPlayerClass: (playerClass: string) => void;
 }
 
 export default function Classes({ playerClass, setPlayerClass }: ClassesProps) {

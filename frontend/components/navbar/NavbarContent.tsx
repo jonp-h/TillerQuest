@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ShieldIcon from "@mui/icons-material/Shield";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import StadiumIcon from "@mui/icons-material/Stadium";
 import BoltIcon from "@mui/icons-material/Bolt";
@@ -18,7 +17,6 @@ import { IconButton } from "@mui/material";
 
 export default function NavbarContent() {
   const session = useSession();
-  const [openMobileMenu, setOpenMobileMenu] = React.useState(false);
   const pathname = usePathname();
 
   const links = [

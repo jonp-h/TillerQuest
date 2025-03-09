@@ -2,7 +2,6 @@ import MainContainer from "@/components/MainContainer";
 import React from "react";
 import ShopCard from "./_components/ShopCard";
 import { getAllShopItems } from "@/data/shop/items";
-import { ShopItem } from "@prisma/client";
 import { getUserInventory } from "@/data/user/getUser";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
