@@ -33,3 +33,25 @@ export const finishGame = async (userId: string, score: number) => {
   });
   return "Recieved " + score + " gold";
 };
+
+export const getRandomTypeQuestText = async () => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
+  const typeQuestText = await db.typeQuestText.findFirst({
+    select: {
+      text: true,
+    },
+    orderBy: {
+      id: "asc",
+    },
+    skip: Math.floor(Math.random() * (await db.typeQuestText.count())),
+  });
+
+  return typeQuestText;
+};

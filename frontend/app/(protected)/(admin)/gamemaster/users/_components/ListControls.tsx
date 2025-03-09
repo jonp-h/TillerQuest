@@ -1,5 +1,11 @@
 "use client";
-import { Button, Paper, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  FormControlLabel,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { User } from "@prisma/client";
 import React from "react";
 import {
@@ -12,12 +18,14 @@ import {
 } from "@/data/admin/adminPowers";
 import { useRouter } from "next/navigation";
 import UserList from "./UserList";
+import Checkbox from "@mui/material/Checkbox";
 
 export default function ListControls({ users }: { users: User[] }) {
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [value, setValue] = React.useState<number>(4);
   const [feedback, setFeedback] = React.useState<string>("");
   const [isPending, startTransition] = React.useTransition();
+  const [notify, setNotify] = React.useState<boolean>(false);
 
   const router = useRouter();
 
@@ -33,22 +41,24 @@ export default function ListControls({ users }: { users: User[] }) {
     startTransition(async () => {
       switch (action) {
         case "heal":
-          setFeedback(await healUsers(selectedUsers, value));
+          setFeedback(await healUsers(selectedUsers, value, notify));
           break;
         case "damage":
-          setFeedback(await damageUsers(selectedUsers, value));
+          setFeedback(await damageUsers(selectedUsers, value, notify));
           break;
         case "xp":
-          setFeedback(await giveXpToUsers(selectedUsers, value));
+          setFeedback(await giveXpToUsers(selectedUsers, value, notify));
           break;
         case "mana":
-          setFeedback(await giveManaToUsers(selectedUsers, value));
+          setFeedback(await giveManaToUsers(selectedUsers, value, notify));
           break;
         case "arenatoken":
-          setFeedback(await giveArenatokenToUsers(selectedUsers, value));
+          setFeedback(
+            await giveArenatokenToUsers(selectedUsers, value, notify),
+          );
           break;
         case "gold":
-          setFeedback(await giveGoldToUsers(selectedUsers, value));
+          setFeedback(await giveGoldToUsers(selectedUsers, value, notify));
           break;
         default:
           setFeedback("No action selected");
@@ -69,6 +79,19 @@ export default function ListControls({ users }: { users: User[] }) {
       )}
 
       <Paper elevation={5}>
+        <div className="flex justify-center py-3">
+          <FormControlLabel
+            sx={{ color: "lightgreen" }}
+            control={
+              <Checkbox
+                size="medium"
+                checked={notify}
+                onChange={() => setNotify(!notify)}
+              />
+            }
+            label="Notify users on Discord"
+          />
+        </div>
         <Typography className=" text-center" variant="h6">
           Quick XP actions
         </Typography>

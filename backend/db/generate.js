@@ -5,6 +5,7 @@ import abilities from "./abilities.js";
 import cosmics from "./cosmic.js";
 import shopItem from "./shopItems.js";
 import readline from "readline";
+import typeQuestTexts from "./typeQuestTexts.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -22,8 +23,9 @@ async function main() {
   3. Add Cosmic Events
   4. Add Shop Items
   5. Add Mocked Users
-  6. Add All
-  7. Add all without users
+  6. Add Type Quest Texts
+  7. Add All
+  8. Add all without users
   `;
 
   rl.question(options, async (answer) => {
@@ -44,9 +46,12 @@ async function main() {
         await addUsers();
         break;
       case "6":
-        await addAll();
+        await addTypeQuestTexts();
         break;
       case "7":
+        await addAll();
+        break;
+      case "8":
         await addAllWithoutUsers();
         break;
       default:
@@ -113,6 +118,21 @@ async function addShopItems() {
   console.info("Shop items have been added to the database.");
 }
 
+async function addTypeQuestTexts() {
+  for (const typeQuestText of typeQuestTexts) {
+    try {
+      await db.typeQuestText.upsert({
+        where: { text: typeQuestText.text },
+        update: { text: typeQuestText.text },
+        create: { text: typeQuestText.text },
+      });
+    } catch (error) {
+      console.error("Error adding", typeQuestText + ": ", error);
+    }
+  }
+  console.info("Type quest texts have been added to the database.");
+}
+
 async function addUsers() {
   try {
     await db.user.createMany({
@@ -130,6 +150,7 @@ async function addAll() {
   await addAbilities();
   await addCosmicEvents();
   await addShopItems();
+  await addTypeQuestTexts();
   await addUsers();
 }
 
@@ -138,6 +159,7 @@ async function addAllWithoutUsers() {
   await addAbilities();
   await addCosmicEvents();
   await addShopItems();
+  await addTypeQuestTexts();
 }
 
 // Run the main function and handle any errors

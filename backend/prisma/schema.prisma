@@ -238,6 +238,11 @@ model ShopItem {
   users       User[] // m-n relation to users. An item can be owned by many users
 }
 
+model TypeQuestText {
+  id   String @id @default(cuid())
+  text String @unique
+}
+
 // 3rd party authentication. OAuth
 model Account {
   id                       String  @id @default(cuid())

@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "gen": "prisma generate && node db/generate.js",
+    "generate": "prisma generate && node db/generate.js"
   },
   "dependencies": {
     "@auth/express": "^0.8.4",

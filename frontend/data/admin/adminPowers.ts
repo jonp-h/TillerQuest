@@ -12,7 +12,11 @@ import { User } from "@prisma/client";
 import { auth } from "@/auth";
 import { sendDiscordMessage } from "@/lib/discord";
 
-export const healUsers = async (users: { id: string }[], value: number) => {
+export const healUsers = async (
+  users: { id: string }[],
+  value: number,
+  notify: boolean,
+) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
@@ -55,10 +59,11 @@ export const healUsers = async (users: { id: string }[], value: number) => {
           }
         }),
       );
-      await sendDiscordMessage(
-        "Game Master",
-        `User(s) ${healedUsers.map((user) => user).join(", ")} has been healed for ${value} HP.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User(s) ${healedUsers.map((user) => user).join(", ")} has been healed for ${value} HP.`,
+        );
       return "Healing successful. The dead are not healed";
     });
   } catch (error) {
@@ -67,7 +72,11 @@ export const healUsers = async (users: { id: string }[], value: number) => {
   }
 };
 
-export const damageUsers = async (users: { id: string }[], value: number) => {
+export const damageUsers = async (
+  users: { id: string }[],
+  value: number,
+  notify: boolean,
+) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
@@ -103,10 +112,11 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
           damagedUsers.push(targetUser.username ?? "Hidden");
         }),
       );
-      await sendDiscordMessage(
-        "Game Master",
-        `User ${damagedUsers.map((user) => user).join(", ")} has been damaged for ${value} HP.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User ${damagedUsers.map((user) => user).join(", ")} has been damaged for ${value} HP.`,
+        );
       return "Damage successful";
     });
   } catch (error) {
@@ -121,7 +131,11 @@ export const damageUsers = async (users: { id: string }[], value: number) => {
  * @param xp - The amount of XP to give to each user.
  * @returns A string indicating the result of the operation.
  */
-export const giveXpToUsers = async (users: User[], xp: number) => {
+export const giveXpToUsers = async (
+  users: User[],
+  xp: number,
+  notify: boolean,
+) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
@@ -134,10 +148,11 @@ export const giveXpToUsers = async (users: User[], xp: number) => {
           await experienceAndLevelValidator(db, user, xp);
         }),
       );
-      sendDiscordMessage(
-        "Game Master",
-        `User(s) ${users.map((user) => user.username).join(", ")} has been given ${xp} XP.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User(s) ${users.map((user) => user.username).join(", ")} has been given ${xp} XP.`,
+        );
       return "Successfully gave XP to users";
     });
   } catch (error) {
@@ -146,7 +161,11 @@ export const giveXpToUsers = async (users: User[], xp: number) => {
   }
 };
 
-export const giveManaToUsers = async (users: User[], mana: number) => {
+export const giveManaToUsers = async (
+  users: User[],
+  mana: number,
+  notify: boolean,
+) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
@@ -174,10 +193,11 @@ export const giveManaToUsers = async (users: User[], mana: number) => {
           });
         }),
       );
-      sendDiscordMessage(
-        "Game Master",
-        `User(s) ${users.map((user) => user.username).join(", ")} has been given ${mana} mana.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User(s) ${users.map((user) => user.username).join(", ")} has been given ${mana} mana.`,
+        );
       return "Mana given successfully";
     });
   } catch (error) {
@@ -189,6 +209,7 @@ export const giveManaToUsers = async (users: User[], mana: number) => {
 export const giveArenatokenToUsers = async (
   users: User[],
   arenatoken: number,
+  notify: boolean,
 ) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
@@ -209,10 +230,11 @@ export const giveArenatokenToUsers = async (
           });
         }),
       );
-      sendDiscordMessage(
-        "Game Master",
-        `User(s) ${users.map((user) => user.username).join(", ")} has been given ${arenatoken} arenatokens.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User(s) ${users.map((user) => user.username).join(", ")} has been given ${arenatoken} arenatokens.`,
+        );
       return "Arenatoken given successfully";
     });
   } catch (error) {
@@ -221,7 +243,11 @@ export const giveArenatokenToUsers = async (
   }
 };
 
-export const giveGoldToUsers = async (users: User[], gold: number) => {
+export const giveGoldToUsers = async (
+  users: User[],
+  gold: number,
+  notify: boolean,
+) => {
   const session = await auth();
   if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
@@ -241,10 +267,11 @@ export const giveGoldToUsers = async (users: User[], gold: number) => {
           });
         }),
       );
-      sendDiscordMessage(
-        "Game Master",
-        `User(s) ${users.map((user) => user.username).join(", ")} has been given ${gold} gold.`,
-      );
+      if (notify)
+        await sendDiscordMessage(
+          "Game Master",
+          `User(s) ${users.map((user) => user.username).join(", ")} has been given ${gold} gold.`,
+        );
       return "Gold given successfully";
     });
   } catch (error) {
