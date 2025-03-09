@@ -215,7 +215,7 @@ export default async function ProfilePage({
           Abilities
         </Typography>
         {user.hp !== 0 ? (
-          <div className="grid grid-cols-2 gap-3 p-5 lg:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+          <div className="grid grid-cols-2 gap-3 p-5 lg:grid-cols-6 xl:grid-cols-8">
             {userAbilities?.map((ability) => (
               <AbilityCard
                 key={ability.ability.name}
