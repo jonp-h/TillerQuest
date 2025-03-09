@@ -82,6 +82,7 @@ function GameForm({ user }: { user: User }) {
         {gameVisible && (
           <TypeQuest
             gameEnabled={gameEnabled}
+            setGameEnabled={setGameEnabled}
             handleFinishGame={handleFinishGame}
             setMoneyReward={memoizedSetMoneyReward}
           />

@@ -35,10 +35,12 @@ const paragraphs = [
 
 function TypeQuest({
   gameEnabled,
+  setGameEnabled,
   handleFinishGame,
   setMoneyReward,
 }: {
   gameEnabled: boolean;
+  setGameEnabled: (enabled: boolean) => void;
   handleFinishGame: () => void;
   setMoneyReward: (reward: number) => void;
 }) {
@@ -96,6 +98,7 @@ function TypeQuest({
     } else if (time === 0) {
       clearInterval(interval);
       setIsTyping(false);
+      setGameEnabled(false);
       handleFinishGame();
     }
     return () => clearInterval(interval);
@@ -146,10 +149,12 @@ function TypeQuest({
       }
       if (charIndex === characters.length - 1) {
         setIsTyping(false);
+        setGameEnabled(false);
         handleFinishGame();
       }
     } else {
       setIsTyping(false);
+      setGameEnabled(false);
       handleFinishGame();
     }
   };
