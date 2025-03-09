@@ -3,6 +3,31 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
+export const getGuilds = async () => {
+  const session = await auth();
+  if (!session || session.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
+  const guilds = await db.guild.findMany({
+    select: {
+      name: true,
+      schoolClass: true,
+      members: {
+        select: {
+          id: true,
+          name: true,
+          lastname: true,
+          schoolClass: true,
+        },
+      },
+    },
+    orderBy: [{ schoolClass: "asc" }, { name: "asc" }],
+  });
+
+  return guilds;
+};
+
 // get guild member count of all guilds, excluding the current user in the count
 export const getGuildsAndMemberCount = async (id: string) => {
   // Should be open to new users / users with a valid session

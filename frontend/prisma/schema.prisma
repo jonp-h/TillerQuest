@@ -140,8 +140,9 @@ model User {
 }
 
 model Guild {
-  name String  @id
-  icon String?
+  name        String       @id
+  icon        String?
+  schoolClass SchoolClass?
 
   members User[]
 }

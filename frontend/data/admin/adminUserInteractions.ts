@@ -26,6 +26,34 @@ export const getAllUsers = async () => {
   return users;
 };
 
+export const getBasicUserDetails = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    throw new Error("Not authorized");
+  }
+
+  const users = await db.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      lastname: true,
+      schoolClass: true,
+    },
+    orderBy: [
+      {
+        schoolClass: "asc",
+      },
+      {
+        name: "asc",
+      },
+      {
+        lastname: "asc",
+      },
+    ],
+  });
+  return users;
+};
+
 export const getAllDeadUsers = async () => {
   const session = await auth();
   if (!session || session?.user.role === "NEW") {

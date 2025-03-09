@@ -33,7 +33,7 @@ export default async function GameMasterPage() {
       </Paper>
       <div className="flex mt-10 justify-evenly">
         <Link href="/gamemaster/guilds">
-          <Button color="secondary" variant="contained" disabled={true}>
+          <Button color="secondary" variant="contained">
             Guilds
           </Button>
         </Link>
