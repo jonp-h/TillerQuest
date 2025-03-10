@@ -24,15 +24,19 @@ export const newUserSchema = z.object({
   username: z
     .string()
     .min(3, "Username must be above 3 characters")
-    .max(15, "Username must be below 20 characters"),
+    .max(20, "Username must be below 20 characters")
+    .regex(
+      /^[a-zA-Z0-9-_]+$/,
+      "Username may only contain letters, numbers, - and _",
+    ),
   name: z
     .string()
     .min(3, "Given name must be above 3 characters")
-    .max(15, "Given name must be below 20 characters"),
+    .max(20, "Given name must be below 20 characters"),
   lastname: z
     .string()
     .min(3, "Lastname must be above 3 characters")
-    .max(15, "Lastname must be below 20 characters"),
+    .max(20, "Lastname must be below 20 characters"),
   playerClass: z.string(),
   guild: z.string(),
   schoolClass: z.nativeEnum($Enums.SchoolClass, {

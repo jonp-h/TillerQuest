@@ -6,6 +6,7 @@ interface MiniatureProfileProps {
   member: {
     id: string;
     image: string | null;
+    title: string | null;
     username: string | null;
     hp: number;
     hpMax: number;
@@ -30,6 +31,14 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
           />
         </div>
         <div className="flex flex-col gap-1 text-center">
+          <Typography
+            variant="overline"
+            flexWrap="wrap"
+            color="textSecondary"
+            sx={{ marginBottom: -1.25, marginTop: -0.25 }}
+          >
+            {member.title}
+          </Typography>
           <Typography variant="body1" flexWrap="wrap">
             {member.username}
           </Typography>

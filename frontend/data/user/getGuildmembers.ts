@@ -18,6 +18,7 @@ export const getMembersByCurrentUserGuild = async (guildName: string) => {
       where: { guildName },
       select: {
         id: true,
+        title: true,
         username: true,
         image: true,
         hp: true,

@@ -1,7 +1,7 @@
 import MainContainer from "@/components/MainContainer";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
-import { LinearProgress, Paper, Typography } from "@mui/material";
+import { LinearProgress, Paper, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -44,7 +44,7 @@ export default async function ProfilePage({
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
-            <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-3 items-center p-5">
+            <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-4 items-center p-5">
               {guildMembers?.map((member) =>
                 member.username !== user.username ? (
                   <MiniatureProfile key={member.id} member={member} />
@@ -144,18 +144,24 @@ export default async function ProfilePage({
           >
             <Typography variant="h4">Resources</Typography>
             <div className="flex mt-2 gap-10">
-              <Typography variant="h5" color="gold">
-                Gold: {user.gold}
-                <Circle />
-              </Typography>
-              <Typography variant="h5" color="orange">
-                Tokens: {user.arenaTokens}
-                <Stadium />
-              </Typography>
-              <Typography variant="h5" color="cyan">
-                Gemstones: {user.gemstones}
-                <Diamond />
-              </Typography>
+              <Tooltip title="Earned by completing games in the arena">
+                <Typography variant="h5" color="gold">
+                  Gold: {user.gold}
+                  <Circle />
+                </Typography>
+              </Tooltip>
+              <Tooltip title="Earned together with daily mana and certain events/abilities">
+                <Typography variant="h5" color="orange">
+                  Tokens: {user.arenaTokens}
+                  <Stadium />
+                </Typography>
+              </Tooltip>
+              <Tooltip title="Earned by gaining experience and leveling up">
+                <Typography variant="h5" color="cyan">
+                  Gemstones: {user.gemstones}
+                  <Diamond />
+                </Typography>
+              </Tooltip>
             </div>
           </Paper>
           <Paper className=" items-center p-5 w-full min-h-3/4" elevation={6}>

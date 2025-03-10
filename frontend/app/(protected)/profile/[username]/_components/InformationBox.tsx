@@ -28,14 +28,19 @@ export default async function InformationBox({
       {!sameDay && !isWeekend() && (
         <Paper
           elevation={6}
-          className="m-3 p-5 flex gap-5 text-center justify-center"
+          className="m-3 p-5 flex flex-col gap-5 text-center justify-center animate-pulse"
+          variant="outlined"
+          sx={{
+            backgroundColor: "Highlight",
+            animation: "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          }}
         >
           <Typography variant="h5" align="center">
             You sense magic in the air
           </Typography>
           <Link href="/mana">
             <Button variant="contained" color="primary">
-              Get mana
+              Get daily mana
             </Button>
           </Link>
         </Paper>
@@ -46,10 +51,16 @@ export default async function InformationBox({
           className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
         >
           <Typography variant="h4" align="center">
-            <strong>Cosmic: </strong> {cosmic.name}
+            Daily Cosmic:{" "}
+            <strong className="text-green-400">
+              {cosmic.name.replace("-", " ")}
+            </strong>
           </Typography>
           <Typography variant="h6" align="center">
             {cosmic.description}
+          </Typography>
+          <Typography variant="h6" align="center" color="textSecondary">
+            {cosmic.triggerAtNoon ? "Can be avoided before 11:20" : ""}
           </Typography>
         </Paper>
       )}

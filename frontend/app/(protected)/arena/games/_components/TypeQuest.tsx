@@ -145,7 +145,9 @@ function TypeQuest({
               charRefs.current[index] = e;
             }}
             className={
-              index === charIndex ? "underline " : characterClassName[index]
+              index === charIndex
+                ? " border-b-2 border-green-500 "
+                : characterClassName[index]
             }
           >
             {char}

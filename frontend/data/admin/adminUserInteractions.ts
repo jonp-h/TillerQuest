@@ -11,6 +11,11 @@ export const getAllUsers = async () => {
   }
 
   const users = await db.user.findMany({
+    where: {
+      role: {
+        not: "NEW",
+      },
+    },
     orderBy: [
       {
         schoolClass: "asc",
