@@ -40,6 +40,33 @@ export const validateUserUpdate = async (id: string, data: any) => {
     return "Try a different username";
   }
 
+  // validate if the guild already has a member with the chosen class
+  const guildClasses = await db.guild.findFirst({
+    where: {
+      name: {
+        equals: validatedData.data.guild,
+      },
+    },
+    select: {
+      members: {
+        select: {
+          class: true,
+        },
+      },
+    },
+  });
+
+  if (
+    guildClasses?.members.some(
+      (member) => member.class === validatedData.data.playerClass.slice(0, -1),
+    )
+  ) {
+    return (
+      validatedData.data.playerClass.slice(0, -1) +
+      " already exists in this guild. Choose a different class or guild."
+    );
+  }
+
   // Sanitize inputs
   const sanitizedData = {
     username: escapeHtml(validatedData.data.username),
