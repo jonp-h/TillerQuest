@@ -251,6 +251,33 @@ const users = [
     classReq: null,
     specialReq: "playstation",
   },
+  {
+    name: "Bugfinder",
+    description: "Found a bug in TillerQuest",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "bug",
+  },
+  {
+    name: "Exterminator",
+    description: "Found and fixed a bug in TillerQuest",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "bugfixer",
+  },
+  {
+    name: "Alpha Tester",
+    description: "Tested TillerQuest while it was in alpha development",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "alpha",
+  },
 ];
 
 export default users;
