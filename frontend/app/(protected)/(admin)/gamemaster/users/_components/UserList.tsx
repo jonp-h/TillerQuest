@@ -1,4 +1,9 @@
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridToolbar,
+} from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { User } from "@prisma/client";
 import { useState } from "react";
@@ -37,7 +42,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-const paginationModel = { page: 0, pageSize: 15 };
+const paginationModel = { page: 0, pageSize: 30 };
 
 export default function NewUserList({
   users,
@@ -55,7 +60,7 @@ export default function NewUserList({
         rows={users}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[15, 30, 45, 60, 120]}
+        pageSizeOptions={[30, 45, 60, 120]}
         checkboxSelection
         classes={{ cell: " cursor-pointer" }}
         onRowSelectionModelChange={(newSelection) => {
@@ -69,6 +74,12 @@ export default function NewUserList({
         }}
         rowSelectionModel={rowSelectionModel}
         sx={{ border: 0 }}
+        slots={{ toolbar: GridToolbar }}
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+          },
+        }}
       />
     </Paper>
   );
