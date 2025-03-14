@@ -63,7 +63,7 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         selectAbility(user.id, [user.id], ability);
       }
 
-      logger.info(`User ${user.id} bought ability ${ability.name}`);
+      logger.info(`User ${user.username} bought ability ${ability.name}`);
       return (
         "Bought " +
         ability.name +

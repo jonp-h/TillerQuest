@@ -368,7 +368,7 @@ const useHealAbility = async (
   );
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
   );
 
   return results.toString();
@@ -400,7 +400,7 @@ const useReviveAbility = async (
   });
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -437,7 +437,7 @@ const useManaAbility = async (
   );
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -499,7 +499,7 @@ const useTransferAbility = async (
   );
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
   return results.toString();
@@ -553,7 +553,7 @@ const useSwapAbility = async (
   });
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -587,7 +587,7 @@ const useTradeAbility = async (
   });
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -639,7 +639,7 @@ const useProtectionAbility = async (
   );
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -681,7 +681,7 @@ const useArenaAbility = async (
   );
 
   logger.info(
-    `User ${castingUser.id} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -713,7 +713,7 @@ const useEvadeAbility = async (
   });
 
   logger.info(
-    `User ${castingUser.id} evaded daily cosmic event and gained ${ability.xpGiven} XP`,
+    `User ${castingUser.username} evaded daily cosmic event and gained ${ability.xpGiven} XP`,
   );
 
   return "Cosmic event evaded!";
