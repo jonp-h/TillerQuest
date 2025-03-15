@@ -1,6 +1,6 @@
 import { getRandomTypeQuestText } from "@/data/games/game";
 import { Button } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function TypeQuest({
   gameEnabled,
@@ -14,22 +14,26 @@ function TypeQuest({
   setMoneyReward: (reward: number) => void;
 }) {
   const maxTime = 60;
-  const [time, setTime] = React.useState(maxTime);
-  const [isTyping, setIsTyping] = React.useState(false);
-  const [mistakes, setMistakes] = React.useState(0);
-  const [WPM, setWPM] = React.useState(0);
-  const [CPM, setCPM] = React.useState(0);
-  const [charIndex, setCharIndex] = React.useState(0);
+  const [time, setTime] = useState(maxTime);
+  const [isTyping, setIsTyping] = useState(false);
+  const [mistakes, setMistakes] = useState(0);
+  const [WPM, setWPM] = useState(0);
+  const [CPM, setCPM] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const charRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [characterClassName, setCharacterClassName] = React.useState<string[]>(
-    [],
-  );
-  const [currentParagraph, setCurrentParagraph] = React.useState<string>("");
+  const [mistakesIndex, setMistakesIndex] = useState<boolean[]>([]);
+  const [characterClassName, setCharacterClassName] = useState<string[]>([]);
+  const [currentParagraph, setCurrentParagraph] = useState<string>("");
+
+  const correctClassName = " bg-green-700";
+  const wrongClassName = " bg-red-700";
+  const fixedClassName = " bg-yellow-600";
 
   useEffect(() => {
     inputRef.current?.focus();
     setCharacterClassName(Array(charRefs.current.length).fill(""));
+    setMistakesIndex(Array(charRefs.current.length).fill(false));
 
     const handleFocus = () => {
       inputRef.current?.focus();
@@ -78,6 +82,7 @@ function TypeQuest({
     // Update charRefs array after currentParagraph is updated
     charRefs.current = Array(currentParagraph.length).fill(null);
     setCharacterClassName(Array(currentParagraph.length).fill(""));
+    setMistakesIndex(Array(currentParagraph.length).fill(false));
   }, [currentParagraph]);
 
   const startGame = async () => {
@@ -105,17 +110,33 @@ function TypeQuest({
     const characters = charRefs.current;
     const currentChar = charRefs.current[charIndex];
     const typedChar = e.target.value.slice(-1);
+
+    if ((e.nativeEvent as InputEvent).inputType === "deleteContentBackward") {
+      if (charIndex > 0) {
+        setCharIndex(charIndex - 1);
+        if (characterClassName[charIndex - 1] === wrongClassName) {
+          mistakesIndex[charIndex - 1] = true;
+        }
+        characterClassName[charIndex - 1] = "";
+      }
+      return;
+    }
+
     if (!isTyping) {
       return;
     }
     if (charIndex < characters.length && time > 0) {
       if (typedChar === currentChar?.textContent) {
         setCharIndex(charIndex + 1);
-        characterClassName[charIndex] = " bg-green-700";
+        if (mistakesIndex[charIndex]) {
+          characterClassName[charIndex] = fixedClassName;
+        } else {
+          characterClassName[charIndex] = correctClassName;
+        }
       } else {
         setCharIndex(charIndex + 1);
         setMistakes(mistakes + 1);
-        characterClassName[charIndex] = " bg-red-700";
+        characterClassName[charIndex] = wrongClassName;
       }
       if (charIndex === characters.length - 1) {
         setIsTyping(false);
