@@ -11,6 +11,7 @@ import { logger } from "@/lib/logger";
 import { User } from "@prisma/client";
 import { auth } from "@/auth";
 import { sendDiscordMessage } from "@/lib/discord";
+import { addLog } from "../log/addLog";
 
 export const healUsers = async (
   users: { id: string }[],
@@ -49,6 +50,12 @@ export const healUsers = async (
                 " for " +
                 valueToHeal,
             );
+
+            await addLog(
+              db,
+              user.id,
+              `${targetUser.username} was healed for ${valueToHeal} HP.`,
+            );
           } else {
             logger.info(
               "Healing failed for user " +
@@ -59,6 +66,7 @@ export const healUsers = async (
           }
         }),
       );
+
       if (notify)
         await sendDiscordMessage(
           "Game Master",
@@ -110,6 +118,16 @@ export const damageUsers = async (
             },
           });
           damagedUsers.push(targetUser.username ?? "Hidden");
+
+          await addLog(
+            db,
+            user.id,
+            `${targetUser.username} was damaged for ${valueToDamage} HP.`,
+          );
+          if (targetUser.hp === 0) {
+            logger.info("DEATH: User " + targetUser.username + " died.");
+            await addLog(db, user.id, `DEATH: ${targetUser.username} died.`);
+          }
         }),
       );
       if (notify)
@@ -191,6 +209,12 @@ export const giveManaToUsers = async (
               mana: { increment: manaToGive },
             },
           });
+
+          await addLog(
+            db,
+            user.id,
+            `${user.username} recieved ${manaToGive} mana.`,
+          );
         }),
       );
       if (notify)
@@ -228,6 +252,12 @@ export const giveArenatokenToUsers = async (
               arenaTokens: { increment: arenatoken },
             },
           });
+
+          await addLog(
+            db,
+            user.id,
+            `${user.username} recieved ${arenatoken} arenatokens.`,
+          );
         }),
       );
       if (notify)
@@ -265,6 +295,8 @@ export const giveGoldToUsers = async (
               gold: { increment: gold },
             },
           });
+
+          await addLog(db, user.id, `${user.username} recieved ${gold} gold.`);
         }),
       );
       if (notify)

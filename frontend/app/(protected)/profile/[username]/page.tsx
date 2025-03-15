@@ -16,6 +16,7 @@ import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
 import { auth } from "@/auth";
+import Log from "./_components/Log";
 
 export default async function ProfilePage({
   params,
@@ -240,6 +241,7 @@ export default async function ProfilePage({
           </Typography>
         )}
       </Paper>
+      <Log userId={user.id} />
     </MainContainer>
   );
 }

@@ -82,7 +82,7 @@ cron.schedule(
           });
         }
 
-        const usersWithIncreaseMana = await db.userPassive.findMany({
+        const usersWithIncreasedMana = await db.userPassive.findMany({
           where: {
             effectType: "IncreaseMana",
             endTime: { lte: now },
@@ -92,14 +92,29 @@ cron.schedule(
           },
         });
 
-        for (const passive of usersWithIncreaseMana) {
+        for (const passive of usersWithIncreasedMana) {
           await db.user.update({
             where: { id: passive.userId },
             data: { manaMax: { decrement: passive.value || 0 } },
           });
         }
 
+        const passives = await db.userPassive.findMany({
+          where: { endTime: { lte: now } },
+          select: { userId: true, abilityName: true },
+        });
+
         await db.userPassive.deleteMany({ where: { endTime: { lte: now } } });
+
+        if (passives.length > 0) {
+          await db.log.createMany({
+            data: passives.map((passive) => ({
+              userId: passive.userId,
+              message: `Passive ${passive.abilityName} expired`,
+            })),
+          });
+        }
+
         console.log("Expired passives removed");
       });
     } catch (error) {
@@ -154,7 +169,6 @@ cron.schedule(
         await Promise.all(
           usersWithCosmicPassive.map(async (user) => {
             // validate value and passives
-            let value = cosmic.ability?.value;
             switch (fieldToUpdate) {
               case "hp": {
                 const targetUserHp = await healingValidator(
@@ -166,7 +180,15 @@ cron.schedule(
                 if (typeof targetUserHp === "string") {
                   return targetUserHp;
                 }
-                value = targetUserHp;
+                await db.user.update({
+                  where: { id: user.userId },
+                  data: {
+                    hp: { increment: targetUserHp },
+                  },
+                  select: {
+                    username: true,
+                  },
+                });
                 break;
               }
               case "mana": {
@@ -181,7 +203,15 @@ cron.schedule(
                 } else if (typeof targetUserMana === "string") {
                   return targetUserMana;
                 }
-                value = targetUserMana;
+                await db.user.update({
+                  where: { id: user.userId },
+                  data: {
+                    mana: { increment: targetUserMana },
+                  },
+                  select: {
+                    username: true,
+                  },
+                });
                 break;
               }
               case "xp": {
@@ -211,10 +241,28 @@ cron.schedule(
                 break;
             }
 
-            await db.user.update({
+            // TODO: improve this with fieldToUpdate logic
+            // const targetedUser = await db.user.update({
+            //   where: { id: user.userId },
+            //   data: {
+            //     [fieldToUpdate]: { increment: value },
+            //   },
+            //   select: {
+            //     username: true,
+            //   },
+            // });
+
+            const targetedUser = await db.user.findUnique({
               where: { id: user.userId },
+              select: {
+                username: true,
+              },
+            });
+
+            await db.log.create({
               data: {
-                [fieldToUpdate]: { increment: value },
+                userId: user.userId,
+                message: `${targetedUser?.username} was affected by ${cosmic.ability?.name.replace(/-/g, " ")}`,
               },
             });
           }),
@@ -258,7 +306,7 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every day at midnight to generate a random cosmic event
+// Schedule a job to run every day at midnight to recommend a random cosmic event
 cron.schedule(
   "0 0 * * *",
   async () => {

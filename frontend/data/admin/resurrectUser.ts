@@ -10,6 +10,7 @@ import { damageValidator } from "../validators/validators";
 import { auth } from "@/auth";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
+import { addLog } from "../log/addLog";
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
@@ -86,7 +87,7 @@ const resurrectUser = async (
     where: {
       id: userId,
     },
-    select: { guildName: true },
+    select: { username: true, guildName: true },
   });
 
   if (user.guildName) {
@@ -115,7 +116,7 @@ const resurrectUser = async (
           },
         });
 
-        return db.user.update({
+        await db.user.update({
           where: {
             id: member.id,
           },
@@ -123,6 +124,12 @@ const resurrectUser = async (
             hp: { decrement: damageToTake },
           },
         });
+
+        await addLog(
+          db,
+          member.id,
+          `${member.username} helped resurrect ${user.username}, and sacrificed ${damageToTake} HP in the ritual.`,
+        );
       }) || [],
     );
   }
@@ -131,7 +138,7 @@ const resurrectUser = async (
     effects.map(async (effect) => {
       try {
         if (effect === "Reduced-xp-gain") {
-          return await db.userPassive.create({
+          await db.userPassive.create({
             data: {
               userId: userId,
               passiveName: effect,
@@ -152,6 +159,11 @@ const resurrectUser = async (
             },
           });
         }
+        await addLog(
+          db,
+          userId,
+          `${user.username} was resurrected, but was affected by ${effect.replace(/-/g, " ")}.`,
+        );
       } catch (error) {
         logger.error("Error resurrecting user" + error);
         return "Something went wrong with" + error;

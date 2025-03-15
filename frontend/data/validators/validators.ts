@@ -6,6 +6,7 @@ import { getUserPassiveEffect } from "../passives/getPassive";
 import { User } from "@prisma/client";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 import { auth } from "@/auth";
+import { addLog } from "../log/addLog";
 
 export const healingValidator = async (
   db: PrismaTransaction,
@@ -198,7 +199,15 @@ export const experienceAndLevelValidator = async (
         ...levelUpData,
       },
     });
+
+    await addLog(db, user.id, `${user.username} gained ${xpToGive} XP`);
+
     if (levelDifference > 0) {
+      await addLog(
+        db,
+        user.id,
+        `LEVEL UP: ${user.username} leveled up to level ${targetUser.level + levelDifference}. Granting ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+      );
       logger.info(
         `LEVEL UP: User ${user.username} leveled up to level ${targetUser.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );

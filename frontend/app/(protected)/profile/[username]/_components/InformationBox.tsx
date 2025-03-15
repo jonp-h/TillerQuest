@@ -53,7 +53,7 @@ export default async function InformationBox({
           <Typography variant="h4" align="center">
             Daily Cosmic:{" "}
             <strong className="text-green-400">
-              {cosmic.name.replace("-", " ")}
+              {cosmic.name.replace(/-/g, " ")}
             </strong>
           </Typography>
           <Typography variant="h6" align="center">

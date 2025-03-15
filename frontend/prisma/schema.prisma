@@ -134,6 +134,7 @@ model User {
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
 
+  logs      Log[] // m-n relation to logs. A user can have many logs
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Session   Session[]
@@ -236,6 +237,15 @@ model ShopItem {
   classReq    Class?
   specialReq  String?
   users       User[] // m-n relation to users. An item can be owned by many users
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model TypeQuestText {

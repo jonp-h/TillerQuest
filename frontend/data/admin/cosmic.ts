@@ -179,7 +179,6 @@ export const setSelectedCosmic = async (cosmicName: string) => {
             });
           }
         } else {
-          console.log("No ability found for cosmic");
           await db.userPassive.create({
             data: {
               user: {
@@ -195,6 +194,12 @@ export const setSelectedCosmic = async (cosmicName: string) => {
             },
           });
         }
+        await db.log.create({
+          data: {
+            userId: user.id,
+            message: `COSMIC: Today's cosmic event is ${cosmic.name.replace(/-/g, " ")}!`,
+          },
+        });
       }
 
       if (!cosmic) {
