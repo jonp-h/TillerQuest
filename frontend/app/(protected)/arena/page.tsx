@@ -27,7 +27,7 @@ async function ArenaPage() {
         {deadUsers.length > 0 && (
           <>
             <h1 className="my-10 text-2xl text-red-400 text-center">
-              Naughty people
+              The dead
             </h1>
             <div className="bg-red-900/50 lg:w-1/2 p-5 rounded-lg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {deadUsers.map((user) => (
@@ -62,7 +62,7 @@ async function ArenaPage() {
             </div>
           </>
         )}
-        <div className="flex flex-col mt-10 w-full gap-3 justify-center lg:flex-row">
+        <div className="flex flex-col mt-10 w-full gap-3 justify-center xl:flex-row">
           <Leaderboard title={"Vg1"} users={usersVg1} />
           <Leaderboard title={"Vg2"} users={usersVg2} />
         </div>
