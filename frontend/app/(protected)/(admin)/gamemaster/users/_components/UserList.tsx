@@ -55,7 +55,7 @@ export default function NewUserList({
     useState<GridRowSelectionModel>([]);
 
   return (
-    <Paper sx={{ height: 500, width: "100%" }}>
+    <Paper sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <DataGrid
         rows={users}
         columns={columns}

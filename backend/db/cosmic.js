@@ -494,7 +494,7 @@ const cosmic = [
   },
   {
     name: "Vigilance",
-    description: "Anyone caught with eyes closed loses 15 HP and 15 Mana.",
+    description: "Anyone caught with eyes closed loses 15 HP.",
     // icon: ".png"
     // presetDate: "",
     frequency: 5,
@@ -644,7 +644,7 @@ const cosmic = [
     // icon: ".png"
     // presetDate: "",
     frequency: 10,
-    automatic: false,
+    automatic: true,
     increaseCostType: "Damage",
     increaseCostValue: 100, // 100% increased damage
     blockAbilityType: "Heal",
@@ -762,6 +762,21 @@ const cosmic = [
     // icon: ".png"
     // presetDate: "",
     frequency: 20,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    name: "Linux-lovers",
+    description:
+      "All students with a Linux-based operating system present on their computer gains 200 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 10,
     automatic: false,
     increaseCostType: null,
     increaseCostValue: null,

@@ -34,10 +34,7 @@ export default function ListControls({ users }: { users: User[] }) {
       setFeedback("No users selected");
       return;
     }
-    if (value <= 0) {
-      setFeedback("Value must be greater than 0");
-      return;
-    }
+
     startTransition(async () => {
       switch (action) {
         case "heal":
@@ -166,6 +163,11 @@ export default function ListControls({ users }: { users: User[] }) {
         <Typography className=" text-center" variant="h6">
           Custom value
         </Typography>
+        {value < 0 && (
+          <Typography color="error" className="text-center">
+            Warning: Negative values can lead to unexpected consequences!
+          </Typography>
+        )}
         <div className="flex flex-col w-1/3 m-auto text-center items-center justify-center py-3">
           <TextField
             className="w-2/3"
