@@ -15,6 +15,7 @@ import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
+import { auth } from "@/auth";
 
 export default async function ProfilePage({
   params,
@@ -28,13 +29,17 @@ export default async function ProfilePage({
     notFound();
   }
 
+  const session = await auth();
+
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
   const userAbilities = await getUserAbilities(user.id);
   const passives = await getUserPassives(user.id);
   return (
     <MainContainer>
-      <InformationBox user={user} />
+      {session?.user.username === user.username && (
+        <InformationBox user={user} />
+      )}
       <div className="flex flex-col justify-center lg:flex-row">
         {user.guildName && (
           <Paper
