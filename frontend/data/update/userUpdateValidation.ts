@@ -1,12 +1,16 @@
 "use server";
 
 import { auth } from "@/auth";
-import { escapeHtml, newUserSchema } from "@/lib/newUserValidation";
+import {
+  escapeHtml,
+  newUserSchema,
+  updateUserScehma,
+} from "@/lib/userValidation";
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateUserUpdate = async (id: string, data: any) => {
+export const validateUserCreation = async (id: string, data: any) => {
   const session = await auth();
   if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {
     return "Not authorized";
@@ -75,6 +79,44 @@ export const validateUserUpdate = async (id: string, data: any) => {
     playerClass: escapeHtml(validatedData.data.playerClass),
     guild: escapeHtml(validatedData.data.guild),
     schoolClass: escapeHtml(validatedData.data.schoolClass),
+    publicHighscore: validatedData.data.publicHighscore,
+  };
+
+  return sanitizedData;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const validateUserUpdate = async (id: string, data: any) => {
+  const session = await auth();
+  if (session?.user.id !== id || session?.user.role === "NEW" || !session) {
+    return "Not authorized";
+  }
+
+  const validatedData = updateUserScehma.safeParse(data);
+
+  if (!validatedData.success) {
+    return validatedData.error.errors.map((e) => e.message).join(", ");
+  }
+
+  const userNameTaken = await db.user.findFirst({
+    where: {
+      username: {
+        equals: validatedData.data.username,
+        mode: "insensitive",
+      },
+      NOT: {
+        id: id,
+      },
+    },
+  });
+
+  if (userNameTaken) {
+    return "Try a different username";
+  }
+
+  // Sanitize inputs
+  const sanitizedData = {
+    username: escapeHtml(validatedData.data.username),
     publicHighscore: validatedData.data.publicHighscore,
   };
 

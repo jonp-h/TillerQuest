@@ -19,7 +19,7 @@ import { checkNewUserSecret } from "@/data/update/secretValidation";
 import { SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { validateUserUpdate } from "@/data/update/userUpdateValidation";
+import { validateUserCreation } from "@/data/update/userUpdateValidation";
 
 export default function CreateUserForm() {
   // FIXME: switch to unstable_update in auth.ts when unstable_update is released
@@ -59,7 +59,10 @@ export default function CreateUserForm() {
     };
 
     try {
-      const validatedData = await validateUserUpdate(data.user.id, formValues);
+      const validatedData = await validateUserCreation(
+        data.user.id,
+        formValues,
+      );
 
       // if the data is a string, it is an error message
       if (typeof validatedData == "string") {
@@ -187,6 +190,25 @@ export default function CreateUserForm() {
               the right to remove or modify any content that violates these
               guidelines. Violations can lead to consequences within the school
               organization, and banishment from the service.
+            </Typography>
+          </AccordionDetails>
+          <AccordionSummary
+            expandIcon={<ArrowDownward />}
+            aria-controls="panel2-content"
+            id="panel2-header"
+          >
+            <Typography component="span">
+              By creating a user you also agree the consequences of{" "}
+              <span className="text-red-500">dying in the game</span>
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography color="textSecondary">
+              By creating a user, you also agree to the consequences of dying in
+              the game. To name a few: <br />
+              - Losing your phone for the remaining duration of class to a
+              &quot;phone jail&quot;. <br />- Temporary wearing a silly hat.{" "}
+              <br /> - Having a pop-quiz
             </Typography>
           </AccordionDetails>
         </Accordion>

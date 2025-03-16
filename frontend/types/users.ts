@@ -16,6 +16,7 @@ export interface UserProfile {
   gold: number;
   arenaTokens: number;
   gemstones: number;
+  publicHighscore: boolean;
   inventory: {
     name: string;
     specialReq: string | null;

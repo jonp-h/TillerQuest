@@ -46,3 +46,15 @@ export const newUserSchema = z.object({
   }),
   publicHighscore: z.boolean(),
 });
+
+export const updateUserScehma = z.object({
+  username: z
+    .string()
+    .min(3, "Username must be above 3 characters")
+    .max(20, "Username must be below 20 characters")
+    .regex(
+      /^[a-zA-Z0-9-_]+$/,
+      "Username may only contain letters, numbers, - and _",
+    ),
+  publicHighscore: z.boolean(),
+});

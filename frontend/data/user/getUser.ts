@@ -78,6 +78,7 @@ export const getUserProfileByUsername = async (username: string) => {
         image: true,
         guildName: true,
         lastMana: true,
+        publicHighscore: true,
         inventory: {
           where: {
             specialReq: { not: null },
