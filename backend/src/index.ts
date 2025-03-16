@@ -279,7 +279,7 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every day before midnight to remove all cosmic passives and abilities
+// Schedule a job to run every day before midnight to remove all cosmic passives, abilities and 14 day old logs
 cron.schedule(
   "59 23 * * *",
   async () => {
@@ -296,7 +296,16 @@ cron.schedule(
         },
       });
 
-      console.log("Removed cosmic passives and abilities");
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+      await db.log.deleteMany({
+        where: {
+          createdAt: { lte: twoWeeksAgo },
+        },
+      });
+
+      console.log("Removed cosmic passives, abilities and logs");
     } catch (error) {
       console.error("Error removing cosmic passives and abilities:", error);
     }

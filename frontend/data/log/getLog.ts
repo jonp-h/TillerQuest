@@ -15,10 +15,19 @@ export const getAllLogs = async () => {
       orderBy: {
         createdAt: "desc",
       },
+      where: {
+        message: {
+          not: {
+            startsWith: "COSMIC",
+          },
+        },
+      },
     });
+
     return logs;
   } catch (error) {
-    return logger.error("Failed to get logs: ", error);
+    logger.error("Failed to get logs: ", error);
+    return null;
   }
 };
 

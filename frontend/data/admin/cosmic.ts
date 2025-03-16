@@ -197,7 +197,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
         await db.log.create({
           data: {
             userId: user.id,
-            message: `COSMIC: Today's cosmic event is ${cosmic.name.replace(/-/g, " ")}!`,
+            message: `COSMIC: Today's cosmic event is "${cosmic.name.replace(/-/g, " ")}"!`,
           },
         });
       }
@@ -206,6 +206,12 @@ export const setSelectedCosmic = async (cosmicName: string) => {
         throw new Error("Cosmic not found");
       }
 
+      await db.log.create({
+        data: {
+          userId: session.user.id || "",
+          message: `GM ${session.user.username} has selected the cosmic event "${cosmic.name.replace(/-/g, " ")}"`,
+        },
+      });
       return cosmic;
     });
   } catch (error) {
