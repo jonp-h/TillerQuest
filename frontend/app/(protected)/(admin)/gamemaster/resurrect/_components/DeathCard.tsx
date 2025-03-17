@@ -14,6 +14,7 @@ import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin/resurrectUser";
 import DiceBox from "@3d-dice/dice-box";
 import { useRouter } from "next/navigation";
+import { diceSettings } from "@/lib/diceSettings";
 
 export default function DeathCard({ user }: { user: User }) {
   const [number, setNumber] = React.useState<number | null>(0);
@@ -30,15 +31,7 @@ export default function DeathCard({ user }: { user: User }) {
 
   const initializeDiceBox = async () => {
     try {
-      const newDiceBox = new DiceBox({
-        container: "#dice-canvas", // required
-        assetPath: "/assets/", // required
-        themeColor: "#581c87",
-        scale: 6,
-        gravity: 0.5,
-        restitution: 0.3,
-        settleTimeout: 6000,
-      });
+      const newDiceBox = new DiceBox(diceSettings);
       await newDiceBox.init();
       setDiceBox(newDiceBox);
     } catch (error) {
