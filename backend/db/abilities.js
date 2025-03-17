@@ -554,7 +554,7 @@ const bard = [
     target: 0,
     description:
       "You inspire your guildmembers, giving the entire guild 5 extra max mana for 7 days.",
-    duration: 10080,
+    duration: 10080, // 7 days
     icon: "Inspire.png",
     gemstoneCost: 1,
     manaCost: 1,
@@ -586,7 +586,7 @@ const bard = [
     target: 0,
     description:
       "You conjure a feast, temporarily increasing the max health of all guildmembers by 5 for 2 days.",
-    duration: 480, // 8 hours
+    duration: 2880, // 2 days
     icon: "Feast-of-Heroes.png",
     gemstoneCost: 1,
     manaCost: 2,
@@ -602,7 +602,7 @@ const bard = [
     target: 0,
     description:
       "You perform a heartfelt song, increasing experience gained for all guildmembers for the day by 25%. This ability stacks.",
-    duration: 1440, // 48 hours
+    duration: 1440, // 24 hours
     icon: "Heartfelt-Performance.png",
     gemstoneCost: 1,
     manaCost: 3,
