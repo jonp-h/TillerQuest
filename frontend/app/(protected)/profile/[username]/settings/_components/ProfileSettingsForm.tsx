@@ -23,7 +23,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const router = useRouter();
 
   const handleUpdate = async () => {
-    const validatedData = validateUserUpdate(user.id, {
+    const validatedData = await validateUserUpdate(user.id, {
       username,
       publicHighscore,
     });
@@ -34,9 +34,12 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
       return;
     }
 
-    await updateUser(user.id, { username, publicHighscore });
+    await updateUser(user.id, {
+      username: validatedData.username,
+      publicHighscore: validatedData.publicHighscore,
+    });
     setFeedback("Profile updated");
-    router.push(`/profile/${username}/settings`);
+    router.push(`/profile/${validatedData.username}/settings`);
     window.location.reload();
   };
 
