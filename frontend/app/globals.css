@@ -70,3 +70,19 @@ h1 {
   width: 100%;
   height: 100%;
 }
+
+@keyframes move-up-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@layer utilities {
+  .animate-move-up-down {
+    animation: move-up-down 3s ease-in-out infinite;
+  }
+}
