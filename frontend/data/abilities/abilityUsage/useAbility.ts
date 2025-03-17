@@ -263,7 +263,6 @@ const finalizeAbilityUsage = async (
 
 // ---------------------------- Helper function for passive abilities ----------------------------
 
-// eslint-disable react-hooks/rules-of-hooks
 const activatePassive = async (
   db: PrismaTransaction,
   castingUser: User,
@@ -322,10 +321,10 @@ const activatePassive = async (
           },
         });
       }
-      await finalizeAbilityUsage(db, castingUser, ability);
-      return "Activated " + ability.name + "!";
     }),
   );
+  await finalizeAbilityUsage(db, castingUser, ability);
+  return "Activated " + ability.name + "!";
 };
 
 // ---------------------------- Helper functions for specific ability types ----------------------------
