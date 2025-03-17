@@ -23,7 +23,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const router = useRouter();
 
   const handleUpdate = async () => {
-    const validatedData = validateUserUpdate(user.id, {
+    const validatedData = await validateUserUpdate(user.id, {
       username,
       publicHighscore,
     });
