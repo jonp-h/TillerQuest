@@ -602,7 +602,7 @@ const bard = [
     target: 0,
     description:
       "You perform a heartfelt song, increasing experience gained for all guildmembers for the day by 25%. This ability stacks.",
-    duration: 2880, // 48 hours
+    duration: 1440, // 48 hours
     icon: "Heartfelt-Performance.png",
     gemstoneCost: 1,
     manaCost: 3,
