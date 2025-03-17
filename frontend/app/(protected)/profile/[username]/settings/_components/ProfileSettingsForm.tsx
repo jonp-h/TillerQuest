@@ -19,10 +19,12 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const [username, setUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
   const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const handleUpdate = async () => {
+    setLoading(true);
     const validatedData = await validateUserUpdate(user.id, {
       username,
       publicHighscore,
@@ -31,6 +33,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     // if the data is a string, it is an error message
     if (typeof validatedData == "string") {
       setFeedback(validatedData);
+      setLoading(false);
       return;
     }
 
@@ -40,7 +43,10 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     });
     setFeedback("Profile updated");
     router.push(`/profile/${validatedData.username}/settings`);
-    window.location.reload();
+    setLoading(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   return (
@@ -92,6 +98,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
         variant="contained"
         color="primary"
         onClick={() => handleUpdate()}
+        disabled={loading}
       >
         Update
       </Button>
