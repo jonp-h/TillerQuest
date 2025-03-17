@@ -35,15 +35,20 @@ async function Leaderboard({ users, title }: LeaderboardProps) {
   return (
     <div className="flex flex-col justify-center items-center h-full">
       <h1 className="text-3xl">Top 10 Leaderboard {title}</h1>
-      <TableContainer component={Paper} elevation={2} className="p-3 my-2">
-        <Table sx={{ minWidth: "30vw" }} aria-label="leaderboard">
+      <TableContainer
+        sx={{ maxWidth: "50vw" }}
+        component={Paper}
+        elevation={2}
+        className="p-3 my-2"
+      >
+        <Table aria-label="leaderboard">
           <TableHead>
             <TableRow>
               <TableCell align="center" colSpan={2}>
                 User
               </TableCell>
               <TableCell align="center">XP</TableCell>
-              <TableCell align="center">Class</TableCell>
+              {/* <TableCell align="center">Class</TableCell> */}
               <TableCell align="center">Level</TableCell>
               <TableCell align="center">Guild</TableCell>
               <TableCell align="center">Schoolclass</TableCell>
@@ -89,9 +94,9 @@ async function Leaderboard({ users, title }: LeaderboardProps) {
                 >
                   {user.xp}
                 </TableCell>
-                <TableCell sx={{ fontSize: "125%" }} align="center">
+                {/* <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.class}
-                </TableCell>
+                </TableCell> */}
                 <TableCell sx={{ fontSize: "125%" }} align="center">
                   {user.level}
                 </TableCell>

@@ -55,6 +55,7 @@ export const validateUserCreation = async (id: string, data: any) => {
       members: {
         select: {
           class: true,
+          id: true,
         },
       },
     },
@@ -62,7 +63,9 @@ export const validateUserCreation = async (id: string, data: any) => {
 
   if (
     guildClasses?.members.some(
-      (member) => member.class === validatedData.data.playerClass.slice(0, -1),
+      (member) =>
+        member.class === validatedData.data.playerClass.slice(0, -1) &&
+        member.id !== id,
     )
   ) {
     return (
