@@ -39,6 +39,9 @@ const typeQuestTexts = [
     text: "cybersecurity is the practice of protecting systems, networks, and data from digital attacks, breaches, and unauthorized access. it encompasses a range of technologies, processes, and practices designed to safeguard information and prevent cyber threats. cybersecurity measures include encryption, firewalls, antivirus software, and intrusion detection systems, among others. with the rise of cybercrime and data breaches, cybersecurity has become a critical priority for organizations and individuals, ensuring the confidentiality, integrity, and availability of digital assets.",
   },
   {
+    text: "linux is an open-source operating system based on the linux kernel, used in a wide range of devices, from servers to smartphones. it offers a high degree of customization, stability, and security, making it popular among developers and system administrators. linux distributions, like ubuntu and debian, provide user-friendly interfaces and extensive software repositories, enabling users to customize their systems to suit their needs. linux's flexibility, scalability, and cost-effectiveness make it a versatile platform for development, hosting, and embedded systems.",
+  },
+  {
     text: "artificial intelligence (ai) is the simulation of human intelligence processes by machines, such as learning, reasoning, and problem-solving. it encompasses a broad range of technologies, from machine learning to natural language processing, enabling systems to perform tasks that typically require human intelligence. ai applications include speech recognition, image analysis, autonomous vehicles, and chatbots, transforming industries and driving innovation. as ai continues to advance, its potential to augment human capabilities and solve complex problems is reshaping the future of technology and society.",
   },
   {
