@@ -157,7 +157,7 @@ const trickery = [
     duration: 480, // 8 hours
     icon: "Postpone.png",
     gemstoneCost: 2,
-    manaCost: 10,
+    manaCost: 5,
     healthCost: null,
     xpGiven: 0,
     value: null,
@@ -173,7 +173,7 @@ const trickery = [
     duration: 1440, // 24 hours
     icon: "Greater-Postpone.png",
     gemstoneCost: 4,
-    manaCost: 15,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 0,
     value: null,
@@ -189,7 +189,7 @@ const trickery = [
     duration: 2880, // 48 hours
     icon: "Superior-Postpone.png",
     gemstoneCost: 6,
-    manaCost: 20,
+    manaCost: 15,
     healthCost: null,
     xpGiven: 0,
     value: null,
