@@ -22,6 +22,22 @@ export const validateUserCreation = async (id: string, data: any) => {
     return validatedData.error.errors.map((e) => e.message).join(", ");
   }
 
+  // validate if the user guild has the same schoolclass
+  const guildSchoolClass = await db.guild.findFirst({
+    where: {
+      name: {
+        equals: validatedData.data.guild,
+      },
+    },
+    select: {
+      schoolClass: true,
+    },
+  });
+
+  if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
+    return "The chosen guild is not available for your school class";
+  }
+
   // validate if the user guild is full
   const guildCount = await getGuildmemberCount(id, validatedData.data.guild);
   if (guildCount >= 5) {

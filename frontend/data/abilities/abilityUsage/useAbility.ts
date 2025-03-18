@@ -361,11 +361,11 @@ const useHealAbility = async (
           },
         },
       });
-      await finalizeAbilityUsage(db, castingUser, ability);
       return "Healed " + valueToHeal + " health";
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
   );
@@ -492,11 +492,11 @@ const useTransferAbility = async (
         },
       });
 
-      await finalizeAbilityUsage(db, castingUser, ability);
       return "Target given " + ability.value + " " + fieldToUpdate;
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
@@ -551,11 +551,11 @@ const useSwapAbility = async (
     },
   });
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
   return "You swapped health with the target";
 };
 
@@ -585,11 +585,11 @@ const useTradeAbility = async (
     },
   });
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
   return (
     "You traded " +
     ability.healthCost +
@@ -637,11 +637,11 @@ const useProtectionAbility = async (
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
   return results.toString();
 };
 
@@ -679,11 +679,11 @@ const useArenaAbility = async (
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
   return "Guild recieved " + ability.value + " arena tokens";
 };
 

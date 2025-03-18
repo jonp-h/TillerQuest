@@ -38,13 +38,27 @@ export default function ListControls({ users }: { users: User[] }) {
     startTransition(async () => {
       switch (action) {
         case "heal":
+          if (value < 0) {
+            setFeedback("Negative values are not allowed for healing");
+            return;
+          }
           setFeedback(await healUsers(selectedUsers, value, notify));
           break;
         case "damage":
+          if (value < 0) {
+            setFeedback("Negative values are not allowed for damage");
+            return;
+          }
           setFeedback(await damageUsers(selectedUsers, value, notify));
           break;
         case "xp":
           setFeedback(await giveXpToUsers(selectedUsers, value, notify));
+          if (value < 0) {
+            setFeedback(
+              "Successfully removed XP from selected users. Levels and gemstones are not refunded.",
+            );
+            return;
+          }
           break;
         case "mana":
           setFeedback(await giveManaToUsers(selectedUsers, value, notify));
