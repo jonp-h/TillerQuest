@@ -141,7 +141,7 @@ const trickery = [
     duration: 1440, // 24 hours
     icon: "Twist-of-Fate.png",
     gemstoneCost: 4,
-    manaCost: 8,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 100,
     value: null,
@@ -305,7 +305,7 @@ const druid = [
     duration: null,
     icon: "Heal.png",
     gemstoneCost: 1,
-    manaCost: 2,
+    manaCost: 4,
     healthCost: null,
     xpGiven: 25,
     value: 4,
@@ -320,7 +320,7 @@ const druid = [
     duration: null,
     icon: "Greater-Heal.png",
     gemstoneCost: 2,
-    manaCost: 3,
+    manaCost: 8,
     healthCost: null,
     xpGiven: 50,
     value: 6,
@@ -335,7 +335,7 @@ const druid = [
     duration: null,
     icon: "Superior-Heal.png",
     gemstoneCost: 4,
-    manaCost: 4,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 100,
     value: 8,
@@ -350,7 +350,7 @@ const druid = [
     duration: null,
     icon: "Healing-Aura.png",
     gemstoneCost: 4,
-    manaCost: 3,
+    manaCost: 5,
     healthCost: null,
     xpGiven: 100,
     value: 3,
@@ -366,7 +366,7 @@ const druid = [
     duration: null,
     icon: "Revive.png",
     gemstoneCost: 6,
-    manaCost: 6,
+    manaCost: 15,
     healthCost: null,
     xpGiven: 500,
     value: null,
@@ -399,7 +399,7 @@ const barbarian = [
     duration: 60,
     icon: "Shield.png",
     gemstoneCost: 2,
-    manaCost: 2,
+    manaCost: 4,
     healthCost: null,
     xpGiven: 50,
     value: 2,
@@ -525,7 +525,7 @@ const bloodMage = [
     duration: null,
     icon: "Crimson-Shift.png",
     gemstoneCost: 4,
-    manaCost: 4,
+    manaCost: 6,
     healthCost: null,
     xpGiven: 100,
     value: null,
@@ -549,6 +549,9 @@ const bloodMage = [
 ];
 
 const bard = [
+  // Should this last for 7 days when for 2 of the days we are not at school?
+  // Should this be a starting ability!?!? I believe it should be further down the tree or give less XP
+  // TODO: Adjust Inspire ability
   {
     name: "Inspire",
     category: "Bard",
@@ -559,7 +562,7 @@ const bard = [
     duration: 10080, // 7 days
     icon: "Inspire.png",
     gemstoneCost: 1,
-    manaCost: 1,
+    manaCost: 5, // Adjusting mana cost for now
     healthCost: null,
     xpGiven: 200,
     value: 5,
@@ -591,7 +594,7 @@ const bard = [
     duration: 2880, // 2 days
     icon: "Feast-of-Heroes.png",
     gemstoneCost: 4,
-    manaCost: 2,
+    manaCost: 6,
     healthCost: null,
     xpGiven: 100,
     value: 5,
@@ -607,7 +610,7 @@ const bard = [
     duration: 1440, // 24 hours
     icon: "Heartfelt-Performance.png",
     gemstoneCost: 4,
-    manaCost: 3,
+    manaCost: 5,
     healthCost: null,
     xpGiven: 100,
     value: 25,
