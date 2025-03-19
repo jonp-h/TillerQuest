@@ -11,6 +11,7 @@ import {
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
+import { addLog } from "@/data/log/addLog";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -258,6 +259,7 @@ const finalizeAbilityUsage = async (
     },
   });
 
+  addLog(db, user.id, `${user.username} used ${ability.name}`);
   await experienceAndLevelValidator(db, user, ability.xpGiven!);
 };
 
