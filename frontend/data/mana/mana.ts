@@ -6,6 +6,7 @@ import { dailyMana } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
 import { User } from "@prisma/client";
 import { auth } from "@/auth";
+import { addLog } from "../log/addLog";
 
 export const getDailyMana = async (user: User) => {
   const session = await auth();
@@ -45,6 +46,7 @@ export const getDailyMana = async (user: User) => {
       },
     });
 
+    addLog(db, user.id, `${user.username} recieved ${manaValue} dailyMana`);
     return "And as you focus, you feel your mana restoring. You also find a token in your pocket.";
   } else {
     logger.error("Error getting daily " + manaValue + " mana: " + user.id);
