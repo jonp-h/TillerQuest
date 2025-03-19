@@ -150,6 +150,7 @@ export const damageUsers = async (
  * @returns A string indicating the result of the operation.
  */
 export const giveXpToUsers = async (
+  // FIXME: strings
   users: User[],
   xp: number,
   notify: boolean,
@@ -180,6 +181,7 @@ export const giveXpToUsers = async (
 };
 
 export const giveManaToUsers = async (
+  // FIXME: strings
   users: User[],
   mana: number,
   notify: boolean,
@@ -231,6 +233,7 @@ export const giveManaToUsers = async (
 };
 
 export const giveArenatokenToUsers = async (
+  // FIXME: strings
   users: User[],
   arenatoken: number,
   notify: boolean,
@@ -274,6 +277,7 @@ export const giveArenatokenToUsers = async (
 };
 
 export const giveGoldToUsers = async (
+  // FIXME: strings
   users: User[],
   gold: number,
   notify: boolean,

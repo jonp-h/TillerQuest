@@ -29,7 +29,7 @@ import { addLog } from "@/data/log/addLog";
 export const selectAbility = async (
   userId: string,
   targetUsersIds: string[],
-  ability: Ability,
+  abilityName: string,
 ) => {
   const session = await auth();
   if (session?.user?.id !== userId) {
@@ -48,6 +48,19 @@ export const selectAbility = async (
 
   if (castingUser.hp === 0) {
     return "You can't use abilities while dead";
+  }
+
+  const ability = await prisma.ability.findFirst({
+    where: {
+      name: abilityName,
+    },
+  });
+
+  if (!ability) {
+    logger.error(
+      `User ${castingUser.username} tried to use ability ${abilityName} but it does not exist`,
+    );
+    return "Ability not found";
   }
 
   const cosmic = await prisma.cosmicEvent.findFirst({

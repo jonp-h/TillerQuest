@@ -4,7 +4,7 @@ import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 
@@ -39,7 +39,7 @@ export default function AbilityForm({
   guildMembers: guildMembers;
   activePassive: boolean;
 }) {
-  const [selectedUser, setSelectedUser] = React.useState<string>(
+  const [selectedUser, setSelectedUser] = useState<string>(
     guildMembers?.[0].id || "",
   );
 
@@ -108,7 +108,7 @@ export default function AbilityForm({
         break;
     }
 
-    const result = await selectAbility(user.id, targetUsers, ability);
+    const result = await selectAbility(user.id, targetUsers, ability.name);
     toast.info(typeof result === "string" ? result : null);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -137,10 +137,10 @@ export default function AbilityForm({
       return;
     }
 
-    // when buying an abillity, check passive. if passive immediatly use.
+    // when buying an abillity, check passive. if passive immediately activate
     // if passive, disable use button
 
-    toast.success(await buyAbility(user.id, ability));
+    toast.success(await buyAbility(user.id, ability.name));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();

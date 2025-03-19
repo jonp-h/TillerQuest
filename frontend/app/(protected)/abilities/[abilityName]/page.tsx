@@ -46,7 +46,7 @@ export default async function AbilityNamePage({
     notFound();
   }
 
-  const activePassive = await checkIfPassiveIsActive(user, ability);
+  const activePassive = await checkIfPassiveIsActive(user.id, ability.name);
 
   const userIsCorrectClass =
     !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||

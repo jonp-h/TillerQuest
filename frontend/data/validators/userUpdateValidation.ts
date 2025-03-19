@@ -16,27 +16,30 @@ export const validateUserCreation = async (id: string, data: any) => {
     return "Not authorized";
   }
 
+  console.log("update validation: " + JSON.stringify(data));
+
   const validatedData = newUserSchema.safeParse(data);
 
   if (!validatedData.success) {
     return validatedData.error.errors.map((e) => e.message).join(", ");
   }
 
-  // validate if the user guild has the same schoolclass
-  const guildSchoolClass = await db.guild.findFirst({
-    where: {
-      name: {
-        equals: validatedData.data.guild,
-      },
-    },
-    select: {
-      schoolClass: true,
-    },
-  });
+  //TODO: use guild and schoolclass restrictions?
+  // // validate if the user guild has the same schoolclass
+  // const guildSchoolClass = await db.guild.findFirst({
+  //   where: {
+  //     name: {
+  //       equals: validatedData.data.guild,
+  //     },
+  //   },
+  //   select: {
+  //     schoolClass: true,
+  //   },
+  // });
 
-  if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
-    return "The chosen guild is not available for your school class";
-  }
+  // if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
+  //   return "The chosen guild is not available for your school class";
+  // }
 
   // validate if the user guild is full
   const guildCount = await getGuildmemberCount(id, validatedData.data.guild);

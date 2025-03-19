@@ -21,7 +21,7 @@ export const resurrectUsers = async ({
   effect: string;
 }) => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
 
