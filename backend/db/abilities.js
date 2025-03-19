@@ -414,7 +414,7 @@ const barbarian = [
     icon: "Battle-Ready.png",
     gemstoneCost: 1,
     manaCost: null,
-    healthCost: 5,
+    healthCost: 10,
     xpGiven: 50,
     value: 1,
     parentAbility: "Toughness",
