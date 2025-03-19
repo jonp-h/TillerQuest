@@ -6,6 +6,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 import { Inter, Julius_Sans_One } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "TillerQuest",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={TillerQuestTheme}>
             <Navbar />
+            <ToastContainer theme="dark" />
             {children}
             <Footer />
           </ThemeProvider>
