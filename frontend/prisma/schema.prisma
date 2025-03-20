@@ -117,6 +117,7 @@ model User {
   arenaTokens Int        @default(0)
   special     String[] // notes and other information
   inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
+  games       Game[] // m-n relation to games. A user can have many games
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 
@@ -246,6 +247,18 @@ model Log {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Game {
+  id        String   @id @default(cuid())
+  game      String
+  userId    String
+  score     Int      @default(0)
+  startedAt DateTime @default(now())
+  status    String   @default("INPROGRESS")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId])
 }
 
 model TypeQuestText {

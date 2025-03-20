@@ -13,7 +13,7 @@ function TypeQuest({
   handleFinishGame: () => void;
   setMoneyReward: (reward: number) => void;
 }) {
-  const maxTime = 60;
+  const maxTime = 5;
   const [time, setTime] = useState(maxTime);
   const [isTyping, setIsTyping] = useState(false);
   const [mistakes, setMistakes] = useState(0);

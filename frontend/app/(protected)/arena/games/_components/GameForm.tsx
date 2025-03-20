@@ -6,29 +6,42 @@ import { finishGame, startGame } from "@/data/games/game";
 import { useRouter } from "next/navigation";
 import TypeQuest from "./TypeQuest";
 import { Circle, Stadium } from "@mui/icons-material";
+import { toast } from "react-toastify";
+import { createHmac } from "@/lib/hmac";
 
 function GameForm({ user }: { user: User }) {
   const [gameVisible, setGameVisible] = useState(false);
   const [moneyReward, setMoneyReward] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
+  const [gameId, setGameId] = useState<string | null>(null);
 
-  const [feedback, setFeedback] = useState("");
   const router = useRouter();
 
   const handleStartGame = async () => {
-    if (await startGame(user.id)) {
+    const gameId = await startGame(user.id, "TypeQuest");
+    if (gameId) {
       setGameVisible(true);
       setGameEnabled(true);
-      setFeedback("");
       setMoneyReward(0);
+      setGameId(gameId);
     } else {
-      setFeedback("Not enough tokens");
+      toast.error("Not enough tokens");
     }
   };
 
+  // const memoizedUpdateGameState = useCallback(async (score: number) => {
+  //   if (gameId) {
+  //     createHmac(gameId, score);
+  //     await updateGame(gameId, score);
+  //     setMoneyReward(score);
+  //   }
+  // }, []);
+
   const handleFinishGame = async () => {
-    if (gameEnabled === true) {
-      await finishGame(user.id, moneyReward);
+    if (gameEnabled === true && gameId) {
+      const hmac = createHmac(gameId, moneyReward);
+      toast.success(await finishGame(gameId || "", moneyReward, hmac));
+      setGameId(null);
     }
     setGameEnabled(false);
     router.refresh();
@@ -70,11 +83,6 @@ function GameForm({ user }: { user: User }) {
           >
             Buy one round (1 <Stadium className="mx-1" />)
           </Button>
-        )}
-        {feedback && (
-          <Typography variant="h6" color="info">
-            {feedback}
-          </Typography>
         )}
       </div>
 
