@@ -9,7 +9,7 @@ import { addLog } from "../log/addLog";
 
 export const getDailyMana = async (userId: string) => {
   const session = await auth();
-  if (session?.user?.id !== userId) {
+  if (!session || session.user.role === "NEW" || session?.user?.id !== userId) {
     throw new Error("Not authorized");
   }
 
