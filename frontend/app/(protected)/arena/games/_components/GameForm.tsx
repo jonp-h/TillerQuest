@@ -16,7 +16,7 @@ function GameForm({ user }: { user: User }) {
   const router = useRouter();
 
   const handleStartGame = async () => {
-    if (await startGame(user)) {
+    if (await startGame(user.id)) {
       setGameVisible(true);
       setGameEnabled(true);
       setFeedback("");

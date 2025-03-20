@@ -5,19 +5,24 @@ import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
 
-export const startGame = async (userName: string) => {
+export const startGame = async (userId: string) => {
   const session = await auth();
-  if (!session || !session?.user.id) {
+  if (!session || !session?.user.id || session?.user.id !== userId) {
     return "Not authorized";
   }
 
   const user = await db.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: userId },
+    select: {
+      id: true,
+      username: true,
+      arenaTokens: true,
+    },
   });
 
   if (!user) {
     logger.error(
-      `${userName} (id: ${session.user.id}) tried to start a game, but the user was not found`,
+      `id: ${session.user.id} tried to start a game, but the user was not found`,
     );
     return "User not found";
   }
@@ -35,7 +40,7 @@ export const startGame = async (userName: string) => {
 
 export const finishGame = async (userId: string, score: number) => {
   const session = await auth();
-  if (!session || !session?.user.id) {
+  if (!session || !session?.user.id || session?.user.id !== userId) {
     return "Not authorized";
   }
 
