@@ -110,7 +110,7 @@ export const updateGame = async (
     }
 
     const mistakePenalty = 1 - mistakes / (charIndex + 1);
-    const score = Math.floor(cpm * mistakePenalty + charIndex);
+    const score = Math.floor(cpm * 2 * mistakePenalty + charIndex);
     const totalCharacters = charIndex;
 
     const metadata = {

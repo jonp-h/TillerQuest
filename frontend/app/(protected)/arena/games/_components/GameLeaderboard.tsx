@@ -42,15 +42,15 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
           <TableHead>
             <TableRow>
               <TableCell align="center" colSpan={2}>
-                User
+                USER
               </TableCell>
-              <TableCell align="center">Score</TableCell>
+              <TableCell align="center">SCORE</TableCell>
               {users.length > 0 &&
                 //   eslint-disable-next-line @typescript-eslint/no-explicit-any
                 Object.keys(users[0].metadata as Record<string, any>).map(
                   (key) => (
                     <TableCell align="center" key={key}>
-                      {key}
+                      {key.toUpperCase()}
                     </TableCell>
                   ),
                 )}

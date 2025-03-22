@@ -88,6 +88,12 @@ enum AbilityType {
   IncreaseMana
 }
 
+enum GameStatus {
+  PENDING
+  INPROGRESS
+  FINISHED
+}
+
 enum ShopItemType {
   Title
   Badge
@@ -123,7 +129,7 @@ model User {
 
   passives UserPassive[] // m-n relation to user passives. A user can have many passives
 
-  guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  guild     Guild?  @relation(fields: [guildName], references: [name], onUpdate: Cascade)
   guildName String?
 
   role UserRole @default(NEW)
@@ -139,6 +145,8 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Session   Session[]
+
+  @@index([username])
 }
 
 model Guild {
@@ -246,7 +254,7 @@ model Log {
   message   String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Game {
@@ -260,12 +268,6 @@ model Game {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
-}
-
-enum GameStatus {
-  PENDING
-  INPROGRESS
-  FINISHED
 }
 
 model TypeQuestText {
@@ -288,7 +290,7 @@ model Account {
   id_token                 String? @db.Text
   session_state            String?
   refresh_token_expires_in Int?
-  user                     User?   @relation(fields: [userId], references: [id])
+  user                     User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -302,7 +304,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
