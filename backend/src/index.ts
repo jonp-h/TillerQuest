@@ -76,9 +76,13 @@ cron.schedule(
         });
 
         for (const passive of usersWithIncreasedHealth) {
+          const newHp = Math.min(
+            passive.user.hp,
+            passive.user.hpMax - (passive.value ?? 0),
+          );
           await db.user.update({
             where: { id: passive.userId },
-            data: { hpMax: { decrement: passive.value || 0 } },
+            data: { hp: newHp, hpMax: { decrement: passive.value || 0 } },
           });
         }
 
@@ -93,9 +97,13 @@ cron.schedule(
         });
 
         for (const passive of usersWithIncreasedMana) {
+          const newMana = Math.min(
+            passive.user.mana,
+            passive.user.manaMax - (passive.value ?? 0),
+          );
           await db.user.update({
             where: { id: passive.userId },
-            data: { manaMax: { decrement: passive.value || 0 } },
+            data: { mana: newMana, manaMax: { decrement: passive.value || 0 } },
           });
         }
 
