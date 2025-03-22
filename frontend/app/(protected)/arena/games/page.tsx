@@ -4,6 +4,7 @@ import GameForm from "./_components/GameForm";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { getUserById } from "@/data/user/getUser";
+import GameLeaderboard from "./_components/GameLeaderboard";
 
 async function Games() {
   const session = await auth();
@@ -21,6 +22,9 @@ async function Games() {
   return (
     <MainContainer>
       <GameForm user={user} />
+      <div className="flex justify-center">
+        <GameLeaderboard gameName="TypeQuest" />
+      </div>
     </MainContainer>
   );
 }

@@ -290,7 +290,7 @@ const users = [
   {
     name: "Game Master",
     description: "Available to all GMs",
-    price: 999999999999,
+    price: 2147483647, // The maximum value for a 32-bit signed integer
     type: "Badge",
     levelReq: null,
     classReq: null,
