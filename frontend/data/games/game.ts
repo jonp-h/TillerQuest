@@ -4,9 +4,8 @@ import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
-import { createHmac } from "crypto";
 
-export const startGame = async (userId: string, gameName: string) => {
+export const initializeGame = async (userId: string, gameName: string) => {
   const session = await auth();
   if (!session || !session?.user.id || session?.user.id !== userId) {
     return "Not authorized";
@@ -48,55 +47,91 @@ export const startGame = async (userId: string, gameName: string) => {
   });
 };
 
-// export const updateGame = async (gameId: string, score: number) => {
-//   const session = await auth();
-//   if (!session || session?.user.role === "NEW") {
-//     return "Not authorized";
-//   }
-//   return await prisma.$transaction(async (db) => {
-//     const game = await db.game.findUnique({
-//       where: { id: gameId },
-//     });
-
-//     if (
-//       !game ||
-//       game.userId !== session.user.id ||
-//       game.status !== "INPROGRESS"
-//     ) {
-//       return "Invalid game session";
-//     }
-
-//     await db.game.update({
-//       where: { id: gameId },
-//       data: { score },
-//     });
-//     return "Updated";
-//   });
-// };
-
-const verifyHmac = (gameId: string, score: number, hmac: string) => {
-  const secretKey = process.env.HMAC_SECRET_KEY;
-  if (!secretKey) {
-    throw new Error("HMAC_SECRET_KEY not set");
+export const startGame = async (gameId: string) => {
+  const session = await auth();
+  if (!session || session?.user.role === "NEW") {
+    return "Not authorized";
   }
-  const expectedHmac = createHmac("sha256", secretKey)
-    .update(`${gameId}:${score}`)
-    .digest("hex");
-  return expectedHmac === hmac;
+  return await prisma.$transaction(async (db) => {
+    const game = await db.game.update({
+      where: { id: gameId, status: "PENDING" },
+      data: { status: "INPROGRESS", startedAt: new Date() },
+    });
+    if (!game) {
+      return "Invalid game session";
+    }
+    return true;
+  });
 };
 
-export const finishGame = async (
+export const updateGame = async (
   gameId: string,
-  score: number,
-  hmac: string,
+  charIndex: number,
+  mistakes: number,
 ) => {
   const session = await auth();
   if (!session || session?.user.role === "NEW") {
     return "Not authorized";
   }
+  return await prisma.$transaction(async (db) => {
+    const game = await db.game.findUnique({
+      where: { id: gameId },
+    });
 
-  if (!verifyHmac(gameId, score, hmac)) {
-    return "Invalid data";
+    if (
+      !game ||
+      game.userId !== session.user.id ||
+      game.status !== "INPROGRESS"
+    ) {
+      return "Invalid game state";
+    }
+
+    const maxTime = 60;
+    const timeElapsed =
+      (new Date().getTime() - new Date(game.startedAt).getTime()) / 1000;
+    const time = maxTime - timeElapsed;
+    const correctChars = charIndex - mistakes;
+    const totalTime = maxTime - time;
+
+    // words per minute. Mathmatical standard is 5 characters per word
+    let wpm = Math.round((correctChars / 5 / totalTime) * 60);
+    wpm = wpm < 0 || !wpm || wpm == Infinity ? 0 : Math.floor(wpm);
+
+    // characters per minute
+    let cpm = correctChars * (60 / totalTime);
+    cpm = cpm < 0 || !cpm || cpm == Infinity ? 0 : Math.floor(cpm);
+
+    // unrealistic values cancel the game
+    if (charIndex > 800 || wpm > 120) {
+      await db.game.delete({
+        where: { id: gameId, status: "INPROGRESS" },
+      });
+      return "Invalid game state, game aborted";
+    }
+
+    const mistakePenalty = 1 - mistakes / (charIndex + 1);
+    const score = Math.floor(cpm * mistakePenalty + charIndex);
+    const totalCharacters = charIndex;
+
+    const metadata = {
+      wpm,
+      cpm,
+      totalCharacters,
+      mistakes,
+    };
+
+    await db.game.update({
+      where: { id: gameId },
+      data: { score, metadata },
+    });
+    return { wpm, cpm, score };
+  });
+};
+
+export const finishGame = async (gameId: string) => {
+  const session = await auth();
+  if (!session || session?.user.role === "NEW") {
+    return "Not authorized";
   }
 
   return await prisma.$transaction(async (db) => {
@@ -155,4 +190,34 @@ export const getRandomTypeQuestText = async () => {
   });
 
   return typeQuestText;
+};
+
+export const getGameLeaderboard = async (gameName: string) => {
+  const session = await auth();
+  if (!session || session?.user.role === "NEW") {
+    throw new Error("Not authorized");
+  }
+
+  const leaderboard = await prisma.game.findMany({
+    where: { game: gameName, status: "FINISHED" },
+    select: {
+      score: true,
+      metadata: true,
+      user: {
+        select: {
+          title: true,
+          image: true,
+          name: true,
+          username: true,
+          lastname: true,
+        },
+      },
+    },
+    orderBy: {
+      score: "desc",
+    },
+    take: 10,
+  });
+
+  return leaderboard;
 };

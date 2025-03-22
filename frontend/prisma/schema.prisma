@@ -250,15 +250,22 @@ model Log {
 }
 
 model Game {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   game      String
   userId    String
-  score     Int      @default(0)
-  startedAt DateTime @default(now())
-  status    String   @default("INPROGRESS")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  score     Int        @default(0)
+  startedAt DateTime   @default(now())
+  status    GameStatus @default(PENDING)
+  metadata  Json?
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
+}
+
+enum GameStatus {
+  PENDING
+  INPROGRESS
+  FINISHED
 }
 
 model TypeQuestText {

@@ -1,55 +1,41 @@
 "use client";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
-import { useCallback, useState } from "react";
-import { finishGame, startGame } from "@/data/games/game";
+import { useState } from "react";
+import { finishGame, initializeGame } from "@/data/games/game";
 import { useRouter } from "next/navigation";
 import TypeQuest from "./TypeQuest";
 import { Circle, Stadium } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import { createHmac } from "@/lib/hmac";
 
 function GameForm({ user }: { user: User }) {
   const [gameVisible, setGameVisible] = useState(false);
-  const [moneyReward, setMoneyReward] = useState(0);
+  const [score, setScore] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
   const [gameId, setGameId] = useState<string | null>(null);
 
   const router = useRouter();
 
-  const handleStartGame = async () => {
-    const gameId = await startGame(user.id, "TypeQuest");
+  const handleInitializeGame = async () => {
+    const gameId = await initializeGame(user.id, "TypeQuest");
     if (gameId) {
       setGameVisible(true);
       setGameEnabled(true);
-      setMoneyReward(0);
+      setScore(0);
       setGameId(gameId);
     } else {
       toast.error("Not enough tokens");
     }
   };
 
-  // const memoizedUpdateGameState = useCallback(async (score: number) => {
-  //   if (gameId) {
-  //     createHmac(gameId, score);
-  //     await updateGame(gameId, score);
-  //     setMoneyReward(score);
-  //   }
-  // }, []);
-
   const handleFinishGame = async () => {
     if (gameEnabled === true && gameId) {
-      const hmac = createHmac(gameId, moneyReward);
-      toast.success(await finishGame(gameId || "", moneyReward, hmac));
+      toast.success(await finishGame(gameId || ""));
       setGameId(null);
     }
     setGameEnabled(false);
     router.refresh();
   };
-
-  const memoizedSetMoneyReward = useCallback((reward: number) => {
-    setMoneyReward(reward);
-  }, []);
 
   return (
     <div className="flex flex-col mt-5 text-center justify-center">
@@ -79,7 +65,7 @@ function GameForm({ user }: { user: User }) {
             variant="contained"
             size="large"
             disabled={user.arenaTokens < 1 || gameEnabled}
-            onClick={handleStartGame}
+            onClick={handleInitializeGame}
           >
             Buy one round (1 <Stadium className="mx-1" />)
           </Button>
@@ -92,12 +78,13 @@ function GameForm({ user }: { user: User }) {
             gameEnabled={gameEnabled}
             setGameEnabled={setGameEnabled}
             handleFinishGame={handleFinishGame}
-            setMoneyReward={memoizedSetMoneyReward}
+            setScore={setScore}
+            gameId={gameId}
           />
         )}
         <div className="mt-5">
           <Typography variant="h6" color="info">
-            {moneyReward > 0 && `You earned ${moneyReward} gold coins`}
+            {score > 0 && `You earned ${score} gold coins`}
           </Typography>
         </div>
       </div>
