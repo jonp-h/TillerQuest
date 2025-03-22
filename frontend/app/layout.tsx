@@ -39,7 +39,7 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={TillerQuestTheme}>
             <Navbar />
-            <ToastContainer theme="dark" />
+            <ToastContainer theme="dark" position="bottom-right" />
             {children}
             <Footer />
           </ThemeProvider>
