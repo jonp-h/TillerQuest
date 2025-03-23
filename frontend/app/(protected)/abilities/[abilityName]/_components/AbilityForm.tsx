@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
+import DiceBox from "@3d-dice/dice-box-threejs";
+import { diceSettings } from "@/lib/diceSettings";
+import { GamesTwoTone } from "@mui/icons-material";
 
 type guildMembers =
   | {
@@ -42,11 +45,11 @@ export default function AbilityForm({
   const [selectedUser, setSelectedUser] = useState<string>(
     guildMembers?.[0].id || "",
   );
+  const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const guildMembersWithoutUser =
     guildMembers?.filter((member) => member.id !== user.id) || [];
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const lackingResource =
     user.mana < (ability.manaCost || 0) ||
@@ -55,6 +58,20 @@ export default function AbilityForm({
   const isDead = user.hp === 0;
 
   const router = useRouter();
+
+  // ---------------- Initialize dice ----------------
+
+  const initializeDiceBox = async () => {
+    try {
+      const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+      await newDiceBox.initialize();
+      setDiceBox(newDiceBox);
+    } catch (error) {
+      console.error("Error initializing DiceBox:", error);
+    }
+  };
+
+  // ---------------- UI helpers ----------------
 
   const getBuyButtonText = () => {
     if (!isPurchaseable) {
@@ -80,6 +97,8 @@ export default function AbilityForm({
         (user.hp <= (ability.healthCost || 0 + 1) ? "health" : "mana") +
         " to use this ability."
       );
+    } else if (!diceBox) {
+      return "Prepare dice!";
     }
     return ability.duration === null
       ? "Use ability"
@@ -88,11 +107,25 @@ export default function AbilityForm({
 
   // ---------------- Use ability ----------------
 
+  const handleSetSelectedUser = (userId: string) => {
+    initializeDiceBox();
+    setSelectedUser(userId);
+  };
+
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     setIsLoading(true);
 
+    console.log(diceBox);
+
     let targetUsers = [selectedUser];
+
+    if (!diceBox && ability.diceNotation) {
+      initializeDiceBox();
+      toast.info("Preparing dice..");
+      setIsLoading(false);
+      return;
+    }
 
     switch (ability.target) {
       case -1:
@@ -109,11 +142,24 @@ export default function AbilityForm({
     }
 
     const result = await selectAbility(user.id, targetUsers, ability.name);
-    toast.info(typeof result === "string" ? result : null);
+    if (typeof result === "string") {
+      toast.error(result);
+      setIsLoading(false);
+      return;
+    }
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    router.refresh();
-    setIsLoading(false);
+    if (result?.message && result?.dice && diceBox) {
+      console.log(ability.diceNotation + "@" + result.dice);
+      diceBox
+        .roll(ability.diceNotation + "@" + result.dice)
+        .then(() => {
+          toast.info(result.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          router.refresh();
+        });
+    }
   };
 
   // ---------------- Buy ability ----------------
@@ -151,13 +197,18 @@ export default function AbilityForm({
 
   return (
     <>
+      <div
+        id="dice-canvas"
+        className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
+      />
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>
+          {diceBox && <GamesTwoTone className="absolute" />}
           <AbilityUserSelect
             target={ability.target}
             selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
+            setSelectedUser={handleSetSelectedUser}
             guildMembers={guildMembersWithoutUser}
           />
           <Button

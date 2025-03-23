@@ -19,7 +19,7 @@ type guildMembers =
 interface Props {
   target: number;
   selectedUser: string | undefined;
-  setSelectedUser: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedUser: (userId: string) => void;
   guildMembers: guildMembers;
 }
 

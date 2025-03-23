@@ -12,6 +12,7 @@ import {
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
 import { addLog } from "@/data/log/addLog";
+import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -342,6 +343,41 @@ const activatePassive = async (
   return "Activated " + ability.name + "!";
 };
 
+/**
+ * Calculates the value of an ability for a user.
+ *
+ * @param ability - The ability being used.
+ * @param user - The user who is using the ability.
+ * @returns An object containing the total value of the ability.
+ *
+ * @remarks
+ * - If the ability has a static value, that value is returned.
+ * - If the ability has a dice notation, the value is calculated based on the dice roll.
+ * - If the ability does not have a value or dice notation, a total value of 0 is returned.
+ */
+const getAbilityValue = (ability: Ability) => {
+  // if an ability has a static value, return it.
+  if (ability.value) {
+    return { total: ability.value };
+  }
+
+  if (!ability.diceNotation) {
+    return { total: 0 };
+  }
+  const roll = new DiceRoll(ability.diceNotation);
+  // @ts-expect-error - the package's export function is not typed correctly
+  return roll.export(exportFormats.OBJECT) as {
+    averageTotal: number;
+    maxTotal: number;
+    minTotal: number;
+    notation: string;
+    output: string;
+    // rolls: any[];
+    total: number;
+    type: string;
+  };
+};
+
 // ---------------------------- Helper functions for specific ability types ----------------------------
 const useHealAbility = async (
   db: PrismaTransaction,
@@ -349,13 +385,15 @@ const useHealAbility = async (
   targetUsersIds: string[],
   ability: Ability,
 ) => {
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability, castingUser);
+
+  await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       // validate health to heal and passives
       const valueToHeal = await healingValidator(
         db,
         targetUserId,
-        ability.value ?? 0,
+        abilityValue.total,
       );
 
       if (valueToHeal === 0) {
@@ -366,7 +404,7 @@ const useHealAbility = async (
         return valueToHeal;
       }
 
-      await db.user.update({
+      const targetUser = await db.user.update({
         where: {
           id: targetUserId,
         },
@@ -375,8 +413,15 @@ const useHealAbility = async (
             increment: valueToHeal,
           },
         },
+        select: {
+          username: true,
+        },
       });
-      return "Healed " + valueToHeal + " health";
+      addLog(
+        db,
+        targetUserId,
+        `${targetUser.username} was healed for ${valueToHeal} by ${castingUser.username}`,
+      );
     }),
   );
 
@@ -385,7 +430,13 @@ const useHealAbility = async (
     `User ${castingUser.username} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
   );
 
-  return results.toString();
+  return {
+    message: "Healed " + abilityValue.total + " sucessfully",
+    dice:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useReviveAbility = async (
@@ -427,16 +478,18 @@ const useManaAbility = async (
   targetUserIds: string[],
   ability: Ability,
 ) => {
-  // validate mana value and passives
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability, castingUser);
+
+  await Promise.all(
     targetUserIds.map(async (targetUserId) => {
-      const value = await manaValidator(db, targetUserId, ability.value!);
+      // validate mana value and passives
+      const value = await manaValidator(db, targetUserId, abilityValue.total);
 
       // if the value is a string, it's an error message
       if (typeof value === "string") {
         return value;
       }
-      await db.user.update({
+      const targetUser = await db.user.update({
         where: {
           id: targetUserId,
         },
@@ -445,8 +498,15 @@ const useManaAbility = async (
             increment: value,
           },
         },
+        select: {
+          username: true,
+        },
       });
-      return "Successfully gave " + value + " mana";
+      addLog(
+        db,
+        targetUserId,
+        `${targetUser.username} recieved ${value} mana from ${castingUser.username}`,
+      );
     }),
   );
 
@@ -455,7 +515,13 @@ const useManaAbility = async (
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
-  return results.toString();
+  return {
+    message: "Healed " + abilityValue.total + " sucessfully",
+    dice:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useTransferAbility = async (
