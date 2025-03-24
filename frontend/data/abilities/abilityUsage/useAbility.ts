@@ -148,7 +148,9 @@ export const selectAbility = async (
 
         case "Trickery":
           if (ability.name === "Evade") {
-            return useEvadeAbility(db, castingUser, ability);
+            return await useEvadeAbility(db, castingUser, ability);
+          } else if (ability.name === "Twist-of-Fate") {
+            return await useTwistOfFateAbility(db, castingUser, ability);
           }
           return await activatePassive(
             db,
@@ -401,14 +403,14 @@ const useHealAbility = async (
         abilityValue.total,
       );
 
-      if (valueToHeal === 0) {
+      if (valueToHeal === 0 && targetUsersIds.length === 1) {
         throw new ErrorMessage("Target is already at full health");
-      } else if (valueToHeal === "dead") {
+      } else if (valueToHeal === "dead" && targetUsersIds.length === 1) {
         throw new ErrorMessage(
           "You can't heal a dead target. The dead require a different kind of magic.",
         );
       } else if (typeof valueToHeal === "string") {
-        throw new Error(valueToHeal);
+        throw new ErrorMessage(valueToHeal);
       }
 
       const targetUser = await db.user.update({
@@ -496,7 +498,9 @@ const useManaAbility = async (
       const value = await manaValidator(db, targetUserId, abilityValue.total);
 
       // if the value is a string, it's an error message
-      if (typeof value === "string") {
+      if (value === 0 && targetUserIds.length === 1) {
+        throw new ErrorMessage("Target is already at max mana");
+      } else if (typeof value === "string") {
         throw new ErrorMessage(value);
       }
       const targetUser = await db.user.update({
@@ -715,7 +719,7 @@ const useProtectionAbility = async (
         },
       });
 
-      if (targetHasPassive) {
+      if (targetHasPassive && targetUserIds.length === 1) {
         throw new ErrorMessage("Target already has this passive");
       }
 
@@ -824,4 +828,31 @@ const useEvadeAbility = async (
   );
 
   return { message: "Cosmic event evaded!", diceRoll: "" };
+};
+
+const useTwistOfFateAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  ability: Ability,
+) => {
+  const dice = getAbilityValue(ability);
+
+  let message = "";
+  if (dice.total === 20) {
+    message =
+      "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
+  } else {
+    message = "You rolled a " + dice.total + ". Better luck next time!";
+  }
+
+  await activatePassive(db, castingUser, [castingUser.id], ability);
+  addLog(
+    db,
+    castingUser.id,
+    `${castingUser.username} used Twist of Fate, and rolled a ${dice.total}`,
+  );
+  return {
+    message,
+    diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+  };
 };
