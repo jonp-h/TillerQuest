@@ -1,17 +1,24 @@
-import { getRandomTypeQuestText } from "@/data/games/game";
+import {
+  getRandomTypeQuestText,
+  startGame,
+  updateGame,
+} from "@/data/games/game";
 import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 function TypeQuest({
   gameEnabled,
   setGameEnabled,
   handleFinishGame,
-  setMoneyReward,
+  setScore,
+  gameId,
 }: {
   gameEnabled: boolean;
   setGameEnabled: (enabled: boolean) => void;
   handleFinishGame: () => void;
-  setMoneyReward: (reward: number) => void;
+  setScore: (score: number) => void;
+  gameId: string | null;
 }) {
   const maxTime = 60;
   const [time, setTime] = useState(maxTime);
@@ -48,26 +55,22 @@ function TypeQuest({
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
     if (isTyping && time > 0) {
-      interval = setInterval(() => {
+      interval = setInterval(async () => {
         setTime((time) => time - 1);
-        const correctChars = charIndex - mistakes;
-        const totalTime = maxTime - time;
-
-        // words per minute. Mathmatical standard is 5 characters per word
-        let wpm = Math.round((correctChars / 5 / totalTime) * 60);
-        wpm = wpm < 0 || !wpm || wpm == Infinity ? 0 : wpm;
-        setWPM(Math.floor(wpm));
-
-        // characters per minute
-        let cpm = correctChars * (60 / totalTime);
-        cpm = cpm < 0 || !cpm || cpm == Infinity ? 0 : cpm;
-        setCPM(Math.floor(cpm));
+        // Update game data every 2 seconds to reduce the number of requests
+        if (time % 2 === 0) {
+          const gamedata = await updateGame(gameId || "", charIndex, mistakes);
+          if (typeof gamedata === "string") {
+            toast.error(gamedata);
+            return;
+          }
+          const { wpm, cpm, score } = gamedata || { wpm: 0, cpm: 0, score: 0 };
+          setWPM(wpm);
+          setCPM(cpm);
+          // the money reward given to the player upon completion of the game
+          setScore(score);
+        }
       }, 1000);
-
-      // the money reward given to the player upon completion of the game
-      setMoneyReward(
-        Math.floor(((CPM * (charIndex - mistakes)) / (mistakes + 1)) * 0.1) + 1,
-      );
     } else if (time === 0) {
       clearInterval(interval);
       setIsTyping(false);
@@ -85,10 +88,11 @@ function TypeQuest({
     setMistakesIndex(Array(currentParagraph.length).fill(false));
   }, [currentParagraph]);
 
-  const startGame = async () => {
+  const handleStartGame = async () => {
     if (!gameEnabled) {
       return;
     }
+    await startGame(gameId || "");
     let newParagraph = currentParagraph;
     while (newParagraph === currentParagraph) {
       const text = await getRandomTypeQuestText();
@@ -192,7 +196,7 @@ function TypeQuest({
           <Button
             variant="contained"
             color="primary"
-            onClick={startGame}
+            onClick={handleStartGame}
             disabled={!gameEnabled || isTyping}
           >
             Start

@@ -21,7 +21,7 @@ export const getAllShopItems = async () => {
 
 export const purchaseItem = async (userId: string, itemId: string) => {
   const session = await auth();
-  if (userId !== session?.user.id) {
+  if (!session || userId !== session?.user.id) {
     return "Unauthorized";
   }
 

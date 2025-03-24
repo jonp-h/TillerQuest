@@ -15,11 +15,11 @@ import {
 import React, { useState } from "react";
 import Classes from "./Classes";
 import { useSession } from "next-auth/react";
-import { checkNewUserSecret } from "@/data/update/secretValidation";
+import { checkNewUserSecret } from "@/data/validators/secretValidation";
 import { SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { validateUserCreation } from "@/data/update/userUpdateValidation";
+import { validateUserCreation } from "@/data/validators/userUpdateValidation";
 
 export default function CreateUserForm() {
   // FIXME: switch to unstable_update in auth.ts when unstable_update is released
@@ -74,7 +74,7 @@ export default function CreateUserForm() {
       // add initial username, class and class image
       // sends to auth.ts, which updates the token and the db
       await update({
-        role: "USER",
+        secret,
         username: validatedData.username,
         name: validatedData.name,
         lastname: validatedData.lastname,

@@ -1,5 +1,3 @@
-"use server";
-
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { getUserPassiveEffect } from "../passives/getPassive";
@@ -200,7 +198,8 @@ export const experienceAndLevelValidator = async (
       },
     });
 
-    await addLog(db, user.id, `${user.username} gained ${xpToGive} XP`);
+    if (xpToGive > 0)
+      await addLog(db, user.id, `${user.username} gained ${xpToGive} XP`);
 
     if (levelDifference > 0) {
       await addLog(

@@ -1,6 +1,6 @@
 "use client";
-import { validateUserUpdate } from "@/data/update/userUpdateValidation";
-import { updateUser } from "@/data/user/updateUser";
+import { validateUserUpdate } from "@/data/validators/userUpdateValidation";
+import { updateProfile } from "@/data/user/updateUser";
 import { UserProfile } from "@/types/users";
 import { ArrowBack } from "@mui/icons-material";
 import {
@@ -14,11 +14,11 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const [username, setUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
-  const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -32,16 +32,16 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
 
     // if the data is a string, it is an error message
     if (typeof validatedData == "string") {
-      setFeedback(validatedData);
+      toast.error(validatedData);
       setLoading(false);
       return;
     }
 
-    await updateUser(user.id, {
+    await updateProfile(user.id, {
       username: validatedData.username,
       publicHighscore: validatedData.publicHighscore,
     });
-    setFeedback("Profile updated");
+    toast.success("Profile updated");
     router.push(`/profile/${validatedData.username}/settings`);
     setLoading(false);
     setTimeout(() => {
@@ -102,11 +102,6 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
       >
         Update
       </Button>
-      {feedback && (
-        <Typography variant="body1" color="info">
-          {feedback}
-        </Typography>
-      )}
     </Paper>
   );
 }

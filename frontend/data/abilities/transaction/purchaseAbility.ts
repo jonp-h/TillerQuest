@@ -3,7 +3,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { Ability } from "@prisma/client";
 import { selectAbility } from "../abilityUsage/useAbility";
 
 /**
@@ -13,7 +12,7 @@ import { selectAbility } from "../abilityUsage/useAbility";
  * @param ability - The ability to be bought.
  * @returns A promise that resolves to "Success" if the ability is successfully bought, or a string indicating an error if something goes wrong.
  */
-export const buyAbility = async (userId: string, ability: Ability) => {
+export const buyAbility = async (userId: string, abilityName: string) => {
   const session = await auth();
   if (session?.user?.id !== userId) {
     throw new Error("Not authorized");
@@ -32,6 +31,19 @@ export const buyAbility = async (userId: string, ability: Ability) => {
   // check if user has enough gemstones
   if (user.gemstones < 0) {
     throw new Error("Insufficient gemstones");
+  }
+
+  const ability = await db.ability.findFirst({
+    where: {
+      name: abilityName,
+    },
+  });
+
+  if (!ability) {
+    logger.error(
+      `User ${user.username} tried to buy non-existent ability ${abilityName}`,
+    );
+    throw new Error("Ability not found");
   }
 
   try {
@@ -60,7 +72,7 @@ export const buyAbility = async (userId: string, ability: Ability) => {
         ability.target === -1 && ability.duration === null;
 
       if (useAbilityImmediately) {
-        selectAbility(user.id, [user.id], ability);
+        selectAbility(user.id, [user.id], ability.name);
       }
 
       logger.info(`User ${user.username} bought ability ${ability.name}`);

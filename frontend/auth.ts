@@ -8,7 +8,11 @@ import { updateUser } from "./data/user/updateUser";
 
 export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   adapter: PrismaAdapter(db),
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
   ...authConfig,
   callbacks: {
     async session({ token, session }) {
@@ -41,7 +45,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
       if (trigger === "update") {
         token.role = session.role;
         await updateUser(token.sub, {
-          role: session.role,
+          secret: session.secret,
           username: session.username,
           name: session.name,
           lastname: session.lastname,

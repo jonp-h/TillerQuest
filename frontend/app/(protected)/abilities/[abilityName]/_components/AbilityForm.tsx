@@ -4,8 +4,9 @@ import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
+import { toast } from "react-toastify";
 
 type guildMembers =
   | {
@@ -38,14 +39,13 @@ export default function AbilityForm({
   guildMembers: guildMembers;
   activePassive: boolean;
 }) {
-  const [selectedUser, setSelectedUser] = React.useState<string>(
+  const [selectedUser, setSelectedUser] = useState<string>(
     guildMembers?.[0].id || "",
   );
 
   const guildMembersWithoutUser =
     guildMembers?.filter((member) => member.id !== user.id) || [];
 
-  const [feedback, setFeedback] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const lackingResource =
@@ -108,8 +108,8 @@ export default function AbilityForm({
         break;
     }
 
-    const result = await selectAbility(user.id, targetUsers, ability);
-    setFeedback(typeof result === "string" ? result : null);
+    const result = await selectAbility(user.id, targetUsers, ability.name);
+    toast.info(typeof result === "string" ? result : null);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
@@ -123,24 +123,24 @@ export default function AbilityForm({
     setIsLoading(true);
 
     if (!userIsCorrectClass) {
-      setFeedback("You are not the correct class to buy this ability.");
+      toast.error("You are not the correct class to buy this ability.");
       return;
     }
 
     if (missingParentAbility) {
-      setFeedback("Buy the necessary parent ability first.");
+      toast.error("Buy the necessary parent ability first.");
       return;
     }
 
     if (user.gemstones < ability.gemstoneCost) {
-      setFeedback("You don't have enough gemstones to buy this ability. ");
+      toast.error("You don't have enough gemstones to buy this ability. ");
       return;
     }
 
-    // when buying an abillity, check passive. if passive immediatly use.
+    // when buying an abillity, check passive. if passive immediately activate
     // if passive, disable use button
 
-    setFeedback(await buyAbility(user.id, ability));
+    toast.success(await buyAbility(user.id, ability.name));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
     router.refresh();
@@ -151,11 +151,6 @@ export default function AbilityForm({
 
   return (
     <>
-      {feedback && (
-        <Typography variant="body1" color="info">
-          {feedback}
-        </Typography>
-      )}
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>

@@ -151,7 +151,7 @@ export const changeUserRole = async (userId: string, role: string) => {
 
 export const updateRole = async (userId: string, role: UserRole) => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
 

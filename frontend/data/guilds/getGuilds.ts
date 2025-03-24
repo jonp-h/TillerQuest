@@ -29,10 +29,10 @@ export const getGuilds = async () => {
 };
 
 // get guild member count of all guilds, excluding the current user in the count
-export const getGuildsAndMemberCount = async (id: string) => {
+export const getGuildsAndMemberCount = async (userId: string) => {
   // Should be open to new users / users with a valid session
   const session = await auth();
-  if (session?.user.id !== id) {
+  if (session?.user.id !== userId) {
     throw new Error("Not authorized");
   }
 
@@ -46,7 +46,7 @@ export const getGuildsAndMemberCount = async (id: string) => {
       members: {
         where: {
           id: {
-            not: id,
+            not: userId,
           },
         },
       },
@@ -62,7 +62,11 @@ export const getGuildsAndMemberCount = async (id: string) => {
 };
 
 // get guild member count, excluding the current user
-export const getGuildmemberCount = async (id: string, guildName: string) => {
+export const getGuildmemberCount = async (
+  userId: string,
+  guildName: string,
+) => {
+  // FIXME: required to be open to new users?
   const guild = await db.guild.findFirst({
     where: {
       name: guildName,
@@ -73,7 +77,7 @@ export const getGuildmemberCount = async (id: string, guildName: string) => {
           members: {
             where: {
               id: {
-                not: id,
+                not: userId,
               },
             },
           },
