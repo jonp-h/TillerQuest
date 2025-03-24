@@ -1,6 +1,5 @@
 "use client";
 import { LinearProgress, Typography } from "@mui/material";
-import React from "react";
 import Image from "next/image";
 import clsx from "clsx";
 
@@ -19,7 +18,7 @@ type guildMembers =
 interface Props {
   target: number;
   selectedUser: string | undefined;
-  setSelectedUser: (userId: string) => void;
+  setSelectedUser: React.Dispatch<React.SetStateAction<string>>;
   guildMembers: guildMembers;
 }
 

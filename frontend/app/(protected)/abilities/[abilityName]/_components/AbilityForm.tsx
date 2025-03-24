@@ -4,7 +4,7 @@ import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
@@ -71,6 +71,15 @@ export default function AbilityForm({
     }
   };
 
+  // Delay of 500ms to prevent the dice box from rendering before the component is mounted
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      initializeDiceBox();
+    }, 500);
+
+    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+  }, []);
+
   // ---------------- UI helpers ----------------
 
   const getBuyButtonText = () => {
@@ -97,7 +106,7 @@ export default function AbilityForm({
         (user.hp <= (ability.healthCost || 0 + 1) ? "health" : "mana") +
         " to use this ability."
       );
-    } else if (!diceBox) {
+    } else if (!diceBox && ability.diceNotation) {
       return "Prepare dice!";
     }
     return ability.duration === null
@@ -107,24 +116,25 @@ export default function AbilityForm({
 
   // ---------------- Use ability ----------------
 
-  const handleSetSelectedUser = (userId: string) => {
-    initializeDiceBox();
-    setSelectedUser(userId);
-  };
-
   const handleUseAbility = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     setIsLoading(true);
 
-    console.log(diceBox);
-
     let targetUsers = [selectedUser];
 
+    // if diceBox is required and not initialized, initialize it first
     if (!diceBox && ability.diceNotation) {
       initializeDiceBox();
-      toast.info("Preparing dice..");
+      toast.info("Preparing dice..", { autoClose: 1000 });
       setIsLoading(false);
       return;
+    } else if (diceBox) {
+      diceBox.clearDice();
+      // TODO: enable custom colorsets for different abilities
+      // diceBox.updateConfig({
+      //   ...diceSettings,
+      //   theme_customColorset: colorsets.fire,
+      // });
     }
 
     switch (ability.target) {
@@ -142,23 +152,30 @@ export default function AbilityForm({
     }
 
     const result = await selectAbility(user.id, targetUsers, ability.name);
+    // if result is only a string, it's an error message
     if (typeof result === "string") {
       toast.error(result);
       setIsLoading(false);
+      router.refresh();
       return;
     }
 
-    if (result?.message && result?.dice && diceBox) {
-      console.log(ability.diceNotation + "@" + result.dice);
+    // if result has a diceRoll, roll the dice
+    if (result?.diceRoll && diceBox) {
       diceBox
-        .roll(ability.diceNotation + "@" + result.dice)
+        .roll(`${ability.diceNotation}@${result.diceRoll}`)
         .then(() => {
-          toast.info(result.message);
+          toast.success(result.message);
         })
         .finally(() => {
           setIsLoading(false);
           router.refresh();
         });
+      // if result has no diceRoll, just show the message
+    } else {
+      toast.success(result?.message);
+      setIsLoading(false);
+      router.refresh();
     }
   };
 
@@ -197,10 +214,6 @@ export default function AbilityForm({
 
   return (
     <>
-      <div
-        id="dice-canvas"
-        className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
-      />
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>
@@ -208,7 +221,7 @@ export default function AbilityForm({
           <AbilityUserSelect
             target={ability.target}
             selectedUser={selectedUser}
-            setSelectedUser={handleSetSelectedUser}
+            setSelectedUser={setSelectedUser}
             guildMembers={guildMembersWithoutUser}
           />
           <Button

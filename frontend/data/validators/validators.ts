@@ -130,12 +130,7 @@ export const damageValidator = async (
   damage = damage * (1 + increasedDamage);
 
   // reduce the damage by the passive effects
-  const reducedDamage = await getUserPassiveEffect(
-    db,
-    targetUserId,
-    "Protection",
-  );
-  const newDamage = damage - reducedDamage;
+  const newDamage = await protectionValidator(db, targetUserId, damage);
 
   // ensure the damage does not become negative
   const finalDamage = newDamage < 0 ? 0 : newDamage;
@@ -146,6 +141,44 @@ export const damageValidator = async (
   } else {
     return finalDamage;
   }
+};
+
+const protectionValidator = async (
+  db: PrismaTransaction,
+  targetUserId: string,
+  damage: number,
+) => {
+  // Get all protection passives for the user, sorted by remaining time
+  const protectionPassives = await db.userPassive.findMany({
+    where: {
+      userId: targetUserId,
+      effectType: "Protection",
+    },
+    orderBy: {
+      endTime: "asc",
+    },
+  });
+
+  let newDamage = damage;
+
+  for (const passive of protectionPassives) {
+    if (newDamage <= 0) break;
+
+    const reducedDamage = passive.value ?? 0;
+    newDamage -= reducedDamage;
+
+    // Remove the passive after it has been used
+    await db.userPassive.delete({
+      where: {
+        id: passive.id,
+      },
+    });
+  }
+
+  // Ensure the damage does not become negative
+  const finalDamage = newDamage < 0 ? 0 : newDamage;
+
+  return finalDamage;
 };
 
 export const experienceAndLevelValidator = async (

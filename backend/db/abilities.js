@@ -389,7 +389,7 @@ const druid = [
     healthCost: null,
     xpGiven: 100,
     diceNotation: "1d6",
-    value: 3,
+    value: null,
     parentAbility: "Greater-Heal",
   },
   {
@@ -433,7 +433,7 @@ const barbarian = [
     category: "Barbarian",
     type: "Protection",
     target: -1,
-    description: "You block 1d4 damage from all attacks for 4 hour.",
+    description: "You shield 1d4 damage from the next attack for 4 hours.",
     duration: 240, // 4 hours
     icon: "Shield.png",
     gemstoneCost: 1,
@@ -467,7 +467,7 @@ const barbarian = [
     type: "Protection",
     target: 1,
     description:
-      "You shield a guildmember from 1d6 damage for the next 4 hours.",
+      "You shield the next attack a guildmember from 1d6 damage for the next 4 hours.",
     duration: 10,
     icon: "Protector-of-the-Weak.png",
     gemstoneCost: 1,
@@ -484,7 +484,7 @@ const barbarian = [
     type: "Protection",
     target: 1,
     description:
-      "You shield a guildmember from 2d6 damage for the next 8 hours.",
+      "You shield the next attack a guildmember from 2d6 damage for the next 8 hours.",
     duration: 10,
     icon: "Test.jpg",
     gemstoneCost: 1,
@@ -493,7 +493,7 @@ const barbarian = [
     xpGiven: 100,
     diceNotation: "2d6",
     value: null,
-    parentAbility: "Shield",
+    parentAbility: "Protector-of-the-Weak",
   },
   {
     name: "Enhanced-Toughness",
@@ -584,8 +584,8 @@ const bloodMage = [
     type: "Swap",
     target: 1,
     description:
-      "You may swap health with a guildmember. You must have more health than the guildmember. The health of either cannot exceed their max health.",
-    duration: null,
+      "You may swap health with a guildmember. You must have more health than the guildmember. The health of either cannot exceed their max health. This ability can only be used once per day.",
+    duration: 480, // 8 hours
     icon: "Crimson-Shift.png",
     gemstoneCost: 1,
     manaCost: 4,
@@ -594,22 +594,6 @@ const bloodMage = [
     diceNotation: null,
     value: null,
     parentAbility: "Blood-Bond",
-  },
-  {
-    name: "Gift-of-Life",
-    category: "BloodMage",
-    type: "Trade",
-    target: -1,
-    description: "You may trade 10 health to recieve 5 mana.",
-    duration: null,
-    icon: "Gift-of-Life.png",
-    gemstoneCost: 1,
-    manaCost: 0,
-    healthCost: 10,
-    xpGiven: 100,
-    diceNotation: null,
-    value: 5,
-    parentAbility: "Bloodgift",
   },
   {
     name: "Gift-of-Life",
