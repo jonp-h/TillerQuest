@@ -9,7 +9,6 @@ import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { diceSettings } from "@/lib/diceSettings";
-import { GamesTwoTone } from "@mui/icons-material";
 
 type guildMembers =
   | {
@@ -217,7 +216,6 @@ export default function AbilityForm({
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>
-          {diceBox && <GamesTwoTone className="absolute" />}
           <AbilityUserSelect
             target={ability.target}
             selectedUser={selectedUser}

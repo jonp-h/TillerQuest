@@ -85,6 +85,7 @@ enum AbilityType {
   Magic
   Adventurer
   Arena
+  GoldPassive
   IncreaseHealth
   IncreaseMana
 }

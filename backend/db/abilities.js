@@ -727,7 +727,7 @@ const bloodMage = [
   {
     name: "Blood-Money",
     category: "BloodMage",
-    type: "Gold",
+    type: "GoldPassive",
     target: -1,
     description:
       "You curse the gold earned from the arena, increasing it by 1d10 % for 1 day.",
@@ -744,7 +744,7 @@ const bloodMage = [
   {
     name: "Cursed-Gold",
     category: "BloodMage",
-    type: "Gold",
+    type: "GoldPassive",
     target: -1,
     description:
       "You curse the gold earned from the arena for all guild members, increasing it by 5d10 % for 1 day.",
@@ -762,23 +762,6 @@ const bloodMage = [
 
 const bard = [
   {
-    name: "Inspire",
-    category: "Bard",
-    type: "IncreaseMana",
-    target: 0,
-    description:
-      "You inspire your guildmembers, giving the entire guild 5 extra max mana for 7 days.",
-    duration: 7200, // 5 days
-    icon: "Inspire.png",
-    gemstoneCost: 1,
-    manaCost: 1,
-    healthCost: null,
-    xpGiven: 200,
-    diceNotation: null,
-    value: 5,
-    parentAbility: null,
-  },
-  {
     name: "Performance",
     category: "Bard",
     type: "Experience",
@@ -790,10 +773,61 @@ const bard = [
     gemstoneCost: 1,
     manaCost: 2,
     healthCost: null,
+    xpGiven: 25,
+    diceNotation: "1d10",
+    value: null,
+    parentAbility: null,
+  },
+  {
+    name: "Streets-of-Gold",
+    category: "Bard",
+    type: "Gold",
+    target: -1,
+    description:
+      "You display your many talents to the crowd, gaining 10d10 gold for yourself.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: 3,
+    healthCost: null,
     xpGiven: 50,
+    diceNotation: "10d10",
+    value: null,
+    parentAbility: "Performance",
+  },
+  {
+    name: "Inspiration",
+    category: "Bard",
+    type: "IncreaseMana",
+    target: 0,
+    description:
+      "You inspire your guildmembers with words of wisdom, giving the entire guild 5 extra max mana for 5 days.",
+    duration: 7200, // 5 days
+    icon: "Inspire.png",
+    gemstoneCost: 2,
+    manaCost: 4,
+    healthCost: null,
+    xpGiven: 300,
     diceNotation: null,
-    value: 10,
-    parentAbility: "Inspire",
+    value: 5,
+    parentAbility: "Performance",
+  },
+  {
+    name: "Greater-Inspiration",
+    category: "Bard",
+    type: "IncreaseMana",
+    target: 0,
+    description:
+      "You inspire your guildmembers with great philosophy, giving the entire guild 5 extra max mana for 5 days.",
+    duration: 7200, // 5 days
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: 4,
+    healthCost: null,
+    xpGiven: 300,
+    diceNotation: null,
+    value: 5,
+    parentAbility: "Inspiration",
   },
   {
     name: "Feast-of-Heroes",
@@ -801,13 +835,13 @@ const bard = [
     type: "IncreaseHealth",
     target: 0,
     description:
-      "You conjure a feast, temporarily increasing the max health of all guildmembers by 5 for 2 days.",
+      "You bring forth a great feast, including magnificent food and drink - temporarily increasing the max health of all guildmembers by 5 for 2 days.",
     duration: 2880, // 2 days
     icon: "Feast-of-Heroes.png",
-    gemstoneCost: 1,
-    manaCost: 2,
+    gemstoneCost: 2,
+    manaCost: 4,
     healthCost: null,
-    xpGiven: 100,
+    xpGiven: 200,
     diceNotation: null,
     value: 5,
     parentAbility: "Performance",
@@ -818,11 +852,11 @@ const bard = [
     type: "Experience",
     target: 0,
     description:
-      "You perform a heartfelt song, increasing experience gained for all guildmembers for the day by 2d10%.",
+      "You and your guildmembers perform a heartfelt song, increasing experience gained for all guildmembers for the day by 2d10 %.",
     duration: 960, // 16 hours
     icon: "Heartfelt-Performance.png",
-    gemstoneCost: 1,
-    manaCost: 3,
+    gemstoneCost: 2,
+    manaCost: 4,
     healthCost: null,
     xpGiven: 100,
     diceNotation: "2d10",
@@ -830,21 +864,21 @@ const bard = [
     parentAbility: "Performance",
   },
   {
-    name: "Concert",
+    name: "Tavern-Dance",
     category: "Bard",
     type: "Experience",
     target: 0,
     description:
-      "You perform an incredible concert, increasing experience gained for all guildmembers for the day by 5d10 %.",
+      "You and your guildmembers perform an incredible dance, increasing experience gained for all guildmembers for the day by 5d10 %.",
     duration: 960, // 16 hours
     icon: "Test.jpg",
     gemstoneCost: 4,
     manaCost: 10,
     healthCost: null,
-    xpGiven: 100,
+    xpGiven: 200,
     diceNotation: "5d10",
     value: null,
-    parentAbility: "Performance",
+    parentAbility: "Heartfelt-Performance",
   },
 ];
 

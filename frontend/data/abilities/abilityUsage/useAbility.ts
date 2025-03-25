@@ -174,7 +174,7 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
-        case "Gold":
+        case "GoldPassive":
           return await activatePassive(
             db,
             castingUser,
@@ -197,6 +197,9 @@ export const selectAbility = async (
 
         case "Mana": // give mana to the target
           return await useManaAbility(db, castingUser, targetUsersIds, ability);
+
+        case "Gold":
+          return await useGoldAbility(db, castingUser, targetUsersIds, ability);
 
         case "Transfer": // transfer a resource from one player to another player
           return await useTransferAbility(
@@ -372,7 +375,7 @@ const activatePassive = async (
   await finalizeAbilityUsage(db, castingUser, ability);
   return {
     message: ability.diceNotation
-      ? "Rolled " +
+      ? "You rolled " +
         abilityValue.total +
         ". " +
         ability.name.replace(/-/g, " ") +
@@ -838,6 +841,43 @@ const useArenaAbility = async (
   return {
     message: "Guild recieved " + ability.value + " arena tokens",
     diceRoll: "",
+  };
+};
+
+const useGoldAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserIds: string[],
+  ability: Ability,
+) => {
+  const abilityValue = getAbilityValue(ability);
+
+  await Promise.all(
+    targetUserIds.map(async (targetUserId) => {
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          gold: {
+            increment: abilityValue.total,
+          },
+        },
+      });
+    }),
+  );
+
+  await finalizeAbilityUsage(db, castingUser, ability);
+  logger.info(
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+  );
+
+  return {
+    message: "You recieved " + abilityValue.total + " gold!",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
   };
 };
 
