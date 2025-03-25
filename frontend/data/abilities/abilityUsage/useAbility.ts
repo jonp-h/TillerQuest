@@ -174,6 +174,13 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
+        case "Gold":
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 
@@ -297,6 +304,8 @@ const activatePassive = async (
   targetUsersIds: string[],
   ability: Ability,
 ) => {
+  const abilityValue = getAbilityValue(ability);
+
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       const targetHasPassive = await db.userPassive.findFirst({
@@ -306,12 +315,21 @@ const activatePassive = async (
         },
       });
 
+      // TODO: ensure logic with multiple targets is correct
+      // if the target is single and already has the passive, return an error message
       if (targetHasPassive) {
         throw new ErrorMessage("Target already has this passive");
       }
+      // if there are multiple targets and one of them has the passive, replace it with a new one
+      // else if (targetHasPassive && targetUsersIds.length > 1) {
+      //   db.userPassive.delete({
+      //     where: {
+      //       id: targetHasPassive.id,
+      //     },
+      //   });
+      // }
 
-      // return db.$transaction(async (db) => {
-      // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
+      // if the ability duration is not undefined, create a counter from the current time for 600000ms (10 minutes)
       await db.userPassive.create({
         data: {
           userId: targetUserId,
@@ -319,7 +337,7 @@ const activatePassive = async (
           passiveName: ability.name,
           abilityName: ability.name,
           icon: ability.icon,
-          value: ability.value ?? 0,
+          value: abilityValue.total,
           endTime: ability.duration
             ? new Date(Date.now() + ability.duration * 60000).toISOString()
             : undefined, // 1 * 60000 = 1 minute
@@ -352,7 +370,19 @@ const activatePassive = async (
     }),
   );
   await finalizeAbilityUsage(db, castingUser, ability);
-  return { message: "Activated " + ability.name + "!", diceRoll: "" };
+  return {
+    message: ability.diceNotation
+      ? "Rolled " +
+        abilityValue.total +
+        ". " +
+        ability.name.replace(/-/g, " ") +
+        " activated!"
+      : "Activated " + ability.name.replace(/-/g, " ") + "!",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 /**
@@ -657,6 +687,13 @@ const useSwapAbility = async (
       hp: newHealthForTarget,
     },
   });
+
+  await addLog(
+    db,
+    targetUserId,
+    `${castingUser.username} swapped health with you`,
+    false,
+  );
 
   await activatePassive(db, castingUser, [castingUser.id], ability);
   logger.info(

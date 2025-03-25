@@ -20,7 +20,7 @@ function TypeQuest({
   setScore: (score: number) => void;
   gameId: string | null;
 }) {
-  const maxTime = 60;
+  const maxTime = 10;
   const [time, setTime] = useState(maxTime);
   const [isTyping, setIsTyping] = useState(false);
   const [mistakes, setMistakes] = useState(0);

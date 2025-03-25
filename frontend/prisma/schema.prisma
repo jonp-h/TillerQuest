@@ -67,6 +67,7 @@ enum AbilityType {
   Revive
   Damage
   ArenaToken
+  Gold
 
   // Passives
   Deathsave
@@ -252,6 +253,7 @@ model ShopItem {
 model Log {
   id        String   @id @default(cuid())
   userId    String
+  global    Boolean  @default(true) // If the log contains useful global information for game masters
   message   String
   createdAt DateTime @default(now())
 

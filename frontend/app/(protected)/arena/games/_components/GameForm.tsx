@@ -30,7 +30,14 @@ function GameForm({ user }: { user: User }) {
 
   const handleFinishGame = async () => {
     if (gameEnabled === true && gameId) {
-      toast.success(await finishGame(gameId || ""));
+      const game = await finishGame(gameId || "");
+      // if game is a string, it's an error message
+      if (typeof game === "string") {
+        toast.error(game);
+      } else {
+        toast.success(game.message);
+        setScore(game.gold);
+      }
       setGameId(null);
     }
     setGameEnabled(false);

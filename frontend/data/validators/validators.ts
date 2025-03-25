@@ -255,3 +255,41 @@ export const experienceAndLevelValidator = async (
     );
   }
 };
+
+export const goldValidator = async (
+  db: PrismaTransaction,
+  userId: string,
+  gold: number,
+) => {
+  const session = await auth();
+  if (session?.user.role === "NEW" || !session) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const targetUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: { gold: true },
+    });
+
+    if (!targetUser) {
+      throw new Error("User not found");
+    }
+
+    const goldMultipler =
+      (await getUserPassiveEffect(db, userId, "Gold")) / 100;
+    const goldToGive = Math.round(gold * (1 + goldMultipler));
+
+    return goldToGive;
+  } catch (error) {
+    logger.error("Validating gold failed: " + error);
+    throw new Error(
+      "Something went wrong at " +
+        Date.now().toLocaleString("no-NO") +
+        " with error: " +
+        error,
+    );
+  }
+};

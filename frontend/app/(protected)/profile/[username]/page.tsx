@@ -1,7 +1,13 @@
 import MainContainer from "@/components/MainContainer";
 import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
-import { LinearProgress, Paper, Tooltip, Typography } from "@mui/material";
+import {
+  Chip,
+  LinearProgress,
+  Paper,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -190,13 +196,20 @@ export default async function ProfilePage({
                 <Tooltip
                   placement="top"
                   enterDelay={1000}
-                  title={passive.value !== 0 && " Value " + passive.value}
+                  title={passive.ability?.description}
                   key={passive.passiveName}
                 >
                   <div
-                    className="flex flex-col items-center text-center gap-2"
+                    className="flex flex-col group items-center text-center gap-2 relative"
                     key={passive.passiveName}
                   >
+                    {passive.value === 0 ||
+                      (passive.value !== null && (
+                        <Chip
+                          label={passive.value}
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity delay-1000 duration-500 z-999"
+                        />
+                      ))}
                     <Link
                       href={
                         passive.ability
