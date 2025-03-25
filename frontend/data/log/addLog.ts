@@ -8,6 +8,7 @@ export const addLog = async (
   db: PrismaTransaction,
   userId: string,
   message: string,
+  global: boolean = true, // default to global
 ) => {
   const session = await auth();
   if (!session || session?.user.role === "NEW") {
@@ -18,6 +19,7 @@ export const addLog = async (
     const log = await db.log.create({
       data: {
         userId,
+        global,
         message,
       },
     });

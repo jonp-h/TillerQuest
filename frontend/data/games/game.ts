@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
+import { goldValidator } from "../validators/validators";
 
 export const initializeGame = async (userId: string, gameName: string) => {
   const session = await auth();
@@ -133,41 +134,50 @@ export const finishGame = async (gameId: string) => {
   if (!session || session?.user.role === "NEW") {
     return "Not authorized";
   }
+  try {
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId },
+        include: { user: true },
+      });
 
-  return await prisma.$transaction(async (db) => {
-    const game = await db.game.findUnique({
-      where: { id: gameId },
-      include: { user: true },
+      if (
+        !game ||
+        game.userId !== session.user.id ||
+        game.status !== "INPROGRESS"
+      ) {
+        return "Invalid game session";
+      }
+
+      const gold = await goldValidator(db, game.userId, game.score);
+
+      const targetUser = await db.user.update({
+        where: { id: game.userId },
+        data: { gold: { increment: gold } },
+        select: {
+          username: true,
+        },
+      });
+
+      await db.game.update({
+        where: { id: gameId },
+        data: { status: "FINISHED" },
+      });
+
+      await addLog(
+        db,
+        game.userId,
+        `GAME: ${targetUser.username} finished a game of TypeQuest, and recieved ${gold} gold`,
+      );
+      return { message: "Recieved " + gold + " gold", gold };
     });
-
-    if (
-      !game ||
-      game.userId !== session.user.id ||
-      game.status !== "INPROGRESS"
-    ) {
-      return "Invalid game session";
-    }
-
-    const targetUser = await db.user.update({
-      where: { id: game.userId },
-      data: { gold: { increment: game.score } },
-      select: {
-        username: true,
-      },
-    });
-
-    await db.game.update({
-      where: { id: gameId },
-      data: { status: "FINISHED" },
-    });
-
-    await addLog(
-      db,
-      game.userId,
-      `GAME: ${targetUser.username} finished a game of TypeQuest, and recieved ${game.score} gold`,
+  } catch (error) {
+    logger.error("Error finishing up game: " + error);
+    return (
+      "Something went wrong. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO")
     );
-    return "Recieved " + game.score + " gold";
-  });
+  }
 };
 
 export const getRandomTypeQuestText = async () => {

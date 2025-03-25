@@ -67,6 +67,7 @@ enum AbilityType {
   Revive
   Damage
   ArenaToken
+  Gold
 
   // Passives
   Deathsave
@@ -84,6 +85,7 @@ enum AbilityType {
   Magic
   Adventurer
   Arena
+  GoldPassive
   IncreaseHealth
   IncreaseMana
 }
@@ -170,6 +172,7 @@ model Ability {
   healthCost   Int?
   xpGiven      Int?
   value        Int?
+  diceNotation String? // Dice notation for random values. Eg. 1d6+2
 
   purchaseable Boolean  @default(true)
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
@@ -251,6 +254,7 @@ model ShopItem {
 model Log {
   id        String   @id @default(cuid())
   userId    String
+  global    Boolean  @default(true) // If the log contains useful global information for game masters
   message   String
   createdAt DateTime @default(now())
 

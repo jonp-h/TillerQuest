@@ -89,7 +89,7 @@ export const buyAbility = async (userId: string, abilityName: string) => {
     );
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      Date.now().toLocaleString("no-NO")
     );
   }
 };

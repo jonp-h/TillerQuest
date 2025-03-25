@@ -30,10 +30,11 @@ export default async function InformationBox({
         variant="outlined"
         sx={{
           backgroundColor: "salmon",
+          textShadow: "2px 2px 2px black",
         }}
       >
-        <Typography variant="h5" align="center">
-          A gameplay rework is coming soon. Please expect some data rollback.
+        <Typography variant="h4" align="center">
+          UPDATE: Large gameplay changes, some data has been rolled back
         </Typography>
       </Paper>
       {/* User is eligible for mana if the user has not recieved mana today, and it is not weekend  */}

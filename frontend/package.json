@@ -8,8 +8,9 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@3d-dice/dice-box": "^1.1.4",
+    "@3d-dice/dice-box-threejs": "^0.0.12",
     "@auth/prisma-adapter": "^2.7.3",
+    "@dice-roller/rpg-dice-roller": "^5.5.1",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -18,7 +19,7 @@
     "@mui/material-nextjs": "^6.1.6",
     "@mui/x-data-grid": "^7.26.0",
     "@prisma/client": "^6.4.1",
-    "next": "^15.2.2",
+    "next": "^15.2.4",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
     "react-d3-tree": "^3.6.6",

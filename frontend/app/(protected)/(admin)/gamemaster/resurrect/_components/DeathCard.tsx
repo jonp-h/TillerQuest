@@ -12,9 +12,10 @@ import React, { useEffect, useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin/resurrectUser";
-import DiceBox from "@3d-dice/dice-box";
+import DiceBox from "@3d-dice/dice-box-threejs";
 import { useRouter } from "next/navigation";
 import { diceSettings } from "@/lib/diceSettings";
+import { toast } from "react-toastify";
 
 export default function DeathCard({ user }: { user: User }) {
   const [number, setNumber] = React.useState<number | null>(0);
@@ -24,15 +25,18 @@ export default function DeathCard({ user }: { user: User }) {
     resurrectUsers({
       userId: user.id,
       effect: effect,
-    }).then(() => router.refresh());
+    }).then(() => {
+      toast.success("User resurrected");
+      router.refresh();
+    });
   };
 
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
 
   const initializeDiceBox = async () => {
     try {
-      const newDiceBox = new DiceBox(diceSettings);
-      await newDiceBox.init();
+      const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+      await newDiceBox.initialize();
       setDiceBox(newDiceBox);
     } catch (error) {
       console.error("Error initializing DiceBox:", error);
@@ -44,23 +48,11 @@ export default function DeathCard({ user }: { user: User }) {
   }, []);
 
   const rollDice = async () => {
-    if (!diceBox)
-      return; // TODO: make dice rerollable
-    else await diceBox.clear();
-    diceBox.roll("1d6").then(
-      (
-        results: {
-          data: undefined;
-          dieType: string;
-          groupId: number;
-          rollId: number;
-          sides: number;
-          theme: string;
-          themeColor: string;
-          value: number;
-        }[],
-      ) => setNumber(results[0].value),
-    );
+    if (!diceBox) {
+      toast.error("Dice failed to initialize");
+      return;
+    }
+    diceBox.roll("1d6").then((results) => setNumber(results.total));
   };
 
   return (

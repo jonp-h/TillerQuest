@@ -42,7 +42,7 @@ export const healingValidator = async (
     logger.error("Error validating HP for user " + targetUserId + ": " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      Date.now().toLocaleString("no-NO")
     );
   }
 };
@@ -130,12 +130,7 @@ export const damageValidator = async (
   damage = damage * (1 + increasedDamage);
 
   // reduce the damage by the passive effects
-  const reducedDamage = await getUserPassiveEffect(
-    db,
-    targetUserId,
-    "Protection",
-  );
-  const newDamage = damage - reducedDamage;
+  const newDamage = await protectionValidator(db, targetUserId, damage);
 
   // ensure the damage does not become negative
   const finalDamage = newDamage < 0 ? 0 : newDamage;
@@ -146,6 +141,44 @@ export const damageValidator = async (
   } else {
     return finalDamage;
   }
+};
+
+const protectionValidator = async (
+  db: PrismaTransaction,
+  targetUserId: string,
+  damage: number,
+) => {
+  // Get all protection passives for the user, sorted by remaining time
+  const protectionPassives = await db.userPassive.findMany({
+    where: {
+      userId: targetUserId,
+      effectType: "Protection",
+    },
+    orderBy: {
+      endTime: "asc",
+    },
+  });
+
+  let newDamage = damage;
+
+  for (const passive of protectionPassives) {
+    if (newDamage <= 0) break;
+
+    const reducedDamage = passive.value ?? 0;
+    newDamage -= reducedDamage;
+
+    // Remove the passive after it has been used
+    await db.userPassive.delete({
+      where: {
+        id: passive.id,
+      },
+    });
+  }
+
+  // Ensure the damage does not become negative
+  const finalDamage = newDamage < 0 ? 0 : newDamage;
+
+  return finalDamage;
 };
 
 export const experienceAndLevelValidator = async (
@@ -214,6 +247,49 @@ export const experienceAndLevelValidator = async (
     return "Successfully gave XP to user";
   } catch (error) {
     logger.error("Validating experience and leveling up failed: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
+  }
+};
+
+export const goldValidator = async (
+  db: PrismaTransaction,
+  userId: string,
+  gold: number,
+) => {
+  const session = await auth();
+  if (session?.user.role === "NEW" || !session) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const targetUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: { gold: true },
+    });
+
+    if (!targetUser) {
+      throw new Error("User not found");
+    }
+
+    const goldMultipler =
+      (await getUserPassiveEffect(db, userId, "Gold")) / 100;
+    const goldToGive = Math.round(gold * (1 + goldMultipler));
+
+    return goldToGive;
+  } catch (error) {
+    logger.error("Validating gold failed: " + error);
+    throw new Error(
+      "Something went wrong at " +
+        Date.now().toLocaleString("no-NO") +
+        " with error: " +
+        error,
+    );
   }
 };

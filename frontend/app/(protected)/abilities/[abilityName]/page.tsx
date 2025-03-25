@@ -72,6 +72,10 @@ export default async function AbilityNamePage({
 
   return (
     <MainContainer>
+      <div
+        id="dice-canvas"
+        className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
+      />
       <div className="flex justify-center">
         <Paper
           elevation={5}
@@ -145,6 +149,7 @@ export default async function AbilityNamePage({
                   <TableCell align="right">Health cost</TableCell>
                   <TableCell align="right">Mana cost</TableCell>
                   <TableCell align="right">Value</TableCell>
+                  <TableCell align="right">Dice</TableCell>
                   <TableCell align="right">XP</TableCell>
                 </TableRow>
               </TableHead>
@@ -161,6 +166,7 @@ export default async function AbilityNamePage({
                   <TableCell align="right">{ability.healthCost}</TableCell>
                   <TableCell align="right">{ability.manaCost}</TableCell>
                   <TableCell align="right">{ability.value}</TableCell>
+                  <TableCell align="right">{ability.diceNotation}</TableCell>
                   <TableCell align="right">{ability.xpGiven}</TableCell>
                 </TableRow>
               </TableBody>
