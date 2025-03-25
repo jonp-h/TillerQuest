@@ -24,6 +24,7 @@ export const getUserPassives = async (userId: string) => {
         endTime: true,
         passiveName: true,
         icon: true,
+        value: true,
         ability: {
           select: {
             name: true,

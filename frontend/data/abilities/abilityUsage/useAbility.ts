@@ -255,7 +255,7 @@ export const selectAbility = async (
       "Something went wrong using " +
       ability.name +
       ". Please notify a game master of this timestamp: " +
-      new Date().toLocaleString()
+      new Date().toLocaleString("no-NO")
     );
   }
 };
@@ -265,6 +265,11 @@ const finalizeAbilityUsage = async (
   user: User,
   ability: Ability,
 ) => {
+  // should not be able to kill yourself with an ability
+  if (ability.healthCost && user.hp - ability.healthCost <= 0) {
+    throw new ErrorMessage("You don't have enough hp to use this ability!");
+  }
+
   // decrement cost of ability from user
   await db.user.update({
     where: {

@@ -42,7 +42,7 @@ export const healingValidator = async (
     logger.error("Error validating HP for user " + targetUserId + ": " + error);
     return (
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now()
+      Date.now().toLocaleString("no-NO")
     );
   }
 };
@@ -247,6 +247,11 @@ export const experienceAndLevelValidator = async (
     return "Successfully gave XP to user";
   } catch (error) {
     logger.error("Validating experience and leveling up failed: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
