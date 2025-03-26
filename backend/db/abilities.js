@@ -276,7 +276,7 @@ const wizard = [
     value: null,
     parentAbility: null,
   },
-  {
+  { // Should wizrds have access to the mana tab if they already gain extra mana here?
     name: "Arcane-Gift",
     category: "Wizard",
     type: "ManaPassive",
@@ -584,7 +584,7 @@ const barbarian = [
     duration: 10,
     icon: "Test.jpg",
     gemstoneCost: 4,
-    manaCost: null,
+    manaCost: 10,
     healthCost: null, // should be equivalent to the damage taken from the attack
     xpGiven: 100,
     diceNotation: "2d6",
