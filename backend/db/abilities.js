@@ -269,7 +269,7 @@ const wizard = [
     duration: null,
     icon: "Essence-Transfer.png",
     gemstoneCost: 1,
-    manaCost: 2,
+    manaCost: 3,
     healthCost: null,
     xpGiven: 50,
     diceNotation: "1d6",
@@ -581,7 +581,7 @@ const barbarian = [
     target: 1,
     description:
       "You shield the next attack on a guildmember from 2d6 damage for the next 8 hours.",
-    duration: 10,
+    duration: 480, // 8 hours
     icon: "Test.jpg",
     gemstoneCost: 4,
     manaCost: null,
