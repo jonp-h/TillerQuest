@@ -718,7 +718,7 @@ const bloodMage = [
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: 0,
-    healthCost: 10,
+    healthCost: 12,
     xpGiven: 100,
     diceNotation: null,
     value: 5,
