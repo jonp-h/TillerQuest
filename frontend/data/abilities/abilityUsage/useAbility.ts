@@ -11,6 +11,9 @@ import {
 } from "@/data/validators/validators";
 import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
+import { addLog } from "@/data/log/addLog";
+import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
+import { ErrorMessage } from "@/lib/error";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -28,11 +31,11 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
 export const selectAbility = async (
   userId: string,
   targetUsersIds: string[],
-  ability: Ability,
+  abilityName: string,
 ) => {
   const session = await auth();
   if (session?.user?.id !== userId) {
-    throw new Error("Not authorized");
+    return "Not authorized";
   }
 
   const castingUser = await prisma.user.findUnique({
@@ -42,11 +45,24 @@ export const selectAbility = async (
   });
 
   if (!castingUser) {
-    throw new Error("Something went wrong. Please notify a game master.");
+    return "Something went wrong. Please notify a game master.";
   }
 
   if (castingUser.hp === 0) {
     return "You can't use abilities while dead";
+  }
+
+  const ability = await prisma.ability.findFirst({
+    where: {
+      name: abilityName,
+    },
+  });
+
+  if (!ability) {
+    logger.error(
+      `User ${castingUser.username} tried to use ability ${abilityName} but it does not exist`,
+    );
+    return "Ability not found";
   }
 
   const cosmic = await prisma.cosmicEvent.findFirst({
@@ -132,7 +148,9 @@ export const selectAbility = async (
 
         case "Trickery":
           if (ability.name === "Evade") {
-            return useEvadeAbility(db, castingUser, ability);
+            return await useEvadeAbility(db, castingUser, ability);
+          } else if (ability.name === "Twist-of-Fate") {
+            return await useTwistOfFateAbility(db, castingUser, ability);
           }
           return await activatePassive(
             db,
@@ -156,6 +174,13 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
+        case "GoldPassive":
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 
@@ -172,6 +197,9 @@ export const selectAbility = async (
 
         case "Mana": // give mana to the target
           return await useManaAbility(db, castingUser, targetUsersIds, ability);
+
+        case "Gold":
+          return await useGoldAbility(db, castingUser, targetUsersIds, ability);
 
         case "Transfer": // transfer a resource from one player to another player
           return await useTransferAbility(
@@ -219,6 +247,10 @@ export const selectAbility = async (
       }
     });
   } catch (error) {
+    // if the error is an instance of ErrorMessage, the message can be returned directly
+    if (error instanceof ErrorMessage) {
+      return error.message;
+    }
     logger.error(
       "Error using " +
         ability.name +
@@ -233,7 +265,7 @@ export const selectAbility = async (
       "Something went wrong using " +
       ability.name +
       ". Please notify a game master of this timestamp: " +
-      new Date().toLocaleString()
+      new Date().toLocaleString("no-NO")
     );
   }
 };
@@ -243,6 +275,11 @@ const finalizeAbilityUsage = async (
   user: User,
   ability: Ability,
 ) => {
+  // should not be able to kill yourself with an ability
+  if (ability.healthCost && user.hp - ability.healthCost <= 0) {
+    throw new ErrorMessage("You don't have enough hp to use this ability!");
+  }
+
   // decrement cost of ability from user
   await db.user.update({
     where: {
@@ -258,6 +295,7 @@ const finalizeAbilityUsage = async (
     },
   });
 
+  addLog(db, user.id, `${user.username} used ${ability.name}`);
   await experienceAndLevelValidator(db, user, ability.xpGiven!);
 };
 
@@ -269,6 +307,8 @@ const activatePassive = async (
   targetUsersIds: string[],
   ability: Ability,
 ) => {
+  const abilityValue = getAbilityValue(ability);
+
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       const targetHasPassive = await db.userPassive.findFirst({
@@ -278,12 +318,21 @@ const activatePassive = async (
         },
       });
 
+      // TODO: ensure logic with multiple targets is correct
+      // if the target is single and already has the passive, return an error message
       if (targetHasPassive) {
-        throw new Error("Target already has this passive");
+        throw new ErrorMessage("Target already has this passive");
       }
+      // if there are multiple targets and one of them has the passive, replace it with a new one
+      // else if (targetHasPassive && targetUsersIds.length > 1) {
+      //   db.userPassive.delete({
+      //     where: {
+      //       id: targetHasPassive.id,
+      //     },
+      //   });
+      // }
 
-      // return db.$transaction(async (db) => {
-      // if the ability duration is undefined, create a counter from the current time for 600000ms (10 minutes)
+      // if the ability duration is not undefined, create a counter from the current time for 600000ms (10 minutes)
       await db.userPassive.create({
         data: {
           userId: targetUserId,
@@ -291,7 +340,7 @@ const activatePassive = async (
           passiveName: ability.name,
           abilityName: ability.name,
           icon: ability.icon,
-          value: ability.value ?? 0,
+          value: abilityValue.total,
           endTime: ability.duration
             ? new Date(Date.now() + ability.duration * 60000).toISOString()
             : undefined, // 1 * 60000 = 1 minute
@@ -324,7 +373,54 @@ const activatePassive = async (
     }),
   );
   await finalizeAbilityUsage(db, castingUser, ability);
-  return "Activated " + ability.name + "!";
+  return {
+    message: ability.diceNotation
+      ? "You rolled " +
+        abilityValue.total +
+        ". " +
+        ability.name.replace(/-/g, " ") +
+        " activated!"
+      : "Activated " + ability.name.replace(/-/g, " ") + "!",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
+};
+
+/**
+ * Calculates the value of an ability for a user.
+ *
+ * @param ability - The ability being used.
+ * @param user - The user who is using the ability.
+ * @returns An object containing the total value of the ability.
+ *
+ * @remarks
+ * - If the ability has a static value, that value is returned.
+ * - If the ability has a dice notation, the value is calculated based on the dice roll.
+ * - If the ability does not have a value or dice notation, a total value of 0 is returned.
+ */
+const getAbilityValue = (ability: Ability) => {
+  // if an ability has a static value, return it.
+  if (ability.value) {
+    return { total: ability.value };
+  }
+
+  if (!ability.diceNotation) {
+    return { total: 0 };
+  }
+  const roll = new DiceRoll(ability.diceNotation);
+  // @ts-expect-error - the package's export function is not typed correctly
+  return roll.export(exportFormats.OBJECT) as {
+    averageTotal: number;
+    maxTotal: number;
+    minTotal: number;
+    notation: string;
+    output: string;
+    // rolls: any[];
+    total: number;
+    type: string;
+  };
 };
 
 // ---------------------------- Helper functions for specific ability types ----------------------------
@@ -334,24 +430,28 @@ const useHealAbility = async (
   targetUsersIds: string[],
   ability: Ability,
 ) => {
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability);
+
+  await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       // validate health to heal and passives
       const valueToHeal = await healingValidator(
         db,
         targetUserId,
-        ability.value ?? 0,
+        abilityValue.total,
       );
 
-      if (valueToHeal === 0) {
-        return "Target is already at full health";
-      } else if (valueToHeal === "dead") {
-        return "You can't heal a dead target. The dead require a different kind of magic.";
+      if (valueToHeal === 0 && targetUsersIds.length === 1) {
+        throw new ErrorMessage("Target is already at full health");
+      } else if (valueToHeal === "dead" && targetUsersIds.length === 1) {
+        throw new ErrorMessage(
+          "You can't heal a dead target. The dead require a different kind of magic.",
+        );
       } else if (typeof valueToHeal === "string") {
-        return valueToHeal;
+        throw new ErrorMessage(valueToHeal);
       }
 
-      await db.user.update({
+      const targetUser = await db.user.update({
         where: {
           id: targetUserId,
         },
@@ -360,17 +460,30 @@ const useHealAbility = async (
             increment: valueToHeal,
           },
         },
+        select: {
+          username: true,
+        },
       });
-      await finalizeAbilityUsage(db, castingUser, ability);
-      return "Healed " + valueToHeal + " health";
+      addLog(
+        db,
+        targetUserId,
+        `${targetUser.username} was healed for ${valueToHeal} by ${castingUser.username}`,
+      );
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
   );
 
-  return results.toString();
+  return {
+    message: "Healed " + abilityValue.total + " successfully",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useReviveAbility = async (
@@ -386,15 +499,18 @@ const useReviveAbility = async (
   });
 
   if (!targetUser || targetUser.hp > 0) {
-    return "Target is not dead";
+    throw new ErrorMessage("Target is not dead");
   }
 
-  await db.user.update({
+  const target = await db.user.update({
     where: {
       id: targetUser.id,
     },
     data: {
       hp: 1,
+    },
+    select: {
+      username: true,
     },
   });
 
@@ -402,8 +518,16 @@ const useReviveAbility = async (
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
+  addLog(
+    db,
+    targetUser.id,
+    `REVIVAL: ${castingUser.username} revived ${target.username}`,
+  );
   await finalizeAbilityUsage(db, castingUser, ability);
-  return "Successfully revived the target without negative consequences";
+  return {
+    message: "Successfully revived the target without negative consequences",
+    diceRoll: "",
+  };
 };
 
 const useManaAbility = async (
@@ -412,16 +536,20 @@ const useManaAbility = async (
   targetUserIds: string[],
   ability: Ability,
 ) => {
-  // validate mana value and passives
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability);
+
+  await Promise.all(
     targetUserIds.map(async (targetUserId) => {
-      const value = await manaValidator(db, targetUserId, ability.value!);
+      // validate mana value and passives
+      const value = await manaValidator(db, targetUserId, abilityValue.total);
 
       // if the value is a string, it's an error message
-      if (typeof value === "string") {
-        return value;
+      if (value === 0 && targetUserIds.length === 1) {
+        throw new ErrorMessage("Target is already at max mana");
+      } else if (typeof value === "string") {
+        throw new ErrorMessage(value);
       }
-      await db.user.update({
+      const targetUser = await db.user.update({
         where: {
           id: targetUserId,
         },
@@ -430,8 +558,15 @@ const useManaAbility = async (
             increment: value,
           },
         },
+        select: {
+          username: true,
+        },
       });
-      return "Successfully gave " + value + " mana";
+      addLog(
+        db,
+        targetUserId,
+        `${targetUser.username} recieved ${value} mana from ${castingUser.username}`,
+      );
     }),
   );
 
@@ -440,7 +575,13 @@ const useManaAbility = async (
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
-  return results.toString();
+  return {
+    message: "Gave " + abilityValue.total + " mana",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useTransferAbility = async (
@@ -449,36 +590,37 @@ const useTransferAbility = async (
   targetUserIds: string[],
   ability: Ability,
 ) => {
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability);
+  // if the ability costs health, the ability trades health. Otherwise, it trades mana
+  const fieldToUpdate = ability.healthCost ? "hp" : "mana";
+
+  await Promise.all(
     targetUserIds.map(async (targetUserId) => {
-      // if the ability costs health, the ability trades health. Otherwise, it trades mana
-      const fieldToUpdate = ability.healthCost ? "hp" : "mana";
       // validate value and passives
-      let value = ability.value;
       if (fieldToUpdate === "hp") {
         const targetUser = await healingValidator(
           db,
           targetUserId,
-          ability.value!,
+          abilityValue.total,
         );
         // check if user is dead and return error message
         if (typeof targetUser === "string") {
-          return targetUser;
+          throw new ErrorMessage(targetUser);
         }
-        value = targetUser;
+        abilityValue.total = targetUser;
       } else {
         const targetUser = await manaValidator(
           db,
           targetUserId,
-          ability.value!,
+          abilityValue.total,
         );
         // return error message if user cannot recieve mana
         if (targetUser === 0) {
-          return "Target is already at full mana";
+          throw new ErrorMessage("Target is already at full mana");
         } else if (typeof targetUser === "string") {
-          return targetUser;
+          throw new ErrorMessage(targetUser);
         }
-        value = targetUser;
+        abilityValue.total = targetUser;
       }
 
       await db.user.update({
@@ -487,21 +629,25 @@ const useTransferAbility = async (
         },
         data: {
           [fieldToUpdate]: {
-            increment: value,
+            increment: abilityValue.total,
           },
         },
       });
-
-      await finalizeAbilityUsage(db, castingUser, ability);
-      return "Target given " + ability.value + " " + fieldToUpdate;
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
-  return results.toString();
+  return {
+    message: "Target given " + abilityValue.total + " " + fieldToUpdate,
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useSwapAbility = async (
@@ -520,11 +666,13 @@ const useSwapAbility = async (
     },
   });
   if (!targetUser || targetUser.hp === 0) {
-    return "Target is dead";
+    throw new ErrorMessage("Target is dead");
   }
 
-  if (castingUser.hp < targetUser.hp) {
-    return "You cannot swap health with a target that has more health than you";
+  if (castingUser.hp <= targetUser.hp) {
+    throw new ErrorMessage(
+      "You cannot swap health with a target that has more health than you",
+    );
   }
 
   // swap should not exceed the max health of the users
@@ -551,12 +699,19 @@ const useSwapAbility = async (
     },
   });
 
+  await addLog(
+    db,
+    targetUserId,
+    `${castingUser.username} swapped health with you`,
+    false,
+  );
+
+  await activatePassive(db, castingUser, [castingUser.id], ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
-  return "You swapped health with the target";
+  return { message: "You swapped health with the target", diceRoll: "" };
 };
 
 const useTradeAbility = async (
@@ -565,13 +720,11 @@ const useTradeAbility = async (
   targetUserId: string,
   ability: Ability,
 ) => {
-  console.log("casting user hp is: " + castingUser.hp);
-
-  // At the moment the trade ability is only used to trade health to mana
+  // TODO: At the moment the trade ability is only used to trade health to mana
   const manaValue = await manaValidator(db, targetUserId, ability.value!);
 
   if (manaValue === 0) {
-    return "Target is already at full mana";
+    throw new ErrorMessage("Target is already at full mana");
   }
 
   await db.user.update({
@@ -585,18 +738,20 @@ const useTradeAbility = async (
     },
   });
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
-  return (
-    "You traded " +
-    ability.healthCost +
-    " health, and recieved " +
-    manaValue +
-    " mana"
-  );
+  return {
+    message:
+      "You traded " +
+      ability.healthCost +
+      " health, and recieved " +
+      manaValue +
+      " mana",
+    diceRoll: "",
+  };
 };
 
 const useProtectionAbility = async (
@@ -605,7 +760,9 @@ const useProtectionAbility = async (
   targetUserIds: string[],
   ability: Ability,
 ) => {
-  const results = await Promise.all(
+  const abilityValue = getAbilityValue(ability);
+
+  await Promise.all(
     targetUserIds.map(async (targetUserId) => {
       // check if user already has passive
       const targetHasPassive = await db.userPassive.findFirst({
@@ -615,8 +772,8 @@ const useProtectionAbility = async (
         },
       });
 
-      if (targetHasPassive) {
-        return "Target already has this passive";
+      if (targetHasPassive && targetUserIds.length === 1) {
+        throw new ErrorMessage("Target already has this passive");
       }
 
       await db.userPassive.create({
@@ -626,23 +783,28 @@ const useProtectionAbility = async (
           passiveName: ability.name,
           abilityName: ability.name,
           icon: ability.icon,
-          value: ability.value ?? 0,
+          value: abilityValue.total,
           endTime: ability.duration
             ? new Date(Date.now() + ability.duration * 60000).toISOString()
             : undefined, // 1 * 60000 = 1 minute
         },
       });
-
-      return "Target recieved " + ability.name;
+      addLog(db, targetUserId, `${castingUser.username} is shielding you`);
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
-  await finalizeAbilityUsage(db, castingUser, ability);
-  return results.toString();
+  return {
+    message: "Target recieved " + abilityValue.total + " shield",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 const useXPAbility = async (
@@ -655,7 +817,7 @@ const useXPAbility = async (
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
-  return "You gained " + ability.xpGiven + " XP";
+  return { message: "You gained " + ability.xpGiven + " XP", diceRoll: "" };
 };
 
 const useArenaAbility = async (
@@ -679,12 +841,52 @@ const useArenaAbility = async (
     }),
   );
 
+  await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
+  return {
+    message: "Guild recieved " + ability.value + " arena tokens",
+    diceRoll: "",
+  };
+};
+
+const useGoldAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserIds: string[],
+  ability: Ability,
+) => {
+  const abilityValue = getAbilityValue(ability);
+
+  await Promise.all(
+    targetUserIds.map(async (targetUserId) => {
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          gold: {
+            increment: abilityValue.total,
+          },
+        },
+      });
+    }),
+  );
+
   await finalizeAbilityUsage(db, castingUser, ability);
-  return "Guild recieved " + ability.value + " arena tokens";
+  logger.info(
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+  );
+
+  return {
+    message: "You recieved " + abilityValue.total + " gold!",
+    diceRoll:
+      "output" in abilityValue
+        ? abilityValue.output.split("[")[1].split("]")[0]
+        : "",
+  };
 };
 
 // ---------------------------- Helper functions for specific ability types ----------------------------
@@ -715,5 +917,32 @@ const useEvadeAbility = async (
     `User ${castingUser.username} evaded daily cosmic event and gained ${ability.xpGiven} XP`,
   );
 
-  return "Cosmic event evaded!";
+  return { message: "Cosmic event evaded!", diceRoll: "" };
+};
+
+const useTwistOfFateAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  ability: Ability,
+) => {
+  const dice = getAbilityValue(ability);
+
+  let message = "";
+  if (dice.total === 20) {
+    message =
+      "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
+  } else {
+    message = "You rolled a " + dice.total + ". Better luck next time!";
+  }
+
+  addLog(
+    db,
+    castingUser.id,
+    `${castingUser.username} used Twist of Fate, and rolled a ${dice.total}`,
+  );
+  await activatePassive(db, castingUser, [castingUser.id], ability);
+  return {
+    message,
+    diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+  };
 };

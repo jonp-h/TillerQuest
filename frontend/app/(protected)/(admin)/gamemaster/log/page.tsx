@@ -41,7 +41,7 @@ async function LogPage() {
                 <ListItem
                   secondaryAction={
                     <Typography color="textSecondary">
-                      {row.createdAt.toLocaleString()}
+                      {row.createdAt.toLocaleString("no-NO")}
                     </Typography>
                   }
                 >

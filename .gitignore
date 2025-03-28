@@ -166,6 +166,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-#sql files
-*.sql

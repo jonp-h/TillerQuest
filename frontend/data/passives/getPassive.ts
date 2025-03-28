@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
-import { $Enums, Ability, User } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 
 export const getUserPassives = async (userId: string) => {
   const session = await auth();
@@ -24,6 +24,7 @@ export const getUserPassives = async (userId: string) => {
         endTime: true,
         passiveName: true,
         icon: true,
+        value: true,
         ability: {
           select: {
             name: true,
@@ -95,17 +96,20 @@ export const getUserPassiveEffect = async (
  * @returns A promise that resolves to a boolean indicating whether the passive ability is active. Does not return cosmic passives.
  * @throws Will throw an error if the user is not authorized.
  */
-export const checkIfPassiveIsActive = async (user: User, ability: Ability) => {
+export const checkIfPassiveIsActive = async (
+  userId: string,
+  abilityName: string,
+) => {
   const session = await auth();
-  if (session?.user?.id !== user.id) {
+  if (session?.user?.id !== userId) {
     throw new Error("Not authorized");
   }
 
   try {
     const activePassive = await db.userPassive.findFirst({
       where: {
-        userId: user.id,
-        abilityName: ability.name,
+        userId: userId,
+        abilityName: abilityName,
         effectType: {
           not: "Cosmic",
         },
@@ -118,19 +122,3 @@ export const checkIfPassiveIsActive = async (user: User, ability: Ability) => {
     return false;
   }
 };
-
-//FIXME: unused?
-// export const getUserPassivesByType = async (userId: string, type: string) => {
-//   try {
-//     const passives = await db.userPassive.findMany({
-//       where: {
-//         userId,
-//         effectType: type as $Enums.AbilityType,
-//       },
-//     });
-//     return passives;
-//   } catch (error) {
-//     console.error("Error getting user passives by type " + error);
-//     return null;
-//   }
-// };

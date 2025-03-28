@@ -1,42 +1,48 @@
 "use client";
 import { Button, Typography } from "@mui/material";
 import { User } from "@prisma/client";
-import { useCallback, useState } from "react";
-import { finishGame, startGame } from "@/data/games/game";
+import { useState } from "react";
+import { finishGame, initializeGame } from "@/data/games/game";
 import { useRouter } from "next/navigation";
 import TypeQuest from "./TypeQuest";
 import { Circle, Stadium } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
 function GameForm({ user }: { user: User }) {
   const [gameVisible, setGameVisible] = useState(false);
-  const [moneyReward, setMoneyReward] = useState(0);
+  const [score, setScore] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
+  const [gameId, setGameId] = useState<string | null>(null);
 
-  const [feedback, setFeedback] = useState("");
   const router = useRouter();
 
-  const handleStartGame = async () => {
-    if (await startGame(user)) {
+  const handleInitializeGame = async () => {
+    const gameId = await initializeGame(user.id, "TypeQuest");
+    if (gameId) {
       setGameVisible(true);
       setGameEnabled(true);
-      setFeedback("");
-      setMoneyReward(0);
+      setScore(0);
+      setGameId(gameId);
     } else {
-      setFeedback("Not enough tokens");
+      toast.error("Not enough tokens");
     }
   };
 
   const handleFinishGame = async () => {
-    if (gameEnabled === true) {
-      await finishGame(user.id, moneyReward);
+    if (gameEnabled === true && gameId) {
+      const game = await finishGame(gameId || "");
+      // if game is a string, it's an error message
+      if (typeof game === "string") {
+        toast.error(game);
+      } else {
+        toast.success(game.message);
+        setScore(game.gold);
+      }
+      setGameId(null);
     }
     setGameEnabled(false);
     router.refresh();
   };
-
-  const memoizedSetMoneyReward = useCallback((reward: number) => {
-    setMoneyReward(reward);
-  }, []);
 
   return (
     <div className="flex flex-col mt-5 text-center justify-center">
@@ -66,15 +72,10 @@ function GameForm({ user }: { user: User }) {
             variant="contained"
             size="large"
             disabled={user.arenaTokens < 1 || gameEnabled}
-            onClick={handleStartGame}
+            onClick={handleInitializeGame}
           >
             Buy one round (1 <Stadium className="mx-1" />)
           </Button>
-        )}
-        {feedback && (
-          <Typography variant="h6" color="info">
-            {feedback}
-          </Typography>
         )}
       </div>
 
@@ -84,12 +85,13 @@ function GameForm({ user }: { user: User }) {
             gameEnabled={gameEnabled}
             setGameEnabled={setGameEnabled}
             handleFinishGame={handleFinishGame}
-            setMoneyReward={memoizedSetMoneyReward}
+            setScore={setScore}
+            gameId={gameId}
           />
         )}
         <div className="mt-5">
           <Typography variant="h6" color="info">
-            {moneyReward > 0 && `You earned ${moneyReward} gold coins`}
+            {score > 0 && `You earned ${score} gold coins`}
           </Typography>
         </div>
       </div>

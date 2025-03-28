@@ -19,11 +19,11 @@ import {
 import { useRouter } from "next/navigation";
 import UserList from "./UserList";
 import Checkbox from "@mui/material/Checkbox";
+import { toast } from "react-toastify";
 
 export default function ListControls({ users }: { users: User[] }) {
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [value, setValue] = React.useState<number>(4);
-  const [feedback, setFeedback] = React.useState<string>("");
   const [isPending, startTransition] = React.useTransition();
   const [notify, setNotify] = React.useState<boolean>(false);
 
@@ -31,7 +31,7 @@ export default function ListControls({ users }: { users: User[] }) {
 
   const handleAdminAction = async (action: string, value: number) => {
     if (selectedUsers.length === 0) {
-      setFeedback("No users selected");
+      toast.error("No users selected");
       return;
     }
 
@@ -39,40 +39,44 @@ export default function ListControls({ users }: { users: User[] }) {
       switch (action) {
         case "heal":
           if (value < 0) {
-            setFeedback("Negative values are not allowed for healing");
+            toast.error("Negative values are not allowed for healing");
             return;
           }
-          setFeedback(await healUsers(selectedUsers, value, notify));
+          toast.success(await healUsers(selectedUsers, value, notify));
           break;
         case "damage":
           if (value < 0) {
-            setFeedback("Negative values are not allowed for damage");
+            toast.error("Negative values are not allowed for damage");
             return;
           }
-          setFeedback(await damageUsers(selectedUsers, value, notify));
+          toast.success(await damageUsers(selectedUsers, value, notify));
           break;
         case "xp":
-          setFeedback(await giveXpToUsers(selectedUsers, value, notify));
           if (value < 0) {
-            setFeedback(
+            toast.warning(
               "Successfully removed XP from selected users. Levels and gemstones are not refunded.",
             );
+            await giveXpToUsers(selectedUsers, value, notify);
             return;
+          } else {
+            toast.success(await giveXpToUsers(selectedUsers, value, notify));
           }
+
           break;
         case "mana":
-          setFeedback(await giveManaToUsers(selectedUsers, value, notify));
+          // TODO: rework to return boolean
+          toast.success(await giveManaToUsers(selectedUsers, value, notify));
           break;
         case "arenatoken":
-          setFeedback(
+          toast.success(
             await giveArenatokenToUsers(selectedUsers, value, notify),
           );
           break;
         case "gold":
-          setFeedback(await giveGoldToUsers(selectedUsers, value, notify));
+          toast.success(await giveGoldToUsers(selectedUsers, value, notify));
           break;
         default:
-          setFeedback("No action selected");
+          toast.error("No action selected");
       }
       router.refresh();
     });
@@ -83,11 +87,6 @@ export default function ListControls({ users }: { users: User[] }) {
       <div className="flex flex-col w-full my-5 m-auto">
         <UserList users={users} setSelectedUsers={setSelectedUsers} />
       </div>
-      {feedback && (
-        <Paper elevation={5} className="flex justify-center my-2 p-2">
-          <Typography color="warning">{feedback}</Typography>
-        </Paper>
-      )}
 
       <Paper elevation={5}>
         <div className="flex justify-center py-3">

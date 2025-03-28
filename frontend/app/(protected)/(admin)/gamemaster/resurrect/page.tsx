@@ -11,6 +11,10 @@ export default async function ResurrectPage() {
   return (
     <MainContainer>
       <div className="flex flex-col justify-center items-center ">
+        <div
+          id="dice-canvas"
+          className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
+        />
         <Image
           className="rounded-full"
           alt="deadly-gm"

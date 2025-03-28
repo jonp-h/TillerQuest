@@ -6,7 +6,7 @@ import { getAllUsers } from "./adminUserInteractions";
 
 export const randomCosmic = async () => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
 
@@ -92,7 +92,7 @@ export const randomCosmic = async () => {
 
 export const setSelectedCosmic = async (cosmicName: string) => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
 
@@ -222,7 +222,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
 
 export const getAllCosmicEvents = async () => {
   const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  if (!session || session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
 

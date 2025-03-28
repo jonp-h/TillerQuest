@@ -77,7 +77,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else {
       try {
-        await getDailyMana(user);
+        await getDailyMana(user.id);
         setFeedback(
           "And as you focus, you feel your mana restoring. You also find a token in your pocket.",
         );

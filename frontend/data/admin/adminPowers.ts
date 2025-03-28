@@ -76,7 +76,12 @@ export const healUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to heal users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
 
@@ -139,7 +144,12 @@ export const damageUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to heal users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
 
@@ -150,6 +160,7 @@ export const damageUsers = async (
  * @returns A string indicating the result of the operation.
  */
 export const giveXpToUsers = async (
+  // FIXME: strings
   users: User[],
   xp: number,
   notify: boolean,
@@ -175,11 +186,17 @@ export const giveXpToUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to give XP to users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
 
 export const giveManaToUsers = async (
+  // FIXME: strings
   users: User[],
   mana: number,
   notify: boolean,
@@ -226,11 +243,17 @@ export const giveManaToUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to give mana to users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
 
 export const giveArenatokenToUsers = async (
+  // FIXME: strings
   users: User[],
   arenatoken: number,
   notify: boolean,
@@ -269,11 +292,17 @@ export const giveArenatokenToUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to give arenatoken to users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
 
 export const giveGoldToUsers = async (
+  // FIXME: strings
   users: User[],
   gold: number,
   notify: boolean,
@@ -308,6 +337,11 @@ export const giveGoldToUsers = async (
     });
   } catch (error) {
     logger.error("A game master failed to give gold to users: " + error);
-    return "Something went wrong at " + Date.now() + " with error: " + error;
+    return (
+      "Something went wrong at " +
+      Date.now().toLocaleString("no-NO") +
+      " with error: " +
+      error
+    );
   }
 };
