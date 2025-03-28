@@ -26,6 +26,8 @@ async function main() {
   6. Add Type Quest Texts
   7. Add All
   8. Add all without users
+  DANGERZONE:
+  99. Set all users to NEW
   `;
 
   rl.question(options, async (answer) => {
@@ -53,6 +55,9 @@ async function main() {
         break;
       case "8":
         await addAllWithoutUsers();
+        break;
+      case "99":
+        await resetUsers();
         break;
       default:
         console.log("Invalid option");
@@ -160,6 +165,40 @@ async function addAllWithoutUsers() {
   await addCosmicEvents();
   await addShopItems();
   await addTypeQuestTexts();
+}
+
+async function resetUsers() {
+  try {
+    const users = await db.user.findMany({
+      include: { abilities: true },
+    });
+
+    for (const user of users) {
+      const abilitiesRemoved = user.abilities.length;
+      const gemstonesToAdd = abilitiesRemoved * 2;
+
+      await db.user.update({
+      where: { id: user.id },
+      data: {
+        status: "NEW",
+        level: 0,
+        gemstones: {
+        increment: gemstonesToAdd,
+        },
+        passives: {
+          set: [],
+        },
+        abilities: {
+        set: [],
+        },
+        
+      },
+      });
+    }
+    console.info("All users have been set to NEW. Only Gemstones, passives and abilities have been reset.");
+  } catch (error) {
+    console.error("Error: ", error);
+  }
 }
 
 // Run the main function and handle any errors

@@ -226,6 +226,7 @@ export const getGameLeaderboard = async (gameName: string) => {
     orderBy: {
       score: "desc",
     },
+    distinct: ["userId"],
     take: 10,
   });
 

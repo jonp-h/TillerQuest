@@ -24,7 +24,7 @@ export default async function InformationBox({
 
   return (
     <>
-      <Paper
+      {/* <Paper
         elevation={6}
         className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
         variant="outlined"
@@ -36,7 +36,7 @@ export default async function InformationBox({
         <Typography variant="h4" align="center">
           UPDATE: Large gameplay changes, some data has been rolled back
         </Typography>
-      </Paper>
+      </Paper> */}
       {/* User is eligible for mana if the user has not recieved mana today, and it is not weekend  */}
       {!sameDay && !isWeekend() && (
         <Paper
