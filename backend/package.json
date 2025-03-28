@@ -8,7 +8,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --write .",
     "gen": "prisma generate && node db/generate.js",
-    "generate": "prisma generate && node db/generate.js"
+    "generate": "prisma generate && node db/generate.js",
+    "reset": "prisma generate && node db/reset.js"
   },
   "dependencies": {
     "@auth/express": "^0.8.4",
