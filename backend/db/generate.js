@@ -26,6 +26,8 @@ async function main() {
   6. Add Type Quest Texts
   7. Add All
   8. Add all without users
+  DANGERZONE:
+  99. Set all users to NEW
   `;
 
   rl.question(options, async (answer) => {

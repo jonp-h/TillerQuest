@@ -502,12 +502,15 @@ const useReviveAbility = async (
     throw new ErrorMessage("Target is not dead");
   }
 
-  await db.user.update({
+  const target = await db.user.update({
     where: {
       id: targetUser.id,
     },
     data: {
       hp: 1,
+    },
+    select: {
+      username: true,
     },
   });
 
@@ -515,6 +518,11 @@ const useReviveAbility = async (
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
+  addLog(
+    db,
+    targetUser.id,
+    `REVIVAL: ${castingUser.username} revived ${target.username}`,
+  );
   await finalizeAbilityUsage(db, castingUser, ability);
   return {
     message: "Successfully revived the target without negative consequences",
@@ -927,12 +935,12 @@ const useTwistOfFateAbility = async (
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
 
-  await activatePassive(db, castingUser, [castingUser.id], ability);
   addLog(
     db,
     castingUser.id,
     `${castingUser.username} used Twist of Fate, and rolled a ${dice.total}`,
   );
+  await activatePassive(db, castingUser, [castingUser.id], ability);
   return {
     message,
     diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
