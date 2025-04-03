@@ -1,3 +1,4 @@
 docker/data
-/backup
+docker/backups
 *.sql
+*.sql.gz
