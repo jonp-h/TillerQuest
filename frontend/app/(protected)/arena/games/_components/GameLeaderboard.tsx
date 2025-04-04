@@ -31,7 +31,7 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
 
   return (
     <div className="flex flex-col text-center">
-      <h1 className="text-3xl">Top 10 Leaderboard {gameName}</h1>
+      <h1 className="text-3xl">Top 10 Weekly Leaderboard {gameName}</h1>
       <TableContainer
         sx={{ maxWidth: "50vw" }}
         component={Paper}
@@ -112,6 +112,9 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
           </TableBody>
         </Table>
       </TableContainer>
+      <Typography variant="body2" color="textSecondary" align="center">
+        The top three players will recieve 300xp at the end of the week.
+      </Typography>
     </div>
   );
 }
