@@ -28,7 +28,7 @@ services:
     container_name: pgbackups_container
     restart: always
     ports:
-      - "8080:8080"
+      - "8090:8080"
     volumes:
       - ./backups:/backups
     links:
@@ -36,7 +36,7 @@ services:
     depends_on:
       - postgres
     environment:
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=tillerquest
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
