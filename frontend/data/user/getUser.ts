@@ -116,6 +116,7 @@ export const getUserInventory = async (id: string) => {
         gold: true,
         level: true,
         inventory: true,
+        special: true,
       },
     });
 

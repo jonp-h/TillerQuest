@@ -252,7 +252,7 @@ const shopItems = [
     specialReq: null,
   },
   {
-    name: "Legendary",
+    name: "Legend",
     description: null,
     price: 0,
     type: "Title",
@@ -272,7 +272,7 @@ const shopItems = [
   {
     name: "Demi-God",
     description: null,
-    price: 30000,
+    price: 99000,
     type: "Title",
     levelReq: 50,
     classReq: null,
