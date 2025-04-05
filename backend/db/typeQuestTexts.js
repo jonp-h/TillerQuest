@@ -86,6 +86,30 @@ const typeQuestTexts = [
   {
     text: "node.js is a javascript runtime built on chrome's v8 javascript engine that allows developers to run javascript code outside of a web browser. it provides a server-side environment for building scalable and high-performance applications, using event-driven, non-blocking i/o to handle concurrent requests efficiently. node.js is widely used for web servers, apis, and microservices, enabling developers to create fast and lightweight applications with javascript. its npm ecosystem, modules, and libraries make node.js a versatile platform for backend development.",
   },
+  {
+    text: "python is a high-level, interpreted programming language known for its simplicity and readability. it supports multiple programming paradigms, including procedural, object-oriented, and functional programming. python's extensive standard library and third-party packages make it suitable for various applications, from web development to data analysis and machine learning. its community-driven development, strong support for scientific computing, and ease of use have made python a popular choice among developers, data scientists, and researchers.",
+  },
+  {
+    text: "java is a versatile, object-oriented programming language designed to be platform-independent through the java virtual machine (jvm). it enables developers to write code once and run it anywhere, making it ideal for cross-platform applications. java's strong typing, automatic memory management (garbage collection), and rich standard library provide a robust foundation for building scalable and maintainable software. its widespread use in enterprise applications, mobile development (android), and web services has solidified java's position as one of the most popular programming languages.",
+  },
+  {
+    text: "c++ is a powerful, high-performance programming language that extends the c programming language with object-oriented features. it supports low-level memory manipulation, making it suitable for system programming, game development, and performance-critical applications. c++ provides features like classes, inheritance, and polymorphism, enabling developers to create complex software architectures. its rich standard library and compatibility with c make it a versatile choice for building applications across various domains, from embedded systems to large-scale enterprise software.",
+  },
+  {
+    text: "dhcp (dynamic host configuration protocol) is a network management protocol used to automatically assign ip addresses and other network configuration parameters to devices on a network. it simplifies the process of connecting devices by dynamically allocating ip addresses, eliminating the need for manual configuration. dhcp ensures efficient use of ip address space and reduces configuration errors, making it an essential component of modern network infrastructure. it is widely used in both home and enterprise networks to streamline device connectivity and management.",
+  },
+  {
+    text: "a network packet is a small unit of data transmitted over a network. it contains a header, which includes metadata like source and destination addresses, and a payload, which is the actual data being sent. packets are used to break down large amounts of data into manageable pieces for efficient transmission. they travel independently across the network and are reassembled at the destination. this method ensures reliable and scalable communication, forming the backbone of modern networking protocols like tcp/ip.",
+  },
+  {
+    text: "a firewall is a network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules. it acts as a barrier between trusted internal networks and untrusted external networks, filtering traffic to protect systems from unauthorized access, malware, and other threats. firewalls can be hardware-based, software-based, or a combination of both, and they play a crucial role in securing networks by enforcing security policies and preventing data breaches.",
+  },
+  {
+    text: "pixels are the smallest unit of a digital image or display, representing a single point of color. they are arranged in a grid to form images, with each pixel containing information about its color and brightness. the resolution of an image or screen is determined by the number of pixels it contains, typically measured in width by height (e.g., 1920x1080). pixels are fundamental to digital imaging and display technologies, enabling the creation of detailed and vibrant visuals in photography, video, and computer graphics.",
+  },
+  {
+    text: "vector graphics are a type of digital image created using mathematical formulas to define shapes, lines, and curves. unlike raster graphics, which are made up of pixels, vector graphics are resolution-independent and can be scaled to any size without losing quality. they are commonly used for logos, illustrations, and designs that require precision and scalability. popular tools for creating vector graphics include adobe illustrator and inkscape, and file formats like svg and eps are widely used for storing vector images.",
+  },
 ];
 
 export default typeQuestTexts;

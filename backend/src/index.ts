@@ -64,6 +64,7 @@ cron.schedule(
     const now = new Date();
     try {
       await db.$transaction(async (db) => {
+        // ------ Remove passives with increased values ------
         const usersWithIncreasedHealth = await db.userPassive.findMany({
           where: {
             effectType: "IncreaseHealth",
@@ -105,6 +106,51 @@ cron.schedule(
             data: { mana: newMana, manaMax: { decrement: passive.value || 0 } },
           });
         }
+        // ------- Remove passives with decreased values -------
+
+        const usersWithDecreasedHealth = await db.userPassive.findMany({
+          where: {
+            effectType: "DecreaseHealth",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithDecreasedHealth) {
+          const newHp = Math.min(
+            passive.user.hp,
+            passive.user.hpMax + (passive.value ?? 0),
+          );
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { hp: newHp, hpMax: { increment: passive.value || 0 } },
+          });
+        }
+
+        const usersWithDecreasedMana = await db.userPassive.findMany({
+          where: {
+            effectType: "DecreaseMana",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithDecreasedMana) {
+          const newMana = Math.min(
+            passive.user.mana,
+            passive.user.manaMax + (passive.value ?? 0),
+          );
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { mana: newMana, manaMax: { increment: passive.value || 0 } },
+          });
+        }
+
+        // ------- Remove all ended passives -------
 
         const passives = await db.userPassive.findMany({
           where: { endTime: { lte: now } },

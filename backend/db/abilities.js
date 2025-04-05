@@ -678,14 +678,15 @@ const bloodMage = [
   {
     name: "Bloodgift",
     category: "BloodMage",
-    type: "Trade",
+    type: "DecreaseHealth",
     target: 1,
-    description: "Trade 7 health to grant 2 mana to a guild member.",
-    duration: null,
+    description:
+      "Lose 5 of your maximum health to grant 2 mana to a guild member. This ability can only be used once per day.",
+    duration: 960, // 16 hours
     icon: "Bloodgift.png",
     gemstoneCost: 2,
     manaCost: null,
-    healthCost: 7,
+    healthCost: 5,
     xpGiven: 50,
     diceNotation: null,
     value: 2,
@@ -711,14 +712,15 @@ const bloodMage = [
   {
     name: "Gift-of-Life",
     category: "BloodMage",
-    type: "Trade",
+    type: "DecreaseHealth",
     target: 1,
-    description: "Trade 12 health to grant 5 mana to a guild member.",
-    duration: null,
+    description:
+      "Lose 10 of your maximum health to grant 5 mana to a guild member. This ability can only be used once per day.",
+    duration: 960, // 16 hours
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: null,
-    healthCost: 12,
+    healthCost: 10,
     xpGiven: 100,
     diceNotation: null,
     value: 5,
