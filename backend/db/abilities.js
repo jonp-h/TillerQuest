@@ -147,7 +147,7 @@ const trickery = [
     icon: "Devilish-Deal.png",
     gemstoneCost: 2,
     manaCost: 0,
-    healthCost: 15,
+    healthCost: 10, // match the mana cost?
     xpGiven: 100,
     diceNotation: null,
     value: null,
@@ -180,7 +180,7 @@ const trickery = [
     duration: 480, // 8 hours
     icon: "Postpone.png",
     gemstoneCost: 2,
-    manaCost: 15,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 0,
     diceNotation: null,
@@ -197,7 +197,7 @@ const trickery = [
     duration: 1440, // 24 hours
     icon: "Greater-Postpone.png",
     gemstoneCost: 4,
-    manaCost: 20,
+    manaCost: 15,
     healthCost: null,
     xpGiven: 0,
     diceNotation: null,
@@ -276,7 +276,7 @@ const wizard = [
     value: null,
     parentAbility: null,
   },
-  {
+  { // Should wizrds have access to the mana tab if they already gain extra mana here?
     name: "Arcane-Gift",
     category: "Wizard",
     type: "ManaPassive",
@@ -499,7 +499,7 @@ const druid = [
     gemstoneCost: 4,
     manaCost: 15,
     healthCost: null,
-    xpGiven: 500,
+    xpGiven: 300,
     diceNotation: null,
     value: null,
     parentAbility: "Superior-Heal",
@@ -533,7 +533,7 @@ const barbarian = [
     duration: 240, // 4 hours
     icon: "Shield.png",
     gemstoneCost: 2,
-    manaCost: 2,
+    manaCost: 4,
     healthCost: null,
     xpGiven: 50,
     diceNotation: "1d4",
@@ -584,8 +584,8 @@ const barbarian = [
     duration: 480, // 8 hours
     icon: "Test.jpg",
     gemstoneCost: 4,
-    manaCost: null,
-    healthCost: 3,
+    manaCost: 10,
+    healthCost: null, // should be equivalent to the damage taken from the attack
     xpGiven: 100,
     diceNotation: "2d6",
     value: null,
@@ -702,7 +702,7 @@ const bloodMage = [
     duration: 480, // 8 hours
     icon: "Crimson-Shift.png",
     gemstoneCost: 4,
-    manaCost: 4,
+    manaCost: 6,
     healthCost: null,
     xpGiven: 100,
     diceNotation: null,
@@ -809,7 +809,7 @@ const bard = [
     gemstoneCost: 2,
     manaCost: 4,
     healthCost: null,
-    xpGiven: 300,
+    xpGiven: 300, // see into this being changed, will make bard turn into an xp farm
     diceNotation: null,
     value: 5,
     parentAbility: "Performance",
@@ -824,7 +824,7 @@ const bard = [
     duration: 7200, // 5 days
     icon: "Test.jpg",
     gemstoneCost: 4,
-    manaCost: 4,
+    manaCost: 6,
     healthCost: null,
     xpGiven: 300,
     diceNotation: null,
