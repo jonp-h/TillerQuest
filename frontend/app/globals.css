@@ -82,7 +82,16 @@ h1 {
 }
 
 @layer utilities {
-  .animate-move-up-down {
+  .animate-move-up-down-0 {
+    animation: move-up-down 3.5s ease-in-out infinite;
+  }
+  .animate-move-up-down-1 {
     animation: move-up-down 3s ease-in-out infinite;
+  }
+  .animate-move-up-down-2 {
+    animation: move-up-down 4s ease-in-out infinite;
+  }
+  .animate-move-up-down-3 {
+    animation: move-up-down 4.5s ease-in-out infinite;
   }
 }
