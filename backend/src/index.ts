@@ -388,7 +388,7 @@ cron.schedule(
 
 // Schedule a job to run every sunday to remove game highscores
 cron.schedule(
-  "1 0 * * 0",
+  "59 23 * * 0",
   async () => {
     try {
       const topScores = await db.game.findMany({
