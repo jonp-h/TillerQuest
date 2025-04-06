@@ -17,6 +17,7 @@ function ShopCard({
     title: string | null;
     class: Class | null;
     inventory: ShopItem[];
+    special: string[];
   };
   item: ShopItem;
 }) {
@@ -57,7 +58,13 @@ function ShopCard({
           {item.name}
         </Typography>
         {item.specialReq && (
-          <Typography variant="body1" color="textSecondary" className="text-lg">
+          <Typography
+            variant="body1"
+            color={
+              user.special.includes(item.specialReq) ? "info" : "textSecondary"
+            }
+            className="text-lg"
+          >
             {item.description}
           </Typography>
         )}

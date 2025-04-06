@@ -122,6 +122,14 @@ export const selectAbility = async (
             ability,
           );
 
+        case "DecreaseHealth":
+          return await useDecreaseHealthAbility(
+            db,
+            castingUser,
+            targetUsersIds[0],
+            ability,
+          );
+
         case "ManaPassive": // give mana passive to target
           return await activatePassive(
             db,
@@ -332,6 +340,13 @@ const activatePassive = async (
       //   });
       // }
 
+      // if the ability decreases health or mana, the value should be set to the cost
+      if (ability.type === "DecreaseHealth") {
+        abilityValue.total = ability.healthCost!;
+      } else if (ability.type === "DecreaseMana") {
+        abilityValue.total = ability.manaCost!;
+      }
+
       // if the ability duration is not undefined, create a counter from the current time for 600000ms (10 minutes)
       await db.userPassive.create({
         data: {
@@ -366,6 +381,28 @@ const activatePassive = async (
           data: {
             manaMax: {
               increment: ability.value ?? 0,
+            },
+          },
+        });
+      } else if (ability.type === "DecreaseHealth") {
+        await db.user.update({
+          where: {
+            id: targetUserId,
+          },
+          data: {
+            hpMax: {
+              decrement: ability.healthCost ?? 0,
+            },
+          },
+        });
+      } else if (ability.type === "DecreaseMana") {
+        await db.user.update({
+          where: {
+            id: targetUserId,
+          },
+          data: {
+            manaMax: {
+              decrement: ability.manaCost ?? 0,
             },
           },
         });
@@ -747,7 +784,58 @@ const useTradeAbility = async (
     message:
       "You traded " +
       ability.healthCost +
-      " health, and recieved " +
+      " , and the target recieved " +
+      manaValue +
+      " mana",
+    diceRoll: "",
+  };
+};
+
+const useDecreaseHealthAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserId: string,
+  ability: Ability,
+) => {
+  // TODO: At the moment the ability only decreases maxhealth to mana
+  const manaValue = await manaValidator(db, targetUserId, ability.value!);
+
+  if (manaValue === 0) {
+    throw new ErrorMessage("Target is already at full mana");
+  }
+
+  if (!ability.healthCost) {
+    throw new ErrorMessage(
+      "Error during health health cost calculation. Please notify a game master.",
+    );
+  }
+
+  if (castingUser.hpMax - ability.healthCost < 10) {
+    throw new ErrorMessage(
+      "Your max health is too low to use this ability. You need at least 10 max health to use this ability",
+    );
+  }
+  await db.user.update({
+    where: {
+      id: targetUserId,
+    },
+    data: {
+      mana: {
+        increment: manaValue,
+      },
+    },
+  });
+
+  await activatePassive(db, castingUser, [castingUser.id], ability);
+  logger.info(
+    `User ${castingUser.username} used ability ${ability.name} and gained ${ability.xpGiven} XP`,
+  );
+
+  return {
+    message:
+      "Your max health was decreased by " +
+      ability.healthCost +
+      " , and the target recieved " +
       manaValue +
       " mana",
     diceRoll: "",

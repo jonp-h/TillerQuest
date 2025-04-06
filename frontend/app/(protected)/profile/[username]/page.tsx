@@ -69,14 +69,16 @@ export default async function ProfilePage({
           className="flex flex-col m-3 gap-3 items-center p-5 lg:w-5/12 w-full order-first lg:order-2"
           elevation={5}
         >
-          <div className="self-end ml-auto absolute">
-            <Link href={`/profile/${username}/settings`}>
-              <Settings
-                sx={{ opacity: 0.7, ":hover": { color: "white" } }}
-                color="disabled"
-              />
-            </Link>
-          </div>
+          {session?.user.username === user.username && (
+            <div className="self-end ml-auto absolute">
+              <Link href={`/profile/${username}/settings`}>
+                <Settings
+                  sx={{ opacity: 0.7, ":hover": { color: "white" } }}
+                  color="disabled"
+                />
+              </Link>
+            </div>
+          )}
           <div className="from-zinc-600 to-zinc-700 bg-radial p-3 rounded-full">
             <Image
               className="rounded-full"

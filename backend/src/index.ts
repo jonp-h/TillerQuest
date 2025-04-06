@@ -12,7 +12,6 @@ import { auth } from "./middleware/auth.js";
 import rateLimit from "express-rate-limit";
 import cron from "node-cron";
 import { randomCosmic } from "./data/cosmic.js";
-import { exec } from "child_process";
 import {
   damageValidator,
   experienceAndLevelValidator,
@@ -65,6 +64,7 @@ cron.schedule(
     const now = new Date();
     try {
       await db.$transaction(async (db) => {
+        // ------ Remove passives with increased values ------
         const usersWithIncreasedHealth = await db.userPassive.findMany({
           where: {
             effectType: "IncreaseHealth",
@@ -106,6 +106,51 @@ cron.schedule(
             data: { mana: newMana, manaMax: { decrement: passive.value || 0 } },
           });
         }
+        // ------- Remove passives with decreased values -------
+
+        const usersWithDecreasedHealth = await db.userPassive.findMany({
+          where: {
+            effectType: "DecreaseHealth",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithDecreasedHealth) {
+          const newHp = Math.min(
+            passive.user.hp,
+            passive.user.hpMax + (passive.value ?? 0),
+          );
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { hp: newHp, hpMax: { increment: passive.value || 0 } },
+          });
+        }
+
+        const usersWithDecreasedMana = await db.userPassive.findMany({
+          where: {
+            effectType: "DecreaseMana",
+            endTime: { lte: now },
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        for (const passive of usersWithDecreasedMana) {
+          const newMana = Math.min(
+            passive.user.mana,
+            passive.user.manaMax + (passive.value ?? 0),
+          );
+          await db.user.update({
+            where: { id: passive.userId },
+            data: { mana: newMana, manaMax: { increment: passive.value || 0 } },
+          });
+        }
+
+        // ------- Remove all ended passives -------
 
         const passives = await db.userPassive.findMany({
           where: { endTime: { lte: now } },
@@ -341,52 +386,39 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every day at midnight to backup the database
+// Schedule a job to run every sunday to remove game highscores
 cron.schedule(
-  "1 00 * * *",
+  "59 23 * * 0",
   async () => {
     try {
-      exec(
-        `docker exec -t postgres_container bash -c "pg_dumpall -U tillerquest > /dump_backup.sql" && docker cp postgres_container:/dump_backup.sql db/backup/TQ_backup_${new Date()
-          .toISOString()
-          .replace(/[:.]/g, "-")
-          .replace("T", "_")
-          .replace("Z", "")
-          .slice(0, -7)}.sql"`,
-        (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error creating database backup: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.error(`Backup stderr: ${stderr}`);
-            return;
-          }
-          console.log(`Database backup created: ${stdout}`);
+      const topScores = await db.game.findMany({
+        orderBy: { score: "desc" },
+        take: 3,
+        select: { userId: true },
+      });
 
-          // Remove old backups, keeping only the 30 most recent (does not work on Windows)
-          exec(
-            `ls -t db/backup/*.sql | tail -n +31 | xargs rm --`,
-            (error, stdout, stderr) => {
-              if (error) {
-                console.error(`Error removing old backups: ${error.message}`);
-                return;
-              }
-              if (stderr) {
-                console.error(`Remove old backups stderr: ${stderr}`);
-                return;
-              }
-              console.log(`Old backups removed: ${stdout}`);
-            },
-          );
-        },
-      );
+      for (const { userId } of topScores) {
+        await experienceAndLevelValidator(db, userId, 300);
+        const user = await db.user.findUnique({
+          where: { id: userId },
+          select: { username: true },
+        });
+
+        await db.log.create({
+          data: {
+            userId,
+            message: `${user?.username} received 300 XP for being at the top of the weekly leaderboard in TypeQuest`,
+          },
+        });
+      }
+
+      await db.game.deleteMany();
     } catch (error) {
-      console.error("Error during database backup:", error);
+      console.error("Error during game highscore reset:", error);
     }
   },
   {
-    name: "databaseBackupService",
+    name: "gameHighscoreResetService",
   },
 );
 

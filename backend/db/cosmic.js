@@ -29,6 +29,21 @@ const cosmic = [
     abilityName: "Troubled-Waters",
   },
   {
+    name: "Evil-Spirits",
+    description:
+      "Evil spirits haunt the forest. No healing may occur today (this cannot be avoided).",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 10,
+    automatic: true,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: "Heal",
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
     name: "You-know-nothing-about-Snow",
     description: "If it is snowing outside, everyone gains 100 XP.",
     // icon: ".png"

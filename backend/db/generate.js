@@ -3,7 +3,7 @@ import guilds from "./guilds.js";
 import users from "./users.js";
 import abilities from "./abilities.js";
 import cosmics from "./cosmic.js";
-import shopItem from "./shopItems.js";
+import shopItems from "./shopItems.js";
 import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
 
@@ -106,8 +106,9 @@ async function addCosmicEvents() {
 }
 
 async function addShopItems() {
-  for (const item of shopItem) {
+  for (const item of shopItems) {
     try {
+      console.log("Adding", item.name);
       await db.shopItem.upsert({
         where: { name: item.name },
         update: item,
