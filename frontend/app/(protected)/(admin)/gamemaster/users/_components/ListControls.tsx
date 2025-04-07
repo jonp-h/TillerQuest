@@ -54,10 +54,9 @@ export default function ListControls({ users }: { users: User[] }) {
         case "xp":
           if (value < 0) {
             toast.warning(
-              "Successfully removed XP from selected users. Levels and gemstones are not refunded.",
+              "Successfully removed XP from selected users. Warning: Users may end with negative gemstones.",
             );
             await giveXpToUsers(selectedUsers, value, notify);
-            return;
           } else {
             toast.success(await giveXpToUsers(selectedUsers, value, notify));
           }
@@ -178,7 +177,7 @@ export default function ListControls({ users }: { users: User[] }) {
         </Typography>
         {value < 0 && (
           <Typography color="error" className="text-center">
-            Warning: Negative values can lead to unexpected consequences!
+            Warning: Removing XP can give negative gemstones to users.
           </Typography>
         )}
         <div className="flex flex-col w-1/3 m-auto text-center items-center justify-center py-3">
