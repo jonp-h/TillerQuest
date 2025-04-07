@@ -1,10 +1,10 @@
 import MainContainer from "@/components/MainContainer";
 import React from "react";
-import GameForm from "./_components/GameForm";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { getUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
+import GameTabs from "./_components/GameTabs";
 
 async function Games() {
   const session = await auth();
@@ -21,8 +21,8 @@ async function Games() {
 
   return (
     <MainContainer>
-      <GameForm user={user} />
-      <div className="flex justify-center">
+      <GameTabs user={user} />
+      <div className="flex justify-center mt-5">
         <GameLeaderboard gameName="TypeQuest" />
       </div>
     </MainContainer>

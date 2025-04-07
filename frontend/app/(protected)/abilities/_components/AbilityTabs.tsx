@@ -19,7 +19,7 @@ function a11yProps(index: number) {
   };
 }
 
-function CustomTabPanel({ children, value, index, ...other }: TabPanelProps) {
+function AbilityTabPanel({ children, value, index, ...other }: TabPanelProps) {
   return (
     <div
       role="abilityTabPanel"
@@ -88,13 +88,13 @@ export default function AbilityTabs({
       <div className="flex flex-col justify-center mx-20 ">
         {rootAbilities &&
           rootAbilities.map((ability, index) => (
-            <CustomTabPanel key={ability.name} value={value} index={index}>
+            <AbilityTabPanel key={ability.name} value={value} index={index}>
               <AbilityTree
                 userClass={userClass}
                 rootAbilities={ability}
                 userAbilities={userAbilities}
               />
-            </CustomTabPanel>
+            </AbilityTabPanel>
           ))}
       </div>
     </div>
