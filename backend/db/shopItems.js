@@ -325,7 +325,7 @@ const shopItems = [
     specialReq: "vm",
   },
   {
-    name: "Virtual Wizard",
+    name: "Installation Wizard",
     description: "Gain permanent access to a computer in the computer lab",
     price: 40000,
     type: "Badge",
