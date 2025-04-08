@@ -16,7 +16,7 @@ async function LogPage() {
   const style = {
     p: 0,
     width: "90%",
-    maxWidth: 800,
+    maxWidth: 1000,
     borderRadius: 2,
     border: "1px solid",
     borderColor: "divider",

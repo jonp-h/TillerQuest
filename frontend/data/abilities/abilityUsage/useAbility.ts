@@ -877,7 +877,12 @@ const useProtectionAbility = async (
             : undefined, // 1 * 60000 = 1 minute
         },
       });
-      addLog(db, targetUserId, `${castingUser.username} is shielding you`);
+      addLog(
+        db,
+        targetUserId,
+        `${castingUser.username} is shielding you`,
+        false,
+      );
     }),
   );
 

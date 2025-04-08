@@ -104,7 +104,7 @@ export default function DeathCard({ user }: { user: User }) {
               endIcon={<Casino />}
               onClick={() => rollDice()}
             >
-              Death Save
+              {diceBox ? "Death Save" : "Initialize Dice"}
             </Button>
             <Button
               variant="outlined"
