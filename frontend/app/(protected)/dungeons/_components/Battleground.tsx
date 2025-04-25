@@ -14,7 +14,7 @@ interface EnemyProps {
 
 function Battleground() {
   const [enemies, setEnemies] = useState<EnemyProps[]>(
-    Array.from({ length: 3 }, (_, index) => ({
+    Array.from({ length: 1 }, (_, index) => ({
       index,
       name: `Enemy ${index + 1}`,
       health: 100,
@@ -79,6 +79,34 @@ function Battleground() {
         setThrown(false);
       });
   };
+  const punchMonster = async () => {
+    if (!diceBox) {
+      initializeDiceBox();
+      toast.info("Preparing dice..", { autoClose: 1000 });
+      return;
+    } else if (diceBox) {
+      diceBox.clearDice();
+    }
+    setThrown(true);
+    if (!diceBox) {
+      toast.error("Dice failed to initialize");
+      return;
+    }
+    diceBox
+      .roll("1d6")
+      .then((results) => {
+        setEnemies((prevEnemies) =>
+          prevEnemies.map((enemy, index) =>
+            index === selectedEnemy
+              ? { ...enemy, health: enemy.health - results.total }
+              : enemy,
+          ),
+        );
+      })
+      .finally(() => {
+        setThrown(false);
+      });
+  };
 
   return (
     <>
@@ -113,6 +141,14 @@ function Battleground() {
           disabled={thrown}
         >
           Roll Dice
+        </Button>
+        <Button
+          onClick={punchMonster}
+          variant="contained"
+          color="primary"
+          disabled={thrown}
+        >
+          Punch
         </Button>
       </div>
     </>
