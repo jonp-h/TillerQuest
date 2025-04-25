@@ -164,6 +164,7 @@ cron.schedule(
             data: passives.map((passive) => ({
               userId: passive.userId,
               message: `Passive ${passive.abilityName} expired`,
+              global: false,
             })),
           });
         }

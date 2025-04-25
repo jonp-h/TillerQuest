@@ -203,6 +203,34 @@ export const experienceAndLevelValidator = async (
       return "User not found";
     }
 
+    // ---------------- handle negative XP ---------------------
+    if (xp <= 0) {
+      const newXp = targetUser.xp + xp;
+      const newLevel = Math.floor(newXp / 1000);
+      const currentLevel = targetUser.level;
+      const levelDifference = newLevel - currentLevel;
+
+      let levelUpData = {};
+      if (levelDifference < 0) {
+        levelUpData = {
+          level: { increment: levelDifference },
+          gemstones: {
+            increment: gemstonesOnLevelUp * levelDifference,
+          },
+        };
+      }
+
+      await db.user.update({
+        where: { id: user.id },
+        data: {
+          xp: { increment: xp },
+          ...levelUpData,
+        },
+      });
+      return "Successfully removed XP from user";
+    }
+    // ---------------------------------------------------------
+
     const xpMultipler =
       (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
     const xpToGive = Math.round(xp * (1 + xpMultipler));

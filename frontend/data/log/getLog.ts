@@ -16,6 +16,7 @@ export const getAllLogs = async () => {
         createdAt: "desc",
       },
       where: {
+        global: true,
         message: {
           not: {
             startsWith: "COSMIC",

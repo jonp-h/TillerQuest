@@ -44,7 +44,7 @@ export const initializeGame = async (userId: string, gameName: string) => {
       },
     });
 
-    return game.id;
+    return { id: game.id, gameName };
   });
 };
 

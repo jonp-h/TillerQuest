@@ -1,30 +1,54 @@
 import { PrismaClient } from "@prisma/client";
-import readline from "readline";
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const options = `
+  console.log(`
   Please choose an option:
   DANGERZONE:
   reset. Set all users to NEW
-  `;
+  single. Reset a single user
+  `);
 
-  rl.question(options, async (answer) => {
+  process.stdin.setEncoding("utf8");
+
+  process.stdin.on("data", async (input) => {
+    const answer = input.trim(); // Trim whitespace and newlines
+
     switch (answer) {
       case "reset":
-        await resetUsers();
+        console.log(
+          "Are you sure you want to reset all users? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.trim().toLowerCase() === "yes") {
+            console.log("Resetting all users...");
+            await resetUsers();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
+        });
         break;
-      default:
-        console.log("Invalid option");
+      case "single":
+        console.log("Enter username of user to reset:");
+        process.stdin.once("data", async (username) => {
+          const trimmedUsername = username.trim();
+          console.log(
+            `Are you sure you want to reset the user "${trimmedUsername}"? Retype the username to confirm:`,
+          );
+          process.stdin.once("data", async (confirmation) => {
+            if (confirmation.trim() === trimmedUsername) {
+              await resetSingleUser(trimmedUsername);
+            } else {
+              console.log("Operation canceled. Usernames did not match.");
+            }
+            process.stdin.pause(); // Stop listening for input after handling this case
+          });
+        });
+        break;
     }
-    rl.close();
   });
 }
 
@@ -77,6 +101,55 @@ async function resetUsers() {
     );
   } catch (error) {
     console.error("Error: ", error);
+  }
+}
+
+async function resetSingleUser(username) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+      select: {
+        id: true,
+        mana: true,
+        abilities: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      console.error(`User with username "${username}" not found.`);
+      return;
+    }
+
+    const abilitiesRemoved = user.abilities.length;
+    const gemstonesToAdd = abilitiesRemoved * 2;
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        role: "NEW",
+        hp: 40,
+        hpMax: 40,
+        mana: Math.min(user.mana, 40),
+        manaMax: 40,
+        gemstones: {
+          increment: gemstonesToAdd,
+        },
+        passives: {
+          deleteMany: {},
+        },
+        abilities: {
+          deleteMany: {},
+        },
+      },
+    });
+
+    console.info(`User with username "${username}" has been reset.`);
+  } catch (error) {
+    console.error(`Error resetting user with username "${username}": `, error);
   }
 }
 
