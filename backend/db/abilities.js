@@ -884,26 +884,6 @@ const bard = [
   },
 ];
 
-const combat = [
-  // {
-  //   name: "Knockdown",
-  //   category: "Combat",
-  //   type: "DecreaseHealth",
-  //   target: 1,
-  //   description:
-  //     "You charge up an attack dealing 1d10",
-  //   duration: null,
-  //   icon: "Test.jpg",
-  //   gemstoneCost: 1,
-  //   manaCost: 5,
-  //   healthCost: null,
-  //   xpGiven: 0,
-  //   diceNotation: "1d10",
-  //   value: null,
-  //   parentAbility: null,
-  // },
-];
-
 const cosmic = [
   {
     name: "Poor-Harvest",
@@ -1010,6 +990,5 @@ const abilities = [
   ...bloodMage,
   ...bard,
   ...cosmic,
-  ...combat,
 ];
 export default abilities;
