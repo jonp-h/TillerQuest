@@ -190,6 +190,16 @@ model Ability {
   cosmic CosmicEvent[]
 }
 
+model Enemy {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  icon        String?
+  attack      String       
+  health      Int          @default(10)
+  xp          Int          @default(0)
+  gold        Int          @default(0)
+}
+
 // relational model to explicitly manage the M-N relationship between User and Ability
 model UserAbility {
   id          String  @id @default(cuid())
