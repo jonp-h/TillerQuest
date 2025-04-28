@@ -27,7 +27,7 @@ function Enemy({
         }
       >
         <Typography variant="h5" className="text-center">
-          Spillutvikling
+          Slug
         </Typography>
         <LinearProgress
           color="health"
@@ -41,6 +41,7 @@ function Enemy({
         width={200}
         height={200}
         draggable={false}
+        className=""
       />
     </div>
   );

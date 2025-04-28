@@ -16,6 +16,7 @@ const health = [
     diceNotation: null,
     value: 1,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Bandage",
@@ -32,6 +33,7 @@ const health = [
     diceNotation: null,
     value: 1,
     parentAbility: "Vigor",
+    isDungeon: false,
   },
   {
     name: "Enhanced-Vigor",
@@ -48,6 +50,7 @@ const health = [
     diceNotation: null,
     value: 1,
     parentAbility: "Vigor",
+    isDungeon: false,
   },
   {
     name: "Superior-Vigor",
@@ -64,6 +67,7 @@ const health = [
     diceNotation: null,
     value: 1,
     parentAbility: "Enhanced-Vigor",
+    isDungeon: false,
   },
 ];
 
@@ -83,6 +87,7 @@ const mana = [
     diceNotation: null,
     value: 1,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Arcane-Recovery",
@@ -99,6 +104,7 @@ const mana = [
     diceNotation: null,
     value: 1,
     parentAbility: "Arcane-Focus",
+    isDungeon: false,
   },
   {
     name: "Arcane-Connection",
@@ -115,6 +121,7 @@ const mana = [
     diceNotation: null,
     value: 1,
     parentAbility: "Arcane-Recovery",
+    isDungeon: false,
   },
 ];
 
@@ -135,6 +142,7 @@ const trickery = [
     diceNotation: null,
     value: null,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Devilish-Deal",
@@ -152,6 +160,7 @@ const trickery = [
     diceNotation: null,
     value: null,
     parentAbility: "Evade",
+    isDungeon: false,
   },
   {
     name: "Twist-of-Fate",
@@ -169,6 +178,7 @@ const trickery = [
     diceNotation: "1d20",
     value: null,
     parentAbility: "Devilish-Deal",
+    isDungeon: false,
   },
   {
     name: "Postpone",
@@ -186,6 +196,7 @@ const trickery = [
     diceNotation: null,
     value: null,
     parentAbility: "Evade",
+    isDungeon: false,
   },
   {
     name: "Greater-Postpone",
@@ -203,6 +214,7 @@ const trickery = [
     diceNotation: null,
     value: null,
     parentAbility: "Postpone",
+    isDungeon: false,
   },
   {
     name: "Superior-Postpone",
@@ -220,6 +232,7 @@ const trickery = [
     diceNotation: null,
     value: null,
     parentAbility: "Greater-Postpone",
+    isDungeon: false,
   },
 ];
 
@@ -256,6 +269,7 @@ const adventurer = [
   // diceNotation: null,
   //   value: null,
   //   parentAbility: "Adventurer",
+  //  isDungeon: false,
   // },
 ];
 
@@ -291,6 +305,7 @@ const wizard = [
     diceNotation: null,
     value: 1,
     parentAbility: "Essence-Transfer",
+    isDungeon: false,
   },
   {
     name: "Inner-Power",
@@ -307,6 +322,7 @@ const wizard = [
     diceNotation: null,
     value: 1,
     parentAbility: "Arcane-Gift",
+    isDungeon: false,
   },
   {
     name: "Channeling",
@@ -323,6 +339,7 @@ const wizard = [
     diceNotation: null,
     value: 2,
     parentAbility: "Inner-Power",
+    isDungeon: false,
   },
   {
     name: "Greater-Essence-Transfer",
@@ -339,6 +356,7 @@ const wizard = [
     diceNotation: "1d10",
     value: 0,
     parentAbility: "Essence-Transfer",
+    isDungeon: false,
   },
   {
     name: "Cosmic-Gift",
@@ -355,6 +373,7 @@ const wizard = [
     diceNotation: "2d6",
     value: null,
     parentAbility: "Greater-Essence-Transfer",
+    isDungeon: false,
   },
   {
     name: "Arcane-Guidance",
@@ -372,6 +391,7 @@ const wizard = [
     diceNotation: null,
     value: 2,
     parentAbility: "Essence-Transfer",
+    isDungeon: false,
   },
   {
     name: "Essence-Offering",
@@ -388,6 +408,7 @@ const wizard = [
     diceNotation: null,
     value: 5,
     parentAbility: "Essence-Transfer",
+    isDungeon: false,
   },
 ];
 
@@ -407,6 +428,7 @@ const druid = [
     diceNotation: "1d4",
     value: null,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Greater-Heal",
@@ -423,6 +445,7 @@ const druid = [
     diceNotation: "1d6",
     value: null,
     parentAbility: "Heal",
+    isDungeon: false,
   },
   {
     name: "Superior-Heal",
@@ -439,6 +462,7 @@ const druid = [
     diceNotation: "2d6",
     value: null,
     parentAbility: "Greater-Heal",
+    isDungeon: false,
   },
   {
     name: "Healing-Aura",
@@ -455,6 +479,7 @@ const druid = [
     diceNotation: "1d6",
     value: null,
     parentAbility: "Greater-Heal",
+    isDungeon: false,
   },
   {
     name: "Healing-Grace",
@@ -471,6 +496,7 @@ const druid = [
     diceNotation: "2d6",
     value: null,
     parentAbility: "Healing-Aura",
+    isDungeon: false,
   },
   // {
   //   name: "Rejuvinate",
@@ -486,6 +512,7 @@ const druid = [
   //   xpGiven: 250,
   //   value: 100,
   //   parentAbility: "Superior-Heal",
+  //   isDungeon: false,
   // },
   {
     name: "Revive",
@@ -503,6 +530,7 @@ const druid = [
     diceNotation: null,
     value: null,
     parentAbility: "Superior-Heal",
+    isDungeon: false,
   },
 ];
 
@@ -522,6 +550,7 @@ const barbarian = [
     diceNotation: null,
     value: 5,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Shield",
@@ -539,6 +568,7 @@ const barbarian = [
     diceNotation: "1d4",
     value: null,
     parentAbility: "Toughness",
+    isDungeon: false,
   },
   {
     name: "Battle-Ready",
@@ -556,6 +586,7 @@ const barbarian = [
     diceNotation: null,
     value: 1,
     parentAbility: "Toughness",
+    isDungeon: false,
   },
   {
     name: "Protector-of-the-Weak",
@@ -573,6 +604,7 @@ const barbarian = [
     diceNotation: "1d6",
     value: null,
     parentAbility: "Shield",
+    isDungeon: false,
   },
   {
     name: "Get-Behind-Me",
@@ -590,6 +622,7 @@ const barbarian = [
     diceNotation: "2d6",
     value: null,
     parentAbility: "Protector-of-the-Weak",
+    isDungeon: false,
   },
   {
     name: "Protector-of-the-People",
@@ -607,6 +640,7 @@ const barbarian = [
     diceNotation: "1d6",
     value: null,
     parentAbility: "Protector-of-the-Weak",
+    isDungeon: false,
   },
   {
     name: "Enhanced-Toughness",
@@ -623,6 +657,7 @@ const barbarian = [
     diceNotation: null,
     value: 5,
     parentAbility: "Toughness",
+    isDungeon: false,
   },
   {
     name: "Superior-Toughness",
@@ -639,6 +674,7 @@ const barbarian = [
     diceNotation: null,
     value: 5,
     parentAbility: "Enhanced-Toughness",
+    isDungeon: false,
   },
 ];
 
@@ -658,6 +694,7 @@ const bloodMage = [
     diceNotation: null,
     value: 1,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Blood-Bond",
@@ -674,6 +711,7 @@ const bloodMage = [
     diceNotation: null,
     value: 5,
     parentAbility: "Secrets-of-the-Crimson",
+    isDungeon: false,
   },
   {
     name: "Bloodgift",
@@ -691,6 +729,7 @@ const bloodMage = [
     diceNotation: null,
     value: 2,
     parentAbility: "Secrets-of-the-Crimson",
+    isDungeon: false,
   },
   {
     name: "Crimson-Shift",
@@ -708,6 +747,7 @@ const bloodMage = [
     diceNotation: null,
     value: null,
     parentAbility: "Blood-Bond",
+    isDungeon: false,
   },
   {
     name: "Gift-of-Life",
@@ -725,6 +765,7 @@ const bloodMage = [
     diceNotation: null,
     value: 5,
     parentAbility: "Bloodgift",
+    isDungeon: false,
   },
   {
     name: "Blood-Money",
@@ -742,6 +783,7 @@ const bloodMage = [
     diceNotation: "1d10",
     value: null,
     parentAbility: "Secrets-of-the-Crimson",
+    isDungeon: false,
   },
   {
     name: "Cursed-Gold",
@@ -759,6 +801,7 @@ const bloodMage = [
     diceNotation: "5d10",
     value: null,
     parentAbility: "Blood-Money",
+    isDungeon: false,
   },
 ];
 
@@ -779,6 +822,7 @@ const bard = [
     diceNotation: "1d10",
     value: null,
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Streets-of-Gold",
@@ -796,6 +840,7 @@ const bard = [
     diceNotation: "10d10",
     value: null,
     parentAbility: "Performance",
+    isDungeon: false,
   },
   {
     name: "Inspiration",
@@ -813,6 +858,7 @@ const bard = [
     diceNotation: null,
     value: 5,
     parentAbility: "Performance",
+    isDungeon: false,
   },
   {
     name: "Greater-Inspiration",
@@ -830,6 +876,7 @@ const bard = [
     diceNotation: null,
     value: 5,
     parentAbility: "Inspiration",
+    isDungeon: false,
   },
   {
     name: "Feast-of-Heroes",
@@ -847,6 +894,7 @@ const bard = [
     diceNotation: null,
     value: 5,
     parentAbility: "Performance",
+    isDungeon: false,
   },
   {
     name: "Heartfelt-Performance",
@@ -864,6 +912,7 @@ const bard = [
     diceNotation: "2d10",
     value: null,
     parentAbility: "Performance",
+    isDungeon: false,
   },
   {
     name: "Tavern-Dance",
@@ -881,6 +930,7 @@ const bard = [
     diceNotation: "5d10",
     value: null,
     parentAbility: "Heartfelt-Performance",
+    isDungeon: false,
   },
 ];
 
@@ -902,6 +952,7 @@ const cosmic = [
     purchaseable: false,
     cosmicEvent: ["Poor-Harvest"],
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Troubled-Waters",
@@ -921,6 +972,7 @@ const cosmic = [
     purchaseable: false,
     cosmicEvent: ["Poor-Harvest"],
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Sacrificial-Lamb",
@@ -940,6 +992,7 @@ const cosmic = [
     purchaseable: false,
     cosmicEvent: ["Sacrificial-Lamb"],
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Tiredness",
@@ -958,6 +1011,7 @@ const cosmic = [
     purchaseable: false,
     cosmicEvent: ["Tiredness"],
     parentAbility: null,
+    isDungeon: false,
   },
   {
     name: "Good-vibes",
@@ -976,6 +1030,7 @@ const cosmic = [
     purchaseable: false,
     cosmicEvent: ["Good-vibes"],
     parentAbility: null,
+    isDungeon: false,
   },
 ];
 
