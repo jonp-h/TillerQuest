@@ -169,3 +169,31 @@ export const checkIfUserOwnsAbility = async (
     return false;
   }
 };
+
+export const getDungeonAbilities = async () => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const abilities = await db.ability.findMany({
+      where: {
+        isDungeon: true, // Filter abilities where isDungeon is true
+      },
+      select: {
+        name: true, // Select specific fields (e.g., name) if needed
+        description: true,
+        category: true,
+        type: true,
+      },
+    });
+    return abilities;
+  } catch {
+    logger.error("Failed to get dungeonAbilities");
+    return null;
+  }
+};
