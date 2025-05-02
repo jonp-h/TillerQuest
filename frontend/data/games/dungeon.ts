@@ -12,6 +12,9 @@ export const getRandomEnemy = async () => {
     throw new Error("Not authorized");
   }
 
+  const totalEnemies = await prisma.enemy.count();
+  const randomOffset = Math.floor(Math.random() * totalEnemies);
+
   const enemies = await prisma.enemy.findFirst({
     select: {
       name: true,
@@ -24,7 +27,7 @@ export const getRandomEnemy = async () => {
     orderBy: {
       id: "asc",
     },
-    skip: Math.floor(Math.random() * (await prisma.enemy.count())),
+    skip: randomOffset,
   });
   console.log("enemies", enemies);
   return enemies;

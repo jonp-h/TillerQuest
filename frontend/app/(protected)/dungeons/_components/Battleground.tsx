@@ -5,24 +5,12 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-
-interface EnemyProps {
-  index: number;
-  name: string;
-  health: number;
-}
+import { getRandomEnemy } from "@/data/games/dungeon";
+import { EnemyProps } from "@/types/types";
 
 function Battleground() {
-  const [enemies, setEnemies] = useState<EnemyProps[]>(
-    Array.from({ length: 3 }, (_, index) => ({
-      index,
-      name: `Enemy ${index + 1}`,
-      health: 100,
-    })),
-  );
-  const [selectedEnemy, setSelectedEnemy] = useState<number>(0);
-
-  const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
+  const [enemy, setEnemy] = useState<EnemyProps | null>(null);
+  const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
 
   const initializeDiceBox = async () => {
@@ -39,12 +27,34 @@ function Battleground() {
   useEffect(() => {
     const timer = setTimeout(() => {
       initializeDiceBox();
-    }, 1000);
+    }, 500);
 
-    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchEnemy = async () => {
+      try {
+        const randomEnemy = await getRandomEnemy();
+        setEnemy(
+          randomEnemy
+            ? {
+                ...randomEnemy,
+                maxHealth: randomEnemy.health,
+                icon: randomEnemy.icon ?? "/dungeons/slug.png",
+              }
+            : null,
+        );
+      } catch (error) {
+        console.error("Error fetching enemy:", error);
+      }
+    };
+
+    fetchEnemy(); // Fetch the enemy on component mount
   }, []);
 
   const rollDice = async () => {
+    console.log(enemy?.health);
     if (!diceBox) {
       initializeDiceBox();
       toast.info("Preparing dice..", { autoClose: 1000 });
@@ -64,15 +74,18 @@ function Battleground() {
       toast.error("Dice failed to initialize");
       return;
     }
+
     diceBox
       .roll("1d20")
       .then((results) => {
-        setEnemies((prevEnemies) =>
-          prevEnemies.map((enemy, index) =>
-            index === selectedEnemy
-              ? { ...enemy, health: enemy.health - results.total }
-              : enemy,
-          ),
+        setEnemy((prevEnemy) =>
+          prevEnemy
+            ? {
+                ...prevEnemy,
+                health: prevEnemy.health - results.total,
+                maxHealth: prevEnemy.maxHealth, // Ensure maxHealth is preserved
+              }
+            : null,
         );
       })
       .finally(() => {
@@ -96,14 +109,19 @@ function Battleground() {
         }}
         className="m-auto flex justify-evenly"
       >
-        {enemies.map((enemy, index) => (
+        {enemy && (
           <Enemy
-            enemy={enemy}
-            selectedEnemy={selectedEnemy}
-            setSelectedEnemy={setSelectedEnemy}
-            key={index}
+            enemy={{
+              name: enemy.name,
+              health: enemy.health,
+              maxHealth: enemy.maxHealth,
+              icon: enemy.icon,
+              attack: enemy.attack,
+              xp: enemy.xp,
+              gold: enemy.gold,
+            }}
           />
-        ))}
+        )}
       </div>
       <div className="flex justify-center p-2">
         <Button

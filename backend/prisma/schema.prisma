@@ -260,6 +260,7 @@ model Enemy {
   icon        String?
   attack      String       
   health      Int          @default(10)
+  maxHealth   Int       @default(10)
   xp          Int          @default(0)
   gold        Int          @default(0)
 }
