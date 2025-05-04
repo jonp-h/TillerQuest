@@ -193,7 +193,42 @@ export const getDungeonAbilities = async () => {
     });
     return abilities;
   } catch {
-    logger.error("Failed to get dungeonAbilities");
+    logger.error("Failed to get Dungeon Abilities");
+    return null;
+  }
+};
+
+export const getUserDungeonAbilities = async (userId: string) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const userDungeonAbilities = await db.userAbility.findMany({
+      where: {
+        userId,
+        ability: {
+          isDungeon: true,
+        },
+      },
+      select: {
+        ability: {
+          select: {
+            name: true,
+            icon: true,
+            diceNotation: true,
+          },
+        },
+      },
+    });
+
+    return userDungeonAbilities;
+  } catch (error) {
+    logger.error("Failed to get Dungeon Abilities", error);
     return null;
   }
 };
