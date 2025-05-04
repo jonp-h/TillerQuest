@@ -51,8 +51,7 @@ export default function AbilityForm({
     guildMembers?.filter((member) => member.id !== user.id) || [];
 
   const lackingResource =
-    user.mana < (ability.manaCost || 0) ||
-    user.hp <= (ability.healthCost || 0 + 1);
+    user.mana < (ability.manaCost || 0) || user.hp <= (ability.healthCost || 0);
 
   const isDead = user.hp === 0;
 
@@ -102,7 +101,7 @@ export default function AbilityForm({
     } else if (lackingResource) {
       return (
         "Not enough " +
-        (user.hp <= (ability.healthCost || 0 + 1) ? "health" : "mana") +
+        (user.hp <= (ability.healthCost || 0) ? "health" : "mana") +
         " to use this ability."
       );
     } else if (!diceBox && ability.diceNotation) {

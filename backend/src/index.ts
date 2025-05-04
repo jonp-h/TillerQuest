@@ -394,6 +394,7 @@ cron.schedule(
     try {
       const topScores = await db.game.findMany({
         orderBy: { score: "desc" },
+        distinct: ["userId"],
         take: 3,
         select: { userId: true },
       });
