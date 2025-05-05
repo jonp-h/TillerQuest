@@ -424,11 +424,12 @@ cron.schedule(
   },
 );
 
+// Schedule a job to run every morning at 08:00 AM, resets all users turn.
 cron.schedule("0 8 * * *", async () => {
   try {
     const usersWithTurnNotFinished = await db.user.findMany({
       where: {
-        turnFinished: true, // Filter users where turnFinished is false
+        turnFinished: true,
       },
       distinct: ["id"], // Ensure unique users based on their ID
       select: {
