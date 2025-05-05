@@ -113,6 +113,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
+  turnFinished    Boolean?     @default(false)
 
   level    Int      @default(0)
   xp       Int      @default(1)
