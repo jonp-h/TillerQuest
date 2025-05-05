@@ -425,30 +425,36 @@ cron.schedule(
 );
 
 // Schedule a job to run every morning at 08:00 AM, resets all users turn.
-cron.schedule("0 8 * * *", async () => {
-  try {
-    const usersWithTurnNotFinished = await db.user.findMany({
-      where: {
-        turnFinished: true,
-      },
-      distinct: ["id"], // Ensure unique users based on their ID
-      select: {
-        id: true,
-        username: true,
-        turnFinished: true,
-      },
-    });
-    for (const user of usersWithTurnNotFinished) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { turnFinished: false },
+cron.schedule(
+  "0 8 * * *",
+  async () => {
+    try {
+      const usersWithTurnNotFinished = await db.user.findMany({
+        where: {
+          turnFinished: true,
+        },
+        distinct: ["id"], // Ensure unique users based on their ID
+        select: {
+          id: true,
+          username: true,
+          turnFinished: true,
+        },
       });
-      console.log(`Updated turnFinished to false for user: ${user.username}`);
+      for (const user of usersWithTurnNotFinished) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { turnFinished: false },
+        });
+        console.log(`Updated turnFinished to false for user: ${user.username}`);
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-});
+  },
+  {
+    name: "ResetTurnFinished",
+  },
+);
 
 // print out scheduled tasks
 console.log("Started cron jobs:");
