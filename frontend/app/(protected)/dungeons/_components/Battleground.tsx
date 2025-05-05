@@ -5,7 +5,7 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import { getRandomEnemy } from "@/data/games/dungeon";
+import { finishTurn, getRandomEnemy } from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
 
 function Battleground() {
@@ -90,6 +90,7 @@ function Battleground() {
       })
       .finally(() => {
         setThrown(false);
+        finishTurn();
       });
   };
   const punchMonster = async () => {
