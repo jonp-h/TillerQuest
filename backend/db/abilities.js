@@ -256,6 +256,7 @@ const adventurer = [
   // diceNotation: null,
   //   value: null,
   //   parentAbility: "Adventurer",
+  //
   // },
 ];
 
@@ -486,6 +487,7 @@ const druid = [
   //   xpGiven: 250,
   //   value: 100,
   //   parentAbility: "Superior-Heal",
+  //
   // },
   {
     name: "Revive",
