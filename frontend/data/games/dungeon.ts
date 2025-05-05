@@ -23,6 +23,7 @@ export const getRandomEnemy = async () => {
       icon: true,
       attack: true,
       health: true,
+      maxHealth: true,
       xp: true,
       gold: true,
     },
@@ -56,7 +57,7 @@ export async function isTurnFinished() {
   }
 }
 
-export async function finishTurn() {
+export async function finishTurn(damage: number, bossName: string) {
   const session = await auth();
 
   if (
@@ -68,6 +69,12 @@ export async function finishTurn() {
   const gameFinished = true;
   try {
     return await prisma.$transaction(async (db) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const bossDamage = await db.enemy.update({
+        where: { name: bossName },
+        data: { health: { decrement: damage } },
+      });
+
       const targetUser = await db.user.update({
         where: { id: session.user.id },
         data: { turnFinished: gameFinished },
@@ -79,7 +86,7 @@ export async function finishTurn() {
       await addLog(
         db,
         targetUser.id,
-        `DUNGEON: ${targetUser.username} finished their turn in the dungeon`,
+        `DUNGEON: ${targetUser.username} finished their turn in the dungeon.`,
       );
     });
   } catch (error) {
@@ -89,5 +96,4 @@ export async function finishTurn() {
       Date.now().toLocaleString("no-NO")
     );
   }
-  console.log("Turn finished!");
 }

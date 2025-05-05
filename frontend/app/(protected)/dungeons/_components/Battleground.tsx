@@ -5,13 +5,18 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import { finishTurn, getRandomEnemy } from "@/data/games/dungeon";
+import {
+  finishTurn,
+  getRandomEnemy,
+  isTurnFinished,
+} from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
+  const [turnFinished, setTurnFinished] = useState<boolean>(false);
 
   const initializeDiceBox = async () => {
     try {
@@ -40,7 +45,7 @@ function Battleground() {
           randomEnemy
             ? {
                 ...randomEnemy,
-                maxHealth: randomEnemy.health,
+                maxHealth: randomEnemy.maxHealth,
                 icon: randomEnemy.icon ?? "/dungeons/slug.png",
               }
             : null,
@@ -77,7 +82,7 @@ function Battleground() {
 
     diceBox
       .roll("1d20")
-      .then((results) => {
+      .then(async (results) => {
         setEnemy((prevEnemy) =>
           prevEnemy
             ? {
@@ -87,10 +92,17 @@ function Battleground() {
               }
             : null,
         );
+        if (!enemy) {
+          toast.error("An error has occurred!");
+          return;
+        }
+
+        await finishTurn(results.total, enemy.name);
+
+        toast.info("Your turn is finished.");
       })
       .finally(() => {
         setThrown(false);
-        finishTurn();
       });
   };
   const punchMonster = async () => {
@@ -123,6 +135,15 @@ function Battleground() {
         setThrown(false);
       });
   };
+
+  useEffect(() => {
+    const fetchTurnStatus = async () => {
+      const status = await isTurnFinished();
+      setTurnFinished(status?.turnFinished || false);
+    };
+
+    fetchTurnStatus();
+  }, []);
 
   return (
     <>
@@ -159,7 +180,7 @@ function Battleground() {
           onClick={rollDice}
           variant="contained"
           color="primary"
-          disabled={thrown}
+          disabled={turnFinished || thrown}
         >
           Roll Dice
         </Button>
@@ -167,7 +188,7 @@ function Battleground() {
           onClick={punchMonster}
           variant="contained"
           color="primary"
-          disabled={thrown}
+          disabled={turnFinished || thrown}
         >
           Punch
         </Button>

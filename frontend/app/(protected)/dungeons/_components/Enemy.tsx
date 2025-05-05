@@ -17,6 +17,10 @@ function Enemy({ enemy }: { enemy: EnemyProps }) {
       >
         <Typography variant="h5" className="text-center">
           {enemy.name}
+          <br />
+          <p>
+            {enemy.health}HP / {enemy.maxHealth}HP
+          </p>
         </Typography>
         <LinearProgress
           color="health"
