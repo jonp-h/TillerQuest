@@ -255,8 +255,7 @@ model ShopItem {
 }
 
 model Enemy {
-  id          String       @id @default(cuid())
-  name        String       @unique
+  name        String       @id
   icon        String?
   attack      String       
   health      Int          @default(10)

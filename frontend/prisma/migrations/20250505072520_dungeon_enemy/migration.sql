@@ -3,7 +3,6 @@ ALTER TABLE "Ability" ADD COLUMN     "isDungeon" BOOLEAN DEFAULT false;
 
 -- CreateTable
 CREATE TABLE "Enemy" (
-    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "icon" TEXT,
     "attack" TEXT NOT NULL,
@@ -12,8 +11,5 @@ CREATE TABLE "Enemy" (
     "xp" INTEGER NOT NULL DEFAULT 0,
     "gold" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "Enemy_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Enemy_pkey" PRIMARY KEY ("name")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "Enemy_name_key" ON "Enemy"("name");
