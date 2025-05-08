@@ -1,14 +1,16 @@
 const enemies = [
   {
+    id: 1,
     name: "Slug",
-    health: 200,
-    maxHealth: 200,
+    health: 225,
+    maxHealth: 225,
     attack: "1d4",
     icon: "/dungeons/slug.png",
-    gold: 150,
+    gold: 500,
     xp: 200,
   },
   {
+    id: 2,
     name: "Evil Knight",
     health: 100,
     maxHealth: 100,

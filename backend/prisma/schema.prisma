@@ -256,7 +256,8 @@ model ShopItem {
 }
 
 model Enemy {
-  name        String       @id
+  id          Int          @id @default(autoincrement())
+  name        String       
   icon        String?
   attack      String       
   health      Int          @default(10)

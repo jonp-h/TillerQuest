@@ -4,6 +4,38 @@ import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
+import { DiceRoll } from "@dice-roller/rpg-dice-roller";
+
+export const getEnemy = async () => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const enemy = await prisma.enemy.findFirst({
+      select: {
+        id: true,
+        name: true,
+        icon: true,
+        attack: true,
+        health: true,
+        maxHealth: true,
+        xp: true,
+        gold: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return enemy;
+  } catch (error) {
+    logger.error("Error fetching enemy: " + error);
+  }
+};
 
 export const getRandomEnemy = async () => {
   const session = await auth();
@@ -57,7 +89,7 @@ export async function isTurnFinished() {
   }
 }
 
-export async function finishTurn(damage: number, bossName: string) {
+export async function finishTurn(diceRoll: string, boss: number) {
   const session = await auth();
 
   if (
@@ -66,18 +98,34 @@ export async function finishTurn(damage: number, bossName: string) {
   ) {
     throw new Error("Not authorized");
   }
-  const gameFinished = true;
   try {
     return await prisma.$transaction(async (db) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const damageRollResult = rollDice(diceRoll);
+      const damage = damageRollResult.total;
+
       const bossDamage = await db.enemy.update({
-        where: { name: bossName },
+        where: { id: boss },
         data: { health: { decrement: damage } },
       });
 
+      if (bossDamage.health <= 0) {
+        await db.enemy.update({
+          where: { id: boss },
+          data: { health: 0 },
+        });
+        // TODO: Implement rewards for defeating boss to all the users
+        // await db.user.update({
+        //   where: { id: session.user.id },
+        //   data: {
+        //     xp: { increment: bossDamage.xp },
+        //     gold: { increment: bossDamage.gold },
+        //   },
+        // });
+      }
+
       const targetUser = await db.user.update({
         where: { id: session.user.id },
-        data: { turnFinished: gameFinished },
+        data: { turnFinished: true },
         select: {
           id: true,
           username: true,
@@ -86,7 +134,7 @@ export async function finishTurn(damage: number, bossName: string) {
       await addLog(
         db,
         targetUser.id,
-        `DUNGEON: ${targetUser.username} finished their turn in the dungeon.`,
+        `DUNGEON: ${targetUser.username} finished their turn in the dungeon and dealt ${damage} damage.`,
       );
     });
   } catch (error) {
@@ -97,3 +145,18 @@ export async function finishTurn(damage: number, bossName: string) {
     );
   }
 }
+
+const rollDice = (diceNotation: string) => {
+  const roll = new DiceRoll(diceNotation);
+  // @ts-expect-error - the package's export function is not typed correctly
+  return roll.export(exportFormats.OBJECT) as {
+    averageTotal: number;
+    maxTotal: number;
+    minTotal: number;
+    notation: string;
+    output: string;
+    // rolls: any[];
+    total: number;
+    type: string;
+  };
+};

@@ -5,11 +5,7 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import {
-  finishTurn,
-  getRandomEnemy,
-  isTurnFinished,
-} from "@/data/games/dungeon";
+import { finishTurn, getEnemy, isTurnFinished } from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
 
 function Battleground() {
@@ -40,13 +36,12 @@ function Battleground() {
   useEffect(() => {
     const fetchEnemy = async () => {
       try {
-        const randomEnemy = await getRandomEnemy();
+        const enemy = await getEnemy();
         setEnemy(
-          randomEnemy
+          enemy
             ? {
-                ...randomEnemy,
-                maxHealth: randomEnemy.maxHealth,
-                icon: randomEnemy.icon ?? "/dungeons/slug.png",
+                ...enemy,
+                icon: enemy.icon ?? "/dungeons/slug.png",
               }
             : null,
         );
@@ -79,61 +74,14 @@ function Battleground() {
       toast.error("Dice failed to initialize");
       return;
     }
-
-    diceBox
-      .roll("1d20")
-      .then(async (results) => {
-        setEnemy((prevEnemy) =>
-          prevEnemy
-            ? {
-                ...prevEnemy,
-                health: prevEnemy.health - results.total,
-                maxHealth: prevEnemy.maxHealth, // Ensure maxHealth is preserved
-              }
-            : null,
-        );
-        if (!enemy) {
-          toast.error("An error has occurred!");
-          return;
-        }
-
-        await finishTurn(results.total, enemy.name);
-
-        toast.info("Your turn is finished.");
-      })
-      .finally(() => {
-        setThrown(false);
-      });
-  };
-  const punchMonster = async () => {
-    if (!diceBox) {
-      initializeDiceBox();
-      toast.info("Preparing dice..", { autoClose: 1000 });
-      return;
-    } else if (diceBox) {
-      diceBox.clearDice();
-    }
-    setThrown(true);
-    if (!diceBox) {
-      toast.error("Dice failed to initialize");
+    if (!enemy) {
+      toast.error("Enemy not found");
       return;
     }
-    diceBox
-      .roll("1d6")
-      .then((results) => {
-        setEnemy((prevEnemy) =>
-          prevEnemy
-            ? {
-                ...prevEnemy,
-                health: prevEnemy.health - results.total,
-                maxHealth: prevEnemy.maxHealth, // Ensure maxHealth is preserved
-              }
-            : null,
-        );
-      })
-      .finally(() => {
-        setThrown(false);
-      });
+
+    await finishTurn(enemy.attack, enemy.id);
+
+    setThrown(false);
   };
 
   useEffect(() => {
@@ -164,6 +112,7 @@ function Battleground() {
         {enemy && (
           <Enemy
             enemy={{
+              id: enemy.id,
               name: enemy.name,
               health: enemy.health,
               maxHealth: enemy.maxHealth,
@@ -183,14 +132,6 @@ function Battleground() {
           disabled={turnFinished || thrown}
         >
           Roll Dice
-        </Button>
-        <Button
-          onClick={punchMonster}
-          variant="contained"
-          color="primary"
-          disabled={turnFinished || thrown}
-        >
-          Punch
         </Button>
       </div>
     </>
