@@ -162,7 +162,8 @@ model Guild {
 }
 
 model Ability {
-  name         String          @id @default(cuid())
+  id           Int             @id @default( autoincrement())
+  name         String          @unique @default(cuid())
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
   target       Int             @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
@@ -241,7 +242,7 @@ model CosmicEvent {
 }
 
 model ShopItem {
-  id          String       @id @default(cuid())
+  id          Int       @id @default(autoincrement())
   name        String       @unique
   description String?
   // icon        String
@@ -277,7 +278,7 @@ model Game {
 }
 
 model TypeQuestText {
-  id   String @id @default(cuid())
+  id   Int @id @default(autoincrement()) @unique
   text String @unique
 }
 

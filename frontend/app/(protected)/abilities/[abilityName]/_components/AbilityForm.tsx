@@ -147,6 +147,13 @@ export default function AbilityForm({
       case 1:
         targetUsers = [selectedUser];
         break;
+      case 2:
+        targetUsers = guildMembers
+          ? guildMembers
+              .map((member) => member.id)
+              .filter((id) => id !== user.id)
+          : [];
+        break;
     }
 
     const result = await selectAbility(user.id, targetUsers, ability.name);
