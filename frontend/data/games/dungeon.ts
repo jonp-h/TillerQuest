@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
-import { DiceRoll } from "@dice-roller/rpg-dice-roller";
+import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 
 export const getEnemy = async () => {
   const session = await auth();
@@ -103,25 +103,26 @@ export async function finishTurn(diceRoll: string, boss: number) {
       const damageRollResult = rollDice(diceRoll);
       const damage = damageRollResult.total;
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const bossDamage = await db.enemy.update({
         where: { id: boss },
         data: { health: { decrement: damage } },
       });
 
-      if (bossDamage.health <= 0) {
-        await db.enemy.update({
-          where: { id: boss },
-          data: { health: 0 },
-        });
-        // TODO: Implement rewards for defeating boss to all the users
-        // await db.user.update({
-        //   where: { id: session.user.id },
-        //   data: {
-        //     xp: { increment: bossDamage.xp },
-        //     gold: { increment: bossDamage.gold },
-        //   },
-        // });
-      }
+      // if (bossDamage.health <= 0) {
+      //   await db.enemy.update({
+      //     where: { id: boss },
+      //     data: { health: 0 },
+      //   });
+      // TODO: Implement rewards for defeating boss to all the users
+      // await db.user.update({
+      //   where: { id: session.user.id },
+      //   data: {
+      //     xp: { increment: bossDamage.xp },
+      //     gold: { increment: bossDamage.gold },
+      //   },
+      // });
+      // }
 
       const targetUser = await db.user.update({
         where: { id: session.user.id },
@@ -136,6 +137,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
         targetUser.id,
         `DUNGEON: ${targetUser.username} finished their turn in the dungeon and dealt ${damage} damage.`,
       );
+      return damage;
     });
   } catch (error) {
     logger.error("Error finishing up turn: " + error);

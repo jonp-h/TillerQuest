@@ -7,12 +7,14 @@ import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
 import { finishTurn, getEnemy, isTurnFinished } from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState<boolean>(false);
+  const router = useRouter();
 
   const initializeDiceBox = async () => {
     try {
@@ -54,12 +56,16 @@ function Battleground() {
   }, []);
 
   const rollDice = async () => {
+    setThrown(true);
     console.log(enemy?.health);
+    console.log("Dicebox current:", diceBox);
     if (!diceBox) {
       initializeDiceBox();
+      console.log("Dicebox was null", diceBox);
       toast.info("Preparing dice..", { autoClose: 1000 });
       return;
     } else if (diceBox) {
+      console.log("Init Dicebox:", diceBox);
       diceBox.clearDice();
       // TODO: enable custom colorsets for different abilities
       // diceBox.updateConfig({
@@ -68,20 +74,39 @@ function Battleground() {
       // });
     }
 
-    setThrown(true);
-
-    if (!diceBox) {
-      toast.error("Dice failed to initialize");
-      return;
-    }
     if (!enemy) {
       toast.error("Enemy not found");
       return;
     }
 
-    await finishTurn(enemy.attack, enemy.id);
-
-    setThrown(false);
+    const result = await finishTurn(enemy.attack, enemy.id);
+    if (!result) {
+      return;
+    }
+    diceBox
+      .roll(`1d6@${result}`)
+      .then(() => {
+        const fetchUpdatedEnemy = async () => {
+          try {
+            const updatedEnemy = await getEnemy();
+            setEnemy(
+              updatedEnemy
+                ? {
+                    ...updatedEnemy,
+                    icon: updatedEnemy.icon ?? "/dungeons/slug.png",
+                  }
+                : null,
+            );
+          } catch (error) {
+            console.error("Error fetching updated enemy:", error);
+          }
+        };
+        fetchUpdatedEnemy();
+      })
+      .finally(() => {
+        router.refresh();
+        setThrown(false);
+      });
   };
 
   useEffect(() => {
