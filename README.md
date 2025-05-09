@@ -45,6 +45,9 @@
 # Clone this repository
 $ git clone
 
+$ cd TillerQuest/
+# Go into the Project
+
 # Install dependencies
 $ npm i
 
