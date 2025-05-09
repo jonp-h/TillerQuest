@@ -45,14 +45,21 @@
 # Clone this repository
 $ git clone
 
+# Install dependencies
+$ npm i
+
 # Enter the repository
-$ cd /frontend/
+$ cd frontend/
 
 # Install dependencies
 $ npm i
 
-# Run the app
-$ npm run dev
+# Enter the repository
+$ cd ../backend/
+
+# Install dependencies
+$ npm i
+
 ```
 
 #### Setup test env
@@ -60,7 +67,7 @@ $ npm run dev
 - First complete the above instructions
 - Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
 
-- Create .env inside project folder (same folder as app/)
+- Create .env inside the frontend folder
   - Create the following variables and replace the "..."
 
 ```
@@ -88,13 +95,45 @@ NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
 # Longitude coordinates of where users are allowed to gain mana from.".
 ```
 
+- Create a new .env file in backend folder
+  - Create the following variables and replace the "..."
+
+```
+AUTH_SECRET=...
+# This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+
+AUTH_GITHUB_ID=...
+# In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+AUTH_GITHUB_SECRET=...
+# Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+DATABASE_URL=...
+# Your connection string to the postgresql database. Should contain username and password.
+
+NEW_USER_SECRET=...
+# This is what your students would need to know to create a user.
+```
+
 ```ps
 $ cd backend/
 
 $ npx prisma db push
 
-$ node db/generate.js #To mock an example database
+$ npm run generate
+#To mock an example database
 
+$ npm run start
+#To start backend
+```
+
+### Open a new Terminal
+
+```ps
+$ cd frontent/
+
+$ npm run dev
+#To open dev
 ```
 
 - You can inspect the database with "npx prisma studio"
