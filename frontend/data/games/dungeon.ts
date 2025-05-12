@@ -5,7 +5,10 @@ import { db as prisma } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
-import { experienceAndLevelValidator } from "../validators/validators";
+import {
+  experienceAndLevelValidator,
+  goldValidator,
+} from "../validators/validators";
 
 // TODO: Move getting enemies to backend
 // add new field in DB to specify that the boss has been picked
@@ -183,9 +186,10 @@ async function rewardUsers(xp: number, gold: number) {
 
       for (const user of users) {
         await experienceAndLevelValidator(db, user, xp);
+        const goldToGive = await goldValidator(db, user.id, user.gold);
         await db.user.update({
           where: { id: user.id },
-          data: { gold: { increment: gold } },
+          data: { gold: { increment: goldToGive } },
         });
         await addLog(
           db,
