@@ -37,7 +37,6 @@ function Battleground() {
   useEffect(() => {
     const fetchEnemy = async () => {
       try {
-        // TODO: change later
         const enemy = await getEnemy();
         if (!enemy) {
           return;
@@ -71,7 +70,6 @@ function Battleground() {
       toast.info("Preparing dice..", { autoClose: 1000 });
       return;
     } else if (diceBox) {
-      console.log("Init Dicebox:", diceBox);
       diceBox.clearDice();
       // TODO: enable custom colorsets for different abilities
       // diceBox.updateConfig({
