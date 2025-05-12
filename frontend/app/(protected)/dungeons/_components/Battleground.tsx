@@ -106,9 +106,11 @@ function Battleground() {
       .finally(() => {
         router.refresh();
         setThrown(false);
+        setTurnFinished(true);
       });
   };
 
+  // TODO: may be redundant, review later
   useEffect(() => {
     const fetchTurnStatus = async () => {
       const status = await isTurnFinished();

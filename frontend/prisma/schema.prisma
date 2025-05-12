@@ -192,6 +192,7 @@ model Ability {
   cosmic CosmicEvent[]
 }
 
+// TODO: Add new field to specify which boss is active.
 model Enemy {
   id          Int          @id @default(autoincrement())
   name        String       

@@ -5,6 +5,7 @@ import { db as prisma } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
+import { experienceAndLevelValidator } from "../validators/validators";
 
 export const getEnemy = async () => {
   const session = await auth();
@@ -102,28 +103,28 @@ export async function finishTurn(diceRoll: string, boss: number) {
     return await prisma.$transaction(async (db) => {
       const damageRollResult = rollDice(diceRoll);
       const damage = damageRollResult.total;
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const bossDamage = await db.enemy.update({
         where: { id: boss },
         data: { health: { decrement: damage } },
       });
-
-      // if (bossDamage.health <= 0) {
-      //   await db.enemy.update({
-      //     where: { id: boss },
-      //     data: { health: 0 },
-      //   });
+      const currentBoss = await db.enemy.findFirst({
+        where: { id: boss },
+      });
       // TODO: Implement rewards for defeating boss to all the users
-      // await db.user.update({
-      //   where: { id: session.user.id },
-      //   data: {
-      //     xp: { increment: bossDamage.xp },
-      //     gold: { increment: bossDamage.gold },
-      //   },
-      // });
-      // }
+      if (bossDamage.health <= 0) {
+        if (!currentBoss) {
+          return;
+        }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const updateBoss = await db.enemy.update({
+          where: { id: boss },
+          data: { health: 0 },
+        });
+        rewardUsers(currentBoss.xp, currentBoss.gold);
+      }
+
+      // Update turn for user
       const targetUser = await db.user.update({
         where: { id: session.user.id },
         data: { turnFinished: true },
@@ -162,3 +163,34 @@ const rollDice = (diceNotation: string) => {
     type: string;
   };
 };
+
+async function rewardUsers(xp: number, gold: number) {
+  const session = await auth();
+
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+  try {
+    const users = await prisma.user.findMany({
+      distinct: ["id"],
+    });
+
+    for (const user of users) {
+      if (!user) {
+        return;
+      }
+      await experienceAndLevelValidator(prisma, user, xp);
+      // const currency = await goldValidator(prisma, user.id, gold);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { gold: { increment: gold } },
+      });
+      console.log(`Updated turnFinished to false for user: ${user.username}`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

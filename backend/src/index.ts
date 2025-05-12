@@ -452,7 +452,32 @@ cron.schedule(
     }
   },
   {
-    name: "ResetTurnFinished",
+    name: "resetTurn",
+  },
+);
+
+cron.schedule(
+  "0 8 * * *",
+  async () => {
+    try {
+      const users = await db.user.findMany({
+        distinct: ["id"],
+        select: {
+          id: true,
+          username: true,
+        },
+      });
+
+      for (const user of users) {
+        await damageValidator(db, user.id, 8);
+        console.log(`Updated turnFinished to false for user: ${user.username}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "dungeonDamage",
   },
 );
 

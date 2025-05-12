@@ -255,6 +255,7 @@ model ShopItem {
   users       User[] // m-n relation to users. An item can be owned by many users
 }
 
+// TODO: Add new field to specify which boss is active.
 model Enemy {
   id          Int          @id @default(autoincrement())
   name        String       
