@@ -5,17 +5,15 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import { finishTurn, getEnemy, isTurnFinished } from "@/data/games/dungeon";
+import { finishTurn, getEnemy } from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
-import { useRouter } from "next/navigation";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
-  const [turnFinished, setTurnFinished] = useState<boolean>(false);
+  const [turnFinished, setTurnFinished] = useState<number>(0);
   const [bossDead, setBossDead] = useState<boolean>(false);
-  const router = useRouter();
 
   const initializeDiceBox = async () => {
     try {
@@ -39,30 +37,23 @@ function Battleground() {
   useEffect(() => {
     const fetchEnemy = async () => {
       try {
+        // TODO: change later
         const enemy = await getEnemy();
         if (!enemy) {
           return;
         }
         if (enemy?.health <= 0) {
-          setEnemy(
-            enemy
-              ? {
-                  ...enemy,
-                  health: 0,
-                  icon: "/classes/Grave.png",
-                }
-              : null,
-          );
           setBossDead(true);
+          setEnemy({
+            ...enemy,
+            icon: enemy.icon ?? "/dungeons/slug.png",
+          });
         }
-        setEnemy(
-          enemy
-            ? {
-                ...enemy,
-                icon: enemy.icon ?? "/dungeons/slug.png",
-              }
-            : null,
-        );
+        setEnemy({
+          ...enemy,
+          icon: enemy.icon ?? "/dungeons/slug.png",
+        });
+
         setBossDead(false);
       } catch (error) {
         console.error("Error fetching enemy:", error);
@@ -74,8 +65,6 @@ function Battleground() {
 
   const rollDice = async () => {
     setThrown(true);
-    console.log(enemy?.health);
-    console.log("Dicebox current:", diceBox);
     if (!diceBox) {
       initializeDiceBox();
       console.log("Dicebox was null", diceBox);
@@ -124,21 +113,10 @@ function Battleground() {
         fetchUpdatedEnemy();
       })
       .finally(() => {
-        router.refresh();
         setThrown(false);
-        setTurnFinished(true);
+        setTurnFinished(1);
       });
   };
-
-  // TODO: may be redundant, review later
-  useEffect(() => {
-    const fetchTurnStatus = async () => {
-      const status = await isTurnFinished();
-      setTurnFinished(status?.turnFinished || false);
-    };
-
-    fetchTurnStatus();
-  }, []);
 
   return (
     <>
@@ -176,7 +154,7 @@ function Battleground() {
           onClick={rollDice}
           variant="contained"
           color="primary"
-          disabled={turnFinished || thrown || bossDead}
+          disabled={Boolean(turnFinished) || thrown || bossDead}
         >
           Roll Dice
         </Button>

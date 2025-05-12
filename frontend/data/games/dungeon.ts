@@ -23,7 +23,7 @@ export const getEnemy = async () => {
   }
 
   try {
-    const enemy = await prisma.enemy.findFirst({
+    let enemy = await prisma.enemy.findFirst({
       select: {
         id: true,
         name: true,
@@ -38,6 +38,26 @@ export const getEnemy = async () => {
         id: "asc",
       },
     });
+    if (!enemy) {
+      return;
+    }
+    const checkBoss = await isBossDead(enemy?.id);
+    if (checkBoss) {
+      enemy = enemy
+        ? {
+            ...enemy,
+            health: 0,
+            icon: "/classes/Grave.png",
+          }
+        : null;
+    } else {
+      enemy = enemy
+        ? {
+            ...enemy,
+            icon: enemy.icon ?? "/dungeons/slug.png",
+          }
+        : null;
+    }
     return enemy;
   } catch (error) {
     logger.error("Error fetching enemy: " + error);
@@ -124,7 +144,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const updateBoss = await db.enemy.update({
           where: { id: boss },
-          data: { health: 0, icon: "/classes/Grave.png" },
+          data: { health: 0 },
         });
         rewardUsers(currentBoss.xp, currentBoss.gold);
       }
@@ -132,7 +152,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
       // Update turn for user
       const targetUser = await db.user.update({
         where: { id: session.user.id },
-        data: { turnFinished: true },
+        data: { turnFinished: 1 },
         select: {
           id: true,
           username: true,
@@ -205,4 +225,20 @@ async function rewardUsers(xp: number, gold: number) {
       Date.now().toLocaleString("no-NO")
     );
   }
+}
+
+async function isBossDead(boss: number) {
+  const enemy = await prisma.enemy.findFirst({
+    where: { id: boss },
+    select: {
+      health: true,
+    },
+  });
+  if (!enemy) {
+    return;
+  }
+  if (enemy?.health <= 0) {
+    return true;
+  }
+  return false;
 }

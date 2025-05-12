@@ -431,9 +431,8 @@ cron.schedule(
     try {
       const usersWithTurnNotFinished = await db.user.findMany({
         where: {
-          turnFinished: true,
+          turnFinished: 0,
         },
-        distinct: ["id"], // Ensure unique users based on their ID
         select: {
           id: true,
           username: true,
@@ -443,7 +442,7 @@ cron.schedule(
       for (const user of usersWithTurnNotFinished) {
         await db.user.update({
           where: { id: user.id },
-          data: { turnFinished: false },
+          data: { turnFinished: 0 },
         });
         console.log(`Updated turnFinished to false for user: ${user.username}`);
       }
@@ -455,16 +454,15 @@ cron.schedule(
     name: "resetTurn",
   },
 );
-// Schedule a job to run every Sunday at 08:00 AM, resets boss if it's dead.
+// Schedule a job to run every day at 07:59 AM, resets boss if it's dead.
 cron.schedule(
-  "0 8 * * *",
+  "59 7 * * *",
   async () => {
     try {
       const bosses = await db.enemy.findMany({
         where: {
           health: 0,
         },
-        distinct: ["id"],
         select: {
           id: true,
           health: true,
@@ -487,14 +485,13 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run at 08:00 everyday to damage players if the boss hasn't been defeated.
+// Schedule a job to run at 11:21 AM everyday to damage players if the boss hasn't been defeated.
 // TODO: Change to reflect dynamic value
 cron.schedule(
-  "0 8 * * *",
+  "21 11 * * *",
   async () => {
     try {
       const users = await db.user.findMany({
-        distinct: ["id"],
         select: {
           id: true,
           username: true,
