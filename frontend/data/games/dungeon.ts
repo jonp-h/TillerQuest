@@ -7,6 +7,9 @@ import { logger } from "@/lib/logger";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 import { experienceAndLevelValidator } from "../validators/validators";
 
+// TODO: Move getting enemies to backend
+// add new field in DB to specify that the boss has been picked
+
 export const getEnemy = async () => {
   const session = await auth();
   if (
@@ -37,7 +40,6 @@ export const getEnemy = async () => {
     logger.error("Error fetching enemy: " + error);
   }
 };
-
 export const getRandomEnemy = async () => {
   const session = await auth();
   if (
@@ -50,7 +52,7 @@ export const getRandomEnemy = async () => {
   const totalEnemies = await prisma.enemy.count();
   const randomOffset = Math.floor(Math.random() * totalEnemies);
 
-  const enemies = await prisma.enemy.findFirst({
+  const enemy = await prisma.enemy.findFirst({
     select: {
       name: true,
       icon: true,
@@ -65,7 +67,7 @@ export const getRandomEnemy = async () => {
     },
     skip: randomOffset,
   });
-  return enemies;
+  return enemy;
 };
 
 export async function isTurnFinished() {
@@ -119,7 +121,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const updateBoss = await db.enemy.update({
           where: { id: boss },
-          data: { health: 0 },
+          data: { health: 0, icon: "/classes/Grave.png" },
         });
         rewardUsers(currentBoss.xp, currentBoss.gold);
       }
@@ -136,7 +138,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
       await addLog(
         db,
         targetUser.id,
-        `DUNGEON: ${targetUser.username} finished their turn in the dungeon and dealt ${damage} damage.`,
+        `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
       return damage;
     });
@@ -174,23 +176,29 @@ async function rewardUsers(xp: number, gold: number) {
     throw new Error("Not authorized");
   }
   try {
-    const users = await prisma.user.findMany({
-      distinct: ["id"],
-    });
-
-    for (const user of users) {
-      if (!user) {
-        return;
-      }
-      await experienceAndLevelValidator(prisma, user, xp);
-      // const currency = await goldValidator(prisma, user.id, gold);
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { gold: { increment: gold } },
+    return await prisma.$transaction(async (db) => {
+      const users = await db.user.findMany({
+        distinct: ["id"],
       });
-      console.log(`Updated turnFinished to false for user: ${user.username}`);
-    }
+
+      for (const user of users) {
+        await experienceAndLevelValidator(db, user, xp);
+        await db.user.update({
+          where: { id: user.id },
+          data: { gold: { increment: gold } },
+        });
+        await addLog(
+          db,
+          user.id,
+          `DUNGEON: The boss has been slain, ${user.username} gained ${xp} XP and ${gold} gold.`,
+        );
+      }
+    });
   } catch (error) {
-    console.log(error);
+    logger.error("Error rewarding users: " + error);
+    return (
+      "Something went wrong. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO")
+    );
   }
 }

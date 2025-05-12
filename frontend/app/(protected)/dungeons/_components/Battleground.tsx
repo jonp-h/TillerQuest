@@ -14,6 +14,7 @@ function Battleground() {
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState<boolean>(false);
+  const [bossDead, setBossDead] = useState<boolean>(false);
   const router = useRouter();
 
   const initializeDiceBox = async () => {
@@ -39,6 +40,21 @@ function Battleground() {
     const fetchEnemy = async () => {
       try {
         const enemy = await getEnemy();
+        if (!enemy) {
+          return;
+        }
+        if (enemy?.health <= 0) {
+          setEnemy(
+            enemy
+              ? {
+                  ...enemy,
+                  health: 0,
+                  icon: "/classes/Grave.png",
+                }
+              : null,
+          );
+          setBossDead(true);
+        }
         setEnemy(
           enemy
             ? {
@@ -47,6 +63,7 @@ function Battleground() {
               }
             : null,
         );
+        setBossDead(false);
       } catch (error) {
         console.error("Error fetching enemy:", error);
       }
@@ -89,6 +106,9 @@ function Battleground() {
         const fetchUpdatedEnemy = async () => {
           try {
             const updatedEnemy = await getEnemy();
+            if (!updatedEnemy) {
+              return;
+            }
             setEnemy(
               updatedEnemy
                 ? {
@@ -156,7 +176,7 @@ function Battleground() {
           onClick={rollDice}
           variant="contained"
           color="primary"
-          disabled={turnFinished || thrown}
+          disabled={turnFinished || thrown || bossDead}
         >
           Roll Dice
         </Button>

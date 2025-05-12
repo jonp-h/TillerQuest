@@ -455,7 +455,40 @@ cron.schedule(
     name: "resetTurn",
   },
 );
+// Schedule a job to run every Sunday at 08:00 AM, resets boss if it's dead.
+cron.schedule(
+  "0 8 * * *",
+  async () => {
+    try {
+      const bosses = await db.enemy.findMany({
+        where: {
+          health: 0,
+        },
+        distinct: ["id"],
+        select: {
+          id: true,
+          health: true,
+          maxHealth: true,
+        },
+      });
+      for (const boss of bosses) {
+        await db.enemy.update({
+          where: { id: boss.id },
+          data: { health: boss.maxHealth },
+        });
+        console.log(`Reset boss health to max health`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "resetSlainBosses",
+  },
+);
 
+// Schedule a job to run at 08:00 everyday to damage players if the boss hasn't been defeated.
+// TODO: Change to reflect dynamic value
 cron.schedule(
   "0 8 * * *",
   async () => {
@@ -467,10 +500,18 @@ cron.schedule(
           username: true,
         },
       });
+      const boss = await db.enemy.findFirst({
+        where: { id: 1 },
+      });
 
-      for (const user of users) {
-        await damageValidator(db, user.id, 8);
-        console.log(`Updated turnFinished to false for user: ${user.username}`);
+      if (!boss) {
+        return;
+      }
+      if (boss?.health > 0) {
+        for (const user of users) {
+          await damageValidator(db, user.id, 8);
+          console.log(`Damaged all users for not defeating the boss in time.`);
+        }
       }
     } catch (error) {
       console.log(error);
