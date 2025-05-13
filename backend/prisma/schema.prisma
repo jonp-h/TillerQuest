@@ -113,6 +113,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
+  attacks         Int?         @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -254,9 +255,11 @@ model ShopItem {
   users       User[] // m-n relation to users. An item can be owned by many users
 }
 
+// TODO: Add new field to specify which boss is active.
 model Enemy {
-  name        String       @id
-  icon        String?
+  id          Int          @id @default(autoincrement())
+  name        String       
+  icon        String
   attack      String       
   health      Int          @default(10)
   maxHealth   Int          @default(10)

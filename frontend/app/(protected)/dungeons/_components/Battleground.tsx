@@ -5,13 +5,15 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import { getRandomEnemy } from "@/data/games/dungeon";
+import { finishTurn, getEnemy } from "@/data/games/dungeon";
 import { EnemyProps } from "@/types/types";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
+  const [turnFinished, setTurnFinished] = useState<number>(0);
+  const [bossDead, setBossDead] = useState<boolean>(false);
 
   const initializeDiceBox = async () => {
     try {
@@ -35,16 +37,23 @@ function Battleground() {
   useEffect(() => {
     const fetchEnemy = async () => {
       try {
-        const randomEnemy = await getRandomEnemy();
-        setEnemy(
-          randomEnemy
-            ? {
-                ...randomEnemy,
-                maxHealth: randomEnemy.health,
-                icon: randomEnemy.icon ?? "/dungeons/slug.png",
-              }
-            : null,
-        );
+        const enemy = await getEnemy();
+        if (!enemy) {
+          return;
+        }
+        if (enemy?.health <= 0) {
+          setBossDead(true);
+          setEnemy({
+            ...enemy,
+            icon: enemy.icon ?? "/dungeons/slug.png",
+          });
+        }
+        setEnemy({
+          ...enemy,
+          icon: enemy.icon ?? "/dungeons/slug.png",
+        });
+
+        setBossDead(false);
       } catch (error) {
         console.error("Error fetching enemy:", error);
       }
@@ -54,9 +63,10 @@ function Battleground() {
   }, []);
 
   const rollDice = async () => {
-    console.log(enemy?.health);
+    setThrown(true);
     if (!diceBox) {
       initializeDiceBox();
+      console.log("Dicebox was null", diceBox);
       toast.info("Preparing dice..", { autoClose: 1000 });
       return;
     } else if (diceBox) {
@@ -68,28 +78,41 @@ function Battleground() {
       // });
     }
 
-    setThrown(true);
-
-    if (!diceBox) {
-      toast.error("Dice failed to initialize");
+    if (!enemy) {
+      toast.error("Enemy not found");
       return;
     }
 
+    const result = await finishTurn(enemy.attack, enemy.id);
+    if (!result) {
+      return;
+    }
     diceBox
-      .roll("1d20")
-      .then((results) => {
-        setEnemy((prevEnemy) =>
-          prevEnemy
-            ? {
-                ...prevEnemy,
-                health: prevEnemy.health - results.total,
-                maxHealth: prevEnemy.maxHealth, // Ensure maxHealth is preserved
-              }
-            : null,
-        );
+      .roll(`1d6@${result}`)
+      .then(() => {
+        const fetchUpdatedEnemy = async () => {
+          try {
+            const updatedEnemy = await getEnemy();
+            if (!updatedEnemy) {
+              return;
+            }
+            setEnemy(
+              updatedEnemy
+                ? {
+                    ...updatedEnemy,
+                    icon: updatedEnemy.icon ?? "/dungeons/slug.png",
+                  }
+                : null,
+            );
+          } catch (error) {
+            console.error("Error fetching updated enemy:", error);
+          }
+        };
+        fetchUpdatedEnemy();
       })
       .finally(() => {
         setThrown(false);
+        setTurnFinished(1);
       });
   };
 
@@ -112,6 +135,7 @@ function Battleground() {
         {enemy && (
           <Enemy
             enemy={{
+              id: enemy.id,
               name: enemy.name,
               health: enemy.health,
               maxHealth: enemy.maxHealth,
@@ -128,7 +152,7 @@ function Battleground() {
           onClick={rollDice}
           variant="contained"
           color="primary"
-          disabled={thrown}
+          disabled={Boolean(turnFinished) || thrown || bossDead}
         >
           Roll Dice
         </Button>

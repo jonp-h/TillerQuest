@@ -424,6 +424,101 @@ cron.schedule(
   },
 );
 
+// Schedule a job to run every morning at 08:00 AM, resets all users turn.
+cron.schedule(
+  "0 8 * * *",
+  async () => {
+    try {
+      const usersWithTurnNotFinished = await db.user.findMany({
+        where: {
+          attacks: 0,
+        },
+        select: {
+          id: true,
+          username: true,
+          attacks: true,
+        },
+      });
+      for (const user of usersWithTurnNotFinished) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { attacks: 0 },
+        });
+        console.log(`Updated attacks to 0 for user: ${user.username}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "resetTurn",
+  },
+);
+// Schedule a job to run every day at 07:59 AM, resets boss if it's dead.
+cron.schedule(
+  "59 7 * * *",
+  async () => {
+    try {
+      const bosses = await db.enemy.findMany({
+        where: {
+          health: 0,
+        },
+        select: {
+          id: true,
+          health: true,
+          maxHealth: true,
+        },
+      });
+      for (const boss of bosses) {
+        await db.enemy.update({
+          where: { id: boss.id },
+          data: { health: boss.maxHealth },
+        });
+        console.log(`Reset boss health to max health`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "resetSlainBosses",
+  },
+);
+
+// Schedule a job to run at 11:21 AM everyday to damage players if the boss hasn't been defeated.
+// TODO: Change to reflect dynamic value
+cron.schedule(
+  "21 11 * * *",
+  async () => {
+    try {
+      const users = await db.user.findMany({
+        select: {
+          id: true,
+          username: true,
+        },
+      });
+      const boss = await db.enemy.findFirst({
+        where: { id: 1 },
+      });
+
+      if (!boss) {
+        return;
+      }
+      if (boss?.health > 0) {
+        for (const user of users) {
+          await damageValidator(db, user.id, 8);
+          console.log(`Damaged all users for not defeating the boss in time.`);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "dungeonDamage",
+  },
+);
+
 // print out scheduled tasks
 console.log("Started cron jobs:");
 cron.getTasks().forEach((task, name) => {

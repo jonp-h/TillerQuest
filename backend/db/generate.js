@@ -145,7 +145,7 @@ async function addEnemies() {
   for (const enemy of enemies) {
     try {
       await db.enemy.upsert({
-        where: { name: enemy.name },
+        where: { id: enemy.id },
         update: enemy,
         create: enemy,
       });

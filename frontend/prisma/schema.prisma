@@ -113,6 +113,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
+  attacks         Int?         @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -128,6 +129,7 @@ model User {
   special     String[] // notes and other information
   inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
   games       Game[] // m-n relation to games. A user can have many games
+
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 
@@ -190,9 +192,11 @@ model Ability {
   cosmic CosmicEvent[]
 }
 
+// TODO: Add new field to specify which boss is active.
 model Enemy {
-  name        String       @id
-  icon        String?
+  id          Int          @id @default(autoincrement())
+  name        String       
+  icon        String
   attack      String       
   health      Int          @default(10)
   maxHealth   Int          @default(10)
