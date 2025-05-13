@@ -431,20 +431,20 @@ cron.schedule(
     try {
       const usersWithTurnNotFinished = await db.user.findMany({
         where: {
-          turnFinished: 0,
+          attacks: 0,
         },
         select: {
           id: true,
           username: true,
-          turnFinished: true,
+          attacks: true,
         },
       });
       for (const user of usersWithTurnNotFinished) {
         await db.user.update({
           where: { id: user.id },
-          data: { turnFinished: 0 },
+          data: { attacks: 0 },
         });
-        console.log(`Updated turnFinished to false for user: ${user.username}`);
+        console.log(`Updated attacks to 0 for user: ${user.username}`);
       }
     } catch (error) {
       console.log(error);
@@ -485,10 +485,10 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run at 11:21 AM every week monday-friday to damage players if the boss hasn't been defeated.
+// Schedule a job to run at 11:21 AM everyday to damage players if the boss hasn't been defeated.
 // TODO: Change to reflect dynamic value
 cron.schedule(
-  "21 11 * * 1-5",
+  "21 11 * * *",
   async () => {
     try {
       const users = await db.user.findMany({
