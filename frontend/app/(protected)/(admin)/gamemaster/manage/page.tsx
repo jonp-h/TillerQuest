@@ -1,14 +1,14 @@
 import MainContainer from "@/components/MainContainer";
 import {
+  adminGetUserInfo,
   getSpecialStatuses,
-  getUsersSpecialStatus,
 } from "@/data/admin/adminUserInteractions";
 import { Typography } from "@mui/material";
 import React from "react";
-import UserSpecialStatus from "./_components/UserSpecialStatus";
+import ManageUserForm from "./_components/ManageUserForm";
 
 async function Manage() {
-  const userSpecialStatus = await getUsersSpecialStatus();
+  const userInfo = await adminGetUserInfo();
   const specialStatues = await getSpecialStatuses();
 
   return (
@@ -22,9 +22,9 @@ async function Manage() {
       <Typography variant="body1" align="center">
         OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
       </Typography>
-      {userSpecialStatus?.map((user) => (
+      {userInfo?.map((user) => (
         <div key={user.username} className="flex justify-center mt-2">
-          <UserSpecialStatus
+          <ManageUserForm
             name={user.name}
             id={user.id}
             role={user.role}

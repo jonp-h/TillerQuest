@@ -75,7 +75,7 @@ export const getAllDeadUsers = async () => {
   return deadUsers;
 };
 
-export const getUsersSpecialStatus = async () => {
+export const adminGetUserInfo = async () => {
   const session = await auth();
   if (session?.user.role !== "ADMIN") {
     return null;
@@ -112,9 +112,12 @@ export const getSpecialStatuses = async () => {
   return specialReqs;
 };
 
-export const updateUserSpecialStatus = async (
+export const adminUpdateUser = async (
   userId: string,
   special: string[],
+  name?: string | null,
+  username?: string | null,
+  lastname?: string | null,
 ) => {
   const session = await auth();
   if (session?.user.role !== "ADMIN") {
@@ -126,6 +129,9 @@ export const updateUserSpecialStatus = async (
       id: userId,
     },
     data: {
+      name,
+      username,
+      lastname,
       special,
     },
   });
