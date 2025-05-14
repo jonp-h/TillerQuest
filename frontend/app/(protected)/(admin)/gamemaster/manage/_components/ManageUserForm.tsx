@@ -12,7 +12,9 @@ import {
   Select,
 } from "@mui/material";
 import { UserRole } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function ManageUserForm(user: {
   special: string[];
@@ -28,33 +30,37 @@ function ManageUserForm(user: {
   const [username, setUsername] = useState<string | null>(user.username);
   const [lastname, setLastname] = useState<string | null>(user.lastname);
 
+  const router = useRouter();
+
   return (
     <>
       <TextField
-        variant="outlined"
-        label="Special"
+        variant="standard"
+        label="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
       <TextField
-        variant="outlined"
-        label="Special"
+        variant="standard"
+        label="Username"
+        sx={{ marginX: 1 }}
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <TextField
-        variant="outlined"
-        label="Special"
+        variant="standard"
+        label="Lastname"
         value={lastname}
         onChange={(e) => setLastname(e.target.value)}
       />
       <TextField
         variant="outlined"
         label="Special"
+        sx={{ marginLeft: 2 }}
         value={special.join(" ")}
         onChange={(e) => setSpecial(e.target.value.split(" "))}
       />
-      <FormControl sx={{ m: 1, minWidth: 80 }}>
+      <FormControl sx={{ marginX: 1, minWidth: 80 }}>
         <InputLabel>Role</InputLabel>
         <Select
           id="role"
@@ -62,7 +68,7 @@ function ManageUserForm(user: {
           onChange={(value) => {
             setRole(value.target.value as UserRole);
           }}
-          autoWidth
+          sx={{ width: 120 }}
           label="Role"
         >
           <MenuItem value={"ADMIN"}>ADMIN</MenuItem>
@@ -81,12 +87,16 @@ function ManageUserForm(user: {
             lastname !== user.lastname
           ) {
             adminUpdateUser(user.id, special, name, username, lastname);
+            toast.success("User updated");
           } else {
             adminUpdateUser(user.id, special);
+            toast.success("User updated");
           }
           if (role !== user.role) {
             updateRole(user.id, role);
+            toast.success("User role updated");
           }
+          router.refresh();
         }}
       >
         Update

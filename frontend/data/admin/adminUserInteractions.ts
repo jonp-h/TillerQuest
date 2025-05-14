@@ -90,6 +90,17 @@ export const adminGetUserInfo = async () => {
       special: true,
       role: true,
     },
+    orderBy: [
+      {
+        schoolClass: "desc",
+      },
+      {
+        name: "asc",
+      },
+      {
+        lastname: "asc",
+      },
+    ],
   });
   return users;
 };
