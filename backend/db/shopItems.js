@@ -327,7 +327,7 @@ const shopItems = [
   {
     name: "Installation Wizard",
     description: "Gain permanent access to a computer in the computer lab",
-    price: 40000,
+    price: 50000,
     type: "Badge",
     levelReq: 20,
     classReq: null,
@@ -406,6 +406,15 @@ const shopItems = [
     specialReq: "alpha",
   },
   {
+    name: "Beta Tester",
+    description: "Tested TillerQuest while it was in beta development",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "beta",
+  },
+  {
     name: "Game Master",
     description: "Available to all GMs",
     price: 2147483647, // The maximum value for a 32-bit signed integer
@@ -413,6 +422,15 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "gm",
+  },
+  {
+    name: "Developer",
+    description: "Helped with the development of TillerQuest",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "dev",
   },
 ];
 

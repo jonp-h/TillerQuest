@@ -27,8 +27,14 @@ async function Shop() {
       <h2 className="text-2xl text-center mt-5 text-green-400">
         Buy items to help you on your journey. Some items require participation
         in certain IRL events to unlock{" "}
-        <Tooltip title="Ask a Game Master for more details">
-          <HelpOutline className="text-green-400 cursor-help" />
+        <Tooltip
+          title={
+            "You have the following special statuses: " +
+            user.special.join(", ") +
+            ". Ask a gamemaster for more information."
+          }
+        >
+          <HelpOutline className="text-white cursor-help" />
         </Tooltip>
       </h2>
       <h3 className="text-xl text-center mt-5">
