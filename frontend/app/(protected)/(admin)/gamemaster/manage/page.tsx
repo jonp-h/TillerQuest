@@ -1,15 +1,25 @@
 import MainContainer from "@/components/MainContainer";
 import {
+  adminGetUserInfo,
   getSpecialStatuses,
-  getUsersSpecialStatus,
 } from "@/data/admin/adminUserInteractions";
-import { Typography } from "@mui/material";
+import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
-import UserSpecialStatus from "./_components/UserSpecialStatus";
+import ManageUserForm from "./_components/ManageUserForm";
 
 async function Manage() {
-  const userSpecialStatus = await getUsersSpecialStatus();
+  const userInfo = await adminGetUserInfo();
   const specialStatues = await getSpecialStatuses();
+
+  const style = {
+    p: 0,
+    width: "90%",
+    maxWidth: 1200,
+    borderRadius: 2,
+    border: "1px solid",
+    borderColor: "divider",
+    backgroundColor: "background.paper",
+  };
 
   return (
     <MainContainer>
@@ -22,18 +32,22 @@ async function Manage() {
       <Typography variant="body1" align="center">
         OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
       </Typography>
-      {userSpecialStatus?.map((user) => (
-        <div key={user.username} className="flex justify-center mt-2">
-          <UserSpecialStatus
-            name={user.name}
-            id={user.id}
-            role={user.role}
-            special={user.special}
-            username={user.username}
-            lastname={user.lastname}
-          />
-        </div>
-      ))}
+      <div className="flex justify-center mt-2">
+        <List sx={style}>
+          {userInfo?.map((user) => (
+            <ListItem key={user.username} sx={{ padding: 2 }}>
+              <ManageUserForm
+                name={user.name}
+                id={user.id}
+                role={user.role}
+                special={user.special}
+                username={user.username}
+                lastname={user.lastname}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </div>
     </MainContainer>
   );
 }
