@@ -5,9 +5,10 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import Enemy from "./Enemy";
-import { finishTurn, getEnemy, isTurnFinished } from "@/data/games/dungeon";
+import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
 import { EnemyProps } from "@/types/types";
 import { useRouter } from "next/navigation";
+import AbilityGrid from "./AbilityGrid";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
@@ -122,10 +123,10 @@ function Battleground() {
   useEffect(() => {
     const fetchTurnStatus = async () => {
       const status = await isTurnFinished();
-      if (status?.attacks == null) {
+      if (status?.turns == null) {
         return;
       }
-      setTurnFinished(status.attacks > 0);
+      setTurnFinished(status.turns > 0);
     };
 
     fetchTurnStatus();
@@ -171,6 +172,7 @@ function Battleground() {
         >
           Roll Dice
         </Button>
+        <AbilityGrid />
       </div>
     </>
   );

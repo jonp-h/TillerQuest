@@ -106,7 +106,7 @@ export async function isTurnFinished() {
     const turnStatus = await prisma.user.findFirst({
       where: { id: session.user.id },
       select: {
-        attacks: true,
+        turns: true,
       },
     });
     return turnStatus;
@@ -152,7 +152,7 @@ export async function finishTurn(diceRoll: string, boss: number) {
       // Update turn for user
       const targetUser = await db.user.update({
         where: { id: session.user.id },
-        data: { attacks: 1 },
+        data: { turns: 1 },
         select: {
           id: true,
           username: true,
