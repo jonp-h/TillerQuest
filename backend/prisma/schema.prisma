@@ -46,6 +46,7 @@ enum AbilityCategory {
   Heal
   Adventurer
   Cosmic
+  Dungeon
 
   // Class specific types
   Druid
@@ -113,7 +114,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
-  attacks         Int?         @default(0)
+  turns           Int?         @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)

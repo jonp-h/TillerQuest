@@ -66,8 +66,8 @@ export const getAbilityHierarchy = async () => {
     });
 
     return roots;
-  } catch {
-    logger.error("Failed to get ability hierarchy");
+  } catch (error) {
+    logger.error("Failed to get ability hierarchy:" + error);
     return null;
   }
 };
