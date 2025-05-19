@@ -1,9 +1,9 @@
 import { Typography, LinearProgress } from "@mui/material";
 import Image from "next/image";
 import React from "react";
-import { EnemyProps } from "@/types/types";
+import { Enemy } from "@prisma/client";
 
-function Enemy({ enemy }: { enemy: EnemyProps }) {
+function EnemyComponent({ enemy }: { enemy: Enemy }) {
   return (
     <div
       className={
@@ -40,4 +40,4 @@ function Enemy({ enemy }: { enemy: EnemyProps }) {
   );
 }
 
-export default Enemy;
+export default EnemyComponent;

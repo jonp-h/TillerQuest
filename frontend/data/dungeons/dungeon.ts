@@ -9,6 +9,7 @@ import {
   experienceAndLevelValidator,
   goldValidator,
 } from "../validators/validators";
+import { Ability } from "@prisma/client";
 
 // TODO: Move getting enemies to backend
 // add new field in DB to specify that the boss has been picked
@@ -115,6 +116,7 @@ export async function isTurnFinished() {
   }
 }
 
+// TODO: Rework function to simplify names
 export async function finishTurn(diceRoll: string, boss: number) {
   const session = await auth();
 
@@ -163,6 +165,84 @@ export async function finishTurn(diceRoll: string, boss: number) {
         targetUser.id,
         `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
+      return damage;
+    });
+  } catch (error) {
+    logger.error("Error finishing up turn: " + error);
+    return (
+      "Something went wrong. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO")
+    );
+  }
+}
+
+export async function useDungeonAbility(userId: string, ability: Ability) {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+  try {
+    return await prisma.$transaction(async (db) => {
+      if (!ability.diceNotation) {
+        return;
+      }
+
+      const userOwnsAbility = await db.userAbility.findFirst({
+        where: { userId, abilityName: ability.name },
+      });
+
+      if (!userOwnsAbility) {
+        console.log("User doesn't own the ability!");
+        return;
+      }
+      // TODO: Check guilds active enemy
+      // const activeEnemy = await db.GuildEnemy.guild
+
+      const damageRollResult = rollDice(ability?.diceNotation);
+      const damage = damageRollResult.total;
+      const enemyDamage = await db.enemy.update({
+        where: { id: enemyId },
+        data: { health: { decrement: damage } },
+      });
+      const currentEnemy = await db.enemy.findFirst({
+        where: { id: enemyId },
+      });
+      if (!currentEnemy) {
+        return;
+      }
+
+      if (currentEnemy.health <= 0) {
+        console.log("enemy is already dead");
+        return;
+      }
+
+      // TODO: Implement rewards for defeating boss to all the users
+
+      // Update turn for user
+      const targetUser = await db.user.update({
+        where: { id: session.user.id },
+        data: { turns: 1 },
+        select: {
+          id: true,
+          username: true,
+        },
+      });
+      await addLog(
+        db,
+        targetUser.id,
+        `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
+      );
+      if (enemyDamage.health <= 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const updateEnemy = await db.enemy.update({
+          where: { id: enemyId },
+          data: { health: 0 },
+        });
+        rewardUsers(currentEnemy.xp, currentEnemy.gold);
+      }
       return damage;
     });
   } catch (error) {

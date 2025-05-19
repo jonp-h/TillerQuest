@@ -4,14 +4,14 @@ import { Button } from "@mui/material";
 import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
-import Enemy from "./Enemy";
+import EnemyComponent from "./EnemyComponent";
 import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
-import { EnemyProps } from "@/types/types";
 import { useRouter } from "next/navigation";
 import AbilityGrid from "./AbilityGrid";
+import { Enemy } from "@prisma/client";
 
 function Battleground() {
-  const [enemy, setEnemy] = useState<EnemyProps | null>(null);
+  const [enemy, setEnemy] = useState<Enemy | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState(false);
@@ -43,16 +43,14 @@ function Battleground() {
         if (!enemy) {
           return;
         }
-        if (enemy?.health <= 0) {
+        if (enemy.health <= 0) {
           setBossDead(true);
           setEnemy({
             ...enemy,
-            icon: enemy.icon ?? "/dungeons/slug.png",
           });
         }
         setEnemy({
           ...enemy,
-          icon: enemy.icon ?? "/dungeons/slug.png",
         });
 
         setBossDead(false);
@@ -113,9 +111,9 @@ function Battleground() {
         fetchUpdatedEnemy();
       })
       .finally(() => {
-        router.refresh();
         setThrown(false);
         setTurnFinished(true);
+        router.refresh();
       });
   };
 
@@ -149,7 +147,7 @@ function Battleground() {
         className="m-auto flex justify-evenly"
       >
         {enemy && (
-          <Enemy
+          <EnemyComponent
             enemy={{
               id: enemy.id,
               name: enemy.name,
