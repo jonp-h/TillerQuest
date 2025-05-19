@@ -161,7 +161,7 @@ model Guild {
   icon        String?
   schoolClass SchoolClass?
 
-  uniqueEnemies GuildEnemy[]
+  uniqueEnemy GuildEnemy[]
   members User[]
 }
 
@@ -203,12 +203,17 @@ model Enemy {
   maxHealth   Int          @default(10)
   xp          Int          @default(0)
   gold        Int          @default(0)
+
+  GuildEnemy GuildEnemy[]
 }
 model GuildEnemy {
-  id          String       @id @default(cuid())
-  guild       Guild        @relation(fields: [name], references: [name])
+  enemyId     Int
+  enemy       Enemy        @relation(fields: [enemyId], references: [id])
+  guildName   String
+  guild       Guild        @relation(fields: [guildName], references: [name])
   name        String       
   health      Int       
+  @@id([enemyId, guildName])
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability

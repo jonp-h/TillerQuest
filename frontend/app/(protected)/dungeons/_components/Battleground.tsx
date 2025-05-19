@@ -8,10 +8,10 @@ import EnemyComponent from "./EnemyComponent";
 import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
 import { useRouter } from "next/navigation";
 import AbilityGrid from "./AbilityGrid";
-import { Enemy } from "@prisma/client";
+import { GuildEnemy } from "@prisma/client";
 
 function Battleground() {
-  const [enemy, setEnemy] = useState<Enemy | null>(null);
+  const [enemy, setEnemy] = useState<GuildEnemy | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState(false);
@@ -83,7 +83,7 @@ function Battleground() {
       return;
     }
 
-    const result = await finishTurn(enemy.attack, enemy.id);
+    const result = await finishTurn();
     if (!result) {
       return;
     }

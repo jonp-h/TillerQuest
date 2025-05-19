@@ -28,8 +28,8 @@ async function AbilityGrid() {
       <div className="flex flex-col gap-3 bg-slate-800 border-2 w-2/10 border-slate-800 rounded-lg p-5">
         {abilities.map((ability) => (
           <Button
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             onClick={() => {
+              // eslint-disable-next-line react-hooks/rules-of-hooks
               useAbility(ability);
             }}
             key={ability.name}

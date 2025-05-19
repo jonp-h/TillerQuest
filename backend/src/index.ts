@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
@@ -431,18 +432,18 @@ cron.schedule(
     try {
       const usersWithTurnNotFinished = await db.user.findMany({
         where: {
-          attacks: 0,
+          turns: 0,
         },
         select: {
           id: true,
           username: true,
-          attacks: true,
+          turns: true,
         },
       });
       for (const user of usersWithTurnNotFinished) {
         await db.user.update({
           where: { id: user.id },
-          data: { attacks: 0 },
+          data: { turns: 0 },
         });
         console.log(`Updated attacks to 0 for user: ${user.username}`);
       }
@@ -459,29 +460,56 @@ cron.schedule(
   "59 7 * * *",
   async () => {
     try {
-      const bosses = await db.enemy.findMany({
+      const guildEnemy = await db.guildEnemy.findMany({
         where: {
           health: 0,
         },
         select: {
-          id: true,
+          guild: true,
+          enemy: true,
           health: true,
-          maxHealth: true,
         },
       });
-      for (const boss of bosses) {
-        await db.enemy.update({
-          where: { id: boss.id },
-          data: { health: boss.maxHealth },
-        });
-        console.log(`Reset boss health to max health`);
-      }
     } catch (error) {
       console.log(error);
     }
   },
   {
     name: "resetSlainBosses",
+  },
+);
+
+cron.schedule(
+  "0 9 * * *", // Run daily at 9:00 AM
+  async () => {
+    try {
+      const guilds = await db.guild.findMany();
+      const enemy = await db.enemy.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      if (!enemy) {
+        return;
+      }
+      for (const guild of guilds) {
+        await db.guildEnemy.create({
+          data: {
+            guildName: guild.name,
+            enemyId: enemy.id,
+            name: enemy.name,
+            health: enemy.maxHealth,
+          },
+        });
+      }
+      console.log("Generated");
+    } catch (error) {
+      console.error("Error generating unique enemies:", error);
+    }
+  },
+  {
+    name: "generateUniqueEnemies",
   },
 );
 
@@ -497,18 +525,12 @@ cron.schedule(
           username: true,
         },
       });
-      const boss = await db.enemy.findFirst({
+      const enemy = await db.enemy.findFirst({
         where: { id: 1 },
       });
 
-      if (!boss) {
+      if (!enemy) {
         return;
-      }
-      if (boss?.health > 0) {
-        for (const user of users) {
-          await damageValidator(db, user.id, 8);
-          console.log(`Damaged all users for not defeating the boss in time.`);
-        }
       }
     } catch (error) {
       console.log(error);

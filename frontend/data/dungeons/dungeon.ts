@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import { auth } from "@/auth";
@@ -22,77 +23,64 @@ export const getEnemy = async () => {
   ) {
     throw new Error("Not authorized");
   }
-
   try {
-    let enemy = await prisma.enemy.findFirst({
+    const user = await prisma.user.findUnique({
+      where: { id: session?.user.id },
       select: {
-        id: true,
-        name: true,
-        icon: true,
-        attack: true,
-        health: true,
-        maxHealth: true,
-        xp: true,
-        gold: true,
+        guildName: true, // Select the guildName
       },
-      orderBy: {
-        id: "asc",
+    });
+
+    if (!user?.guildName) {
+      console.warn("User is not in a guild.");
+      return null;
+    }
+
+    const enemy = await prisma.guildEnemy.findFirst({
+      where: {
+        guildName: user.guildName,
       },
     });
     if (!enemy) {
       return;
     }
-    const checkBoss = await isBossDead(enemy?.id);
-    if (checkBoss) {
-      enemy = enemy
-        ? {
-            ...enemy,
-            health: 0,
-            icon: "/classes/Grave.png",
-          }
-        : null;
-    } else {
-      enemy = enemy
-        ? {
-            ...enemy,
-            icon: enemy.icon ?? "/dungeons/slug.png",
-          }
-        : null;
-    }
+
     return enemy;
   } catch (error) {
     logger.error("Error fetching enemy: " + error);
   }
 };
-export const getRandomEnemy = async () => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
 
-  const totalEnemies = await prisma.enemy.count();
-  const randomOffset = Math.floor(Math.random() * totalEnemies);
+// TODO: Rework
+// export const getRandomEnemy = async () => {
+//   const session = await auth();
+//   if (
+//     !session ||
+//     (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+//   ) {
+//     throw new Error("Not authorized");
+//   }
 
-  const enemy = await prisma.enemy.findFirst({
-    select: {
-      name: true,
-      icon: true,
-      attack: true,
-      health: true,
-      maxHealth: true,
-      xp: true,
-      gold: true,
-    },
-    orderBy: {
-      name: "asc",
-    },
-    skip: randomOffset,
-  });
-  return enemy;
-};
+//   const totalEnemies = await prisma.enemy.count();
+//   const randomOffset = Math.floor(Math.random() * totalEnemies);
+
+//   const enemy = await prisma.enemy.findFirst({
+//     select: {
+//       name: true,
+//       icon: true,
+//       attack: true,
+//       health: true,
+//       maxHealth: true,
+//       xp: true,
+//       gold: true,
+//     },
+//     orderBy: {
+//       name: "asc",
+//     },
+//     skip: randomOffset,
+//   });
+//   return enemy;
+// };
 
 export async function isTurnFinished() {
   const session = await auth();
@@ -117,7 +105,7 @@ export async function isTurnFinished() {
 }
 
 // TODO: Rework function to simplify names
-export async function finishTurn(diceRoll: string, boss: number) {
+export async function finishTurn(diceRoll: string) {
   const session = await auth();
 
   if (
@@ -130,25 +118,38 @@ export async function finishTurn(diceRoll: string, boss: number) {
     return await prisma.$transaction(async (db) => {
       const damageRollResult = rollDice(diceRoll);
       const damage = damageRollResult.total;
-      const bossDamage = await db.enemy.update({
-        where: { id: boss },
+
+      const user = await prisma.user.findUnique({
+        where: { id: session?.user.id },
+        select: {
+          guildName: true,
+        },
+      });
+
+      if (!user?.guildName) {
+        console.warn("User is not in a guild.");
+        return null;
+      }
+
+      const enemyDamage = await db.guildEnemy.update({
+        where: {
+          enemyId_guildName: {
+            enemyId: 1,
+            guildName: user.guildName,
+          },
+        },
         data: { health: { decrement: damage } },
       });
-      const currentBoss = await db.enemy.findFirst({
-        where: { id: boss },
+      const enemyBoss = await db.guildEnemy.findFirst({
+        where: { guildName: user.guildName },
       });
-      // TODO: Implement rewards for defeating boss to all the users
-      if (bossDamage.health <= 0) {
-        if (!currentBoss) {
-          return;
-        }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const updateBoss = await db.enemy.update({
-          where: { id: boss },
-          data: { health: 0 },
-        });
-        rewardUsers(currentBoss.xp, currentBoss.gold);
+      if (!enemyBoss?.health) {
+        return;
+      }
+      // TODO: Implement rewards for defeating boss to all the users
+      if (enemyBoss.health <= 0) {
+        rewardUsers(300, 300); // temp value
       }
 
       // Update turn for user
@@ -190,6 +191,18 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
         return;
       }
 
+      const user = await prisma.user.findUnique({
+        where: { id: session?.user.id },
+        select: {
+          guildName: true,
+        },
+      });
+
+      if (!user?.guildName) {
+        console.warn("User is not in a guild.");
+        return null;
+      }
+
       const userOwnsAbility = await db.userAbility.findFirst({
         where: { userId, abilityName: ability.name },
       });
@@ -203,12 +216,17 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
 
       const damageRollResult = rollDice(ability?.diceNotation);
       const damage = damageRollResult.total;
-      const enemyDamage = await db.enemy.update({
-        where: { id: enemyId },
+      const enemyDamage = await db.guildEnemy.update({
+        where: {
+          enemyId_guildName: {
+            enemyId: 1,
+            guildName: user.guildName,
+          },
+        },
         data: { health: { decrement: damage } },
       });
-      const currentEnemy = await db.enemy.findFirst({
-        where: { id: enemyId },
+      const currentEnemy = await db.guildEnemy.findFirst({
+        where: { guildName: user.guildName },
       });
       if (!currentEnemy) {
         return;
@@ -236,12 +254,11 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
         `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
       if (enemyDamage.health <= 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const updateEnemy = await db.enemy.update({
           where: { id: enemyId },
           data: { health: 0 },
         });
-        rewardUsers(currentEnemy.xp, currentEnemy.gold);
+        rewardUsers(300, 300);
       }
       return damage;
     });
@@ -307,18 +324,4 @@ async function rewardUsers(xp: number, gold: number) {
   }
 }
 
-async function isBossDead(boss: number) {
-  const enemy = await prisma.enemy.findFirst({
-    where: { id: boss },
-    select: {
-      health: true,
-    },
-  });
-  if (!enemy) {
-    return;
-  }
-  if (enemy?.health <= 0) {
-    return true;
-  }
-  return false;
-}
+// async function isBossDead(guild: string) {}
