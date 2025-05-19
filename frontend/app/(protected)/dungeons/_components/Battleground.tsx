@@ -8,7 +8,6 @@ import Enemy from "./Enemy";
 import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
 import { EnemyProps } from "@/types/types";
 import { useRouter } from "next/navigation";
-import AbilityGrid from "./AbilityGrid";
 
 function Battleground() {
   const [enemy, setEnemy] = useState<EnemyProps | null>(null);
@@ -172,7 +171,6 @@ function Battleground() {
         >
           Roll Dice
         </Button>
-        <AbilityGrid />
       </div>
     </>
   );
