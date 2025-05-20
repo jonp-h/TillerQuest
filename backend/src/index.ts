@@ -462,7 +462,9 @@ cron.schedule(
     try {
       const guildEnemy = await db.guildEnemy.findMany({
         where: {
-          health: 0,
+          health: {
+            lte: 0,
+          },
         },
         select: {
           guild: true,
@@ -525,13 +527,19 @@ cron.schedule(
           username: true,
         },
       });
-      const enemy = await db.enemy.findFirst({
-        where: { id: 1 },
+      const guildEnemies = await db.guildEnemy.findMany({
+        where: {
+          health: { gt: 0 },
+        },
       });
 
-      if (!enemy) {
-        return;
-      }
+      // Or if you want unique guild enemies (e.g. one per guild), you could:
+      const uniqueGuildEnemies = await db.guildEnemy.findMany({
+        where: {
+          health: { gt: 0 },
+        },
+        distinct: ["guildName"], // distinct by guildName (or other field)
+      });
     } catch (error) {
       console.log(error);
     }
