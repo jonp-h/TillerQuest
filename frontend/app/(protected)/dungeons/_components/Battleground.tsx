@@ -7,11 +7,10 @@ import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
 import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
 import { useRouter } from "next/navigation";
-import AbilityGrid from "./AbilityGrid";
-import { GuildEnemy } from "@prisma/client";
+import { GuildEnemyWithEnemy } from "./interfaces";
 
 function Battleground() {
-  const [enemy, setEnemy] = useState<GuildEnemy | null>(null);
+  const [enemy, setEnemy] = useState<GuildEnemyWithEnemy | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState(false);
@@ -47,10 +46,14 @@ function Battleground() {
           setBossDead(true);
           setEnemy({
             ...enemy,
+            icon: enemy.enemy.icon,
+            maxHealth: enemy.enemy.maxHealth,
           });
         }
         setEnemy({
           ...enemy,
+          icon: enemy.enemy.icon,
+          maxHealth: enemy.enemy.maxHealth,
         });
 
         setBossDead(false);
@@ -83,7 +86,7 @@ function Battleground() {
       return;
     }
 
-    const result = await finishTurn();
+    const result = await finishTurn("1d6");
     if (!result) {
       return;
     }
@@ -96,14 +99,11 @@ function Battleground() {
             if (!updatedEnemy) {
               return;
             }
-            setEnemy(
-              updatedEnemy
-                ? {
-                    ...updatedEnemy,
-                    icon: updatedEnemy.icon ?? "/dungeons/slug.png",
-                  }
-                : null,
-            );
+            setEnemy({
+              ...updatedEnemy,
+              icon: enemy.icon,
+              maxHealth: enemy.maxHealth,
+            });
           } catch (error) {
             console.error("Error fetching updated enemy:", error);
           }
@@ -149,14 +149,12 @@ function Battleground() {
         {enemy && (
           <EnemyComponent
             enemy={{
-              id: enemy.id,
               name: enemy.name,
               health: enemy.health,
-              maxHealth: enemy.maxHealth,
+              guildName: enemy.guildName,
+              enemyId: enemy.enemyId,
               icon: enemy.icon,
-              attack: enemy.attack,
-              xp: enemy.xp,
-              gold: enemy.gold,
+              maxHealth: enemy.maxHealth,
             }}
           />
         )}
@@ -170,7 +168,6 @@ function Battleground() {
         >
           Roll Dice
         </Button>
-        <AbilityGrid />
       </div>
     </>
   );

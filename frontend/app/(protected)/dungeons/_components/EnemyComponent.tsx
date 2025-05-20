@@ -1,9 +1,9 @@
 import { Typography, LinearProgress } from "@mui/material";
 import Image from "next/image";
 import React from "react";
-import { Enemy } from "@prisma/client";
+import { GuildEnemyWithEnemy } from "./interfaces";
 
-function EnemyComponent({ enemy }: { enemy: Enemy }) {
+function EnemyComponent({ enemy }: { enemy: GuildEnemyWithEnemy }) {
   return (
     <div
       className={

@@ -40,6 +40,18 @@ export const getEnemy = async () => {
       where: {
         guildName: user.guildName,
       },
+      select: {
+        enemy: {
+          select: {
+            icon: true,
+            maxHealth: true,
+          },
+        },
+        enemyId: true,
+        guildName: true,
+        health: true,
+        name: true,
+      },
     });
     if (!enemy) {
       return;
@@ -177,7 +189,7 @@ export async function finishTurn(diceRoll: string) {
   }
 }
 
-export async function useDungeonAbility(userId: string, ability: Ability) {
+export async function useDungeonAbility(ability: Ability) {
   const session = await auth();
   if (
     !session ||
@@ -194,6 +206,8 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
       const user = await prisma.user.findUnique({
         where: { id: session?.user.id },
         select: {
+          id: true,
+          username: true,
           guildName: true,
         },
       });
@@ -204,7 +218,7 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
       }
 
       const userOwnsAbility = await db.userAbility.findFirst({
-        where: { userId, abilityName: ability.name },
+        where: { userId: user.id, abilityName: ability.name },
       });
 
       if (!userOwnsAbility) {
@@ -254,8 +268,13 @@ export async function useDungeonAbility(userId: string, ability: Ability) {
         `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
       if (enemyDamage.health <= 0) {
-        const updateEnemy = await db.enemy.update({
-          where: { id: enemyId },
+        const updateEnemy = await db.guildEnemy.update({
+          where: {
+            enemyId_guildName: {
+              enemyId: currentEnemy.enemyId,
+              guildName: currentEnemy.guildName,
+            },
+          },
           data: { health: 0 },
         });
         rewardUsers(300, 300);
