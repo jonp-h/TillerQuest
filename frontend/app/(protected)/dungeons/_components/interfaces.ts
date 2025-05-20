@@ -8,5 +8,5 @@ export interface GuildEnemyWithEnemy extends GuildEnemy {
 export interface AbilityGridProps {
   abilities: Ability[];
   onAbilityRoll?: (ability: Ability) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }

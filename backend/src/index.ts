@@ -547,6 +547,48 @@ cron.schedule(
     name: "generateEnemies",
   },
 );
+cron.schedule(
+  "* * * * *",
+  async () => {
+    try {
+      const guilds = await db.guild.findMany();
+      const enemy = await db.enemy.findFirst({
+        where: {
+          id: 1, // Hardcoded for now.
+        },
+      });
+
+      if (!enemy) {
+        return;
+      }
+      for (const guild of guilds) {
+        await db.guildEnemy.upsert({
+          where: {
+            enemyId_guildName: {
+              enemyId: enemy.id,
+              guildName: guild.name,
+            },
+          },
+          update: {
+            name: enemy.name,
+            health: enemy.maxHealth,
+          },
+          create: {
+            guildName: guild.name,
+            enemyId: enemy.id,
+            name: enemy.name,
+            health: enemy.maxHealth,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error generating unique enemies:", error);
+    }
+  },
+  {
+    name: "generateEnemies",
+  },
+);
 
 // Schedule a job to run at 11:21 AM everyday to damage players if the Enemy hasn't been defeated.
 // TODO: Change to reflect dynamic value
