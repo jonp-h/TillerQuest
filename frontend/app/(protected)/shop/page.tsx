@@ -5,7 +5,8 @@ import { getAllShopItems } from "@/data/shop/items";
 import { getUserInventory } from "@/data/user/getUser";
 import { auth } from "@/auth";
 import { notFound } from "next/navigation";
-import { Circle } from "@mui/icons-material";
+import { Circle, HelpOutline } from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 async function Shop() {
   const session = await auth();
@@ -25,7 +26,16 @@ async function Shop() {
       <h1 className=" text-6xl text-center mt-5">Shop</h1>
       <h2 className="text-2xl text-center mt-5 text-green-400">
         Buy items to help you on your journey. Some items require participation
-        in certain IRL events.
+        in certain IRL events to unlock{" "}
+        <Tooltip
+          title={
+            "You have the following special statuses: " +
+            user.special.join(", ") +
+            ". Ask a gamemaster for more information."
+          }
+        >
+          <HelpOutline className="text-white cursor-help" />
+        </Tooltip>
       </h2>
       <h3 className="text-xl text-center mt-5">
         You have {user.gold} <Circle htmlColor="gold" /> gold

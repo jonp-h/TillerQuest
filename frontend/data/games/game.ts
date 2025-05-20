@@ -103,7 +103,8 @@ export const updateGame = async (
     cpm = cpm < 0 || !cpm || cpm == Infinity ? 0 : Math.floor(cpm);
 
     // unrealistic values cancel the game
-    if (charIndex > 800 || wpm > 120) {
+    // TODO: consider checking for unrealistic mistakes to invalidate game
+    if (charIndex > 800 || wpm > 135) {
       await db.game.delete({
         where: { id: gameId, status: "INPROGRESS" },
       });
@@ -111,7 +112,7 @@ export const updateGame = async (
     }
 
     const mistakePenalty = 1 - mistakes / (charIndex + 1);
-    const score = Math.floor(cpm * 2 * mistakePenalty + charIndex);
+    const score = Math.floor(cpm * 2 * mistakePenalty);
     const totalCharacters = charIndex;
 
     const metadata = {
