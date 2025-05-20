@@ -118,6 +118,7 @@ export async function isTurnFinished() {
 }
 
 // TODO: Rework function to simplify names
+// Simplify function to split up finishing the turn into another function
 export async function useAttack(diceRoll: string) {
   const session = await auth();
 
@@ -138,10 +139,12 @@ export async function useAttack(diceRoll: string) {
           guildName: true,
         },
       });
-
       if (!user?.guildName) {
         console.warn("User is not in a guild.");
         return null;
+      }
+      if (await isEnemyDead(user?.guildName)) {
+        logger.error("The enemy is already dead!");
       }
 
       const enemyDamage = await db.guildEnemy.update({
@@ -190,6 +193,7 @@ export async function useAttack(diceRoll: string) {
 }
 
 // TODO: Add proper error logs.
+// Simplify function to split up finishing the turn into another function
 export async function useDungeonAbility(ability: Ability) {
   const session = await auth();
   if (
@@ -217,6 +221,9 @@ export async function useDungeonAbility(ability: Ability) {
         console.warn("User is not in a guild.");
         return null;
       }
+      if (await isEnemyDead(user?.guildName)) {
+        logger.error("The enemy is already dead!");
+      }
 
       const userOwnsAbility = await db.userAbility.findFirst({
         where: { userId: user.id, abilityName: ability.name },
@@ -231,16 +238,7 @@ export async function useDungeonAbility(ability: Ability) {
 
       const damageRollResult = rollDice(ability?.diceNotation);
       const damage = damageRollResult.total;
-      const currentEnemy = await db.guildEnemy.findFirst({
-        where: { guildName: user.guildName },
-      });
-      if (!currentEnemy) {
-        console.log("No enemy found");
-        throw new Error("No enemy found");
-      }
-      if (currentEnemy.health <= 0) {
-        console.log("enemy is already dead");
-      }
+
       const enemyDamage = await db.guildEnemy.update({
         where: {
           enemyId_guildName: {
@@ -264,16 +262,14 @@ export async function useDungeonAbility(ability: Ability) {
         targetUser.id,
         `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
-      if (enemyDamage.health <= 0) {
-        const updatedEnemy = await db.guildEnemy.update({
-          where: {
-            enemyId_guildName: {
-              enemyId: currentEnemy.enemyId,
-              guildName: currentEnemy.guildName,
-            },
-          },
-          data: { health: 0 },
-        });
+      const enemyBoss = await db.guildEnemy.findFirst({
+        where: { guildName: user.guildName },
+      });
+
+      if (!enemyBoss?.health) {
+        return;
+      }
+      if (enemyBoss.health <= 0) {
         rewardUsers(user.guildName);
       }
       return damage;
