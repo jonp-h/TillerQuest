@@ -229,8 +229,11 @@ function Battleground({ abilities }: AbilityGridProps) {
         >
           Roll Dice
         </Button>
-        {/* TODO: Add disabled property and or something equal */}
-        <AbilityGrid abilities={abilities} onAbilityRoll={rollAbility} />
+        <AbilityGrid
+          abilities={abilities}
+          onAbilityRoll={rollAbility}
+          disabled={Boolean(turnFinished) || thrown || bossDead}
+        />
       </div>
     </>
   );
