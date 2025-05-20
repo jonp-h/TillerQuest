@@ -520,48 +520,6 @@ cron.schedule(
         return;
       }
       for (const guild of guilds) {
-        await db.guildEnemy.updateMany({
-          where: {
-            guildName: guild.name,
-            enemyId: enemy.id,
-          },
-          data: {
-            guildName: guild.name,
-            enemyId: enemy.id,
-            name: enemy.name,
-            health: enemy.maxHealth,
-          },
-        });
-        await db.log.create({
-          data: {
-            userId: guild.name,
-            message: `${enemy.name} has been updated for ${guild.name}`,
-          },
-        });
-      }
-    } catch (error) {
-      console.error("Error generating unique enemies:", error);
-    }
-  },
-  {
-    name: "generateEnemies",
-  },
-);
-cron.schedule(
-  "* * * * *",
-  async () => {
-    try {
-      const guilds = await db.guild.findMany();
-      const enemy = await db.enemy.findFirst({
-        where: {
-          id: 1, // Hardcoded for now.
-        },
-      });
-
-      if (!enemy) {
-        return;
-      }
-      for (const guild of guilds) {
         await db.guildEnemy.upsert({
           where: {
             enemyId_guildName: {
