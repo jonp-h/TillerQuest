@@ -11,6 +11,7 @@ import {
   goldValidator,
 } from "../validators/validators";
 import { Ability } from "@prisma/client";
+import { error } from "console";
 
 // TODO: Move getting enemies to backend
 // add new field in DB to specify that the boss has been picked
@@ -117,7 +118,7 @@ export async function isTurnFinished() {
 }
 
 // TODO: Rework function to simplify names
-export async function finishTurn(diceRoll: string) {
+export async function useAttack(diceRoll: string) {
   const session = await auth();
 
   if (
@@ -159,9 +160,8 @@ export async function finishTurn(diceRoll: string) {
       if (!enemyBoss?.health) {
         return;
       }
-      // TODO: Implement rewards for defeating boss to all the users
       if (enemyBoss.health <= 0) {
-        rewardUsers(300, 300); // temp value
+        rewardUsers(user.guildName);
       }
 
       // Update turn for user
@@ -189,6 +189,7 @@ export async function finishTurn(diceRoll: string) {
   }
 }
 
+// TODO: Add proper error logs.
 export async function useDungeonAbility(ability: Ability) {
   const session = await auth();
   if (
@@ -222,14 +223,24 @@ export async function useDungeonAbility(ability: Ability) {
       });
 
       if (!userOwnsAbility) {
-        console.log("User doesn't own the ability!");
-        return;
+        console.log("User doesn't own the ability");
+        throw new Error("User doesn't own the ability");
       }
       // TODO: Check guilds active enemy
       // const activeEnemy = await db.GuildEnemy.guild
 
       const damageRollResult = rollDice(ability?.diceNotation);
       const damage = damageRollResult.total;
+      const currentEnemy = await db.guildEnemy.findFirst({
+        where: { guildName: user.guildName },
+      });
+      if (!currentEnemy) {
+        console.log("No enemy found");
+        throw new Error("No enemy found");
+      }
+      if (currentEnemy.health <= 0) {
+        console.log("enemy is already dead");
+      }
       const enemyDamage = await db.guildEnemy.update({
         where: {
           enemyId_guildName: {
@@ -239,21 +250,7 @@ export async function useDungeonAbility(ability: Ability) {
         },
         data: { health: { decrement: damage } },
       });
-      const currentEnemy = await db.guildEnemy.findFirst({
-        where: { guildName: user.guildName },
-      });
-      if (!currentEnemy) {
-        return;
-      }
 
-      if (currentEnemy.health <= 0) {
-        console.log("enemy is already dead");
-        return;
-      }
-
-      // TODO: Implement rewards for defeating boss to all the users
-
-      // Update turn for user
       const targetUser = await db.user.update({
         where: { id: session.user.id },
         data: { turns: 1 },
@@ -268,7 +265,7 @@ export async function useDungeonAbility(ability: Ability) {
         `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
       );
       if (enemyDamage.health <= 0) {
-        const updateEnemy = await db.guildEnemy.update({
+        const updatedEnemy = await db.guildEnemy.update({
           where: {
             enemyId_guildName: {
               enemyId: currentEnemy.enemyId,
@@ -277,7 +274,7 @@ export async function useDungeonAbility(ability: Ability) {
           },
           data: { health: 0 },
         });
-        rewardUsers(300, 300);
+        rewardUsers(user.guildName);
       }
       return damage;
     });
@@ -305,7 +302,7 @@ const rollDice = (diceNotation: string) => {
   };
 };
 
-async function rewardUsers(xp: number, gold: number) {
+async function rewardUsers(guild: string) {
   const session = await auth();
 
   if (
@@ -317,12 +314,32 @@ async function rewardUsers(xp: number, gold: number) {
   try {
     return await prisma.$transaction(async (db) => {
       const users = await db.user.findMany({
-        distinct: ["id"],
+        where: {
+          guildName: guild,
+        },
       });
+      const rewards = await db.guildEnemy.findFirst({
+        where: { guildName: guild },
+        select: {
+          enemy: {
+            select: {
+              xp: true,
+              gold: true,
+            },
+          },
+        },
+      });
+      if (!rewards) {
+        throw new Error("Enemy gold/xp is not defined!");
+      }
 
       for (const user of users) {
-        await experienceAndLevelValidator(db, user, xp);
-        const goldToGive = await goldValidator(db, user.id, user.gold);
+        await experienceAndLevelValidator(db, user, rewards?.enemy.xp);
+        const goldToGive = await goldValidator(
+          db,
+          user.id,
+          rewards?.enemy.gold,
+        );
         await db.user.update({
           where: { id: user.id },
           data: { gold: { increment: goldToGive } },
@@ -330,7 +347,7 @@ async function rewardUsers(xp: number, gold: number) {
         await addLog(
           db,
           user.id,
-          `DUNGEON: The boss has been slain, ${user.username} gained ${xp} XP and ${gold} gold.`,
+          `DUNGEON: The boss has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
         );
       }
     });
@@ -343,4 +360,25 @@ async function rewardUsers(xp: number, gold: number) {
   }
 }
 
-// async function isBossDead(guild: string) {}
+async function isEnemyDead(guild: string) {
+  try {
+    const enemy = await prisma.guildEnemy.findFirst({
+      where: { guildName: guild },
+      select: {
+        health: true,
+      },
+    });
+    if (!enemy) {
+      return (
+        "Something went wrong. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO")
+      );
+    }
+    if (enemy.health > 0) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    logger.error("Error checking status of enemy: " + error);
+  }
+}

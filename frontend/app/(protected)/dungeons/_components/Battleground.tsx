@@ -5,11 +5,18 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
-import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
+import {
+  useAttack,
+  getEnemy,
+  isTurnFinished,
+  useDungeonAbility,
+} from "@/data/dungeons/dungeon";
 import { useRouter } from "next/navigation";
-import { GuildEnemyWithEnemy } from "./interfaces";
+import { AbilityGridProps, GuildEnemyWithEnemy } from "./interfaces";
+import AbilityGrid from "./AbilityGrid";
+import { Ability } from "@prisma/client";
 
-function Battleground() {
+function Battleground({ abilities }: AbilityGridProps) {
   const [enemy, setEnemy] = useState<GuildEnemyWithEnemy | null>(null);
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [thrown, setThrown] = useState<boolean>(false);
@@ -46,6 +53,7 @@ function Battleground() {
           setBossDead(true);
           setEnemy({
             ...enemy,
+            health: 0,
             icon: enemy.enemy.icon,
             maxHealth: enemy.enemy.maxHealth,
           });
@@ -64,6 +72,58 @@ function Battleground() {
 
     fetchEnemy(); // Fetch the enemy on component mount
   }, []);
+
+  const rollAbility = async (ability: Ability) => {
+    setThrown(true);
+    if (!diceBox) {
+      initializeDiceBox();
+      console.log("Dicebox was null", diceBox);
+      toast.info("Preparing dice..", { autoClose: 1000 });
+      return;
+    } else if (diceBox) {
+      diceBox.clearDice();
+    }
+    if (!ability.diceNotation) {
+      return "cannot do anything";
+    }
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const result = await useDungeonAbility(ability);
+    if (!result) {
+      setThrown(false);
+      return;
+    }
+
+    if (!enemy) {
+      toast.error("Enemy not found");
+      return;
+    }
+    diceBox
+      .roll(`${ability.diceNotation}@${result}`)
+      .then(() => {
+        const fetchUpdatedEnemy = async () => {
+          try {
+            const updatedEnemy = await getEnemy();
+            if (!updatedEnemy) {
+              return;
+            }
+            setEnemy({
+              ...updatedEnemy,
+              icon: enemy.icon,
+              maxHealth: enemy.maxHealth,
+            });
+          } catch (error) {
+            console.error("Error fetching updated enemy:", error);
+          }
+        };
+        fetchUpdatedEnemy();
+        router.refresh();
+      })
+      .finally(() => {
+        setThrown(false);
+        setTurnFinished(true);
+        router.refresh();
+      });
+  };
 
   const rollDice = async () => {
     setThrown(true);
@@ -86,7 +146,8 @@ function Battleground() {
       return;
     }
 
-    const result = await finishTurn("1d6");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const result = await useAttack("1d6");
     if (!result) {
       return;
     }
@@ -168,6 +229,8 @@ function Battleground() {
         >
           Roll Dice
         </Button>
+        {/* TODO: Add disabled property and or something equal */}
+        <AbilityGrid abilities={abilities} onAbilityRoll={rollAbility} />
       </div>
     </>
   );
