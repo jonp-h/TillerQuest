@@ -161,7 +161,7 @@ model Guild {
   icon        String?
   schoolClass SchoolClass?
 
-  uniqueEnemy GuildEnemy[]
+  enemies GuildEnemy[]
   members User[]
 }
 

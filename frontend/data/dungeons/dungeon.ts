@@ -119,7 +119,7 @@ export async function isTurnFinished() {
 
 // TODO: Rework function to simplify names
 // Simplify function to split up finishing the turn into another function
-export async function useAttack(diceRoll: string) {
+export async function attackEnemy(diceRoll: string) {
   const session = await auth();
 
   if (
@@ -194,7 +194,7 @@ export async function useAttack(diceRoll: string) {
 
 // TODO: Add proper error logs.
 // Simplify function to split up finishing the turn into another function
-export async function useDungeonAbility(ability: Ability) {
+export async function selectDungeonAbility(ability: Ability) {
   const session = await auth();
   if (
     !session ||

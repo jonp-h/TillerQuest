@@ -6,12 +6,11 @@ import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
 import {
-  useAttack,
+  attackEnemy,
   getEnemy,
   isTurnFinished,
-  useDungeonAbility,
+  selectDungeonAbility,
 } from "@/data/dungeons/dungeon";
-import { useRouter } from "next/navigation";
 import { AbilityGridProps, GuildEnemyWithEnemy } from "./interfaces";
 import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
@@ -22,7 +21,6 @@ function Battleground({ abilities }: AbilityGridProps) {
   const [thrown, setThrown] = useState<boolean>(false);
   const [turnFinished, setTurnFinished] = useState(false);
   const [bossDead, setBossDead] = useState<boolean>(false);
-  const router = useRouter();
   const initializeDiceBox = async () => {
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
@@ -86,8 +84,7 @@ function Battleground({ abilities }: AbilityGridProps) {
     if (!ability.diceNotation) {
       return "cannot do anything";
     }
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const result = await useDungeonAbility(ability);
+    const result = await selectDungeonAbility(ability);
     if (!result) {
       setThrown(false);
       return;
@@ -116,12 +113,10 @@ function Battleground({ abilities }: AbilityGridProps) {
           }
         };
         fetchUpdatedEnemy();
-        router.refresh();
       })
       .finally(() => {
         setThrown(false);
         setTurnFinished(true);
-        router.refresh();
       });
   };
 
@@ -146,8 +141,7 @@ function Battleground({ abilities }: AbilityGridProps) {
       return;
     }
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const result = await useAttack("1d6");
+    const result = await attackEnemy("1d6");
     if (!result) {
       return;
     }
@@ -174,7 +168,6 @@ function Battleground({ abilities }: AbilityGridProps) {
       .finally(() => {
         setThrown(false);
         setTurnFinished(true);
-        router.refresh();
       });
   };
 

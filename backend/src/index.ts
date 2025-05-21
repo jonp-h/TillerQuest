@@ -431,7 +431,7 @@ cron.schedule(
     try {
       const usersWithTurnNotFinished = await db.user.findMany({
         where: {
-          turns: 0,
+          turns: 1,
         },
         select: {
           id: true,
