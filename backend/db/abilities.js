@@ -884,6 +884,23 @@ const bard = [
     value: null,
     parentAbility: "Heartfelt-Performance",
   },
+  {
+    name: "The-Song-of-Inspiration",
+    category: "Bard",
+    type: "Turns",
+    target: 0,
+    description:
+      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 3,
+    manaCost: 12,
+    healthCost: null,
+    xpGiven: 200,
+    diceNotation: null,
+    value: 1,
+    parentAbility: "Inspiration",
+  },
 ];
 
 const dungeon = [
