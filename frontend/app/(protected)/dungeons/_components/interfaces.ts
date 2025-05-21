@@ -1,6 +1,7 @@
 import { GuildEnemy, Ability } from "@prisma/client";
 
 export interface GuildEnemyWithEnemy extends GuildEnemy {
+  id: string;
   icon: string;
   maxHealth: number;
 }

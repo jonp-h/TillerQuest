@@ -1,12 +1,13 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { AbilityGridProps } from "./interfaces";
+import { Ability } from "@prisma/client";
 
 function AbilityGrid({ abilities, onAbilityRoll, disabled }: AbilityGridProps) {
   return (
     <>
-      <div className="flex flex-col gap-3 bg-slate-800 border-2 w-2/10 border-slate-800 rounded-lg p-5">
-        {abilities.map((ability) => (
+      <div className="flex flex-col mx-auto my-3 gap-3 bg-slate-800 border-2 w-2/10 border-slate-800 rounded-lg p-5">
+        {abilities.map((ability: Ability) => (
           <Button
             onClick={() => onAbilityRoll && onAbilityRoll(ability)}
             key={ability.name}

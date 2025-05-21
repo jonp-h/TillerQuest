@@ -114,7 +114,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
-  turns           Int?         @default(0)
+  turns           Int          @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -130,7 +130,6 @@ model User {
   special     String[] // notes and other information
   inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
   games       Game[] // m-n relation to games. A user can have many games
-
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 
@@ -179,7 +178,7 @@ model Ability {
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2
-  isDungeon Boolean?  @default(false) // If the ability is a dungeon ability
+  isDungeon    Boolean?        @default(false) // If the ability is a dungeon ability
 
   purchaseable Boolean  @default(true)
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
@@ -196,24 +195,25 @@ model Ability {
 
 // TODO: Add new field to specify which boss is active.
 model Enemy {
-  id          Int          @id @default(autoincrement())
-  name        String       
-  icon        String
-  attack      String       
-  maxHealth   Int          @default(10)
-  xp          Int          @default(0)
-  gold        Int          @default(0)
+  id        Int    @id @default(autoincrement())
+  name      String
+  icon      String
+  attack    String
+  maxHealth Int    @default(10)
+  xp        Int    @default(0)
+  gold      Int    @default(0)
 
   GuildEnemy GuildEnemy[]
 }
+
 model GuildEnemy {
-  enemyId     Int
-  enemy       Enemy        @relation(fields: [enemyId], references: [id])
-  guildName   String
-  guild       Guild        @relation(fields: [guildName], references: [name])
-  name        String       
-  health      Int       
-  @@id([enemyId, guildName])
+  id        String @id @default(cuid())
+  enemyId   Int
+  enemy     Enemy  @relation(fields: [enemyId], references: [id])
+  guildName String
+  guild     Guild  @relation(fields: [guildName], references: [name])
+  name      String
+  health    Int
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability

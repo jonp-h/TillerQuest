@@ -10,13 +10,10 @@ import {
   experienceAndLevelValidator,
   goldValidator,
 } from "../validators/validators";
-import { Ability } from "@prisma/client";
-import { error } from "console";
+import { Ability, Enemy, Guild } from "@prisma/client";
+import { GuildEnemyWithEnemy } from "@/app/(protected)/dungeons/_components/interfaces";
 
-// TODO: Move getting enemies to backend
-// add new field in DB to specify that the boss has been picked
-
-export const getEnemy = async () => {
+export const getEnemies = async (userId: string) => {
   const session = await auth();
   if (
     !session ||
@@ -26,18 +23,20 @@ export const getEnemy = async () => {
   }
   try {
     const user = await prisma.user.findUnique({
-      where: { id: session?.user.id },
+      where: { id: userId },
       select: {
         guildName: true, // Select the guildName
       },
     });
 
     if (!user?.guildName) {
-      console.warn("User is not in a guild.");
+      logger.warn(
+        "User " + userId + " is not in a guild. Tried to fetch enemy.",
+      );
       return null;
     }
 
-    const enemy = await prisma.guildEnemy.findFirst({
+    const enemy = await prisma.guildEnemy.findMany({
       where: {
         guildName: user.guildName,
       },
@@ -48,17 +47,29 @@ export const getEnemy = async () => {
             maxHealth: true,
           },
         },
+        id: true,
         enemyId: true,
         guildName: true,
         health: true,
         name: true,
+      },
+      orderBy: {
+        id: "asc",
       },
     });
     if (!enemy) {
       return;
     }
 
-    return enemy;
+    return enemy.map((enemy) => ({
+      id: enemy.id,
+      name: enemy.name,
+      health: enemy.health,
+      guildName: enemy.guildName,
+      enemyId: enemy.enemyId,
+      icon: enemy.enemy.icon,
+      maxHealth: enemy.enemy.maxHealth,
+    })) as GuildEnemyWithEnemy[];
   } catch (error) {
     logger.error("Error fetching enemy: " + error);
   }
@@ -95,7 +106,7 @@ export const getEnemy = async () => {
 //   return enemy;
 // };
 
-export async function isTurnFinished() {
+export async function getUserTurns(userId: string) {
   const session = await auth();
   if (
     !session ||
@@ -105,96 +116,24 @@ export async function isTurnFinished() {
   }
 
   try {
-    const turnStatus = await prisma.user.findFirst({
-      where: { id: session.user.id },
+    const turns = await prisma.user.findFirst({
+      where: { id: userId },
       select: {
         turns: true,
       },
     });
-    return turnStatus;
+    return turns || { turns: 0 };
   } catch (error) {
     logger.error("Error checking turn: " + error);
+    return { turns: 0 };
   }
 }
 
-// TODO: Rework function to simplify names
-// Simplify function to split up finishing the turn into another function
-export async function attackEnemy(diceRoll: string) {
-  const session = await auth();
-
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-  try {
-    return await prisma.$transaction(async (db) => {
-      const damageRollResult = rollDice(diceRoll);
-      const damage = damageRollResult.total;
-
-      const user = await prisma.user.findUnique({
-        where: { id: session?.user.id },
-        select: {
-          guildName: true,
-        },
-      });
-      if (!user?.guildName) {
-        console.warn("User is not in a guild.");
-        return null;
-      }
-      if (await isEnemyDead(user?.guildName)) {
-        logger.error("The enemy is already dead!");
-      }
-
-      const enemyDamage = await db.guildEnemy.update({
-        where: {
-          enemyId_guildName: {
-            enemyId: 1,
-            guildName: user.guildName,
-          },
-        },
-        data: { health: { decrement: damage } },
-      });
-      const enemyBoss = await db.guildEnemy.findFirst({
-        where: { guildName: user.guildName },
-      });
-
-      if (!enemyBoss?.health) {
-        return;
-      }
-      if (enemyBoss.health <= 0) {
-        rewardUsers(user.guildName);
-      }
-
-      // Update turn for user
-      const targetUser = await db.user.update({
-        where: { id: session.user.id },
-        data: { turns: 1 },
-        select: {
-          id: true,
-          username: true,
-        },
-      });
-      await addLog(
-        db,
-        targetUser.id,
-        `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
-      );
-      return damage;
-    });
-  } catch (error) {
-    logger.error("Error finishing up turn: " + error);
-    return (
-      "Something went wrong. Please inform a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
-    );
-  }
-}
-
-// TODO: Add proper error logs.
-// Simplify function to split up finishing the turn into another function
-export async function selectDungeonAbility(ability: Ability) {
+export async function selectDungeonAbility(
+  userId: string,
+  ability: Ability,
+  targetEnemyId: string | null,
+) {
   const session = await auth();
   if (
     !session ||
@@ -204,75 +143,63 @@ export async function selectDungeonAbility(ability: Ability) {
   }
   try {
     return await prisma.$transaction(async (db) => {
-      if (!ability.diceNotation) {
-        return;
-      }
-
       const user = await prisma.user.findUnique({
         where: { id: session?.user.id },
         select: {
           id: true,
           username: true,
           guildName: true,
+          turns: true,
         },
       });
 
-      if (!user?.guildName) {
-        console.warn("User is not in a guild.");
-        return null;
+      if (!user || !user?.guildName || targetEnemyId === null) {
+        logger.error("Error when attempting to use dungeon ability: " + userId);
+        return { message: "Error when attempting to use dungeon ability" };
       }
-      if (await isEnemyDead(user?.guildName)) {
-        logger.error("The enemy is already dead!");
+
+      if (user?.turns <= 0) {
+        return { message: "You have no turns left!" };
       }
 
       const userOwnsAbility = await db.userAbility.findFirst({
         where: { userId: user.id, abilityName: ability.name },
       });
 
-      if (!userOwnsAbility) {
-        console.log("User doesn't own the ability");
-        throw new Error("User doesn't own the ability");
+      if (!userOwnsAbility || !ability.diceNotation) {
+        return { message: "User doesn't own the ability" };
       }
-      // TODO: Check guilds active enemy
-      // const activeEnemy = await db.GuildEnemy.guild
 
-      const damageRollResult = rollDice(ability?.diceNotation);
-      const damage = damageRollResult.total;
-
-      const enemyDamage = await db.guildEnemy.update({
-        where: {
-          enemyId_guildName: {
-            enemyId: 1,
-            guildName: user.guildName,
-          },
-        },
-        data: { health: { decrement: damage } },
-      });
-
-      const targetUser = await db.user.update({
-        where: { id: session.user.id },
-        data: { turns: 1 },
+      const enemy = await prisma.guildEnemy.findFirst({
+        where: { id: targetEnemyId },
         select: {
-          id: true,
-          username: true,
+          health: true,
         },
       });
+
+      if (!enemy || enemy?.health <= 0) {
+        return { message: "The enemy is already dead!" };
+      }
+
+      const diceResult = rollDice(ability?.diceNotation);
+
+      await damageEnemy(targetEnemyId, diceResult.total);
+
+      await db.user.update({
+        where: { id: session.user.id },
+        data: { turns: { decrement: 1 } },
+      });
+
       await addLog(
         db,
-        targetUser.id,
-        `DUNGEON: ${targetUser.username} finished their turn and dealt ${damage} damage.`,
+        userId,
+        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult} damage.`,
       );
-      const enemyBoss = await db.guildEnemy.findFirst({
-        where: { guildName: user.guildName },
-      });
 
-      if (!enemyBoss?.health) {
-        return;
-      }
-      if (enemyBoss.health <= 0) {
-        rewardUsers(user.guildName);
-      }
-      return damage;
+      return {
+        message: "Rolled " + diceResult.total + "!",
+        diceRoll: diceResult.total,
+      };
     });
   } catch (error) {
     logger.error("Error finishing up turn: " + error);
@@ -298,7 +225,32 @@ const rollDice = (diceNotation: string) => {
   };
 };
 
-async function rewardUsers(guild: string) {
+async function damageEnemy(targetEnemyId: string, diceResult: number) {
+  try {
+    return await prisma.$transaction(async (db) => {
+      console.log("Dealing damage to enemy: " + targetEnemyId);
+      const enemy = await db.guildEnemy.update({
+        where: {
+          id: targetEnemyId,
+        },
+        data: { health: { decrement: diceResult } },
+      });
+
+      // revwards are only given when the enemy is killed
+      if (enemy.health <= 0) {
+        rewardUsers(targetEnemyId, enemy.guildName);
+      }
+    });
+  } catch (error) {
+    logger.error("Error using damage ability in dungeons: " + error);
+    return (
+      "Something went wrong. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO")
+    );
+  }
+}
+
+async function rewardUsers(enemyId: string, guild: string) {
   const session = await auth();
 
   if (
@@ -315,7 +267,7 @@ async function rewardUsers(guild: string) {
         },
       });
       const rewards = await db.guildEnemy.findFirst({
-        where: { guildName: guild },
+        where: { id: enemyId },
         select: {
           enemy: {
             select: {
@@ -325,12 +277,14 @@ async function rewardUsers(guild: string) {
           },
         },
       });
+
       if (!rewards) {
-        throw new Error("Enemy gold/xp is not defined!");
+        logger.error("No rewards found for enemy: " + enemyId);
+        return;
       }
 
       for (const user of users) {
-        await experienceAndLevelValidator(db, user, rewards?.enemy.xp);
+        await experienceAndLevelValidator(db, user, rewards.enemy.xp);
         const goldToGive = await goldValidator(
           db,
           user.id,
@@ -353,28 +307,5 @@ async function rewardUsers(guild: string) {
       "Something went wrong. Please inform a game master of this timestamp: " +
       Date.now().toLocaleString("no-NO")
     );
-  }
-}
-
-async function isEnemyDead(guild: string) {
-  try {
-    const enemy = await prisma.guildEnemy.findFirst({
-      where: { guildName: guild },
-      select: {
-        health: true,
-      },
-    });
-    if (!enemy) {
-      return (
-        "Something went wrong. Please inform a game master of this timestamp: " +
-        Date.now().toLocaleString("no-NO")
-      );
-    }
-    if (enemy.health > 0) {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    logger.error("Error checking status of enemy: " + error);
   }
 }
