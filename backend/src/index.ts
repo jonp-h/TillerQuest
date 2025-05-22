@@ -430,7 +430,7 @@ cron.schedule(
   "2 0 * * *",
   async () => {
     try {
-      const usersWithTurnNotFinished = await db.user.findMany({
+      const usersWithTurnFinished = await db.user.findMany({
         where: {
           turns: 0,
         },
@@ -440,16 +440,27 @@ cron.schedule(
           turns: true,
         },
       });
-      for (const user of usersWithTurnNotFinished) {
+      for (const user of usersWithTurnFinished) {
+        // Check if user has a TurnPassive and get its value
+        const turnPassive = await db.userPassive.findMany({
+          where: {
+            userId: user.id,
+            effectType: "TurnPassive",
+          },
+          select: {
+            value: true,
+          },
+        });
+
         await db.user.update({
           where: { id: user.id },
-          data: { turns: 1 },
+          data: { turns: turnsToSet },
         });
 
         await db.log.create({
           data: {
             userId: user.id,
-            message: `${user.username} turn has been reset`,
+            message: `${user.username} turn has been reset${turnPassive ? ` (+${turnPassive.value} from passive)` : ""}`,
           },
         });
       }
