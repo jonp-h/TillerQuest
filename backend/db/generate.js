@@ -84,7 +84,7 @@ async function addAbilities() {
   for (const ability of abilities) {
     try {
       await db.ability.upsert({
-        where: { name: ability.name },
+        where: { id: ability.id },
         update: ability,
         create: ability,
       });
@@ -99,7 +99,7 @@ async function addCosmicEvents() {
   for (const cosmic of cosmics) {
     try {
       await db.cosmicEvent.upsert({
-        where: { name: cosmic.name },
+        where: { id: cosmic.id },
         update: cosmic,
         create: cosmic,
       });
@@ -113,9 +113,8 @@ async function addCosmicEvents() {
 async function addShopItems() {
   for (const item of shopItems) {
     try {
-      console.log("Adding", item.name);
       await db.shopItem.upsert({
-        where: { name: item.name },
+        where: { id: item.id },
         update: item,
         create: item,
       });
@@ -130,12 +129,12 @@ async function addTypeQuestTexts() {
   for (const typeQuestText of typeQuestTexts) {
     try {
       await db.typeQuestText.upsert({
-        where: { text: typeQuestText.text },
-        update: { text: typeQuestText.text },
-        create: { text: typeQuestText.text },
+        where: { id: typeQuestText.id },
+        update: typeQuestText,
+        create: typeQuestText,
       });
     } catch (error) {
-      console.error("Error adding", typeQuestText + ": ", error);
+      console.error("Error adding", typeQuestText.text + ": ", error);
     }
   }
   console.info("Type quest texts have been added to the database.");
