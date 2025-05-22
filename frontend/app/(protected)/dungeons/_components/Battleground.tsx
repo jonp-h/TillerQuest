@@ -21,9 +21,8 @@ function Battleground({
   userTurns: { turns: number };
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
-  const [selectedEnemy, setSelectedEnemy] = useState<string | null>(
-    enemies[0]?.id || null,
-  );
+  const [selectedEnemy, setSelectedEnemy] =
+    useState<GuildEnemyWithEnemy | null>(enemies[0] || null);
   const [thrown, setThrown] = useState<boolean>(false);
 
   const router = useRouter();
@@ -50,14 +49,20 @@ function Battleground({
   const rollAbility = async (ability: Ability) => {
     setThrown(true);
     if (!diceBox) {
+      setThrown(false);
       initializeDiceBox();
       toast.info("Preparing dice..", { autoClose: 1000 });
+      router.refresh();
+
       return;
     } else if (diceBox) {
       diceBox.clearDice();
     }
-
-    const result = await selectDungeonAbility(userId, ability, selectedEnemy);
+    const result = await selectDungeonAbility(
+      userId,
+      ability,
+      selectedEnemy?.id || "",
+    );
 
     // if result is only a string, it's an error message
     if (typeof result === "string") {
@@ -97,9 +102,9 @@ function Battleground({
       >
         {enemies &&
           enemies.map((enemy: GuildEnemyWithEnemy) => (
-            <div onClick={() => setSelectedEnemy(enemy.id)} key={enemy.id}>
+            <div onClick={() => setSelectedEnemy(enemy)} key={enemy.id}>
               <EnemyComponent
-                selected={selectedEnemy === enemy.id}
+                selected={selectedEnemy === enemy}
                 enemy={{
                   id: enemy.id,
                   enemyId: enemy.enemyId,
@@ -120,7 +125,11 @@ function Battleground({
         <AbilityGrid
           abilities={abilities}
           onAbilityRoll={rollAbility}
-          disabled={thrown || userTurns.turns <= 0}
+          disabled={
+            thrown ||
+            userTurns.turns <= 0 ||
+            !!(selectedEnemy && selectedEnemy?.health <= 0)
+          }
         />
       </div>
     </>

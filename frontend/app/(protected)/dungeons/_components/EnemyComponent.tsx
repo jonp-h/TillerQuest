@@ -13,7 +13,7 @@ function EnemyComponent({
   return (
     <div
       className={
-        "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-"
+        "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-0"
       }
     >
       <div
@@ -37,7 +37,7 @@ function EnemyComponent({
         />
       </div>
       <Image
-        src={enemy.icon}
+        src={enemy.health <= 0 ? "/classes/grave.png" : enemy.icon}
         alt="Enemy"
         width={200}
         height={200}

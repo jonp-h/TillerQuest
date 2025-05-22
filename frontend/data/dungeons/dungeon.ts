@@ -193,12 +193,15 @@ export async function selectDungeonAbility(
       await addLog(
         db,
         userId,
-        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult} damage.`,
+        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult.total} damage.`,
       );
 
       return {
         message: "Rolled " + diceResult.total + "!",
-        diceRoll: diceResult.total,
+        diceRoll:
+          "output" in diceResult
+            ? diceResult.output.split("[")[1].split("]")[0]
+            : "",
       };
     });
   } catch (error) {
@@ -271,6 +274,7 @@ async function rewardUsers(enemyId: string, guild: string) {
         select: {
           enemy: {
             select: {
+              name: true,
               xp: true,
               gold: true,
             },
@@ -297,7 +301,7 @@ async function rewardUsers(enemyId: string, guild: string) {
         await addLog(
           db,
           user.id,
-          `DUNGEON: The boss has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
+          `DUNGEON: ${rewards.enemy.name} has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
         );
       }
     });
