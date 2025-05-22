@@ -1,9 +1,15 @@
 import { Typography, LinearProgress } from "@mui/material";
 import Image from "next/image";
 import React from "react";
-import { EnemyProps } from "@/types/types";
+import { GuildEnemyWithEnemy } from "./interfaces";
 
-function Enemy({ enemy }: { enemy: EnemyProps }) {
+function EnemyComponent({
+  enemy,
+  selected,
+}: {
+  enemy: GuildEnemyWithEnemy;
+  selected: boolean;
+}) {
   return (
     <div
       className={
@@ -12,14 +18,16 @@ function Enemy({ enemy }: { enemy: EnemyProps }) {
     >
       <div
         className={
-          "border-2 border-red-600 w-full bg-black/40 p-3 rounded-xl shadow-lg backdrop-blur-sm"
+          selected
+            ? "border-2 border-red-600 w-full bg-black/40 p-3 rounded-xl shadow-lg backdrop-blur-sm"
+            : "border-2 border-gray-600 w-full bg-black/40 p-3 rounded-xl shadow-lg backdrop-blur-sm"
         }
       >
         <Typography variant="h5" className="text-center">
           {enemy.name}
           <br />
           <p>
-            {enemy.health}HP / {enemy.maxHealth}HP
+            {enemy.health <= 0 ? 0 : enemy.health} / {enemy.maxHealth} hp
           </p>
         </Typography>
         <LinearProgress
@@ -40,4 +48,4 @@ function Enemy({ enemy }: { enemy: EnemyProps }) {
   );
 }
 
-export default Enemy;
+export default EnemyComponent;

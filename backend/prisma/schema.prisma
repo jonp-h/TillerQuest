@@ -46,6 +46,7 @@ enum AbilityCategory {
   Heal
   Adventurer
   Cosmic
+  Dungeon
 
   // Class specific types
   Druid
@@ -113,7 +114,7 @@ model User {
   class           Class?
   image           String?
   publicHighscore Boolean      @default(false)
-  attacks         Int?         @default(0)
+  turns           Int          @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -159,6 +160,7 @@ model Guild {
   icon        String?
   schoolClass SchoolClass?
 
+  enemies GuildEnemy[]
   members User[]
 }
 
@@ -176,7 +178,7 @@ model Ability {
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2
-  isDungeon    Boolean?        @default(false)   // If the ability is a dungeon ability
+  isDungeon    Boolean?        @default(false) // If the ability is a dungeon ability
 
   purchaseable Boolean  @default(true)
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
@@ -189,6 +191,29 @@ model Ability {
   userPassives UserPassive[] // m-n relation to user passives. An ability can have passives on many users 
 
   cosmic CosmicEvent[]
+}
+
+// TODO: Add new field to specify which boss is active.
+model Enemy {
+  id        Int    @id @default(autoincrement())
+  name      String
+  icon      String
+  attack    String
+  maxHealth Int    @default(10)
+  xp        Int    @default(0)
+  gold      Int    @default(0)
+
+  GuildEnemy GuildEnemy[]
+}
+
+model GuildEnemy {
+  id        String @id @default(cuid())
+  enemyId   Int
+  enemy     Enemy  @relation(fields: [enemyId], references: [id])
+  guildName String
+  guild     Guild  @relation(fields: [guildName], references: [name])
+  name      String
+  health    Int
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
@@ -253,18 +278,6 @@ model ShopItem {
   classReq    Class?
   specialReq  String?
   users       User[] // m-n relation to users. An item can be owned by many users
-}
-
-// TODO: Add new field to specify which boss is active.
-model Enemy {
-  id          Int          @id @default(autoincrement())
-  name        String       
-  icon        String
-  attack      String       
-  health      Int          @default(10)
-  maxHealth   Int          @default(10)
-  xp          Int          @default(0)
-  gold        Int          @default(0)
 }
 
 model Log {

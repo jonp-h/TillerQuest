@@ -94,6 +94,9 @@ export default function AbilityForm({
   };
 
   const getOwnedButtonText = () => {
+    /*if (ability.isDungeon) {
+      return "Go to dungeon";
+    } else*/
     if (activePassive) {
       return "Activated";
     } else if (isDead) {
@@ -121,6 +124,9 @@ export default function AbilityForm({
     let targetUsers = [selectedUser];
 
     // if diceBox is required and not initialized, initialize it first
+    /*if (ability.isDungeon) {
+      router.push("/dungeon");
+    } else */
     if (!diceBox && ability.diceNotation) {
       initializeDiceBox();
       toast.info("Preparing dice..", { autoClose: 1000 });
@@ -215,19 +221,31 @@ export default function AbilityForm({
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>
-          <AbilityUserSelect
-            target={ability.target}
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
-            guildMembers={guildMembersWithoutUser}
-          />
-          <Button
-            variant="contained"
-            onClick={handleUseAbility}
-            disabled={lackingResource || activePassive || isLoading || isDead}
-          >
-            {getOwnedButtonText()}
-          </Button>
+          {!ability.isDungeon ? (
+            <AbilityUserSelect
+              target={ability.target}
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+              guildMembers={guildMembersWithoutUser}
+            />
+          ) : null}
+          {ability.isDungeon ? (
+            <Button
+              variant="contained"
+              onClick={() => router.push("/dungeons")}
+              disabled={false}
+            >
+              Go to the dungeons
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleUseAbility}
+              disabled={lackingResource || activePassive || isLoading || isDead}
+            >
+              {getOwnedButtonText()}
+            </Button>
+          )}
         </>
       ) : (
         <>

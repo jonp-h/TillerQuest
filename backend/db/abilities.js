@@ -886,6 +886,60 @@ const bard = [
   },
 ];
 
+const dungeon = [
+  {
+    name: "Weak-Attack",
+    category: "Dungeon",
+    type: "Damage",
+    target: 0,
+    description: "You attack a target for 1d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 1,
+    manaCost: 2,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d6",
+    isDungeon: true,
+    value: null,
+  },
+  {
+    name: "Great-Attack",
+    category: "Dungeon",
+    type: "Damage",
+    target: 0,
+    description: "You use a great attack against the Boss dealing 1d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: 4,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d8",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Weak-Attack",
+  },
+  {
+    name: "Fencing",
+    category: "Dungeon",
+    type: "Damage",
+    target: 0,
+    description:
+      "You use a fencing attack against the Boss dealing 2d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: 6,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d6",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Great-Attack",
+  },
+];
+
 const cosmic = [
   {
     name: "Poor-Harvest",
@@ -991,6 +1045,7 @@ const abilities = [
   ...barbarian,
   ...bloodMage,
   ...bard,
+  ...dungeon,
   ...cosmic,
 ];
 export default abilities;
