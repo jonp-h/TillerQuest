@@ -5,15 +5,18 @@ import { GuildEnemyWithEnemy } from "./interfaces";
 
 function EnemyComponent({
   enemy,
+  animateSpeed,
   selected,
 }: {
   enemy: GuildEnemyWithEnemy;
+  animateSpeed: number;
   selected: boolean;
 }) {
   return (
     <div
       className={
-        "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-0"
+        "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-" +
+        animateSpeed
       }
     >
       <div

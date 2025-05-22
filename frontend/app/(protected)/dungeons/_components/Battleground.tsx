@@ -9,6 +9,7 @@ import { AbilityGridProps, GuildEnemyWithEnemy } from "./interfaces";
 import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import TimeLeft from "@/components/TimeLeft";
 
 function Battleground({
   abilities,
@@ -100,11 +101,24 @@ function Battleground({
         }}
         className="m-auto flex justify-evenly"
       >
+        {enemies ? (
+          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
+            <p>Enemies attack in </p>
+            <div className="text-red-500">
+              <TimeLeft endTime={new Date(new Date().setHours(15, 0, 0, 0))} />
+            </div>
+          </div>
+        ) : (
+          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
+            <p>Congratulations! All enemies have been slain!</p>
+          </div>
+        )}
         {enemies &&
-          enemies.map((enemy: GuildEnemyWithEnemy) => (
+          enemies.map((enemy: GuildEnemyWithEnemy, index: number) => (
             <div onClick={() => setSelectedEnemy(enemy)} key={enemy.id}>
               <EnemyComponent
                 selected={selectedEnemy === enemy}
+                animateSpeed={index % 4} // get a number between 0 and 3 to animate the enemies
                 enemy={{
                   id: enemy.id,
                   enemyId: enemy.enemyId,
@@ -120,7 +134,23 @@ function Battleground({
       </div>
       <div className="flex flex-col justify-center p-2">
         <div className="text-center text-white">
-          You have {userTurns.turns} turns left
+          {userTurns.turns ? (
+            "You have " + userTurns.turns + " turns left"
+          ) : (
+            <div className="flex text-center justify-center gap-1">
+              <p>You must rest for </p>
+
+              <div className="text-red-500 text-5xl">
+                <TimeLeft
+                  endTime={new Date(new Date().setHours(24, 0, 0, 0))}
+                />
+              </div>
+              <p>
+                before you can muster your strength enough to enter the dungeons
+                again
+              </p>
+            </div>
+          )}
         </div>
         <AbilityGrid
           abilities={abilities}
