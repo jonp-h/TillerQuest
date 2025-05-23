@@ -1,21 +1,33 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
-import Enemy from "./Enemy";
-import { finishTurn, getEnemy, isTurnFinished } from "@/data/dungeons/dungeon";
-import { EnemyProps } from "@/types/types";
+import EnemyComponent from "./EnemyComponent";
+import { selectDungeonAbility } from "@/data/dungeons/dungeon";
+import { AbilityGridProps, GuildEnemyWithEnemy } from "./interfaces";
+import AbilityGrid from "./AbilityGrid";
+import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import TimeLeft from "@/components/TimeLeft";
 
-function Battleground() {
-  const [enemy, setEnemy] = useState<EnemyProps | null>(null);
+function Battleground({
+  abilities,
+  userId,
+  enemies,
+  userTurns,
+}: AbilityGridProps & {
+  userId: string;
+  enemies: GuildEnemyWithEnemy[];
+  userTurns: { turns: number };
+}) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
+  const [selectedEnemy, setSelectedEnemy] =
+    useState<GuildEnemyWithEnemy | null>(enemies[0] || null);
   const [thrown, setThrown] = useState<boolean>(false);
-  const [turnFinished, setTurnFinished] = useState(false);
-  const [bossDead, setBossDead] = useState<boolean>(false);
+
   const router = useRouter();
+
   const initializeDiceBox = async () => {
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
@@ -35,101 +47,43 @@ function Battleground() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const fetchEnemy = async () => {
-      try {
-        const enemy = await getEnemy();
-        if (!enemy) {
-          return;
-        }
-        if (enemy?.health <= 0) {
-          setBossDead(true);
-          setEnemy({
-            ...enemy,
-            icon: enemy.icon ?? "/dungeons/slug.png",
-          });
-        }
-        setEnemy({
-          ...enemy,
-          icon: enemy.icon ?? "/dungeons/slug.png",
-        });
-
-        setBossDead(false);
-      } catch (error) {
-        console.error("Error fetching enemy:", error);
-      }
-    };
-
-    fetchEnemy(); // Fetch the enemy on component mount
-  }, []);
-
-  const rollDice = async () => {
+  const rollAbility = async (ability: Ability) => {
     setThrown(true);
     if (!diceBox) {
+      setThrown(false);
       initializeDiceBox();
-      console.log("Dicebox was null", diceBox);
       toast.info("Preparing dice..", { autoClose: 1000 });
+      router.refresh();
+
       return;
     } else if (diceBox) {
       diceBox.clearDice();
-      // TODO: enable custom colorsets for different abilities
-      // diceBox.updateConfig({
-      //   ...diceSettings,
-      //   theme_customColorset: colorsets.fire,
-      // });
     }
+    const result = await selectDungeonAbility(
+      userId,
+      ability,
+      selectedEnemy?.id || "",
+    );
 
-    if (!enemy) {
-      toast.error("Enemy not found");
+    // if result is only a string, it's an error message
+    if (typeof result === "string") {
+      toast.error(result);
+      setThrown(false);
+      router.refresh();
+      return;
+    } else if (!result.diceRoll) {
+      setThrown(false);
+      toast.error(result.message);
+      router.refresh();
       return;
     }
 
-    const result = await finishTurn(enemy.attack, enemy.id);
-    if (!result) {
-      return;
-    }
-    diceBox
-      .roll(`1d6@${result}`)
-      .then(() => {
-        const fetchUpdatedEnemy = async () => {
-          try {
-            const updatedEnemy = await getEnemy();
-            if (!updatedEnemy) {
-              return;
-            }
-            setEnemy(
-              updatedEnemy
-                ? {
-                    ...updatedEnemy,
-                    icon: updatedEnemy.icon ?? "/dungeons/slug.png",
-                  }
-                : null,
-            );
-          } catch (error) {
-            console.error("Error fetching updated enemy:", error);
-          }
-        };
-        fetchUpdatedEnemy();
-      })
-      .finally(() => {
-        router.refresh();
-        setThrown(false);
-        setTurnFinished(true);
-      });
+    diceBox.roll(`${ability.diceNotation}@${result.diceRoll}`).finally(() => {
+      setThrown(false);
+      toast.success(result.message);
+      router.refresh();
+    });
   };
-
-  // TODO: may be redundant, review later
-  useEffect(() => {
-    const fetchTurnStatus = async () => {
-      const status = await isTurnFinished();
-      if (status?.turns == null) {
-        return;
-      }
-      setTurnFinished(status.turns > 0);
-    };
-
-    fetchTurnStatus();
-  }, []);
 
   return (
     <>
@@ -147,30 +101,66 @@ function Battleground() {
         }}
         className="m-auto flex justify-evenly"
       >
-        {enemy && (
-          <Enemy
-            enemy={{
-              id: enemy.id,
-              name: enemy.name,
-              health: enemy.health,
-              maxHealth: enemy.maxHealth,
-              icon: enemy.icon,
-              attack: enemy.attack,
-              xp: enemy.xp,
-              gold: enemy.gold,
-            }}
-          />
+        {enemies ? (
+          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
+            <p>Enemies attack in </p>
+            <div className="text-red-500">
+              <TimeLeft endTime={new Date(new Date().setHours(15, 0, 0, 0))} />
+            </div>
+          </div>
+        ) : (
+          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
+            <p>Congratulations! All enemies have been slain!</p>
+          </div>
         )}
+        {enemies &&
+          enemies.map((enemy: GuildEnemyWithEnemy, index: number) => (
+            <div onClick={() => setSelectedEnemy(enemy)} key={enemy.id}>
+              <EnemyComponent
+                selected={selectedEnemy === enemy}
+                animateSpeed={index % 4} // get a number between 0 and 3 to animate the enemies
+                enemy={{
+                  id: enemy.id,
+                  enemyId: enemy.enemyId,
+                  name: enemy.name,
+                  guildName: enemy.guildName,
+                  health: enemy.health,
+                  icon: enemy.icon,
+                  maxHealth: enemy.maxHealth,
+                }}
+              />
+            </div>
+          ))}
       </div>
-      <div className="flex justify-center p-2">
-        <Button
-          onClick={rollDice}
-          variant="contained"
-          color="primary"
-          disabled={Boolean(turnFinished) || thrown || bossDead}
-        >
-          Roll Dice
-        </Button>
+      <div className="flex flex-col justify-center p-2">
+        <div className="text-center text-white">
+          {userTurns.turns ? (
+            "You have " + userTurns.turns + " turns left"
+          ) : (
+            <div className="flex text-center justify-center gap-1">
+              <p>You must rest for </p>
+
+              <div className="text-red-500 text-5xl">
+                <TimeLeft
+                  endTime={new Date(new Date().setHours(24, 0, 0, 0))}
+                />
+              </div>
+              <p>
+                before you can muster your strength enough to enter the dungeons
+                again
+              </p>
+            </div>
+          )}
+        </div>
+        <AbilityGrid
+          abilities={abilities}
+          onAbilityRoll={rollAbility}
+          disabled={
+            thrown ||
+            userTurns.turns <= 0 ||
+            !!(selectedEnemy && selectedEnemy?.health <= 0)
+          }
+        />
       </div>
     </>
   );

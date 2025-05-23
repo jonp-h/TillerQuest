@@ -124,19 +124,19 @@ $ cd backend/
 $ npx prisma db push
 
 $ npm run generate
-#To mock an example database
+# To mock an example database
 
 $ npm run start
-#To start backend
+# To start backend
 ```
 
 ### Open a new Terminal
 
 ```ps
-$ cd frontent/
+$ cd frontend/
 
 $ npm run dev
-#To open dev
+# To open dev
 ```
 
 - You can inspect the database with "npx prisma studio"
@@ -161,43 +161,150 @@ $ npm run dev
 - Remember to use Pascal-case for components.
 
 ```
-tillerquest/
-├── .env
-├── .eslintrc.json
-├── .gitignore
-├── .next/
-│ ├── ...
-├── app/
-│ ├── (protected)/
-│ │ ├── page/
-│ │ │ ├── _page-specific-components/
-│ │ │ │ └── Component.tsx
-│ │ │ └── page.tsx
-│ │ └── ...
-├── auth.config.ts
-├── auth.ts
-├── components/
-│ ├── navbar/
-│ │ ├── Navbar.tsx
-│ │ └── NavbarContent.tsx
-│ └── MainContainer.tsx
-├── data/
-│ ├── mocking/
-│ │ ├── users.json
-│ │ └── generate.mjs
-│ └── abilities.ts
-├── lib/
-├── middleware.ts
-├── next-auth.d.ts
-├── next-env.d.ts
-├── next.config.mjs
-├── package.json
-├── postcss.config.mjs
-├── prisma/
-├── public/
-├── routes.ts
-├── tailwind.config.ts
-└── tsconfig.json
+└── 📁TillerQuest
+    └── 📁.github
+        └── 📁ISSUE_TEMPLATE
+            └── bug_report.md
+            └── feature_request.md
+            └── scrum-story.md
+            └── scrum-task.md
+        └── pull_request_template.md
+    └── 📁.husky
+        └── 📁_
+        └── commit-msg
+        └── pre-commit
+    └── 📁backend
+        └── .env
+        └── .eslintcache
+        └── .gitignore
+        └── .lintstagedrc.js
+        └── 📁db
+            └── .gitignore
+            └── 📁docker
+                └── .env
+                └── 📁backups
+                └── 📁data
+                └── docker-compose.yml
+                └── README.md
+            └── abilities.js
+            └── cosmic.js
+            └── enemies.js
+            └── generate.js
+            └── guilds.js
+            └── reset.js
+            └── shopItems.js
+            └── typeQuestTexts.js
+            └── users.js
+        └── eslint.config.js
+        └── nodemon.json
+        └── package-lock.json
+        └── package.json
+        └── 📁prisma
+            └── 📁migrations
+            └── schema.prisma
+        └── 📁src
+            └── 📁data
+            └── 📁lib
+            └── 📁middleware
+            └── 📁types
+        └── tsconfig.json
+    └── 📁frontend
+        └── .env
+        └── .gitignore
+        └── .lintstagedrc.mjs
+        └── .prettierignore
+        └── .prettierrc
+        └── 📁app
+            └── 📁(protected)
+                └── 📁(admin)
+                    └── 📁gamemaster
+                        └── 📁cosmic
+                            └── 📁_components
+                        └── 📁guilds
+                            └── 📁_components
+                        └── 📁log
+                        └── 📁manage
+                            └── 📁_components
+                        └── 📁resurrect
+                            └── 📁_components
+                        └── 📁users
+                            └── 📁_components
+                └── 📁abilities
+                    └── 📁_components
+                    └── 📁[abilityName]
+                        └── 📁_components
+                └── 📁arena
+                    └── 📁_components
+                    └── 📁games
+                        └── 📁_components
+                └── 📁create
+                    └── 📁_components
+                └── 📁dungeons
+                    └── 📁_components
+                └── 📁mana
+                    └── 📁_components
+                └── 📁profile
+                    └── 📁[username]
+                        └── 📁_components
+                        └── 📁settings
+                            └── 📁_components
+                └── 📁shop
+                    └── 📁_components
+            └── 📁api
+                └── 📁auth
+                    └── 📁[...nextauth]
+            └── 📁signup
+        └── auth.config.ts
+        └── auth.ts
+        └── combined.log
+        └── 📁components
+            └── 📁navbar
+        └── 📁data
+            └── 📁abilities
+                └── 📁abilityUsage
+                └── 📁getters
+                └── 📁transaction
+            └── 📁admin
+            └── 📁cosmic
+            └── 📁dungeons
+            └── 📁games
+            └── 📁guilds
+            └── 📁log
+            └── 📁mana
+            └── 📁passives
+            └── 📁shop
+            └── 📁user
+            └── 📁validators
+        └── eslint.config.mjs
+        └── 📁lib
+        └── middleware.ts
+        └── next.config.mjs
+        └── package-lock.json
+        └── package.json
+        └── postcss.config.mjs
+        └── 📁prisma
+            └── 📁migrations
+            └── schema.prisma
+        └── 📁public
+            └── 📁abilities
+            └── 📁assets
+                └── 📁ammo
+                └── 📁textures
+                └── 📁themes
+                    └── 📁default
+            └── 📁badges
+            └── 📁classes
+            └── 📁dungeons
+            └── 📁ragnarok
+        └── routes.ts
+        └── tsconfig.json
+        └── 📁types
+    └── .gitignore
+    └── commitlint.config.mjs
+    └── CONTRIBUTING.md
+    └── package-lock.json
+    └── package.json
+    └── README.md
 ```
 
 - Tailwind responsive:

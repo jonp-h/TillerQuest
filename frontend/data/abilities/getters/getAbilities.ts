@@ -216,13 +216,7 @@ export const getUserDungeonAbilities = async (userId: string) => {
         },
       },
       select: {
-        ability: {
-          select: {
-            name: true,
-            icon: true,
-            diceNotation: true,
-          },
-        },
+        ability: true,
       },
     });
 
