@@ -189,6 +189,24 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
+        case "TurnPassive":
+          // TODO: considering moving this. Required to give immediate turns to the user
+          await db.user.update({
+            where: {
+              id: castingUser.id,
+            },
+            data: {
+              turns: {
+                increment: 1,
+              },
+            },
+          });
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 

@@ -70,6 +70,10 @@ enum AbilityType {
   ArenaToken
   Gold
 
+  // Dungeons
+  TurnPassive
+  DungeonAttack
+
   // Passives
   Deathsave
   Cosmic
@@ -165,7 +169,8 @@ model Guild {
 }
 
 model Ability {
-  name         String          @id @default(cuid())
+  id           Int             @id @default(autoincrement())
+  name         String          @unique
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
   target       Int             @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
@@ -178,7 +183,7 @@ model Ability {
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2
-  isDungeon    Boolean?        @default(false) // If the ability is a dungeon ability
+  isDungeon    Boolean         @default(false) // If the ability is a dungeon ability
 
   purchaseable Boolean  @default(true)
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
@@ -191,9 +196,10 @@ model Ability {
   userPassives UserPassive[] // m-n relation to user passives. An ability can have passives on many users 
 
   cosmic CosmicEvent[]
+
+  @@index([name])
 }
 
-// TODO: Add new field to specify which boss is active.
 model Enemy {
   id        Int    @id @default(autoincrement())
   name      String
@@ -247,7 +253,8 @@ model UserPassive {
 }
 
 model CosmicEvent {
-  name        String    @id
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String
   icon        String    @default("Cosmic.png")
   recommended Boolean   @default(false)
@@ -265,19 +272,24 @@ model CosmicEvent {
   abilityName       String? // if the cosmic event should grant an ability or passive
 
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade)
+
+  @@index([name])
 }
 
 model ShopItem {
-  id          String       @id @default(cuid())
+  id          Int          @id @default(autoincrement())
   name        String       @unique
   description String?
-  // icon        String
+  icon        String?
   price       Int
   type        ShopItemType
   levelReq    Int?
   classReq    Class?
   specialReq  String?
   users       User[] // m-n relation to users. An item can be owned by many users
+
+  @@index([name])
+  @@index([type])
 }
 
 model Log {
@@ -304,7 +316,7 @@ model Game {
 }
 
 model TypeQuestText {
-  id   String @id @default(cuid())
+  id   Int    @id @default(autoincrement())
   text String @unique
 }
 
