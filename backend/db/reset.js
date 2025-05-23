@@ -8,6 +8,7 @@ async function main() {
   Please choose an option:
   DANGERZONE:
   reset. Set all users to NEW
+  resetWithShopItems. Resets all abilities and passives, and refunds shop items
   single. Reset a single user
   `);
 
@@ -25,6 +26,20 @@ async function main() {
           if (confirmation.trim().toLowerCase() === "yes") {
             console.log("Resetting all users...");
             await resetUsers();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
+        });
+        break;
+      case "resetWithShopItems":
+        console.log(
+          "Are you sure you want to reset all users and their shop items? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.trim().toLowerCase() === "yes") {
+            console.log("Resetting all users...");
+            await resetUsersAndShopItems();
           } else {
             console.log("Operation canceled.");
           }
@@ -98,6 +113,82 @@ async function resetUsers() {
     });
     console.info(
       "All users have been set to NEW. Only Gemstones, passives and abilities have been reset.",
+    );
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+}
+
+async function resetUsersAndShopItems() {
+  try {
+    await prisma.$transaction(async (db) => {
+      const users = await db.user.findMany({
+        select: {
+          id: true,
+          mana: true,
+          abilities: {
+            select: {
+              id: true,
+            },
+          },
+          shopItems: {
+            select: {
+              shopItem: {
+                select: {
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      for (const user of users) {
+        const abilitiesRemoved = user.abilities.length;
+        const gemstonesToAdd = abilitiesRemoved * 2;
+        let goldFromShopItems = 0;
+        for (const shopItem of user.shopItems) {
+          if (shopItem.shopItem) {
+            goldFromShopItems += shopItem.shopItem.price;
+          }
+        }
+
+        await db.user.update({
+          where: { id: user.id },
+          data: {
+            // role: "NEW",
+            hp: Math.min(user.hp, 40),
+            hpMax: 40,
+            mana: Math.min(user.mana, 40),
+            manaMax: 40,
+            gemstones: {
+              increment: gemstonesToAdd,
+            },
+            gold: {
+              increment: goldFromShopItems,
+            },
+            title: "Newborn",
+            passives: {
+              deleteMany: {
+                userId: user.id,
+              },
+            },
+            abilities: {
+              deleteMany: {
+                userId: user.id,
+              },
+            },
+            inventory: {
+              deleteMany: {
+                userId: user.id,
+              },
+            },
+          },
+        });
+      }
+    });
+    console.info(
+      "All users have been reset. Users are not set to NEW. Only Gemstones, passives, shopitems and abilities have been reset.",
     );
   } catch (error) {
     console.error("Error: ", error);
