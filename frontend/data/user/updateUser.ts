@@ -54,7 +54,7 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
 
 export const updateProfile = async (
   id: string,
-  data: { username: string; publicHighscore: boolean },
+  data: { username: string; publicHighscore: boolean; archiveConsent: boolean },
 ) => {
   const session = await auth();
   if (!session || session?.user?.id !== id || session?.user?.role === "NEW") {
@@ -67,6 +67,7 @@ export const updateProfile = async (
       data: {
         username: data.username,
         publicHighscore: data.publicHighscore,
+        archiveConsent: data.archiveConsent,
       },
     });
     return true;

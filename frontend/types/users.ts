@@ -17,6 +17,7 @@ export interface UserProfile {
   arenaTokens: number;
   gemstones: number;
   publicHighscore: boolean;
+  archiveConsent: boolean;
   inventory: {
     name: string;
     specialReq: string | null;

@@ -110,16 +110,15 @@ enum ShopItemType {
 }
 
 model User {
-  id              String       @id @default(cuid())
-  name            String?
-  username        String?      @unique
-  lastname        String?
-  title           String?      @default("Newborn")
-  schoolClass     SchoolClass?
-  class           Class?
-  image           String?
-  publicHighscore Boolean      @default(false)
-  turns           Int          @default(0)
+  id          String       @id @default(cuid())
+  name        String?
+  username    String?      @unique
+  lastname    String?
+  title       String?      @default("Newborn")
+  schoolClass SchoolClass?
+  class       Class?
+  image       String?
+  turns       Int          @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -145,9 +144,11 @@ model User {
 
   role UserRole @default(NEW)
 
-  email         String?   @unique
-  emailVerified DateTime?
-  accounts      Account[] // Relation to OAuth account
+  publicHighscore Boolean   @default(false)
+  archiveConsent  Boolean   @default(false)
+  email           String?   @unique
+  emailVerified   DateTime?
+  accounts        Account[] // Relation to OAuth account
   // sessions      Session[]      
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
@@ -180,7 +181,7 @@ model Ability {
   icon         String?
   gemstoneCost Int             @default(1)
   manaCost     Int?
-  healthCost   Int?   
+  healthCost   Int?
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2

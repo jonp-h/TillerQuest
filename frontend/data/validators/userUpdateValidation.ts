@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import {
   escapeHtml,
   newUserSchema,
-  updateUserScehma,
+  updateUserSchema,
 } from "@/lib/userValidation";
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
@@ -114,7 +114,7 @@ export const validateUserUpdate = async (id: string, data: any) => {
     return "Not authorized";
   }
 
-  const validatedData = updateUserScehma.safeParse(data);
+  const validatedData = updateUserSchema.safeParse(data);
 
   if (!validatedData.success) {
     return validatedData.error.errors.map((e) => e.message).join(", ");
@@ -140,6 +140,7 @@ export const validateUserUpdate = async (id: string, data: any) => {
   const sanitizedData = {
     username: escapeHtml(validatedData.data.username),
     publicHighscore: validatedData.data.publicHighscore,
+    archiveConsent: validatedData.data.archiveConsent,
   };
 
   return sanitizedData;

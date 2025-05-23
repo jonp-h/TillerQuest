@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const [username, setUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
+  const [archiveConsent, setArchiveConsent] = useState(user.archiveConsent);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -40,6 +41,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     await updateProfile(user.id, {
       username: validatedData.username,
       publicHighscore: validatedData.publicHighscore,
+      archiveConsent: validatedData.archiveConsent,
     });
     toast.success("Profile updated");
     router.push(`/profile/${validatedData.username}/settings`);
@@ -92,6 +94,26 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
         />
         <Typography variant="body1">
           {publicHighscore ? "Yes" : "No"}
+        </Typography>
+      </div>
+      <div className="flex flex-col justify-center items-center">
+        <Typography variant="body1">
+          Do you want your user profile to remain in the halls of fame after the
+          end of your studies?
+        </Typography>
+        <Switch
+          checked={archiveConsent}
+          onChange={() => setArchiveConsent(!archiveConsent)}
+        />
+        <Typography variant="body1">
+          {archiveConsent
+            ? "Yes, I want my profile to remain"
+            : "No, I want my profile to be deleted"}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Only generic information about username, XP, level, class and
+          achievements will be kept. The information will only be available to
+          validated students, and not the general public.
         </Typography>
       </div>
       <Button
