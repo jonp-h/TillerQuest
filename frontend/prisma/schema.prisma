@@ -90,6 +90,7 @@ enum AbilityType {
   Magic
   Adventurer
   Arena
+  Turns
   GoldPassive
   IncreaseHealth
   DecreaseHealth
@@ -179,7 +180,7 @@ model Ability {
   icon         String?
   gemstoneCost Int             @default(1)
   manaCost     Int?
-  healthCost   Int?
+  healthCost   Int?   
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2

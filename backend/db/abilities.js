@@ -413,6 +413,23 @@ const wizard = [
     value: 5,
     parentAbility: "Essence-Transfer",
   },
+  {
+    name: "Fireball",
+    category: "Wizard",
+    type: "Damage",
+    target: 0,
+    description: "You attack the Boss with a fireball, dealing 1d10 damage.",
+    duration: null,
+    icon: "Fireball.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Essence-Transfer",
+  },
 ];
 
 const druid = [
@@ -535,6 +552,24 @@ const druid = [
     diceNotation: null,
     value: null,
     parentAbility: "Superior-Heal",
+  },
+  {
+    name: "Thorns",
+    category: "Druid",
+    type: "Damage",
+    target: 0,
+    description:
+      "You attack the Boss with vines covered by thorns, dealing 3d4 damage.",
+    duration: null,
+    icon: "Thorns.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "3d4",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Heal",
   },
 ];
 
@@ -680,6 +715,24 @@ const barbarian = [
     value: 5,
     parentAbility: "Enhanced-Toughness",
   },
+  {
+    name: "Raging-Attack",
+    category: "Barbarian",
+    type: "Damage",
+    target: 0,
+    description:
+      "You attack the Boss with a raging attack, dealing 2d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d8",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Toughness",
+  },
 ];
 
 const bloodMage = [
@@ -806,6 +859,23 @@ const bloodMage = [
     diceNotation: "5d10",
     value: null,
     parentAbility: "Blood-Money",
+  },
+  {
+    name: "Blood-Blades",
+    category: "BloodMage",
+    type: "Damage",
+    target: 0,
+    description: "You attack the Boss with blood blades, dealing 1d10 damage.",
+    duration: null,
+    icon: "Blood-Blades.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Secrets-of-the-Crimson",
   },
 ];
 
@@ -935,6 +1005,23 @@ const bard = [
     diceNotation: "5d10",
     value: null,
     parentAbility: "Heartfelt-Performance",
+  },
+  {
+    name: "The-Song-of-Inspiration",
+    category: "Bard",
+    type: "Turns",
+    target: 0,
+    description:
+      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 3,
+    manaCost: 6,
+    healthCost: null,
+    xpGiven: 200,
+    diceNotation: null,
+    value: 1,
+    parentAbility: "Inspiration",
   },
 ];
 
