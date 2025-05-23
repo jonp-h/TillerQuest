@@ -210,7 +210,11 @@ export const getGameLeaderboard = async (gameName: string) => {
   }
 
   const leaderboard = await prisma.game.findMany({
-    where: { game: gameName, status: "FINISHED" },
+    where: {
+      game: gameName,
+      status: "FINISHED",
+      user: { publicHighscore: true },
+    },
     select: {
       score: true,
       metadata: true,

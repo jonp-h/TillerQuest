@@ -105,7 +105,16 @@ function Battleground({
           <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
             <p>Enemies attack in </p>
             <div className="text-red-500">
-              <TimeLeft endTime={new Date(new Date().setHours(15, 0, 0, 0))} />
+              <TimeLeft
+                endTime={
+                  new Date(
+                    new Date().setHours(15, 0, 0, 0) +
+                      (new Date() > new Date(new Date().setHours(15, 0, 0, 0))
+                        ? 24 * 60 * 60 * 1000
+                        : 0),
+                  )
+                }
+              />
             </div>
           </div>
         ) : (

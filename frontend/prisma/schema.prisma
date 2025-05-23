@@ -10,6 +10,7 @@ generator client {
 enum UserRole {
   NEW
   USER
+  ARCHIVED
   ADMIN
 }
 

@@ -393,6 +393,10 @@ cron.schedule(
   async () => {
     try {
       const topScores = await db.game.findMany({
+        where: {
+          status: "FINISHED",
+          user: { publicHighscore: true },
+        },
         orderBy: { score: "desc" },
         distinct: ["userId"],
         take: 3,
