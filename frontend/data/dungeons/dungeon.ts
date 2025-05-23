@@ -148,6 +148,7 @@ export async function selectDungeonAbility(
         select: {
           id: true,
           username: true,
+          hp: true,
           guildName: true,
           turns: true,
         },
@@ -156,6 +157,10 @@ export async function selectDungeonAbility(
       if (!user || !user?.guildName || targetEnemyId === null) {
         logger.error("Error when attempting to use dungeon ability: " + userId);
         return { message: "Error when attempting to use dungeon ability" };
+      }
+
+      if (user.hp <= 0) {
+        return { message: "You are dead." };
       }
 
       if (user?.turns <= 0) {

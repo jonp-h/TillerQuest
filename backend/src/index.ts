@@ -452,6 +452,11 @@ cron.schedule(
           },
         });
 
+        let turnsToSet = 0;
+        for (const turn of turnPassive) {
+          if (turn.value) turnsToSet += turn.value;
+        }
+
         await db.user.update({
           where: { id: user.id },
           data: { turns: turnsToSet },
@@ -459,8 +464,9 @@ cron.schedule(
 
         await db.log.create({
           data: {
+            global: false,
             userId: user.id,
-            message: `${user.username} turn has been reset${turnPassive ? ` (+${turnPassive.value} from passive)` : ""}`,
+            message: `You have regained your strength and are now ready to enter the dungeon once again!`,
           },
         });
       }
@@ -533,7 +539,7 @@ cron.schedule(
 // TODO: Change to a fully CRUD-like system
 // Schedule a job to run every monday at 09:00 AM, creates an enemy for all guilds.
 cron.schedule(
-  "0 9 * * 1",
+  "0 9 * * *",
   async () => {
     try {
       const guilds = await db.guild.findMany();
@@ -561,6 +567,7 @@ cron.schedule(
             });
           }
         }
+        console.log("Enemy created for guilds");
       }
     } catch (error) {
       console.error("Error generating unique enemies:", error);
@@ -572,9 +579,9 @@ cron.schedule(
 );
 
 // Schedule a job to run at 15:00 everyday to damage active players if the Enemy hasn't been defeated.
-// TODO: Change to reflect dynamic value
+// TODO: Change to reflect enemy attack dice value
 cron.schedule(
-  "00 15 * * *",
+  "0 15 * * *",
   async () => {
     try {
       // For each guild enemy, damage all members of that guild by 5 HP
@@ -608,10 +615,11 @@ cron.schedule(
         });
 
         for (const user of users) {
+          const damageToTake = await damageValidator(db, user.id, 5);
           await db.user.update({
             where: { id: user.id },
             data: {
-              hp: { decrement: 5 },
+              hp: { decrement: damageToTake },
             },
           });
 
@@ -619,10 +627,11 @@ cron.schedule(
             data: {
               global: false,
               userId: user.id,
-              message: `${user.username} ventured into the magical forest and took 5 damage from a scary ${enemy.name}`,
+              message: `${user.username} ventured into the dungeon and took 5 damage from a scary ${enemy.name}`,
             },
           });
         }
+        console.log("Dungeon damage recieved");
       }
     } catch (error) {
       console.log(error);
