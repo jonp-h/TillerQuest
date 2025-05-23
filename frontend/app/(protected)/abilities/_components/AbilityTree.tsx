@@ -82,7 +82,7 @@ export default function AbilityTree({
           pathFunc={"diagonal"}
           pathClassFunc={() => "linkClass"}
           draggable={true}
-          zoomable={false}
+          zoomable={true}
           // The nodeSize prop is used to determine the spacing between nodes
           nodeSize={{ x: 475, y: 350 }}
           renderCustomNodeElement={(rd3tProps) => {

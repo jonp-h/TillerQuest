@@ -45,14 +45,24 @@
 # Clone this repository
 $ git clone
 
-# Enter the repository
-$ cd /frontend/
+$ cd TillerQuest/
+# Go into the Project
 
 # Install dependencies
 $ npm i
 
-# Run the app
-$ npm run dev
+# Enter the repository
+$ cd frontend/
+
+# Install dependencies
+$ npm i
+
+# Enter the repository
+$ cd ../backend/
+
+# Install dependencies
+$ npm i
+
 ```
 
 #### Setup test env
@@ -60,7 +70,7 @@ $ npm run dev
 - First complete the above instructions
 - Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
 
-- Create .env inside project folder (same folder as app/)
+- Create .env inside the frontend folder
   - Create the following variables and replace the "..."
 
 ```
@@ -88,13 +98,45 @@ NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
 # Longitude coordinates of where users are allowed to gain mana from.".
 ```
 
+- Create a new .env file in backend folder
+  - Create the following variables and replace the "..."
+
+```
+AUTH_SECRET=...
+# This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+
+AUTH_GITHUB_ID=...
+# In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+AUTH_GITHUB_SECRET=...
+# Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+
+DATABASE_URL=...
+# Your connection string to the postgresql database. Should contain username and password.
+
+NEW_USER_SECRET=...
+# This is what your students would need to know to create a user.
+```
+
 ```ps
 $ cd backend/
 
 $ npx prisma db push
 
-$ node db/generate.js #To mock an example database
+$ npm run generate
+# To mock an example database
 
+$ npm run start
+# To start backend
+```
+
+### Open a new Terminal
+
+```ps
+$ cd frontend/
+
+$ npm run dev
+# To open dev
 ```
 
 - You can inspect the database with "npx prisma studio"
@@ -119,43 +161,150 @@ $ node db/generate.js #To mock an example database
 - Remember to use Pascal-case for components.
 
 ```
-tillerquest/
-├── .env
-├── .eslintrc.json
-├── .gitignore
-├── .next/
-│ ├── ...
-├── app/
-│ ├── (protected)/
-│ │ ├── page/
-│ │ │ ├── _page-specific-components/
-│ │ │ │ └── Component.tsx
-│ │ │ └── page.tsx
-│ │ └── ...
-├── auth.config.ts
-├── auth.ts
-├── components/
-│ ├── navbar/
-│ │ ├── Navbar.tsx
-│ │ └── NavbarContent.tsx
-│ └── MainContainer.tsx
-├── data/
-│ ├── mocking/
-│ │ ├── users.json
-│ │ └── generate.mjs
-│ └── abilities.ts
-├── lib/
-├── middleware.ts
-├── next-auth.d.ts
-├── next-env.d.ts
-├── next.config.mjs
-├── package.json
-├── postcss.config.mjs
-├── prisma/
-├── public/
-├── routes.ts
-├── tailwind.config.ts
-└── tsconfig.json
+└── 📁TillerQuest
+    └── 📁.github
+        └── 📁ISSUE_TEMPLATE
+            └── bug_report.md
+            └── feature_request.md
+            └── scrum-story.md
+            └── scrum-task.md
+        └── pull_request_template.md
+    └── 📁.husky
+        └── 📁_
+        └── commit-msg
+        └── pre-commit
+    └── 📁backend
+        └── .env
+        └── .eslintcache
+        └── .gitignore
+        └── .lintstagedrc.js
+        └── 📁db
+            └── .gitignore
+            └── 📁docker
+                └── .env
+                └── 📁backups
+                └── 📁data
+                └── docker-compose.yml
+                └── README.md
+            └── abilities.js
+            └── cosmic.js
+            └── enemies.js
+            └── generate.js
+            └── guilds.js
+            └── reset.js
+            └── shopItems.js
+            └── typeQuestTexts.js
+            └── users.js
+        └── eslint.config.js
+        └── nodemon.json
+        └── package-lock.json
+        └── package.json
+        └── 📁prisma
+            └── 📁migrations
+            └── schema.prisma
+        └── 📁src
+            └── 📁data
+            └── 📁lib
+            └── 📁middleware
+            └── 📁types
+        └── tsconfig.json
+    └── 📁frontend
+        └── .env
+        └── .gitignore
+        └── .lintstagedrc.mjs
+        └── .prettierignore
+        └── .prettierrc
+        └── 📁app
+            └── 📁(protected)
+                └── 📁(admin)
+                    └── 📁gamemaster
+                        └── 📁cosmic
+                            └── 📁_components
+                        └── 📁guilds
+                            └── 📁_components
+                        └── 📁log
+                        └── 📁manage
+                            └── 📁_components
+                        └── 📁resurrect
+                            └── 📁_components
+                        └── 📁users
+                            └── 📁_components
+                └── 📁abilities
+                    └── 📁_components
+                    └── 📁[abilityName]
+                        └── 📁_components
+                └── 📁arena
+                    └── 📁_components
+                    └── 📁games
+                        └── 📁_components
+                └── 📁create
+                    └── 📁_components
+                └── 📁dungeons
+                    └── 📁_components
+                └── 📁mana
+                    └── 📁_components
+                └── 📁profile
+                    └── 📁[username]
+                        └── 📁_components
+                        └── 📁settings
+                            └── 📁_components
+                └── 📁shop
+                    └── 📁_components
+            └── 📁api
+                └── 📁auth
+                    └── 📁[...nextauth]
+            └── 📁signup
+        └── auth.config.ts
+        └── auth.ts
+        └── combined.log
+        └── 📁components
+            └── 📁navbar
+        └── 📁data
+            └── 📁abilities
+                └── 📁abilityUsage
+                └── 📁getters
+                └── 📁transaction
+            └── 📁admin
+            └── 📁cosmic
+            └── 📁dungeons
+            └── 📁games
+            └── 📁guilds
+            └── 📁log
+            └── 📁mana
+            └── 📁passives
+            └── 📁shop
+            └── 📁user
+            └── 📁validators
+        └── eslint.config.mjs
+        └── 📁lib
+        └── middleware.ts
+        └── next.config.mjs
+        └── package-lock.json
+        └── package.json
+        └── postcss.config.mjs
+        └── 📁prisma
+            └── 📁migrations
+            └── schema.prisma
+        └── 📁public
+            └── 📁abilities
+            └── 📁assets
+                └── 📁ammo
+                └── 📁textures
+                └── 📁themes
+                    └── 📁default
+            └── 📁badges
+            └── 📁classes
+            └── 📁dungeons
+            └── 📁ragnarok
+        └── routes.ts
+        └── tsconfig.json
+        └── 📁types
+    └── .gitignore
+    └── commitlint.config.mjs
+    └── CONTRIBUTING.md
+    └── package-lock.json
+    └── package.json
+    └── README.md
 ```
 
 - Tailwind responsive:

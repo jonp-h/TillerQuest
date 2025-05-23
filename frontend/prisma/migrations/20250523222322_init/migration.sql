@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('NEW', 'USER', 'ADMIN');
+CREATE TYPE "UserRole" AS ENUM ('NEW', 'USER', 'ARCHIVED', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "SchoolClass" AS ENUM ('Class_1IM1', 'Class_1IM2', 'Class_1IM3', 'Class_1IM4', 'Class_2IT1', 'Class_2IT2', 'Class_2IT3', 'Class_2MP1');
@@ -8,10 +8,10 @@ CREATE TYPE "SchoolClass" AS ENUM ('Class_1IM1', 'Class_1IM2', 'Class_1IM3', 'Cl
 CREATE TYPE "Class" AS ENUM ('Druid', 'Wizard', 'Barbarian', 'BloodMage', 'Bard');
 
 -- CreateEnum
-CREATE TYPE "AbilityCategory" AS ENUM ('Health', 'Mana', 'Experience', 'Damage', 'Strength', 'Agility', 'Trickery', 'Magic', 'Heal', 'Adventurer', 'Cosmic', 'Druid', 'Wizard', 'Barbarian', 'BloodMage', 'Bard');
+CREATE TYPE "AbilityCategory" AS ENUM ('Health', 'Mana', 'Experience', 'Damage', 'Strength', 'Agility', 'Trickery', 'Magic', 'Heal', 'Adventurer', 'Cosmic', 'Dungeon', 'Druid', 'Wizard', 'Barbarian', 'BloodMage', 'Bard');
 
 -- CreateEnum
-CREATE TYPE "AbilityType" AS ENUM ('Heal', 'XP', 'Mana', 'Swap', 'Transfer', 'Trade', 'Revive', 'Damage', 'ArenaToken', 'Deathsave', 'Cosmic', 'All', 'Health', 'ManaPassive', 'Experience', 'Protection', 'Strength', 'Agility', 'Trickery', 'Postpone', 'Magic', 'Adventurer', 'Arena', 'IncreaseHealth', 'IncreaseMana');
+CREATE TYPE "AbilityType" AS ENUM ('Heal', 'XP', 'Mana', 'Swap', 'Transfer', 'Trade', 'Revive', 'Damage', 'ArenaToken', 'Gold', 'TurnPassive', 'DungeonAttack', 'Deathsave', 'Cosmic', 'All', 'Health', 'ManaPassive', 'Experience', 'Protection', 'Strength', 'Agility', 'Trickery', 'Postpone', 'Magic', 'Adventurer', 'Arena', 'Turns', 'GoldPassive', 'IncreaseHealth', 'DecreaseHealth', 'IncreaseMana', 'DecreaseMana');
 
 -- CreateEnum
 CREATE TYPE "GameStatus" AS ENUM ('PENDING', 'INPROGRESS', 'FINISHED');
@@ -29,7 +29,7 @@ CREATE TABLE "User" (
     "schoolClass" "SchoolClass",
     "class" "Class",
     "image" TEXT,
-    "publicHighscore" BOOLEAN NOT NULL DEFAULT false,
+    "turns" INTEGER NOT NULL DEFAULT 0,
     "level" INTEGER NOT NULL DEFAULT 0,
     "xp" INTEGER NOT NULL DEFAULT 1,
     "hp" INTEGER NOT NULL DEFAULT 40,
@@ -43,6 +43,8 @@ CREATE TABLE "User" (
     "special" TEXT[],
     "guildName" TEXT,
     "role" "UserRole" NOT NULL DEFAULT 'NEW',
+    "publicHighscore" BOOLEAN NOT NULL DEFAULT false,
+    "archiveConsent" BOOLEAN NOT NULL DEFAULT false,
     "email" TEXT,
     "emailVerified" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -62,6 +64,7 @@ CREATE TABLE "Guild" (
 
 -- CreateTable
 CREATE TABLE "Ability" (
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "category" "AbilityCategory" NOT NULL,
     "type" "AbilityType" NOT NULL,
@@ -74,11 +77,37 @@ CREATE TABLE "Ability" (
     "healthCost" INTEGER,
     "xpGiven" INTEGER,
     "value" INTEGER,
+    "diceNotation" TEXT,
+    "isDungeon" BOOLEAN NOT NULL DEFAULT false,
     "purchaseable" BOOLEAN NOT NULL DEFAULT true,
     "cosmicEvent" TEXT[],
     "parentAbility" TEXT,
 
-    CONSTRAINT "Ability_pkey" PRIMARY KEY ("name")
+    CONSTRAINT "Ability_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Enemy" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
+    "attack" TEXT NOT NULL,
+    "maxHealth" INTEGER NOT NULL DEFAULT 10,
+    "xp" INTEGER NOT NULL DEFAULT 0,
+    "gold" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "Enemy_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "GuildEnemy" (
+    "id" TEXT NOT NULL,
+    "enemyId" INTEGER NOT NULL,
+    "guildName" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "health" INTEGER NOT NULL,
+
+    CONSTRAINT "GuildEnemy_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -108,6 +137,7 @@ CREATE TABLE "UserPassive" (
 
 -- CreateTable
 CREATE TABLE "CosmicEvent" (
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "icon" TEXT NOT NULL DEFAULT 'Cosmic.png',
@@ -124,14 +154,15 @@ CREATE TABLE "CosmicEvent" (
     "grantAbility" BOOLEAN NOT NULL DEFAULT false,
     "abilityName" TEXT,
 
-    CONSTRAINT "CosmicEvent_pkey" PRIMARY KEY ("name")
+    CONSTRAINT "CosmicEvent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ShopItem" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
+    "icon" TEXT,
     "price" INTEGER NOT NULL,
     "type" "ShopItemType" NOT NULL,
     "levelReq" INTEGER,
@@ -145,6 +176,7 @@ CREATE TABLE "ShopItem" (
 CREATE TABLE "Log" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "global" BOOLEAN NOT NULL DEFAULT true,
     "message" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -166,7 +198,7 @@ CREATE TABLE "Game" (
 
 -- CreateTable
 CREATE TABLE "TypeQuestText" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
 
     CONSTRAINT "TypeQuestText_pkey" PRIMARY KEY ("id")
@@ -207,7 +239,7 @@ CREATE TABLE "Session" (
 
 -- CreateTable
 CREATE TABLE "_ShopItemToUser" (
-    "A" TEXT NOT NULL,
+    "A" INTEGER NOT NULL,
     "B" TEXT NOT NULL,
 
     CONSTRAINT "_ShopItemToUser_AB_pkey" PRIMARY KEY ("A","B")
@@ -223,13 +255,31 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE INDEX "User_username_idx" ON "User"("username");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Ability_name_key" ON "Ability"("name");
+
+-- CreateIndex
+CREATE INDEX "Ability_name_idx" ON "Ability"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "UserAbility_userId_abilityName_key" ON "UserAbility"("userId", "abilityName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserPassive_userId_abilityName_key" ON "UserPassive"("userId", "abilityName");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "CosmicEvent_name_key" ON "CosmicEvent"("name");
+
+-- CreateIndex
+CREATE INDEX "CosmicEvent_name_idx" ON "CosmicEvent"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ShopItem_name_key" ON "ShopItem"("name");
+
+-- CreateIndex
+CREATE INDEX "ShopItem_name_idx" ON "ShopItem"("name");
+
+-- CreateIndex
+CREATE INDEX "ShopItem_type_idx" ON "ShopItem"("type");
 
 -- CreateIndex
 CREATE INDEX "Game_userId_idx" ON "Game"("userId");
@@ -260,6 +310,12 @@ ALTER TABLE "User" ADD CONSTRAINT "User_guildName_fkey" FOREIGN KEY ("guildName"
 
 -- AddForeignKey
 ALTER TABLE "Ability" ADD CONSTRAINT "Ability_parentAbility_fkey" FOREIGN KEY ("parentAbility") REFERENCES "Ability"("name") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "GuildEnemy" ADD CONSTRAINT "GuildEnemy_enemyId_fkey" FOREIGN KEY ("enemyId") REFERENCES "Enemy"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GuildEnemy" ADD CONSTRAINT "GuildEnemy_guildName_fkey" FOREIGN KEY ("guildName") REFERENCES "Guild"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserAbility" ADD CONSTRAINT "UserAbility_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

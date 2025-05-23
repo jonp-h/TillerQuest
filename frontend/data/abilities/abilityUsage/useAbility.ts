@@ -189,6 +189,24 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
+        case "TurnPassive":
+          // TODO: considering moving this. Required to give immediate turns to the user
+          await db.user.update({
+            where: {
+              id: castingUser.id,
+            },
+            data: {
+              turns: {
+                increment: 1,
+              },
+            },
+          });
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 
@@ -244,6 +262,13 @@ export const selectAbility = async (
 
         case "Arena":
           return await useArenaAbility(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+        case "Turns":
+          return await useTurnsAbility(
             db,
             castingUser,
             targetUsersIds,
@@ -941,6 +966,38 @@ const useArenaAbility = async (
 
   return {
     message: "Guild recieved " + ability.value + " arena tokens",
+    diceRoll: "",
+  };
+};
+
+const useTurnsAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserIds: string[],
+  ability: Ability,
+) => {
+  await Promise.all(
+    targetUserIds.map(async (targetUserId) => {
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          turns: {
+            increment: ability.value!,
+          },
+        },
+      });
+    }),
+  );
+
+  await finalizeAbilityUsage(db, castingUser, ability);
+  logger.info(
+    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
+  );
+
+  return {
+    message: "The Guild gets another " + ability.value + " Turn",
     diceRoll: "",
   };
 };

@@ -14,6 +14,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { IconButton } from "@mui/material";
+import { Castle } from "@mui/icons-material";
 
 export default function NavbarContent() {
   const session = useSession();
@@ -29,6 +30,11 @@ export default function NavbarContent() {
       name: "Arena",
       href: "/arena",
       icon: <StadiumIcon />,
+    },
+    {
+      name: "Dungeons",
+      href: "/dungeons",
+      icon: <Castle />,
     },
     {
       name: "Abilities",

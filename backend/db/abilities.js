@@ -2,6 +2,7 @@
 
 const health = [
   {
+    id: 1,
     name: "Vigor",
     category: "Health",
     type: "Health",
@@ -18,6 +19,7 @@ const health = [
     parentAbility: null,
   },
   {
+    id: 2,
     name: "Bandage",
     category: "Heal",
     type: "Heal",
@@ -34,6 +36,7 @@ const health = [
     parentAbility: "Vigor",
   },
   {
+    id: 3,
     name: "Enhanced-Vigor",
     category: "Health",
     type: "Health",
@@ -50,6 +53,7 @@ const health = [
     parentAbility: "Vigor",
   },
   {
+    id: 4,
     name: "Superior-Vigor",
     category: "Health",
     type: "Health",
@@ -69,6 +73,7 @@ const health = [
 
 const mana = [
   {
+    id: 5,
     name: "Arcane-Focus",
     category: "Mana",
     type: "ManaPassive",
@@ -85,6 +90,7 @@ const mana = [
     parentAbility: null,
   },
   {
+    id: 6,
     name: "Arcane-Recovery",
     category: "Mana",
     type: "ManaPassive",
@@ -101,6 +107,7 @@ const mana = [
     parentAbility: "Arcane-Focus",
   },
   {
+    id: 7,
     name: "Arcane-Connection",
     category: "Mana",
     type: "ManaPassive",
@@ -120,6 +127,7 @@ const mana = [
 
 const trickery = [
   {
+    id: 8,
     name: "Evade",
     category: "Trickery",
     type: "Trickery",
@@ -137,6 +145,7 @@ const trickery = [
     parentAbility: null,
   },
   {
+    id: 9,
     name: "Devilish-Deal",
     category: "Trickery",
     type: "Trickery",
@@ -154,6 +163,7 @@ const trickery = [
     parentAbility: "Evade",
   },
   {
+    id: 10,
     name: "Twist-of-Fate",
     category: "Trickery",
     type: "Trickery",
@@ -171,6 +181,7 @@ const trickery = [
     parentAbility: "Devilish-Deal",
   },
   {
+    id: 11,
     name: "Postpone",
     category: "Trickery",
     type: "Postpone",
@@ -188,6 +199,7 @@ const trickery = [
     parentAbility: "Evade",
   },
   {
+    id: 12,
     name: "Greater-Postpone",
     category: "Trickery",
     type: "Postpone",
@@ -205,6 +217,7 @@ const trickery = [
     parentAbility: "Postpone",
   },
   {
+    id: 13,
     name: "Superior-Postpone",
     category: "Trickery",
     type: "Postpone",
@@ -225,6 +238,7 @@ const trickery = [
 
 const adventurer = [
   // {
+  // id: 14
   //   name: "Adventurer",
   //   category: "Adventurer",
   //   type: "Adventurer",
@@ -241,6 +255,7 @@ const adventurer = [
   //   parentAbility: null,
   // },
   // {
+  // id:
   //   name: "Economist",
   //   category: "Adventurer",
   //   type: "Adventurer",
@@ -256,11 +271,13 @@ const adventurer = [
   // diceNotation: null,
   //   value: null,
   //   parentAbility: "Adventurer",
+  //
   // },
 ];
 
 const wizard = [
   {
+    id: 15,
     name: "Essence-Transfer",
     category: "Wizard",
     type: "Mana",
@@ -277,6 +294,7 @@ const wizard = [
     parentAbility: null,
   },
   {
+    id: 16,
     name: "Arcane-Gift",
     category: "Wizard",
     type: "ManaPassive",
@@ -293,6 +311,7 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 17,
     name: "Inner-Power",
     category: "Wizard",
     type: "ManaPassive",
@@ -309,6 +328,7 @@ const wizard = [
     parentAbility: "Arcane-Gift",
   },
   {
+    id: 18,
     name: "Channeling",
     category: "Wizard",
     type: "ManaPassive",
@@ -325,6 +345,7 @@ const wizard = [
     parentAbility: "Inner-Power",
   },
   {
+    id: 19,
     name: "Greater-Essence-Transfer",
     category: "Wizard",
     type: "Mana",
@@ -341,6 +362,7 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 20,
     name: "Cosmic-Gift",
     category: "Wizard",
     type: "Mana",
@@ -357,6 +379,7 @@ const wizard = [
     parentAbility: "Greater-Essence-Transfer",
   },
   {
+    id: 21,
     name: "Arcane-Guidance",
     category: "Wizard",
     type: "ManaPassive",
@@ -374,6 +397,7 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 22,
     name: "Essence-Offering",
     category: "Wizard",
     type: "Transfer",
@@ -389,10 +413,29 @@ const wizard = [
     value: 5,
     parentAbility: "Essence-Transfer",
   },
+  {
+    id: 63,
+    name: "Fireball",
+    category: "Wizard",
+    type: "Damage",
+    target: 0,
+    description: "You attack the Boss with a fireball, dealing 1d10 damage.",
+    duration: null,
+    icon: "Fireball.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Essence-Transfer",
+  },
 ];
 
 const druid = [
   {
+    id: 23,
     name: "Heal",
     category: "Druid",
     type: "Heal",
@@ -409,6 +452,7 @@ const druid = [
     parentAbility: null,
   },
   {
+    id: 24,
     name: "Greater-Heal",
     category: "Druid",
     type: "Heal",
@@ -425,6 +469,7 @@ const druid = [
     parentAbility: "Heal",
   },
   {
+    id: 25,
     name: "Superior-Heal",
     category: "Druid",
     type: "Heal",
@@ -441,6 +486,7 @@ const druid = [
     parentAbility: "Greater-Heal",
   },
   {
+    id: 26,
     name: "Healing-Aura",
     category: "Druid",
     type: "Heal",
@@ -457,6 +503,7 @@ const druid = [
     parentAbility: "Greater-Heal",
   },
   {
+    id: 27,
     name: "Healing-Grace",
     category: "Druid",
     type: "Heal",
@@ -473,6 +520,7 @@ const druid = [
     parentAbility: "Healing-Aura",
   },
   // {
+  // id: 28
   //   name: "Rejuvinate",
   //   category: "Druid",
   //   type: "Heal",
@@ -486,8 +534,10 @@ const druid = [
   //   xpGiven: 250,
   //   value: 100,
   //   parentAbility: "Superior-Heal",
+  //
   // },
   {
+    id: 29,
     name: "Revive",
     category: "Druid",
     type: "Revive",
@@ -504,10 +554,30 @@ const druid = [
     value: null,
     parentAbility: "Superior-Heal",
   },
+  {
+    id: 64,
+    name: "Thorns",
+    category: "Druid",
+    type: "Damage",
+    target: 0,
+    description:
+      "You attack the Boss with vines covered by thorns, dealing 3d4 damage.",
+    duration: null,
+    icon: "Thorns.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "3d4",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Heal",
+  },
 ];
 
 const barbarian = [
   {
+    id: 30,
     name: "Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
@@ -524,6 +594,7 @@ const barbarian = [
     parentAbility: null,
   },
   {
+    id: 31,
     name: "Shield",
     category: "Barbarian",
     type: "Protection",
@@ -541,6 +612,7 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 32,
     name: "Battle-Ready",
     category: "Barbarian",
     type: "Arena",
@@ -558,6 +630,7 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 33,
     name: "Protector-of-the-Weak",
     category: "Barbarian",
     type: "Protection",
@@ -575,6 +648,7 @@ const barbarian = [
     parentAbility: "Shield",
   },
   {
+    id: 34,
     name: "Get-Behind-Me",
     category: "Barbarian",
     type: "Protection",
@@ -592,6 +666,7 @@ const barbarian = [
     parentAbility: "Protector-of-the-Weak",
   },
   {
+    id: 35,
     name: "Protector-of-the-People",
     category: "Barbarian",
     type: "Protection",
@@ -609,6 +684,7 @@ const barbarian = [
     parentAbility: "Protector-of-the-Weak",
   },
   {
+    id: 36,
     name: "Enhanced-Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
@@ -625,6 +701,7 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 37,
     name: "Superior-Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
@@ -640,10 +717,30 @@ const barbarian = [
     value: 5,
     parentAbility: "Enhanced-Toughness",
   },
+  {
+    id: 65,
+    name: "Raging-Attack",
+    category: "Barbarian",
+    type: "Damage",
+    target: 0,
+    description:
+      "You attack the Boss with a raging attack, dealing 2d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d8",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Toughness",
+  },
 ];
 
 const bloodMage = [
   {
+    id: 38,
     name: "Secrets-of-the-Crimson",
     category: "BloodMage",
     type: "Health",
@@ -660,6 +757,7 @@ const bloodMage = [
     parentAbility: null,
   },
   {
+    id: 39,
     name: "Blood-Bond",
     category: "BloodMage",
     type: "Transfer",
@@ -676,6 +774,7 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 40,
     name: "Bloodgift",
     category: "BloodMage",
     type: "DecreaseHealth",
@@ -693,6 +792,7 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 41,
     name: "Crimson-Shift",
     category: "BloodMage",
     type: "Swap",
@@ -710,6 +810,7 @@ const bloodMage = [
     parentAbility: "Blood-Bond",
   },
   {
+    id: 42,
     name: "Gift-of-Life",
     category: "BloodMage",
     type: "DecreaseHealth",
@@ -727,6 +828,7 @@ const bloodMage = [
     parentAbility: "Bloodgift",
   },
   {
+    id: 43,
     name: "Blood-Money",
     category: "BloodMage",
     type: "GoldPassive",
@@ -744,6 +846,7 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 44,
     name: "Cursed-Gold",
     category: "BloodMage",
     type: "GoldPassive",
@@ -760,10 +863,29 @@ const bloodMage = [
     value: null,
     parentAbility: "Blood-Money",
   },
+  {
+    id: 66,
+    name: "Blood-Blades",
+    category: "BloodMage",
+    type: "Damage",
+    target: 0,
+    description: "You attack the Boss with blood blades, dealing 1d10 damage.",
+    duration: null,
+    icon: "Blood-Blades.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Secrets-of-the-Crimson",
+  },
 ];
 
 const bard = [
   {
+    id: 45,
     name: "Performance",
     category: "Bard",
     type: "Experience",
@@ -781,6 +903,7 @@ const bard = [
     parentAbility: null,
   },
   {
+    id: 46,
     name: "Streets-of-Gold",
     category: "Bard",
     type: "Gold",
@@ -798,6 +921,7 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 47,
     name: "Inspiration",
     category: "Bard",
     type: "IncreaseMana",
@@ -815,6 +939,7 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 48,
     name: "Greater-Inspiration",
     category: "Bard",
     type: "IncreaseMana",
@@ -832,6 +957,7 @@ const bard = [
     parentAbility: "Inspiration",
   },
   {
+    id: 49,
     name: "Feast-of-Heroes",
     category: "Bard",
     type: "IncreaseHealth",
@@ -849,6 +975,7 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 50,
     name: "Heartfelt-Performance",
     category: "Bard",
     type: "Experience",
@@ -866,6 +993,7 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 51,
     name: "Tavern-Dance",
     category: "Bard",
     type: "Experience",
@@ -882,10 +1010,143 @@ const bard = [
     value: null,
     parentAbility: "Heartfelt-Performance",
   },
+  {
+    id: 67,
+    name: "The-Song-of-Inspiration",
+    category: "Bard",
+    type: "Turns",
+    target: 0,
+    description:
+      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 3,
+    manaCost: 6,
+    healthCost: null,
+    xpGiven: 200,
+    diceNotation: null,
+    value: 1,
+    parentAbility: "Inspiration",
+  },
+];
+
+const dungeon = [
+  {
+    id: 52,
+    name: "Courage",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: -1,
+    description: "You muster up the courage to fight the guild's enemies!",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 1,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: null,
+  },
+  {
+    id: 53,
+    name: "Second-Wind",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: -1,
+    description:
+      "You regain extra stamina to fight your enemies longer! You gain 1 extra turn.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: "Courage",
+  },
+  {
+    id: 54,
+    name: "Action-Surge",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: -1,
+    description:
+      "You push yourself beyond the normal limits, to fight your enemies for longer! You gain 1 extra turn.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: "Second-Wind",
+  },
+  {
+    id: 55,
+    name: "Weak-Attack",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: 1,
+    description: "You attack a target for 1d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 0,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d6",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Courage",
+  },
+  {
+    id: 56,
+    name: "Great-Attack",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: 1,
+    description: "You use a great attack against the Boss dealing 1d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d8",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Weak-Attack",
+  },
+  {
+    id: 57,
+    name: "Fencing",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: 1,
+    description:
+      "You use a fencing attack against the Boss dealing 2d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d6",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Great-Attack",
+  },
 ];
 
 const cosmic = [
   {
+    id: 58,
     name: "Poor-Harvest",
     category: "Cosmic",
     type: "XP",
@@ -904,6 +1165,7 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 59,
     name: "Troubled-Waters",
     category: "Cosmic",
     type: "Damage",
@@ -923,6 +1185,7 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 60,
     name: "Sacrificial-Lamb",
     category: "Cosmic",
     type: "XP",
@@ -942,6 +1205,7 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 61,
     name: "Tiredness",
     category: "Cosmic",
     type: "Mana",
@@ -960,6 +1224,7 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 62,
     name: "Good-vibes",
     category: "Cosmic",
     type: "XP",
@@ -989,6 +1254,7 @@ const abilities = [
   ...barbarian,
   ...bloodMage,
   ...bard,
+  ...dungeon,
   ...cosmic,
 ];
 export default abilities;
