@@ -414,6 +414,7 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 63,
     name: "Fireball",
     category: "Wizard",
     type: "Damage",
@@ -554,6 +555,7 @@ const druid = [
     parentAbility: "Superior-Heal",
   },
   {
+    id: 64,
     name: "Thorns",
     category: "Druid",
     type: "Damage",
@@ -716,6 +718,7 @@ const barbarian = [
     parentAbility: "Enhanced-Toughness",
   },
   {
+    id: 65,
     name: "Raging-Attack",
     category: "Barbarian",
     type: "Damage",
@@ -861,6 +864,7 @@ const bloodMage = [
     parentAbility: "Blood-Money",
   },
   {
+    id: 66,
     name: "Blood-Blades",
     category: "BloodMage",
     type: "Damage",
@@ -1007,6 +1011,7 @@ const bard = [
     parentAbility: "Heartfelt-Performance",
   },
   {
+    id: 67,
     name: "The-Song-of-Inspiration",
     category: "Bard",
     type: "Turns",
