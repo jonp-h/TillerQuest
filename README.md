@@ -89,9 +89,6 @@ DATABASE_URL=...
 WEBHOOK_URL=...
 # The Discord connection url
 
-NEXT_PUBLIC_NEW_USER_SECRET=...
-# Random string which is required by the user to be typed when creating a new user in the user creation page. You can make the string whatever
-
 NEXT_PUBLIC_MAGICAL_AREA_LATITUDE=...
 # Latitude coordinates of where users are allowed to gain mana from.".
 NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
@@ -114,8 +111,6 @@ AUTH_GITHUB_SECRET=...
 DATABASE_URL=...
 # Your connection string to the postgresql database. Should contain username and password.
 
-NEW_USER_SECRET=...
-# This is what your students would need to know to create a user.
 ```
 
 ```ps
@@ -141,7 +136,7 @@ $ npm run dev
 
 - You can inspect the database with "npx prisma studio"
   - If the mocking was successful the database should have example data
-- Create your own user by signing in with GitHub OAuth and creating a user
+- Create your own user by signing in with GitHub OAuth and creating a user. Example creation secret can be found in the db/seed files
 - Happy testing!
 
 ## Conventions
