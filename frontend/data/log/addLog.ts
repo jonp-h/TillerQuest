@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/auth";
-import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 
 export const addLog = async (
@@ -9,9 +8,10 @@ export const addLog = async (
   userId: string,
   message: string,
   global: boolean = true, // default to global
+  debug: boolean = false, // default to false
 ) => {
   const session = await auth();
-  if (!session || session?.user.role === "NEW") {
+  if (!session || session?.user.id !== userId) {
     throw new Error("Not authorized");
   }
 
@@ -21,11 +21,14 @@ export const addLog = async (
         userId,
         global,
         message,
+        debug,
       },
     });
     return log;
   } catch (error) {
-    logger.error("Failed to add log: ", error);
+    // not available in the edge runtime
+    // logger.error("Failed to add log: ", error);
+    console.error("Failed to add log: ", error);
     return null;
   }
 };

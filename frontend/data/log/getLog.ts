@@ -42,6 +42,7 @@ export const getLogsByUserId = async (userId: string) => {
     const logs = await db.log.findMany({
       where: {
         userId,
+        debug: false, // Exclude debug logs
       },
       orderBy: {
         createdAt: "desc",

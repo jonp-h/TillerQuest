@@ -34,7 +34,7 @@ interface LeaderboardProps {
 async function Leaderboard({ users, title }: LeaderboardProps) {
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <h1 className="text-3xl">Top 10 Leaderboard {title}</h1>
+      <h1 className="text-3xl">{title}</h1>
       <TableContainer
         sx={{ maxWidth: "50vw" }}
         component={Paper}

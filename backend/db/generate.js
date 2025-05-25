@@ -7,6 +7,7 @@ import shopItems from "./shopItems.js";
 import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
 import enemies from "./enemies.js";
+import gameSettings from "./gameSettings.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -28,8 +29,7 @@ async function main() {
   7. Add Mocked Users
   8. Add Type Quest Texts
   9. Add Enemies
-  DANGERZONE:
-  99. Set all users to NEW
+  10. Add Game Settings
   `;
 
   rl.question(options, async (answer) => {
@@ -60,6 +60,9 @@ async function main() {
         break;
       case "9":
         await addEnemies();
+        break;
+      case "10":
+        await addGameSettings();
         break;
       default:
         console.log("Invalid option");
@@ -155,6 +158,20 @@ async function addEnemies() {
   console.info("Enemies has been added to the database.");
 }
 
+async function addGameSettings() {
+  for (const setting of gameSettings) {
+    try {
+      await db.applicationSettings.createMany({
+        data: setting,
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      console.error("Error adding", setting + ": ", error);
+    }
+  }
+  console.info("Enemies has been added to the database.");
+}
+
 async function addUsers() {
   try {
     await db.user.createMany({
@@ -175,6 +192,7 @@ async function addAll() {
   await addTypeQuestTexts();
   await addUsers();
   await addEnemies();
+  await addGameSettings();
 }
 
 async function addAllWithoutUsers() {
@@ -184,6 +202,7 @@ async function addAllWithoutUsers() {
   await addShopItems();
   await addTypeQuestTexts();
   await addEnemies();
+  await addGameSettings();
 }
 
 // Run the main function and handle any errors

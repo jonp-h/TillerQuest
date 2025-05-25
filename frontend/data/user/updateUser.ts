@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { $Enums } from "@prisma/client";
+import { checkNewUserSecret } from "../validators/secretValidation";
 
 interface UpdateUserProps {
   secret: string;
@@ -24,9 +25,7 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
     throw new Error("Not authorized");
   }
 
-  console.log("secret: " + data.secret);
-  if (data.secret !== process.env.NEW_USER_SECRET) {
-    console.log("secret true: " + data.secret);
+  if (!(await checkNewUserSecret(id, data.secret))) {
     return "Not authorized";
   }
 

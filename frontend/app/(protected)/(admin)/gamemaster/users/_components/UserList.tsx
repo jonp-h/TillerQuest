@@ -7,6 +7,7 @@ import {
 import Paper from "@mui/material/Paper";
 import { User } from "@prisma/client";
 import { useState } from "react";
+import Link from "next/link";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "First name", width: 160 },
@@ -39,6 +40,23 @@ const columns: GridColDef[] = [
     filterable: true,
     width: 150,
     valueGetter: (params: string) => params && params.split("_")[1],
+  },
+  {
+    field: "Profilepage",
+    headerName: "Profile",
+    width: 120,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => (
+      <Link
+        href={`/profile/${params.row.username}`}
+        className="text-blue-400 hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {params.row.username}
+      </Link>
+    ),
   },
 ];
 

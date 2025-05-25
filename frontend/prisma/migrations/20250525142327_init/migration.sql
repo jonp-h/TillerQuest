@@ -14,6 +14,9 @@ CREATE TYPE "AbilityCategory" AS ENUM ('Health', 'Mana', 'Experience', 'Damage',
 CREATE TYPE "AbilityType" AS ENUM ('Heal', 'XP', 'Mana', 'Swap', 'Transfer', 'Trade', 'Revive', 'Damage', 'ArenaToken', 'Gold', 'TurnPassive', 'DungeonAttack', 'Deathsave', 'Cosmic', 'All', 'Health', 'ManaPassive', 'Experience', 'Protection', 'Strength', 'Agility', 'Trickery', 'Postpone', 'Magic', 'Adventurer', 'Arena', 'Turns', 'GoldPassive', 'IncreaseHealth', 'DecreaseHealth', 'IncreaseMana', 'DecreaseMana');
 
 -- CreateEnum
+CREATE TYPE "AbilityTarget" AS ENUM ('Self', 'SingleTarget', 'MultiTarget', 'All', 'Others');
+
+-- CreateEnum
 CREATE TYPE "GameStatus" AS ENUM ('PENDING', 'INPROGRESS', 'FINISHED');
 
 -- CreateEnum
@@ -68,7 +71,7 @@ CREATE TABLE "Ability" (
     "name" TEXT NOT NULL,
     "category" "AbilityCategory" NOT NULL,
     "type" "AbilityType" NOT NULL,
-    "target" INTEGER NOT NULL DEFAULT -1,
+    "target" "AbilityTarget" NOT NULL DEFAULT 'Self',
     "description" TEXT,
     "duration" INTEGER,
     "icon" TEXT,
@@ -177,6 +180,7 @@ CREATE TABLE "Log" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "global" BOOLEAN NOT NULL DEFAULT true,
+    "debug" BOOLEAN NOT NULL DEFAULT false,
     "message" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -235,6 +239,16 @@ CREATE TABLE "Session" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ApplicationSettings" (
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ApplicationSettings_pkey" PRIMARY KEY ("key")
 );
 
 -- CreateTable

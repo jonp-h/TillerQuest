@@ -328,8 +328,9 @@ const finalizeAbilityUsage = async (
     },
   });
 
-  addLog(db, user.id, `${user.username} used ${ability.name}`);
-  await experienceAndLevelValidator(db, user, ability.xpGiven!);
+  await addLog(db, user.id, `${user.username} used ${ability.name}`);
+  if (ability.xpGiven)
+    await experienceAndLevelValidator(db, user, ability.xpGiven!);
 };
 
 // ---------------------------- Helper function for passive abilities ----------------------------
@@ -351,19 +352,25 @@ const activatePassive = async (
         },
       });
 
-      // TODO: ensure logic with multiple targets is correct
       // if the target is single and already has the passive, return an error message
-      if (targetHasPassive) {
+      if (targetHasPassive && targetUsersIds.length === 1) {
         throw new ErrorMessage("Target already has this passive");
       }
       // if there are multiple targets and one of them has the passive, replace it with a new one
-      // else if (targetHasPassive && targetUsersIds.length > 1) {
-      //   db.userPassive.delete({
-      //     where: {
-      //       id: targetHasPassive.id,
-      //     },
-      //   });
-      // }
+      else if (targetHasPassive?.abilityName && targetUsersIds.length > 1) {
+        await db.userPassive.delete({
+          where: {
+            userId_abilityName: {
+              userId: targetUserId,
+              abilityName: targetHasPassive.abilityName,
+            },
+          },
+        });
+      }
+
+      console.log(
+        `Activating passive ${ability.name} for user ${targetUserId}`,
+      );
 
       // if the ability decreases health or mana, the value should be set to the cost
       if (ability.type === "DecreaseHealth") {

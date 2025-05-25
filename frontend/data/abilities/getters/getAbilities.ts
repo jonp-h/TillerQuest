@@ -111,6 +111,57 @@ export const getUserAbilities = async (userId: string) => {
 };
 
 /**
+ * Retrieves the abilities of a userprofile from the database.
+ *
+ * @param userId - The unique identifier of the user whose abilities are to be retrieved.
+ * @returns A promise that resolves to an array of abilities if successful, or null if an error occurs. Filters out abilities that the target already has as a passive.
+ *
+ * @throws Will log an error message if the retrieval fails.
+ */
+export const getUserProfileAbilities = async (userId: string) => {
+  const session = await auth();
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const abilities = await db.userAbility.findMany({
+      where: {
+        userId,
+        ability: {
+          userPassives: {
+            none: {
+              userId: userId,
+            },
+          },
+        },
+      },
+      select: {
+        ability: {
+          select: {
+            name: true,
+            icon: true,
+          },
+        },
+      },
+      orderBy: {
+        ability: {
+          name: "asc",
+        },
+      },
+    });
+
+    return abilities;
+  } catch {
+    logger.error("Failed to get user abilities for user: " + userId);
+    return null;
+  }
+};
+
+/**
  * Retrieves an ability by its name from the database.
  *
  * @param {string} abilityName - The name of the ability to retrieve.

@@ -30,7 +30,7 @@ export default function AbilityForm({
   userIsCorrectClass,
   missingParentAbility,
   guildMembers,
-  activePassive,
+  targetHasPassive,
 }: {
   ability: Ability;
   user: User;
@@ -39,7 +39,7 @@ export default function AbilityForm({
   userIsCorrectClass: boolean;
   missingParentAbility: boolean;
   guildMembers: guildMembers;
-  activePassive: boolean;
+  targetHasPassive: boolean;
 }) {
   const [selectedUser, setSelectedUser] = useState<string>(
     guildMembers?.[0].id || "",
@@ -97,7 +97,7 @@ export default function AbilityForm({
     /*if (ability.isDungeon) {
       return "Go to dungeon";
     } else*/
-    if (activePassive) {
+    if (targetHasPassive) {
       return "Activated";
     } else if (isDead) {
       return "You cannot use abilities while dead";
@@ -142,15 +142,18 @@ export default function AbilityForm({
     }
 
     switch (ability.target) {
-      case -1:
+      case "Self":
         targetUsers = [user.id];
         break;
-      case 0:
+      case "All":
         targetUsers = guildMembers
           ? guildMembers.map((member) => member.id)
           : [];
         break;
-      case 1:
+      case "Others":
+        targetUsers = guildMembersWithoutUser.map((member) => member.id);
+        break;
+      case "SingleTarget":
         targetUsers = [selectedUser];
         break;
     }
@@ -209,9 +212,8 @@ export default function AbilityForm({
 
     toast.success(await buyAbility(user.id, ability.name));
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    router.refresh();
     setIsLoading(false);
+    router.refresh();
   };
 
   // -----------------------
@@ -241,7 +243,9 @@ export default function AbilityForm({
             <Button
               variant="contained"
               onClick={handleUseAbility}
-              disabled={lackingResource || activePassive || isLoading || isDead}
+              disabled={
+                lackingResource || targetHasPassive || isLoading || isDead
+              }
             >
               {getOwnedButtonText()}
             </Button>

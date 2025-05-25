@@ -99,6 +99,14 @@ enum AbilityType {
   DecreaseMana
 }
 
+enum AbilityTarget {
+  Self
+  SingleTarget
+  MultiTarget
+  All
+  Others
+}
+
 enum GameStatus {
   PENDING
   INPROGRESS
@@ -176,7 +184,7 @@ model Ability {
   name         String          @unique
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
-  target       Int             @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
+  target       AbilityTarget   @default(Self) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
   description  String?
   duration     Int?
   icon         String?
@@ -299,6 +307,7 @@ model Log {
   id        String   @id @default(cuid())
   userId    String
   global    Boolean  @default(true) // If the log contains useful global information for game masters
+  debug     Boolean  @default(false) // If the log is for debugging purposes
   message   String
   createdAt DateTime @default(now())
 
@@ -358,6 +367,13 @@ model Session {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model ApplicationSettings {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // model VerificationToken {

@@ -29,6 +29,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     const validatedData = await validateUserUpdate(user.id, {
       username,
       publicHighscore,
+      archiveConsent,
     });
 
     // if the data is a string, it is an error message

@@ -16,8 +16,6 @@ export const validateUserCreation = async (id: string, data: any) => {
     return "Not authorized";
   }
 
-  console.log("update validation: " + JSON.stringify(data));
-
   const validatedData = newUserSchema.safeParse(data);
 
   if (!validatedData.success) {

@@ -16,14 +16,39 @@ async function ArenaPage() {
   return (
     <MainContainer>
       <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="my-10 text-5xl text-red-400 text-center ">
-          Arena games
-        </h1>
+        <h1 className="my-10 text-5xl text-red-400 text-center ">Arena</h1>
         <Link href={"arena/games"}>
           <Button variant="contained" size="large">
-            Go to arena games
+            Go to the arena games
           </Button>
         </Link>
+        <div className="flex flex-col mt-10 max-w-2/3 gap-3 justify-center xl:flex-row">
+          <Link href={"arena/valhalla"}>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                background:
+                  "linear-gradient(90deg, #FFD700 0%, #FF8C00 25%, #FF1493 50%, #00BFFF 75%, #FFD700 100%)",
+
+                boxShadow:
+                  "0 4px 20px 0 rgba(255, 105, 180, 0.3), 0 2px 4px 0 rgba(0,191,255,0.15)",
+                backgroundSize: "300% 100%",
+                backgroundPosition: "0% 0%",
+                transition:
+                  "background-position 0.7s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s",
+                letterSpacing: 2,
+                "&:hover": {
+                  backgroundPosition: "100% 0%",
+                  boxShadow:
+                    "0 6px 30px 0 rgba(255, 20, 147, 0.4), 0 4px 8px 0 rgba(0,191,255,0.25)",
+                },
+              }}
+            >
+              Legendary players
+            </Button>
+          </Link>
+        </div>
         {deadUsers.length > 0 && (
           <>
             <h1 className="my-10 text-2xl text-red-400 text-center">
@@ -63,8 +88,8 @@ async function ArenaPage() {
           </>
         )}
         <div className="flex flex-col mt-10 max-w-2/3 gap-3 justify-center xl:flex-row">
-          <Leaderboard title={"Vg1"} users={usersVg1} />
-          <Leaderboard title={"Vg2"} users={usersVg2} />
+          <Leaderboard title={"Top 10 Leaderboard Vg1"} users={usersVg1} />
+          <Leaderboard title={"Top 10 Leaderboard Vg2"} users={usersVg2} />
         </div>
       </div>
     </MainContainer>

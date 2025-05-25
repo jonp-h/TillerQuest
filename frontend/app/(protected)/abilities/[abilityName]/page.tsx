@@ -21,7 +21,7 @@ import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
-import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
+import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";
 
@@ -46,8 +46,6 @@ export default async function AbilityNamePage({
     notFound();
   }
 
-  const activePassive = await checkIfPassiveIsActive(user.id, ability.name);
-
   const userIsCorrectClass =
     !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
     user.class === ability.category;
@@ -69,6 +67,21 @@ export default async function AbilityNamePage({
   }
 
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+
+  // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
+  let targetHasPassive = false;
+  if (ability.target == "Self") {
+    targetHasPassive = await checkIfAllTargetsHavePassive(
+      [user.id],
+      abilityName,
+    );
+  } else if (ability.target == "All" || ability.target == "Others") {
+    // check if all guild members have active passive
+    targetHasPassive = await checkIfAllTargetsHavePassive(
+      guildMembers?.map((member) => member.id) || [],
+      abilityName,
+    );
+  }
 
   return (
     <MainContainer>
@@ -174,7 +187,7 @@ export default async function AbilityNamePage({
               userOwnsAbility={userOwnsAbility}
               userIsCorrectClass={userIsCorrectClass}
               missingParentAbility={missingParentAbility}
-              activePassive={activePassive}
+              targetHasPassive={targetHasPassive}
             />
           </div>
         </Paper>
