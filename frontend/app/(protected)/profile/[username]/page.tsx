@@ -14,7 +14,7 @@ import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
 import { Circle, Diamond, Settings, Stadium } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { getUserAbilities } from "@/data/abilities/getters/getAbilities";
+import { getUserProfileAbilities } from "@/data/abilities/getters/getAbilities";
 import { getUserPassives } from "@/data/passives/getPassive";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
@@ -40,7 +40,7 @@ export default async function ProfilePage({
 
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
-  const userAbilities = await getUserAbilities(user.id);
+  const userAbilities = await getUserProfileAbilities(user.id);
   const passives = await getUserPassives(user.id);
   return (
     <MainContainer>

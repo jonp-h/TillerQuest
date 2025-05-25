@@ -29,9 +29,11 @@ async function Shop() {
         in certain IRL events to unlock{" "}
         <Tooltip
           title={
-            "You have the following special statuses: " +
-            user.special.join(", ") +
-            ". Ask a gamemaster for more information."
+            user.special.length === 0
+              ? "You have no special statuses. Ask a gamemaster for more information."
+              : "You have the following special statuses: " +
+                user.special.join(", ") +
+                ". Ask a gamemaster for more information."
           }
         >
           <HelpOutline className="text-white cursor-help" />

@@ -30,7 +30,7 @@ export default function AbilityForm({
   userIsCorrectClass,
   missingParentAbility,
   guildMembers,
-  activePassive,
+  targetHasPassive,
 }: {
   ability: Ability;
   user: User;
@@ -39,7 +39,7 @@ export default function AbilityForm({
   userIsCorrectClass: boolean;
   missingParentAbility: boolean;
   guildMembers: guildMembers;
-  activePassive: boolean;
+  targetHasPassive: boolean;
 }) {
   const [selectedUser, setSelectedUser] = useState<string>(
     guildMembers?.[0].id || "",
@@ -94,7 +94,10 @@ export default function AbilityForm({
   };
 
   const getOwnedButtonText = () => {
-    if (activePassive) {
+    /*if (ability.isDungeon) {
+      return "Go to dungeon";
+    } else*/
+    if (targetHasPassive) {
       return "Activated";
     } else if (isDead) {
       return "You cannot use abilities while dead";
@@ -121,6 +124,9 @@ export default function AbilityForm({
     let targetUsers = [selectedUser];
 
     // if diceBox is required and not initialized, initialize it first
+    /*if (ability.isDungeon) {
+      router.push("/dungeon");
+    } else */
     if (!diceBox && ability.diceNotation) {
       initializeDiceBox();
       toast.info("Preparing dice..", { autoClose: 1000 });
@@ -136,15 +142,18 @@ export default function AbilityForm({
     }
 
     switch (ability.target) {
-      case -1:
+      case "Self":
         targetUsers = [user.id];
         break;
-      case 0:
+      case "All":
         targetUsers = guildMembers
           ? guildMembers.map((member) => member.id)
           : [];
         break;
-      case 1:
+      case "Others":
+        targetUsers = guildMembersWithoutUser.map((member) => member.id);
+        break;
+      case "SingleTarget":
         targetUsers = [selectedUser];
         break;
     }
@@ -203,9 +212,8 @@ export default function AbilityForm({
 
     toast.success(await buyAbility(user.id, ability.name));
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    router.refresh();
     setIsLoading(false);
+    router.refresh();
   };
 
   // -----------------------
@@ -215,19 +223,33 @@ export default function AbilityForm({
       {/* Should not render use-functionality when user does not own ability. Passives should not be usable */}
       {userOwnsAbility ? (
         <>
-          <AbilityUserSelect
-            target={ability.target}
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
-            guildMembers={guildMembersWithoutUser}
-          />
-          <Button
-            variant="contained"
-            onClick={handleUseAbility}
-            disabled={lackingResource || activePassive || isLoading || isDead}
-          >
-            {getOwnedButtonText()}
-          </Button>
+          {!ability.isDungeon ? (
+            <AbilityUserSelect
+              target={ability.target}
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+              guildMembers={guildMembersWithoutUser}
+            />
+          ) : null}
+          {ability.isDungeon ? (
+            <Button
+              variant="contained"
+              onClick={() => router.push("/dungeons")}
+              disabled={false}
+            >
+              Go to the dungeons
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleUseAbility}
+              disabled={
+                lackingResource || targetHasPassive || isLoading || isDead
+              }
+            >
+              {getOwnedButtonText()}
+            </Button>
+          )}
         </>
       ) : (
         <>

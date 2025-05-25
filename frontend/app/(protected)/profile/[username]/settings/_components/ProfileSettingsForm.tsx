@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const [username, setUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
+  const [archiveConsent, setArchiveConsent] = useState(user.archiveConsent);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -28,6 +29,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     const validatedData = await validateUserUpdate(user.id, {
       username,
       publicHighscore,
+      archiveConsent,
     });
 
     // if the data is a string, it is an error message
@@ -40,6 +42,7 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
     await updateProfile(user.id, {
       username: validatedData.username,
       publicHighscore: validatedData.publicHighscore,
+      archiveConsent: validatedData.archiveConsent,
     });
     toast.success("Profile updated");
     router.push(`/profile/${validatedData.username}/settings`);
@@ -75,33 +78,77 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
           </Link>
         </IconButton>
       </div>
-      <div className="flex gap-3">
-        <TextField
-          label="Username"
-          defaultValue={user.username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col justify-center items-center">
-        <Typography variant="body1">
-          Do you want to be visible on public highscore lists?
-        </Typography>
-        <Switch
-          checked={publicHighscore}
-          onChange={() => setPublicHighscore(!publicHighscore)}
-        />
-        <Typography variant="body1">
-          {publicHighscore ? "Yes" : "No"}
-        </Typography>
-      </div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleUpdate()}
-        disabled={loading}
+      <Paper
+        elevation={2}
+        className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
       >
-        Update
-      </Button>
+        <div className="flex gap-3">
+          <TextField
+            label="Username"
+            defaultValue={user.username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <Paper
+          elevation={1}
+          className="flex flex-col justify-center items-center p-4"
+        >
+          <Typography variant="body1" className="text-center">
+            Do you want to be visible on public highscore lists? <br />
+            (Default option: No)
+          </Typography>
+          <Switch
+            checked={publicHighscore}
+            onChange={() => setPublicHighscore(!publicHighscore)}
+          />
+          <Typography variant="body1">
+            {publicHighscore ? "Yes" : "No"}
+          </Typography>
+        </Paper>
+        <Paper
+          elevation={1}
+          className="flex flex-col justify-center items-center gap-3 p-4"
+        >
+          <Typography variant="body1" className="text-center">
+            Do you want your user profile to remain in the halls of fame after
+            the end of your studies?
+            <br /> (Default option: No)
+          </Typography>
+          <Switch
+            checked={archiveConsent}
+            onChange={() => setArchiveConsent(!archiveConsent)}
+          />
+          <Typography variant="body1">
+            {archiveConsent
+              ? "Yes, I want my profile to remain in the halls of fame"
+              : "No, I want my data to be deleted"}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="textSecondary"
+            className="text-center py-3"
+          >
+            Only generic information about username, XP, level, class and
+            achievements will be displayed. The information will only be
+            available to validated students and game masters.
+          </Typography>
+        </Paper>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleUpdate()}
+          disabled={loading}
+        >
+          Update
+        </Button>
+      </Paper>
+      <Typography variant="caption" color="warning" className="text-center">
+        Account deletion is possible at any time. By default all accounts and
+        data is deleted when a user is no longer a student. <br /> If you want
+        to delete your account before this time, please contact a game master.
+        Please note that this action is irreversible and all your data will be
+        permanently deleted.
+      </Typography>
     </Paper>
   );
 }

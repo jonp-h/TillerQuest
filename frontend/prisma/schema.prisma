@@ -10,6 +10,7 @@ generator client {
 enum UserRole {
   NEW
   USER
+  ARCHIVED
   ADMIN
 }
 
@@ -46,6 +47,7 @@ enum AbilityCategory {
   Heal
   Adventurer
   Cosmic
+  Dungeon
 
   // Class specific types
   Druid
@@ -69,6 +71,10 @@ enum AbilityType {
   ArenaToken
   Gold
 
+  // Dungeons
+  TurnPassive
+  DungeonAttack
+
   // Passives
   Deathsave
   Cosmic
@@ -85,11 +91,20 @@ enum AbilityType {
   Magic
   Adventurer
   Arena
+  Turns
   GoldPassive
   IncreaseHealth
   DecreaseHealth
   IncreaseMana
   DecreaseMana
+}
+
+enum AbilityTarget {
+  Self
+  SingleTarget
+  MultiTarget
+  All
+  Others
 }
 
 enum GameStatus {
@@ -104,15 +119,15 @@ enum ShopItemType {
 }
 
 model User {
-  id              String       @id @default(cuid())
-  name            String?
-  username        String?      @unique
-  lastname        String?
-  title           String?      @default("Newborn")
-  schoolClass     SchoolClass?
-  class           Class?
-  image           String?
-  publicHighscore Boolean      @default(false)
+  id          String       @id @default(cuid())
+  name        String?
+  username    String?      @unique
+  lastname    String?
+  title       String?      @default("Newborn")
+  schoolClass SchoolClass?
+  class       Class?
+  image       String?
+  turns       Int          @default(0)
 
   level    Int      @default(0)
   xp       Int      @default(1)
@@ -138,9 +153,12 @@ model User {
 
   role UserRole @default(NEW)
 
-  email         String?   @unique
-  emailVerified DateTime?
-  accounts      Account[] // Relation to OAuth account
+  readMessages    SystemMessage[] @relation("ReadMessages") // m-n relation to system messages. A user can read many system messages
+  publicHighscore Boolean         @default(false)
+  archiveConsent  Boolean         @default(false)
+  email           String?         @unique
+  emailVerified   DateTime?
+  accounts        Account[] // Relation to OAuth account
   // sessions      Session[]      
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
@@ -158,14 +176,16 @@ model Guild {
   icon        String?
   schoolClass SchoolClass?
 
+  enemies GuildEnemy[]
   members User[]
 }
 
 model Ability {
-  name         String          @id @default(cuid())
+  id           Int             @id @default(autoincrement())
+  name         String          @unique
   category     AbilityCategory // Can be generic or class specific
   type         AbilityType
-  target       Int             @default(-1) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
+  target       AbilityTarget   @default(Self) // -1 means self, 0 means all, 1 means single target, 2+ means multi-target
   description  String?
   duration     Int?
   icon         String?
@@ -175,6 +195,7 @@ model Ability {
   xpGiven      Int?
   value        Int?
   diceNotation String? // Dice notation for random values. Eg. 1d6+2
+  isDungeon    Boolean         @default(false) // If the ability is a dungeon ability
 
   purchaseable Boolean  @default(true)
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
@@ -187,6 +208,30 @@ model Ability {
   userPassives UserPassive[] // m-n relation to user passives. An ability can have passives on many users 
 
   cosmic CosmicEvent[]
+
+  @@index([name])
+}
+
+model Enemy {
+  id        Int    @id @default(autoincrement())
+  name      String
+  icon      String
+  attack    String
+  maxHealth Int    @default(10)
+  xp        Int    @default(0)
+  gold      Int    @default(0)
+
+  GuildEnemy GuildEnemy[]
+}
+
+model GuildEnemy {
+  id        String @id @default(cuid())
+  enemyId   Int
+  enemy     Enemy  @relation(fields: [enemyId], references: [id])
+  guildName String
+  guild     Guild  @relation(fields: [guildName], references: [name])
+  name      String
+  health    Int
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
@@ -220,7 +265,8 @@ model UserPassive {
 }
 
 model CosmicEvent {
-  name        String    @id
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String
   icon        String    @default("Cosmic.png")
   recommended Boolean   @default(false)
@@ -238,29 +284,44 @@ model CosmicEvent {
   abilityName       String? // if the cosmic event should grant an ability or passive
 
   ability Ability? @relation(fields: [abilityName], references: [name], onUpdate: Cascade)
+
+  @@index([name])
 }
 
 model ShopItem {
-  id          String       @id @default(cuid())
+  id          Int          @id @default(autoincrement())
   name        String       @unique
   description String?
-  // icon        String
+  icon        String?
   price       Int
   type        ShopItemType
   levelReq    Int?
   classReq    Class?
   specialReq  String?
   users       User[] // m-n relation to users. An item can be owned by many users
+
+  @@index([name])
+  @@index([type])
 }
 
 model Log {
   id        String   @id @default(cuid())
   userId    String
   global    Boolean  @default(true) // If the log contains useful global information for game masters
+  debug     Boolean  @default(false) // If the log is for debugging purposes
   message   String
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model SystemMessage {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  readers User[] @relation("ReadMessages")
 }
 
 model Game {
@@ -277,7 +338,7 @@ model Game {
 }
 
 model TypeQuestText {
-  id   String @id @default(cuid())
+  id   Int    @id @default(autoincrement())
   text String @unique
 }
 
@@ -316,6 +377,13 @@ model Session {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model ApplicationSettings {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // model VerificationToken {

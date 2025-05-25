@@ -89,34 +89,53 @@ export const getUserPassiveEffect = async (
 };
 
 /**
- * Checks if a passive ability is active for a given user. Does not return cosmic passives.
+ * Checks if a passive ability is active for given users. Does not return cosmic passives.
  *
- * @param user - The user whose passive abilities are being checked.
- * @param ability - The ability to check for active status.
+ * @param targetUserIds[] - The users whose passive abilities are being checked.
+ * @param abilityName - The ability to check for active status.
  * @returns A promise that resolves to a boolean indicating whether the passive ability is active. Does not return cosmic passives.
  * @throws Will throw an error if the user is not authorized.
  */
-export const checkIfPassiveIsActive = async (
-  userId: string,
+export const checkIfAllTargetsHavePassive = async (
+  targetUserIds: string[],
   abilityName: string,
 ) => {
   const session = await auth();
-  if (session?.user?.id !== userId) {
+  if (
+    !session ||
+    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
+  ) {
     throw new Error("Not authorized");
   }
 
   try {
-    const activePassive = await db.userPassive.findFirst({
-      where: {
-        userId: userId,
-        abilityName: abilityName,
-        effectType: {
-          not: "Cosmic",
-        },
-      },
-    });
+    let allUsersHavePassive = true;
+    await Promise.all(
+      targetUserIds.map(async (targetUserId) => {
+        const userPassive = await db.userPassive.findFirst({
+          where: {
+            userId: targetUserId,
+            abilityName: abilityName,
+            effectType: {
+              not: "Cosmic",
+            },
+          },
+        });
+        console.log(
+          `Checking if user ${targetUserId} has passive ${abilityName}: ${!!userPassive}`,
+        );
+        // if one user does not have the passive, return false
+        if (!userPassive) {
+          allUsersHavePassive = false;
+          return allUsersHavePassive;
+        }
+      }),
+    );
+    console.log(
+      `All users have passive ${abilityName}: ${allUsersHavePassive}`,
+    );
 
-    return !!activePassive;
+    return allUsersHavePassive;
   } catch (error) {
     logger.error("Error checking if active passive: " + error);
     return false;

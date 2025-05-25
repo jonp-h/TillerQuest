@@ -14,7 +14,7 @@ async function Manage() {
   const style = {
     p: 0,
     width: "90%",
-    maxWidth: 1200,
+    maxWidth: 1350,
     borderRadius: 2,
     border: "1px solid",
     borderColor: "divider",

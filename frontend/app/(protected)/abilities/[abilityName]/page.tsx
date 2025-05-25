@@ -21,9 +21,9 @@ import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
-import { checkIfPassiveIsActive } from "@/data/passives/getPassive";
-import Link from "next/link";
-import { ArrowBack, Diamond, Favorite, WaterDrop } from "@mui/icons-material";
+import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
+import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
+import BackButton from "./_components/BackButton";
 
 export default async function AbilityNamePage({
   params,
@@ -45,8 +45,6 @@ export default async function AbilityNamePage({
   if (!user) {
     notFound();
   }
-
-  const activePassive = await checkIfPassiveIsActive(user.id, ability.name);
 
   const userIsCorrectClass =
     !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
@@ -70,6 +68,21 @@ export default async function AbilityNamePage({
 
   const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
 
+  // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
+  let targetHasPassive = false;
+  if (ability.target == "Self") {
+    targetHasPassive = await checkIfAllTargetsHavePassive(
+      [user.id],
+      abilityName,
+    );
+  } else if (ability.target == "All" || ability.target == "Others") {
+    // check if all guild members have active passive
+    targetHasPassive = await checkIfAllTargetsHavePassive(
+      guildMembers?.map((member) => member.id) || [],
+      abilityName,
+    );
+  }
+
   return (
     <MainContainer>
       <div
@@ -83,16 +96,9 @@ export default async function AbilityNamePage({
         >
           {/* back button */}
           <div className="flex justify-between w-full">
-            <Link href="/abilities">
-              <ArrowBack
-                sx={{
-                  fontSize: "3rem",
-                  ":hover": { color: "white", cursor: "pointer" },
-                  color: "grey",
-                }}
-                className="cursor-pointer"
-              />
-            </Link>
+            <div className="flex flex-col">
+              <BackButton />
+            </div>
 
             <div
               className={
@@ -181,7 +187,7 @@ export default async function AbilityNamePage({
               userOwnsAbility={userOwnsAbility}
               userIsCorrectClass={userIsCorrectClass}
               missingParentAbility={missingParentAbility}
-              activePassive={activePassive}
+              targetHasPassive={targetHasPassive}
             />
           </div>
         </Paper>

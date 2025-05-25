@@ -79,6 +79,7 @@ export const getUserProfileByUsername = async (username: string) => {
         guildName: true,
         lastMana: true,
         publicHighscore: true,
+        archiveConsent: true,
         inventory: {
           where: {
             specialReq: { not: null },
@@ -181,6 +182,49 @@ export const getVg2Leaderboard = async () => {
       },
       orderBy: { xp: "desc" },
       take: 10,
+    });
+
+    return users;
+  } catch {
+    return null;
+  }
+};
+
+export const getValhallaUsers = async () => {
+  const session = await auth();
+  if (!session || session?.user.role === "NEW") {
+    throw new Error("Not authorized");
+  }
+
+  try {
+    const users = await db.user.findMany({
+      where: {
+        publicHighscore: true,
+        archiveConsent: true,
+        // inventory: {
+        //   some: {
+        //     name: {
+        //       in: ["Demi-god"],
+        //     },
+        //   },
+        // },
+        xp: {
+          gte: 50000,
+        },
+      },
+      orderBy: { xp: "desc" },
+      select: {
+        xp: true,
+        title: true,
+        name: true,
+        username: true,
+        lastname: true,
+        image: true,
+        level: true,
+        class: true,
+        guildName: true,
+        schoolClass: true,
+      },
     });
 
     return users;

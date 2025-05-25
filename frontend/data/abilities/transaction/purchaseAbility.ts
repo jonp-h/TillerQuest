@@ -69,7 +69,7 @@ export const buyAbility = async (userId: string, abilityName: string) => {
 
       // ease of use for passive abilities with unlimited duration
       const useAbilityImmediately =
-        ability.target === -1 && ability.duration === null;
+        ability.target === "Self" && ability.duration === null;
 
       if (useAbilityImmediately) {
         selectAbility(user.id, [user.id], ability.name);

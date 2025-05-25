@@ -70,3 +70,28 @@ h1 {
   width: 100%;
   height: 100%;
 }
+
+@keyframes move-up-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@layer utilities {
+  .animate-move-up-down-0 {
+    animation: move-up-down 3.5s ease-in-out infinite;
+  }
+  .animate-move-up-down-1 {
+    animation: move-up-down 3s ease-in-out infinite;
+  }
+  .animate-move-up-down-2 {
+    animation: move-up-down 4s ease-in-out infinite;
+  }
+  .animate-move-up-down-3 {
+    animation: move-up-down 4.5s ease-in-out infinite;
+  }
+}

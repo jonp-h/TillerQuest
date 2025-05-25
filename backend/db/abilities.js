@@ -2,10 +2,11 @@
 
 const health = [
   {
+    id: 1,
     name: "Vigor",
     category: "Health",
     type: "Health",
-    target: -1,
+    target: "Self",
     description: "Every time you are healed, you gain 1 extra health.",
     duration: null,
     icon: "Vigor.png",
@@ -18,10 +19,11 @@ const health = [
     parentAbility: null,
   },
   {
+    id: 2,
     name: "Bandage",
     category: "Heal",
     type: "Heal",
-    target: 1,
+    target: "SingleTarget",
     description: "Restores 1 health to a target.",
     duration: null,
     icon: "Heal.png",
@@ -34,10 +36,11 @@ const health = [
     parentAbility: "Vigor",
   },
   {
+    id: 3,
     name: "Enhanced-Vigor",
     category: "Health",
     type: "Health",
-    target: -1,
+    target: "Self",
     description: "Every time you are healed, you gain another 1 extra health.",
     duration: null,
     icon: "Enhanced-Vigor.png",
@@ -50,10 +53,11 @@ const health = [
     parentAbility: "Vigor",
   },
   {
+    id: 4,
     name: "Superior-Vigor",
     category: "Health",
     type: "Health",
-    target: -1,
+    target: "Self",
     description: "Every time you are healed, you gain another 1 extra health.",
     duration: null,
     icon: "Superior-Vigor.png",
@@ -69,10 +73,11 @@ const health = [
 
 const mana = [
   {
+    id: 5,
     name: "Arcane-Focus",
     category: "Mana",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain 1 extra mana.",
     duration: null,
     icon: "Arcane-Focus.png",
@@ -85,10 +90,11 @@ const mana = [
     parentAbility: null,
   },
   {
+    id: 6,
     name: "Arcane-Recovery",
     category: "Mana",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain another 1 extra mana.",
     duration: null,
     icon: "Arcane-Recovery.png",
@@ -101,10 +107,11 @@ const mana = [
     parentAbility: "Arcane-Focus",
   },
   {
+    id: 7,
     name: "Arcane-Connection",
     category: "Mana",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain another 1 extra mana.",
     duration: null,
     icon: "Test.jpg",
@@ -120,10 +127,11 @@ const mana = [
 
 const trickery = [
   {
+    id: 8,
     name: "Evade",
     category: "Trickery",
     type: "Trickery",
-    target: -1,
+    target: "Self",
     description:
       "You may evade the effects of today's cosmic event, in exchange for mana.",
     duration: 960, // 16 hours
@@ -137,10 +145,11 @@ const trickery = [
     parentAbility: null,
   },
   {
+    id: 9,
     name: "Devilish-Deal",
     category: "Trickery",
     type: "Trickery",
-    target: -1,
+    target: "Self",
     description:
       "You may evade the effects of today's cosmic event, in exchange for health.",
     duration: 960, // 16 hours
@@ -154,10 +163,11 @@ const trickery = [
     parentAbility: "Evade",
   },
   {
+    id: 10,
     name: "Twist-of-Fate",
     category: "Trickery",
     type: "Trickery",
-    target: -1,
+    target: "Self",
     description:
       "Roll a d20. On a natural 20, today's event is rerolled. You may only use this ability once per day.",
     duration: 960, // 16 hours
@@ -171,10 +181,11 @@ const trickery = [
     parentAbility: "Devilish-Deal",
   },
   {
+    id: 11,
     name: "Postpone",
     category: "Trickery",
     type: "Postpone",
-    target: -1,
+    target: "Self",
     description:
       "You appeal to the game master, and plead for 8 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 480, // 8 hours
@@ -188,10 +199,11 @@ const trickery = [
     parentAbility: "Evade",
   },
   {
+    id: 12,
     name: "Greater-Postpone",
     category: "Trickery",
     type: "Postpone",
-    target: -1,
+    target: "Self",
     description:
       "You appeal to the game master, and plead for 24 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 1440, // 24 hours
@@ -205,10 +217,11 @@ const trickery = [
     parentAbility: "Postpone",
   },
   {
+    id: 13,
     name: "Superior-Postpone",
     category: "Trickery",
     type: "Postpone",
-    target: -1,
+    target: "Self",
     description:
       "You appeal to the game master, and plead for 48 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 2880, // 48 hours
@@ -225,10 +238,11 @@ const trickery = [
 
 const adventurer = [
   // {
+  // id: 14
   //   name: "Adventurer",
   //   category: "Adventurer",
   //   type: "Adventurer",
-  //   target: -1,
+  //   target: "Self",
   //   description: "Allows participation in the arena's games.",
   //   duration: null,
   //   icon: "Adventurer.png",
@@ -241,10 +255,11 @@ const adventurer = [
   //   parentAbility: null,
   // },
   // {
+  // id:
   //   name: "Economist",
   //   category: "Adventurer",
   //   type: "Adventurer",
-  //   target: -1,
+  //   target: "Self",
   //   description:
   //     "Every time you gain xp, you gain the same amount of gold. Gold can be spent in the shop.",
   //   duration: null,
@@ -256,15 +271,17 @@ const adventurer = [
   // diceNotation: null,
   //   value: null,
   //   parentAbility: "Adventurer",
+  //
   // },
 ];
 
 const wizard = [
   {
+    id: 15,
     name: "Essence-Transfer",
     category: "Wizard",
     type: "Mana",
-    target: 1,
+    target: "SingleTarget",
     description: "You channel your powers, giving a guildmember 1d6 mana.",
     duration: null,
     icon: "Essence-Transfer.png",
@@ -277,10 +294,11 @@ const wizard = [
     parentAbility: null,
   },
   {
+    id: 16,
     name: "Arcane-Gift",
     category: "Wizard",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain 1 extra mana.",
     duration: null,
     icon: "Arcane-Gift.png",
@@ -293,10 +311,11 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 17,
     name: "Inner-Power",
     category: "Wizard",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain 1 extra mana.",
     duration: null,
     icon: "Test.jpg",
@@ -309,10 +328,11 @@ const wizard = [
     parentAbility: "Arcane-Gift",
   },
   {
+    id: 18,
     name: "Channeling",
     category: "Wizard",
     type: "ManaPassive",
-    target: -1,
+    target: "Self",
     description: "Every time you gain mana, you gain 2 extra mana.",
     duration: null,
     icon: "Test.jpg",
@@ -325,10 +345,11 @@ const wizard = [
     parentAbility: "Inner-Power",
   },
   {
+    id: 19,
     name: "Greater-Essence-Transfer",
     category: "Wizard",
     type: "Mana",
-    target: 1,
+    target: "SingleTarget",
     description: "You channel your powers, giving a guildmember 1d10 mana.",
     duration: null,
     icon: "Greater-Essence-Transfer.png",
@@ -341,10 +362,11 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 20,
     name: "Cosmic-Gift",
     category: "Wizard",
     type: "Mana",
-    target: 1,
+    target: "SingleTarget",
     description: "You channel your powers, giving a guildmember 2d6 mana.",
     duration: null,
     icon: "Test.jpg",
@@ -357,10 +379,11 @@ const wizard = [
     parentAbility: "Greater-Essence-Transfer",
   },
   {
+    id: 21,
     name: "Arcane-Guidance",
     category: "Wizard",
     type: "ManaPassive",
-    target: 0,
+    target: "All",
     description:
       "You show your guildmates the secrets of the arcane. All members of the guild gain an addition 2 mana every time they gain mana.",
     duration: null,
@@ -374,29 +397,49 @@ const wizard = [
     parentAbility: "Essence-Transfer",
   },
   {
+    id: 22,
     name: "Essence-Offering",
     category: "Wizard",
     type: "Transfer",
-    target: 0,
-    description: "You may give 5 of your mana to another player.",
+    target: "Others",
+    description: "You grant your guildmembers 5 mana.",
     duration: null,
     icon: "Test.jpg",
-    gemstoneCost: 4,
-    manaCost: 5,
+    gemstoneCost: 6,
+    manaCost: 10,
     healthCost: null,
     xpGiven: 100,
     diceNotation: null,
     value: 5,
     parentAbility: "Essence-Transfer",
   },
+  {
+    id: 63,
+    name: "Fireball",
+    category: "Wizard",
+    type: "Damage",
+    target: "SingleTarget",
+    description: "You attack an enemy with a fireball, dealing 1d10 damage.",
+    duration: null,
+    icon: "Fireball.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Essence-Transfer",
+  },
 ];
 
 const druid = [
   {
+    id: 23,
     name: "Heal",
     category: "Druid",
     type: "Heal",
-    target: 1,
+    target: "SingleTarget",
     description: "Restores 1d4 health to a target.",
     duration: null,
     icon: "Heal.png",
@@ -409,10 +452,11 @@ const druid = [
     parentAbility: null,
   },
   {
+    id: 24,
     name: "Greater-Heal",
     category: "Druid",
     type: "Heal",
-    target: 1,
+    target: "SingleTarget",
     description: "Restores 1d6 health to a target.",
     duration: null,
     icon: "Greater-Heal.png",
@@ -425,10 +469,11 @@ const druid = [
     parentAbility: "Heal",
   },
   {
+    id: 25,
     name: "Superior-Heal",
     category: "Druid",
     type: "Heal",
-    target: 1,
+    target: "SingleTarget",
     description: "Restores 2d6 health to a target.",
     duration: null,
     icon: "Superior-Heal.png",
@@ -441,10 +486,11 @@ const druid = [
     parentAbility: "Greater-Heal",
   },
   {
+    id: 26,
     name: "Healing-Aura",
     category: "Druid",
     type: "Heal",
-    target: 0,
+    target: "All",
     description: "Restores 1d6 health to all guildmembers.",
     duration: null,
     icon: "Healing-Aura.png",
@@ -457,10 +503,11 @@ const druid = [
     parentAbility: "Greater-Heal",
   },
   {
+    id: 27,
     name: "Healing-Grace",
     category: "Druid",
     type: "Heal",
-    target: 0,
+    target: "All",
     description: "Restores 2d6 health to all guildmembers.",
     duration: null,
     icon: "Test.jpg",
@@ -473,10 +520,11 @@ const druid = [
     parentAbility: "Healing-Aura",
   },
   // {
+  // id: 28
   //   name: "Rejuvinate",
   //   category: "Druid",
   //   type: "Heal",
-  //   target: 1,
+  //   target: "SingleTarget",
   //   description: "Restores 15hp to a guildmember.",
   //   duration: null,
   //   // icon: "Rejuvinate.png",
@@ -486,32 +534,54 @@ const druid = [
   //   xpGiven: 250,
   //   value: 100,
   //   parentAbility: "Superior-Heal",
+  //
   // },
   {
+    id: 29,
     name: "Revive",
     category: "Druid",
     type: "Revive",
-    target: 1,
+    target: "SingleTarget",
     description:
       "Revives a target from death without side-effects. Must be done before a game master revives the target.",
     duration: null,
     icon: "Revive.png",
-    gemstoneCost: 4,
-    manaCost: 15,
+    gemstoneCost: 6,
+    manaCost: 20,
     healthCost: null,
     xpGiven: 500,
     diceNotation: null,
     value: null,
     parentAbility: "Superior-Heal",
   },
+  {
+    id: 64,
+    name: "Thorns",
+    category: "Druid",
+    type: "Damage",
+    target: "SingleTarget",
+    description:
+      "You attack an enemy with vines covered by thorns, dealing 3d4 damage.",
+    duration: null,
+    icon: "Thorns.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "3d4",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Heal",
+  },
 ];
 
 const barbarian = [
   {
+    id: 30,
     name: "Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
-    target: -1,
+    target: "Self",
     description: "You gain 5 extra health.",
     duration: null,
     icon: "Toughness.png",
@@ -524,10 +594,11 @@ const barbarian = [
     parentAbility: null,
   },
   {
+    id: 31,
     name: "Shield",
     category: "Barbarian",
     type: "Protection",
-    target: -1,
+    target: "Self",
     description:
       "You shield yourself 1d4 damage from the next attack for 4 hours.",
     duration: 240, // 4 hours
@@ -541,10 +612,11 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 32,
     name: "Battle-Ready",
     category: "Barbarian",
     type: "Arena",
-    target: 0,
+    target: "All",
     description:
       "You long for the thrill of battle, bringing your guildmates with you for another round in the arena.",
     duration: null,
@@ -558,10 +630,11 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 33,
     name: "Protector-of-the-Weak",
     category: "Barbarian",
     type: "Protection",
-    target: 1,
+    target: "SingleTarget",
     description:
       "You shield the next attack on a guildmember from 1d6 damage for the next 4 hours.",
     duration: 240, // 4 hours
@@ -575,10 +648,11 @@ const barbarian = [
     parentAbility: "Shield",
   },
   {
+    id: 34,
     name: "Get-Behind-Me",
     category: "Barbarian",
     type: "Protection",
-    target: 1,
+    target: "SingleTarget",
     description:
       "You shield the next attack on a guildmember from 2d6 damage for the next 8 hours.",
     duration: 480, // 8 hours
@@ -592,10 +666,11 @@ const barbarian = [
     parentAbility: "Protector-of-the-Weak",
   },
   {
+    id: 35,
     name: "Protector-of-the-People",
     category: "Barbarian",
     type: "Protection",
-    target: 0,
+    target: "Others",
     description:
       "You shield your guildmembers from 1d6 damage for the next 4 hours.",
     duration: 240, // 4 hours
@@ -609,10 +684,11 @@ const barbarian = [
     parentAbility: "Protector-of-the-Weak",
   },
   {
+    id: 36,
     name: "Enhanced-Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
-    target: -1,
+    target: "Self",
     description: "You gain another 5 extra health.",
     duration: null,
     icon: "Enhanced-Toughness.png",
@@ -625,10 +701,11 @@ const barbarian = [
     parentAbility: "Toughness",
   },
   {
+    id: 37,
     name: "Superior-Toughness",
     category: "Barbarian",
     type: "IncreaseHealth",
-    target: -1,
+    target: "Self",
     description: "You gain another 5 extra health.",
     duration: null,
     icon: "Superior-Toughness.png",
@@ -640,14 +717,34 @@ const barbarian = [
     value: 5,
     parentAbility: "Enhanced-Toughness",
   },
+  {
+    id: 65,
+    name: "Raging-Attack",
+    category: "Barbarian",
+    type: "Damage",
+    target: "SingleTarget",
+    description:
+      "You attack an enemy with a raging attack, dealing 2d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d8",
+    value: null,
+    isDungeon: true,
+    parentAbility: "Toughness",
+  },
 ];
 
 const bloodMage = [
   {
+    id: 38,
     name: "Secrets-of-the-Crimson",
     category: "BloodMage",
     type: "Health",
-    target: -1,
+    target: "Self",
     description: "Every time you are healed, you gain 1 extra health.",
     duration: null,
     icon: "Secrets-of-the-Crimson.png",
@@ -660,10 +757,11 @@ const bloodMage = [
     parentAbility: null,
   },
   {
+    id: 39,
     name: "Blood-Bond",
     category: "BloodMage",
     type: "Transfer",
-    target: 1,
+    target: "SingleTarget",
     description: "You may give 5 of your hp to another player.",
     duration: null,
     icon: "Blood-Bond.png",
@@ -676,10 +774,11 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 40,
     name: "Bloodgift",
     category: "BloodMage",
     type: "DecreaseHealth",
-    target: 1,
+    target: "SingleTarget",
     description:
       "Lose 5 of your maximum health to grant 2 mana to a guild member. This ability can only be used once per day.",
     duration: 960, // 16 hours
@@ -693,10 +792,11 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 41,
     name: "Crimson-Shift",
     category: "BloodMage",
     type: "Swap",
-    target: 1,
+    target: "SingleTarget",
     description:
       "You may swap health with a guildmember. You must have more health than the guildmember. The health of either cannot exceed their max health. This ability can only be used once per day.",
     duration: 480, // 8 hours
@@ -710,10 +810,11 @@ const bloodMage = [
     parentAbility: "Blood-Bond",
   },
   {
+    id: 42,
     name: "Gift-of-Life",
     category: "BloodMage",
     type: "DecreaseHealth",
-    target: 1,
+    target: "SingleTarget",
     description:
       "Lose 10 of your maximum health to grant 5 mana to a guild member. This ability can only be used once per day.",
     duration: 960, // 16 hours
@@ -727,10 +828,11 @@ const bloodMage = [
     parentAbility: "Bloodgift",
   },
   {
+    id: 43,
     name: "Blood-Money",
     category: "BloodMage",
     type: "GoldPassive",
-    target: -1,
+    target: "Self",
     description:
       "You curse the gold earned from the arena, increasing it by 1d10 % for 1 day.",
     duration: 960, // 16 hours
@@ -744,10 +846,11 @@ const bloodMage = [
     parentAbility: "Secrets-of-the-Crimson",
   },
   {
+    id: 44,
     name: "Cursed-Gold",
     category: "BloodMage",
     type: "GoldPassive",
-    target: -1,
+    target: "All",
     description:
       "You curse the gold earned from the arena for all guild members, increasing it by 5d10 % for 1 day.",
     duration: 960, // 16 hours
@@ -760,14 +863,33 @@ const bloodMage = [
     value: null,
     parentAbility: "Blood-Money",
   },
+  {
+    id: 66,
+    name: "Blood-Blades",
+    category: "BloodMage",
+    type: "Damage",
+    target: "SingleTarget",
+    description: "You attack an enemy with blood blades, dealing 1d10 damage.",
+    duration: null,
+    icon: "Blood-Blades.png",
+    gemstoneCost: 6,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Secrets-of-the-Crimson",
+  },
 ];
 
 const bard = [
   {
+    id: 45,
     name: "Performance",
     category: "Bard",
     type: "Experience",
-    target: 0,
+    target: "All",
     description:
       "You perform a song, temporarily increasing the experience gain for all guildmembers by 1d10 % for 1 hour.",
     duration: 60, // 1 hour
@@ -781,10 +903,11 @@ const bard = [
     parentAbility: null,
   },
   {
+    id: 46,
     name: "Streets-of-Gold",
     category: "Bard",
     type: "Gold",
-    target: -1,
+    target: "Self",
     description:
       "You display your many talents to the crowd, gaining 10d10 gold for yourself.",
     duration: null,
@@ -798,10 +921,11 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 47,
     name: "Inspiration",
     category: "Bard",
     type: "IncreaseMana",
-    target: 0,
+    target: "All",
     description:
       "You inspire your guildmembers with words of wisdom, giving the entire guild 5 extra max mana for 5 days.",
     duration: 7200, // 5 days
@@ -815,10 +939,11 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 48,
     name: "Greater-Inspiration",
     category: "Bard",
     type: "IncreaseMana",
-    target: 0,
+    target: "All",
     description:
       "You inspire your guildmembers with great philosophy, giving the entire guild 5 extra max mana for 5 days.",
     duration: 7200, // 5 days
@@ -832,10 +957,11 @@ const bard = [
     parentAbility: "Inspiration",
   },
   {
+    id: 49,
     name: "Feast-of-Heroes",
     category: "Bard",
     type: "IncreaseHealth",
-    target: 0,
+    target: "All",
     description:
       "You bring forth a great feast, including magnificent food and drink - temporarily increasing the max health of all guildmembers by 5 for 2 days.",
     duration: 2880, // 2 days
@@ -849,10 +975,11 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 50,
     name: "Heartfelt-Performance",
     category: "Bard",
     type: "Experience",
-    target: 0,
+    target: "All",
     description:
       "You and your guildmembers perform a heartfelt song, increasing experience gained for all guildmembers for the day by 2d10 %.",
     duration: 960, // 16 hours
@@ -866,10 +993,11 @@ const bard = [
     parentAbility: "Performance",
   },
   {
+    id: 51,
     name: "Tavern-Dance",
     category: "Bard",
     type: "Experience",
-    target: 0,
+    target: "All",
     description:
       "You and your guildmembers perform an incredible dance, increasing experience gained for all guildmembers for the day by 5d10 %.",
     duration: 960, // 16 hours
@@ -882,14 +1010,147 @@ const bard = [
     value: null,
     parentAbility: "Heartfelt-Performance",
   },
+  {
+    id: 67,
+    name: "Song-of-Inspiration",
+    category: "Bard",
+    type: "Turns",
+    target: "All",
+    description:
+      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 3,
+    manaCost: 6,
+    healthCost: null,
+    xpGiven: 200,
+    diceNotation: null,
+    value: 1,
+    parentAbility: "Inspiration",
+  },
+];
+
+const dungeon = [
+  {
+    id: 52,
+    name: "Courage",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: "Self",
+    description: "You muster up the courage to fight the guild's enemies!",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 1,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: null,
+  },
+  {
+    id: 53,
+    name: "Second-Wind",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: "Self",
+    description:
+      "You regain extra stamina to fight your enemies longer! You gain 1 extra turn.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: "Courage",
+  },
+  {
+    id: 54,
+    name: "Action-Surge",
+    category: "Dungeon",
+    type: "TurnPassive",
+    target: "Self",
+    description:
+      "You push yourself beyond the normal limits, to fight your enemies for longer! You gain 1 extra turn.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    isDungeon: false,
+    value: 1,
+    parentAbility: "Second-Wind",
+  },
+  {
+    id: 55,
+    name: "Weak-Attack",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: "SingleTarget",
+    description: "You attack a target for 1d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 0,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d6",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Courage",
+  },
+  {
+    id: 56,
+    name: "Great-Attack",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: "SingleTarget",
+    description: "You use a great attack against an enemy dealing 1d8 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d8",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Weak-Attack",
+  },
+  {
+    id: 57,
+    name: "Fencing",
+    category: "Dungeon",
+    type: "DungeonAttack",
+    target: "SingleTarget",
+    description:
+      "You use a fencing attack against an enemy dealing 2d6 damage.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "2d6",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Great-Attack",
+  },
 ];
 
 const cosmic = [
   {
+    id: 58,
     name: "Poor-Harvest",
     category: "Cosmic",
     type: "XP",
-    target: 0,
+    target: "All",
     description: "Everyone gains 1 XP. Activates at 11:20.",
     duration: null,
     icon: "Cosmic.png",
@@ -904,10 +1165,11 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 59,
     name: "Troubled-Waters",
     category: "Cosmic",
     type: "Damage",
-    target: 0,
+    target: "All",
     description:
       "A storm is crashing down upon us. All take 5 damage. No healing may occur today. The storm is said to hit at 11:20.",
     duration: null,
@@ -923,10 +1185,11 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 60,
     name: "Sacrificial-Lamb",
     category: "Cosmic",
     type: "XP",
-    target: -1,
+    target: "Self",
     description:
       "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 100 XP.",
     duration: null,
@@ -942,10 +1205,11 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 61,
     name: "Tiredness",
     category: "Cosmic",
     type: "Mana",
-    target: -1,
+    target: "Self",
     description: "Everyone loses 10 mana. Activates at 11:20.",
     duration: null,
     icon: "Cosmic.png",
@@ -960,10 +1224,11 @@ const cosmic = [
     parentAbility: null,
   },
   {
+    id: 62,
     name: "Good-vibes",
     category: "Cosmic",
     type: "XP",
-    target: 0,
+    target: "All",
     description: "Everyone gains 100 XP. Activates at 11:20.",
     duration: null,
     icon: "Cosmic.png",
@@ -989,6 +1254,7 @@ const abilities = [
   ...barbarian,
   ...bloodMage,
   ...bard,
+  ...dungeon,
   ...cosmic,
 ];
 export default abilities;

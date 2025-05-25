@@ -12,6 +12,7 @@ import {
   Select,
 } from "@mui/material";
 import { UserRole } from "@prisma/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -101,6 +102,15 @@ function ManageUserForm(user: {
       >
         Update
       </Button>
+      <Link
+        href={`/profile/${user.username}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Button variant="outlined" color="experience" sx={{ mx: 1 }}>
+          Profilepage
+        </Button>
+      </Link>
     </>
   );
 }

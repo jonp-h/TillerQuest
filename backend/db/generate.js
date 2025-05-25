@@ -6,6 +6,8 @@ import cosmics from "./cosmic.js";
 import shopItems from "./shopItems.js";
 import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
+import enemies from "./enemies.js";
+import gameSettings from "./gameSettings.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -18,43 +20,49 @@ async function main() {
 
   const options = `
   Please choose an option:
-  1. Add Guilds
-  2. Add Abilities
-  3. Add Cosmic Events
-  4. Add Shop Items
-  5. Add Mocked Users
-  6. Add Type Quest Texts
-  7. Add All
-  8. Add all without users
-  DANGERZONE:
-  99. Set all users to NEW
+  1. Add All
+  2. Add all without users
+  3. Add Guilds
+  4. Add Abilities
+  5. Add Cosmic Events
+  6. Add Shop Items
+  7. Add Mocked Users
+  8. Add Type Quest Texts
+  9. Add Enemies
+  10. Add Game Settings
   `;
 
   rl.question(options, async (answer) => {
     switch (answer) {
       case "1":
-        await addGuilds();
-        break;
-      case "2":
-        await addAbilities();
-        break;
-      case "3":
-        await addCosmicEvents();
-        break;
-      case "4":
-        await addShopItems();
-        break;
-      case "5":
-        await addUsers();
-        break;
-      case "6":
-        await addTypeQuestTexts();
-        break;
-      case "7":
         await addAll();
         break;
-      case "8":
+      case "2":
         await addAllWithoutUsers();
+        break;
+      case "3":
+        await addGuilds();
+        break;
+      case "4":
+        await addAbilities();
+        break;
+      case "5":
+        await addCosmicEvents();
+        break;
+      case "6":
+        await addShopItems();
+        break;
+      case "7":
+        await addUsers();
+        break;
+      case "8":
+        await addTypeQuestTexts();
+        break;
+      case "9":
+        await addEnemies();
+        break;
+      case "10":
+        await addGameSettings();
         break;
       default:
         console.log("Invalid option");
@@ -79,7 +87,7 @@ async function addAbilities() {
   for (const ability of abilities) {
     try {
       await db.ability.upsert({
-        where: { name: ability.name },
+        where: { id: ability.id },
         update: ability,
         create: ability,
       });
@@ -94,7 +102,7 @@ async function addCosmicEvents() {
   for (const cosmic of cosmics) {
     try {
       await db.cosmicEvent.upsert({
-        where: { name: cosmic.name },
+        where: { id: cosmic.id },
         update: cosmic,
         create: cosmic,
       });
@@ -108,9 +116,8 @@ async function addCosmicEvents() {
 async function addShopItems() {
   for (const item of shopItems) {
     try {
-      console.log("Adding", item.name);
       await db.shopItem.upsert({
-        where: { name: item.name },
+        where: { id: item.id },
         update: item,
         create: item,
       });
@@ -125,15 +132,44 @@ async function addTypeQuestTexts() {
   for (const typeQuestText of typeQuestTexts) {
     try {
       await db.typeQuestText.upsert({
-        where: { text: typeQuestText.text },
-        update: { text: typeQuestText.text },
-        create: { text: typeQuestText.text },
+        where: { id: typeQuestText.id },
+        update: typeQuestText,
+        create: typeQuestText,
       });
     } catch (error) {
-      console.error("Error adding", typeQuestText + ": ", error);
+      console.error("Error adding", typeQuestText.text + ": ", error);
     }
   }
   console.info("Type quest texts have been added to the database.");
+}
+
+async function addEnemies() {
+  for (const enemy of enemies) {
+    try {
+      await db.enemy.upsert({
+        where: { id: enemy.id },
+        update: enemy,
+        create: enemy,
+      });
+    } catch (error) {
+      console.error("Error adding", enemy + ": ", error);
+    }
+  }
+  console.info("Enemies has been added to the database.");
+}
+
+async function addGameSettings() {
+  for (const setting of gameSettings) {
+    try {
+      await db.applicationSettings.createMany({
+        data: setting,
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      console.error("Error adding", setting + ": ", error);
+    }
+  }
+  console.info("Enemies has been added to the database.");
 }
 
 async function addUsers() {
@@ -155,6 +191,8 @@ async function addAll() {
   await addShopItems();
   await addTypeQuestTexts();
   await addUsers();
+  await addEnemies();
+  await addGameSettings();
 }
 
 async function addAllWithoutUsers() {
@@ -163,6 +201,8 @@ async function addAllWithoutUsers() {
   await addCosmicEvents();
   await addShopItems();
   await addTypeQuestTexts();
+  await addEnemies();
+  await addGameSettings();
 }
 
 // Run the main function and handle any errors
