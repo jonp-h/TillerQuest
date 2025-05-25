@@ -153,9 +153,10 @@ model User {
 
   role UserRole @default(NEW)
 
-  publicHighscore Boolean   @default(false)
-  archiveConsent  Boolean   @default(false)
-  email           String?   @unique
+  readMessages    SystemMessage[] @relation("ReadMessages") // m-n relation to system messages. A user can read many system messages
+  publicHighscore Boolean         @default(false)
+  archiveConsent  Boolean         @default(false)
+  email           String?         @unique
   emailVerified   DateTime?
   accounts        Account[] // Relation to OAuth account
   // sessions      Session[]      
@@ -312,6 +313,15 @@ model Log {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model SystemMessage {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  readers User[] @relation("ReadMessages")
 }
 
 model Game {

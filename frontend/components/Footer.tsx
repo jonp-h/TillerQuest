@@ -17,7 +17,8 @@ export default function Footer() {
           className="text-blue-400 hover:text-blue-500 hover:underline"
         >
           jonp-h
-        </a>
+        </a>{" "}
+        and students at Tiller vgs
       </h2>
       <p>2025</p>
     </div>

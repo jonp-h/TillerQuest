@@ -188,6 +188,16 @@ CREATE TABLE "Log" (
 );
 
 -- CreateTable
+CREATE TABLE "SystemMessage" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "SystemMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Game" (
     "id" TEXT NOT NULL,
     "game" TEXT NOT NULL,
@@ -259,6 +269,14 @@ CREATE TABLE "_ShopItemToUser" (
     CONSTRAINT "_ShopItemToUser_AB_pkey" PRIMARY KEY ("A","B")
 );
 
+-- CreateTable
+CREATE TABLE "_ReadMessages" (
+    "A" INTEGER NOT NULL,
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_ReadMessages_AB_pkey" PRIMARY KEY ("A","B")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
@@ -319,6 +337,9 @@ CREATE INDEX "Session_userId_idx" ON "Session"("userId");
 -- CreateIndex
 CREATE INDEX "_ShopItemToUser_B_index" ON "_ShopItemToUser"("B");
 
+-- CreateIndex
+CREATE INDEX "_ReadMessages_B_index" ON "_ReadMessages"("B");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_guildName_fkey" FOREIGN KEY ("guildName") REFERENCES "Guild"("name") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -363,3 +384,9 @@ ALTER TABLE "_ShopItemToUser" ADD CONSTRAINT "_ShopItemToUser_A_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "_ShopItemToUser" ADD CONSTRAINT "_ShopItemToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ReadMessages" ADD CONSTRAINT "_ReadMessages_A_fkey" FOREIGN KEY ("A") REFERENCES "SystemMessage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ReadMessages" ADD CONSTRAINT "_ReadMessages_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

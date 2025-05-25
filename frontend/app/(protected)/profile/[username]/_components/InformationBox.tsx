@@ -1,8 +1,10 @@
 import { getCosmic } from "@/data/cosmic/getCosmic";
+import { getSystemMessages } from "@/data/messages/systemMessages";
 import { UserProfile } from "@/types/users";
 import { Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import React, { JSX } from "react";
+import SystemMessage from "./SystemMessage";
 
 export default async function InformationBox({
   user,
@@ -10,6 +12,7 @@ export default async function InformationBox({
   user: UserProfile;
 }): Promise<JSX.Element> {
   const cosmic = await getCosmic();
+  const systemMessages = await getSystemMessages(user.id);
 
   // Server-side component: date-time check
   const currentDate = new Date();
@@ -24,19 +27,10 @@ export default async function InformationBox({
 
   return (
     <>
-      {/* <Paper
-        elevation={6}
-        className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
-        variant="outlined"
-        sx={{
-          backgroundColor: "salmon",
-          textShadow: "2px 2px 2px black",
-        }}
-      >
-        <Typography variant="h4" align="center">
-          UPDATE: Large gameplay changes, some data has been rolled back
-        </Typography>
-      </Paper> */}
+      {/* Render system messages if they exist and the user has not read them yet */}
+      {systemMessages?.map((message) => (
+        <SystemMessage key={message.id} message={message} userId={user.id} />
+      ))}
       {/* User is eligible for mana if the user has not recieved mana today, and it is not weekend  */}
       {!sameDay && !isWeekend() && (
         <Paper
