@@ -8,7 +8,7 @@ async function main() {
   Please choose an option:
   DANGERZONE:
   reset. Set all users to NEW
-  resetWithShopItems. Resets all abilities and passives, and refunds shop items
+  resetWithShopItems. Resets all abilities and passives, and refunds shop items. Does not set NEW
   single. Reset a single user
   `);
 
@@ -126,18 +126,15 @@ async function resetUsersAndShopItems() {
         select: {
           id: true,
           mana: true,
+          hp: true,
           abilities: {
             select: {
               id: true,
             },
           },
-          shopItems: {
+          inventory: {
             select: {
-              shopItem: {
-                select: {
-                  price: true,
-                },
-              },
+              price: true,
             },
           },
         },
@@ -147,9 +144,9 @@ async function resetUsersAndShopItems() {
         const abilitiesRemoved = user.abilities.length;
         const gemstonesToAdd = abilitiesRemoved * 2;
         let goldFromShopItems = 0;
-        for (const shopItem of user.shopItems) {
+        for (const shopItem of user.inventory) {
           if (shopItem.shopItem) {
-            goldFromShopItems += shopItem.shopItem.price;
+            goldFromShopItems += shopItem.price;
           }
         }
 
@@ -179,9 +176,7 @@ async function resetUsersAndShopItems() {
               },
             },
             inventory: {
-              deleteMany: {
-                userId: user.id,
-              },
+              deleteMany: {},
             },
           },
         });
