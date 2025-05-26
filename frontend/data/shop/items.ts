@@ -19,7 +19,7 @@ export const getAllShopItems = async () => {
   }
 };
 
-export const purchaseItem = async (userId: string, itemId: string) => {
+export const purchaseItem = async (userId: string, itemId: number) => {
   const session = await auth();
   if (!session || userId !== session?.user.id) {
     return "Unauthorized";
@@ -77,7 +77,7 @@ export const purchaseItem = async (userId: string, itemId: string) => {
   return "Sucessfully bought " + item.name;
 };
 
-export const equipItem = async (userId: string, itemId: string) => {
+export const equipItem = async (userId: string, itemId: number) => {
   const session = await auth();
   if (userId !== session?.user.id) {
     return "Unauthorized";

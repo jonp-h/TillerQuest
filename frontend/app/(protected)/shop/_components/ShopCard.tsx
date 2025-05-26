@@ -24,12 +24,12 @@ function ShopCard({
   const [feedback, setFeedback] = React.useState<string>("");
   const router = useRouter();
 
-  const handlePurchase = async (itemId: string) => {
+  const handlePurchase = async (itemId: number) => {
     setFeedback(await purchaseItem(user.id, itemId));
     router.refresh();
   };
 
-  const handleEquip = async (itemId: string) => {
+  const handleEquip = async (itemId: number) => {
     setFeedback(await equipItem(user.id, itemId));
     router.refresh();
   };
