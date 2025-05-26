@@ -1017,8 +1017,8 @@ const bard = [
     type: "Turns",
     target: "All",
     description:
-      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
-    duration: null,
+      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon. Lasts 1 day",
+    duration: 960,
     icon: "Test.jpg",
     gemstoneCost: 3,
     manaCost: 6,
