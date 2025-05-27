@@ -1023,7 +1023,7 @@ const bard = [
     gemstoneCost: 3,
     manaCost: 6,
     healthCost: null,
-    xpGiven: 200,
+    xpGiven: 100,
     diceNotation: null,
     value: 1,
     parentAbility: "Inspiration",

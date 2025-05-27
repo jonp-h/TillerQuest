@@ -245,7 +245,7 @@ async function damageEnemy(targetEnemyId: string, diceResult: number) {
       });
 
       // revwards are only given when the enemy is killed
-      if (enemy.health <= 0) {
+      if (enemy.health - diceResult <= 0) {
         rewardUsers(targetEnemyId, enemy.guildName);
       }
     });

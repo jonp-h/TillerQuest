@@ -11,7 +11,12 @@ export const addLog = async (
   debug: boolean = false, // default to false
 ) => {
   const session = await auth();
-  if (!session || session?.user.id !== userId) {
+  if (!session) {
+    throw new Error("Not authorized");
+  }
+
+  // Users can only add debug logs for themselves
+  if (debug === true && session.user.id !== userId) {
     throw new Error("Not authorized");
   }
 
@@ -29,6 +34,9 @@ export const addLog = async (
     // not available in the edge runtime
     // logger.error("Failed to add log: ", error);
     console.error("Failed to add log: ", error);
-    return null;
+    throw new Error(
+      "Please inform a game master of the following timestamp" +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
