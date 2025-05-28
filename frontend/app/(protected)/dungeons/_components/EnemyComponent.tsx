@@ -40,7 +40,7 @@ function EnemyComponent({
         />
       </div>
       <Image
-        src={enemy.health <= 0 ? "/classes/grave.png" : enemy.icon}
+        src={enemy.health <= 0 ? "/classes/Grave.png" : enemy.icon}
         alt="Enemy"
         width={200}
         height={200}
