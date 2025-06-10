@@ -157,7 +157,7 @@ const cosmic = [
   },
   {
     id: 11,
-    name: "Dangeorus-Raid",
+    name: "Dangerous-Raid",
     description:
       "Every student rolls a D6. Any student who rolls a 6, gains 100 XP and may heal up to 5 HP. Any student who rolls a 1, loses 7 HP.",
     // icon: ".png"
