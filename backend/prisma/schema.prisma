@@ -113,6 +113,14 @@ enum GameStatus {
   FINISHED
 }
 
+enum Rarity {
+  Common
+  Uncommon
+  Rare
+  Epic
+  Legendary
+}
+
 enum ShopItemType {
   Title
   Badge
@@ -216,7 +224,7 @@ model Enemy {
   id        Int    @id @default(autoincrement())
   name      String
   icon      String
-  attack    String
+  attack    Int
   maxHealth Int    @default(10)
   xp        Int    @default(0)
   gold      Int    @default(0)
@@ -294,6 +302,7 @@ model ShopItem {
   description String?
   icon        String?
   price       Int
+  rarity      Rarity       @default(Common)
   type        ShopItemType
   levelReq    Int?
   classReq    Class?

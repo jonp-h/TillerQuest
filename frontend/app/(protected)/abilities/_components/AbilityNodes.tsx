@@ -78,7 +78,26 @@ export const AbilityNodes = (
       fontSize={25}
       onClick={() => handleNodeClick(nodeDatum)}
     >
-      {nodeDatum.name.replace(/-/g, " ")}
+      {nodeDatum.name
+        .replace(/-/g, " ")
+        .split(" ")
+        .reduce<string[]>(
+          (acc, word) => {
+            const lastLine = acc[acc.length - 1] || "";
+            if ((lastLine + " " + word).trim().length > 12) {
+              acc.push(word);
+            } else {
+              acc[acc.length - 1] = (lastLine + " " + word).trim();
+            }
+            return acc;
+          },
+          [""],
+        )
+        .map((line, i) => (
+          <tspan key={i} x="80" dy={i === 0 ? 0 : 28}>
+            {line}
+          </tspan>
+        ))}
     </text>
   </g>
 );

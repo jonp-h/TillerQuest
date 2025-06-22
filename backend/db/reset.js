@@ -7,9 +7,10 @@ async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  reset. Set all users to NEW
-  resetWithShopItems. Resets all abilities and passives, and refunds shop items. Does not set NEW
-  single. Reset a single user
+  1 - reset. Set all users to the NEW role
+  2 - reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role
+  3 - single. Reset a single user
+  4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
   `);
 
   process.stdin.setEncoding("utf8");
@@ -18,7 +19,7 @@ async function main() {
     const answer = input.trim(); // Trim whitespace and newlines
 
     switch (answer) {
-      case "reset":
+      case "1":
         console.log(
           "Are you sure you want to reset all users? Type 'yes' to confirm:",
         );
@@ -32,7 +33,7 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
-      case "resetWithShopItems":
+      case "2":
         console.log(
           "Are you sure you want to reset all users and their shop items? Type 'yes' to confirm:",
         );
@@ -46,7 +47,7 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
-      case "single":
+      case "3":
         console.log("Enter username of user to reset:");
         process.stdin.once("data", async (username) => {
           const trimmedUsername = username.trim();
@@ -159,9 +160,7 @@ async function resetUsersAndShopItems() {
         const gemstonesToAdd = abilitiesRemoved * 2;
         let goldFromShopItems = 0;
         for (const shopItem of user.inventory) {
-          if (shopItem.shopItem) {
-            goldFromShopItems += shopItem.price;
-          }
+          goldFromShopItems += shopItem.price;
         }
 
         await db.user.update({

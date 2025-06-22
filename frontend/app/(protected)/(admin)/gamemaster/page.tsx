@@ -42,6 +42,11 @@ export default async function GameMasterPage() {
             Manage users
           </Button>
         </Link>
+        <Link href="/gamemaster/dungeons">
+          <Button color="secondary" variant="contained">
+            Dungeons
+          </Button>
+        </Link>
         <Link href="/gamemaster/cosmic">
           <Button color="secondary" variant="contained">
             Cosmic

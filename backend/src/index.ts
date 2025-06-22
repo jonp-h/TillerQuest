@@ -582,10 +582,9 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run at 15:00 everyday to damage active players if the Enemy hasn't been defeated.
-// TODO: Change to reflect enemy attack dice value
+// Schedule a job to run at 15:15 every weekday to damage active players if the Enemy hasn't been defeated.
 cron.schedule(
-  "0 15 * * *",
+  "15 15 * * 1-5",
   async () => {
     try {
       // For each guild enemy, damage all members of that guild by 5 HP
@@ -596,18 +595,23 @@ cron.schedule(
         select: {
           guildName: true,
           name: true,
+          enemy: {
+            select: {
+              attack: true,
+            },
+          },
         },
       });
 
       for (const enemy of guildEnemies) {
-        // Only select users from this guild who has been active today
+        // Only select users from this guild who has fetched mana today
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
 
         const users = await db.user.findMany({
           where: {
             guildName: enemy.guildName,
-            updatedAt: {
+            lastMana: {
               gte: startOfToday,
             },
           },
@@ -619,7 +623,11 @@ cron.schedule(
         });
 
         for (const user of users) {
-          const damageToTake = await damageValidator(db, user.id, 5);
+          const damageToTake = await damageValidator(
+            db,
+            user.id,
+            enemy.enemy.attack,
+          );
           await db.user.update({
             where: { id: user.id },
             data: {
@@ -631,11 +639,10 @@ cron.schedule(
             data: {
               global: false,
               userId: user.id,
-              message: `${user.username} ventured into the dungeon and took 5 damage from a scary ${enemy.name}`,
+              message: `${user.username} ventured into the dungeon and took ${damageToTake} damage from a scary ${enemy.name}`,
             },
           });
         }
-        console.log("Dungeon damage recieved");
       }
     } catch (error) {
       console.log(error);

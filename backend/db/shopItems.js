@@ -480,6 +480,16 @@ const shopItems = [
     classReq: null,
     specialReq: "dev",
   },
+  {
+    id: 49,
+    name: "Artist",
+    description: "Created art for TillerQuest",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "artist",
+  },
 ];
 
 export default shopItems;
