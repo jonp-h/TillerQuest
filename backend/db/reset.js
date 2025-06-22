@@ -7,9 +7,10 @@ async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  reset. Set all users to NEW
-  resetWithShopItems. Resets all abilities and passives, and refunds shop items. Does not set NEW
-  single. Reset a single user
+  1 - reset. Set all users to the NEW role
+  2 - reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role
+  3 - single. Reset a single user
+  4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
   `);
 
   process.stdin.setEncoding("utf8");
@@ -18,7 +19,7 @@ async function main() {
     const answer = input.trim(); // Trim whitespace and newlines
 
     switch (answer) {
-      case "reset":
+      case "1":
         console.log(
           "Are you sure you want to reset all users? Type 'yes' to confirm:",
         );
@@ -32,7 +33,7 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
-      case "resetWithShopItems":
+      case "2":
         console.log(
           "Are you sure you want to reset all users and their shop items? Type 'yes' to confirm:",
         );
@@ -46,7 +47,7 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
-      case "single":
+      case "3":
         console.log("Enter username of user to reset:");
         process.stdin.once("data", async (username) => {
           const trimmedUsername = username.trim();
@@ -61,6 +62,20 @@ async function main() {
             }
             process.stdin.pause(); // Stop listening for input after handling this case
           });
+        });
+        break;
+      case "4":
+        console.log(
+          "Are you sure you want to delete ALL non-consenting VG2 users? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.trim().toLowerCase() === "yes") {
+            console.log("Resetting all users...");
+            await deleteNonConsentingVG2Users();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
     }
@@ -145,9 +160,7 @@ async function resetUsersAndShopItems() {
         const gemstonesToAdd = abilitiesRemoved * 2;
         let goldFromShopItems = 0;
         for (const shopItem of user.inventory) {
-          if (shopItem.shopItem) {
-            goldFromShopItems += shopItem.price;
-          }
+          goldFromShopItems += shopItem.price;
         }
 
         await db.user.update({
@@ -183,7 +196,7 @@ async function resetUsersAndShopItems() {
       }
     });
     console.info(
-      "All users have been reset. Users are not set to NEW. Only Gemstones, passives, shopitems and abilities have been reset.",
+      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
     );
   } catch (error) {
     console.error("Error: ", error);
@@ -236,6 +249,63 @@ async function resetSingleUser(username) {
     console.info(`User with username "${username}" has been reset.`);
   } catch (error) {
     console.error(`Error resetting user with username "${username}": `, error);
+  }
+}
+
+async function deleteNonConsentingVG2Users() {
+  try {
+    await prisma.$transaction(async (db) => {
+      await db.user.deleteMany({
+        where: {
+          AND: [
+            { consentedToArchive: false },
+            { role: "USER" },
+            {
+              schoolClass: [
+                "Class_2IT1",
+                "Class_2IT2",
+                "Class_2IT3",
+                "Class_2MP1",
+              ],
+            },
+          ],
+        },
+      });
+
+      await db.user.updateMany({
+        where: {
+          AND: [
+            { consentedToArchive: true },
+            {
+              role: "USER",
+            },
+            {
+              schoolClass: [
+                "Class_2IT1",
+                "Class_2IT2",
+                "Class_2IT3",
+                "Class_2MP1",
+              ],
+            },
+          ],
+        },
+        data: {
+          mana: 0,
+          role: "ARCHIVED",
+        },
+      });
+
+      await db.user.deleteMany({
+        where: {
+          role: "NEW",
+        },
+      });
+    });
+    console.info(
+      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
+    );
+  } catch (error) {
+    console.error("Error: ", error);
   }
 }
 

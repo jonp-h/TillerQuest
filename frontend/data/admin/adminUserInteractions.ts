@@ -104,6 +104,66 @@ export const adminGetUserInfo = async () => {
   });
   return users;
 };
+
+export const adminGetDungeonInfo = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    return null;
+  }
+
+  const dungeons = await db.guild.findMany({
+    select: {
+      name: true,
+      enemies: {
+        select: {
+          id: true,
+          health: true,
+          enemy: {
+            select: {
+              name: true,
+              attack: true,
+              icon: true,
+              maxHealth: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // const dungeons = await db.guildEnemy.findMany({
+  //   select: {
+  //     id: true,
+  //     health: true,
+  //     enemy: {
+  //       select: {
+  //         name: true,
+  //         attack: true,
+  //         icon: true,
+  //         maxHealth: true,
+  //       },
+  //     },
+  //     guild: {
+  //       select: {
+  //         name: true,
+  //       },
+  //     },
+  //   },
+  // });
+  return dungeons;
+};
+
+export const getAllEnemyTypes = async () => {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") {
+    return null;
+  }
+
+  const enemyTypes = await db.enemy.findMany();
+
+  return enemyTypes;
+};
+
 export const getSpecialStatuses = async () => {
   const session = await auth();
   if (session?.user.role !== "ADMIN") {
