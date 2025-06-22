@@ -63,6 +63,20 @@ async function main() {
           });
         });
         break;
+      case "4":
+        console.log(
+          "Are you sure you want to delete ALL non-consenting VG2 users? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.trim().toLowerCase() === "yes") {
+            console.log("Resetting all users...");
+            await deleteNonConsentingVG2Users();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
+        });
+        break;
     }
   });
 }
@@ -183,7 +197,7 @@ async function resetUsersAndShopItems() {
       }
     });
     console.info(
-      "All users have been reset. Users are not set to NEW. Only Gemstones, passives, shopitems and abilities have been reset.",
+      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
     );
   } catch (error) {
     console.error("Error: ", error);
@@ -236,6 +250,57 @@ async function resetSingleUser(username) {
     console.info(`User with username "${username}" has been reset.`);
   } catch (error) {
     console.error(`Error resetting user with username "${username}": `, error);
+  }
+}
+
+async function deleteNonConsentingVG2Users() {
+  try {
+    await prisma.$transaction(async (db) => {
+      await db.user.deleteMany({
+        where: {
+          AND: [
+            { archiveConsent: false },
+            { role: "USER" },
+            {
+              schoolClass: {
+                in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
+              },
+            },
+          ],
+        },
+      });
+
+      await db.user.updateMany({
+        where: {
+          AND: [
+            { archiveConsent: true },
+            {
+              role: "USER",
+            },
+            {
+              schoolClass: {
+                in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
+              },
+            },
+          ],
+        },
+        data: {
+          mana: 0,
+          role: "ARCHIVED",
+        },
+      });
+
+      await db.user.deleteMany({
+        where: {
+          role: "NEW",
+        },
+      });
+    });
+    console.info(
+      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
+    );
+  } catch (error) {
+    console.error("Error: ", error);
   }
 }
 
