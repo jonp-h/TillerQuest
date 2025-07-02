@@ -20,6 +20,7 @@ export const getDailyMana = async (userId: string) => {
     select: {
       username: true,
       lastMana: true,
+      role: true,
     },
   });
 
@@ -28,6 +29,10 @@ export const getDailyMana = async (userId: string) => {
       `User ${userId} tried to get daily mana, but the user was not found`,
     );
     return "User not found";
+  }
+
+  if (targetUser.role === "NEW" || targetUser.role === "ARCHIVED") {
+    return "You are not allowed to get daily mana.";
   }
 
   if (
