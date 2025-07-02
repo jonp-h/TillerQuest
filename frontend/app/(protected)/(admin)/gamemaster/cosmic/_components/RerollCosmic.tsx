@@ -17,6 +17,8 @@ import React, { useEffect, useState } from "react";
 import { CosmicEvent } from "@prisma/client";
 import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
 import { useRouter } from "next/navigation";
+import DialogButton from "@/components/DialogButton";
+import { toast } from "react-toastify";
 
 export default function RerollCosmic({
   cosmicEvents,
@@ -48,6 +50,7 @@ export default function RerollCosmic({
 
   const handleSetSelectedCosmic = async (name: string) => {
     await setSelectedCosmic(name).then(() => {
+      toast.success(`Successfully set ${name} as daily cosmic`);
       router.refresh();
     });
   };
@@ -98,7 +101,22 @@ export default function RerollCosmic({
                   : "This event requires manual triggering"}
               </Typography>
               <div className="flex gap-5">
-                <Button
+                <DialogButton
+                  buttonText="Select cosmic"
+                  dialogTitle="Confirm Selection"
+                  dialogContent={
+                    selectedCosmicEvent
+                      ? "Are you sure you want to select this cosmic event? This will replace the currently selected cosmic event."
+                      : "Are you sure you want to select this cosmic event? "
+                  }
+                  dialogFunction={() =>
+                    handleSetSelectedCosmic(recommendedCosmicEvent?.name)
+                  }
+                  buttonVariant="contained"
+                  agreeText="Set as daily cosmic"
+                  disagreeText="Cancel"
+                />
+                {/* <Button
                   className="w-30"
                   variant="contained"
                   onClick={() =>
@@ -106,7 +124,7 @@ export default function RerollCosmic({
                   }
                 >
                   Select cosmic
-                </Button>
+                </Button> */}
                 <Button
                   variant="contained"
                   color="error"

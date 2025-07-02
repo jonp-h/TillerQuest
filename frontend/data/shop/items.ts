@@ -22,7 +22,7 @@ export const getAllShopItems = async () => {
 export const purchaseItem = async (userId: string, itemId: number) => {
   const session = await auth();
   if (!session || userId !== session?.user.id) {
-    return "Unauthorized";
+    return new Error("Unauthorized");
   }
 
   const user = await db.user.findUnique({
@@ -37,44 +37,49 @@ export const purchaseItem = async (userId: string, itemId: number) => {
   });
 
   if (!user) {
-    return "Something went wrong";
+    throw new Error("Something went wrong");
   }
 
   const item = await db.shopItem.findUnique({ where: { id: itemId } });
 
   if (!item) {
-    return "Something went wrong";
+    throw new Error("Something went wrong");
   }
 
   if (user.gold < item.price) {
-    return "Not enough gold";
+    throw new Error("Not enough gold");
   }
 
   if (item.classReq && item.classReq !== user.class) {
-    return "Class requirement not met";
+    throw new Error("Class requirement not met");
   }
 
   if (item.levelReq && item.levelReq > user.level) {
-    return "Level requirement not met";
+    throw new Error("Level requirement not met");
   }
 
   if (item.specialReq) {
     if (!user.special.includes(item.specialReq)) {
-      return "Special requirement not met";
+      throw new Error("Special requirement not met");
     }
   }
 
-  await db.user.update({
-    where: { id: userId },
-    data: {
-      gold: user.gold - item.price,
-      inventory: {
-        connect: { id: itemId },
+  try {
+    await db.user.update({
+      where: { id: userId },
+      data: {
+        gold: user.gold - item.price,
+        inventory: {
+          connect: { id: itemId },
+        },
       },
-    },
-  });
+    });
 
-  return "Sucessfully bought " + item.name;
+    return "Sucessfully bought " + item.name;
+  } catch (error) {
+    logger.error("Error purchasing item: " + error);
+    throw new Error("Something went wrong");
+  }
 };
 
 export const equipItem = async (userId: string, itemId: number) => {

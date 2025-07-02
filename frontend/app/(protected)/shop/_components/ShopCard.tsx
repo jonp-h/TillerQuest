@@ -1,4 +1,5 @@
 "use client";
+import DialogButton from "@/components/DialogButton";
 import { equipItem, purchaseItem } from "@/data/shop/items";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
@@ -6,6 +7,7 @@ import { Class, ShopItem } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "react-toastify";
 
 function ShopCard({
   user,
@@ -21,16 +23,45 @@ function ShopCard({
   };
   item: ShopItem;
 }) {
-  const [feedback, setFeedback] = React.useState<string>("");
   const router = useRouter();
 
   const handlePurchase = async (itemId: number) => {
-    setFeedback(await purchaseItem(user.id, itemId));
+    toast.promise(purchaseItem(user.id, itemId), {
+      pending: "Processing purchase...",
+      success: {
+        render({ data }) {
+          return data.toString() as string;
+        },
+      },
+      error: {
+        render({ data }) {
+          if (data instanceof Error) {
+            return data.message;
+          }
+          return "An error occurred while purchasing the item.";
+        },
+      },
+    });
     router.refresh();
   };
 
   const handleEquip = async (itemId: number) => {
-    setFeedback(await equipItem(user.id, itemId));
+    toast.promise(equipItem(user.id, itemId), {
+      pending: "Equipping item...",
+      success: {
+        render({ data }) {
+          return data.toString() as string;
+        },
+      },
+      error: {
+        render({ data }) {
+          if (data instanceof Error) {
+            return data.message;
+          }
+          return "An error occurred while equipping the item.";
+        },
+      },
+    });
     router.refresh();
   };
 
@@ -100,22 +131,29 @@ function ShopCard({
             {user.title === item.name ? "Equipped" : "Equip title"}
           </Button>
         ) : (
-          <Button
-            variant="text"
-            color="primary"
-            disabled={user.inventory.includes(item)}
-            onClick={() => handlePurchase(item.id)}
-          >
-            <Typography variant="body1" className="text-xl" color="gold">
-              Buy for {item.price}
-              <Circle />
-            </Typography>
-          </Button>
-        )}
-        {feedback && (
-          <Typography variant="subtitle2" color="info">
-            {feedback}
-          </Typography>
+          <DialogButton
+            buttonText={
+              <Typography variant="body1" className="text-xl" color="gold">
+                Buy for {item.price}
+                <Circle />
+              </Typography>
+            }
+            dialogTitle={`Buy ${item.name}`}
+            dialogContent={
+              <Typography variant="body1" component={"span"}>
+                Are you sure you want to buy the {item.type.toLowerCase()}{" "}
+                {item.name} for{" "}
+                <Typography color="gold" component="span">
+                  {item.price} <Circle />
+                </Typography>
+                ?
+              </Typography>
+            }
+            agreeText="Buy"
+            disagreeText="Cancel"
+            buttonVariant="text"
+            dialogFunction={() => handlePurchase(item.id)}
+          />
         )}
       </div>
     </Paper>

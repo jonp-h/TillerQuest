@@ -5,7 +5,6 @@ import { UserProfile } from "@/types/users";
 import { ArrowBack } from "@mui/icons-material";
 import {
   TextField,
-  Button,
   Switch,
   Typography,
   Paper,
@@ -15,6 +14,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import DialogButton from "@/components/DialogButton";
 
 function ProfileSettingsForm({ user }: { user: UserProfile }) {
   const [username, setUsername] = useState(user.username);
@@ -133,14 +133,16 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
             available to validated students and game masters.
           </Typography>
         </Paper>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleUpdate()}
+        <DialogButton
+          buttonText="Update Profile"
+          dialogTitle="Update Profile"
+          dialogContent="Are you sure you want to update your profile?"
+          dialogFunction={handleUpdate}
+          buttonVariant="contained"
           disabled={loading}
-        >
-          Update
-        </Button>
+          agreeText="Update"
+          disagreeText="Cancel"
+        />
       </Paper>
       <Typography variant="caption" color="warning" className="text-center">
         Account deletion is possible at any time. By default all accounts and

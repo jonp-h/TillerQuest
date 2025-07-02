@@ -16,6 +16,7 @@ import DiceBox from "@3d-dice/dice-box-threejs";
 import { useRouter } from "next/navigation";
 import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
+import DialogButton from "@/components/DialogButton";
 
 export default function DeathCard({ user }: { user: User }) {
   const [number, setNumber] = React.useState<number | null>(0);
@@ -106,13 +107,15 @@ export default function DeathCard({ user }: { user: User }) {
             >
               {diceBox ? "Death Save" : "Initialize Dice"}
             </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleRessurect("free")}
-            >
-              Free resurrection
-            </Button>
+            <DialogButton
+              buttonText="Free Resurrection"
+              dialogTitle="Free Resurrection"
+              dialogContent="Are you sure you want to resurrect this user for free? This will not penalize the guild or user in any way."
+              agreeText="Resurrect"
+              disagreeText="Cancel"
+              buttonVariant="outlined"
+              dialogFunction={() => handleRessurect("free")}
+            />
             <Button
               variant="contained"
               color={number === 1 ? "error" : "warning"}

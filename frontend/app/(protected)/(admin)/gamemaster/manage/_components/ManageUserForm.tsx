@@ -1,4 +1,5 @@
 "use client";
+import DialogButton from "@/components/DialogButton";
 import {
   adminUpdateUser,
   updateRole,
@@ -32,6 +33,42 @@ function ManageUserForm(user: {
   const [lastname, setLastname] = useState<string | null>(user.lastname);
 
   const router = useRouter();
+
+  const handleChange = async () => {
+    // Check if any of the values have changed
+
+    if (
+      name !== user.name ||
+      username !== user.username ||
+      lastname !== user.lastname
+    ) {
+      await toast.promise(
+        adminUpdateUser(user.id, special, name, username, lastname),
+        {
+          pending: "Updating user...",
+          success: "User updated",
+          error: {
+            render({ data }) {
+              return data instanceof Error
+                ? `Error: ${data.message}`
+                : "An error occurred while updating the user.";
+            },
+          },
+        },
+      );
+      // adminUpdateUser(user.id, special, name, username, lastname);
+      // toast.success("User updated");
+    } else {
+      adminUpdateUser(user.id, special);
+      toast.success("User updated");
+    }
+    if (role !== user.role) {
+      updateRole(user.id, role);
+      toast.success("User role updated");
+    }
+
+    router.refresh();
+  };
 
   return (
     <>
@@ -77,31 +114,15 @@ function ManageUserForm(user: {
           <MenuItem value={"NEW"}>NEW</MenuItem>
         </Select>
       </FormControl>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          // Check if any of the values have changed
-          if (
-            name !== user.name ||
-            username !== user.username ||
-            lastname !== user.lastname
-          ) {
-            adminUpdateUser(user.id, special, name, username, lastname);
-            toast.success("User updated");
-          } else {
-            adminUpdateUser(user.id, special);
-            toast.success("User updated");
-          }
-          if (role !== user.role) {
-            updateRole(user.id, role);
-            toast.success("User role updated");
-          }
-          router.refresh();
-        }}
-      >
-        Update
-      </Button>
+      <DialogButton
+        buttonText="Update"
+        dialogTitle={"Update user: " + user.name + " " + user.lastname}
+        dialogContent={"Are you sure you want to update this user?"}
+        agreeText="Update"
+        disagreeText="Cancel"
+        buttonVariant="contained"
+        dialogFunction={handleChange}
+      />
       <Link
         href={`/profile/${user.username}`}
         target="_blank"

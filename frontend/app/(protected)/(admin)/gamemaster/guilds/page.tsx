@@ -15,7 +15,8 @@ async function Guilds() {
         Manage Guilds
       </Typography>
       <Typography variant="h6" align="center" color="lightgreen">
-        No guilds can have the same name. Max max guildmembers are 5.
+        No guilds can have the same name. Recommended number of guildmembers are
+        5.
       </Typography>
 
       {guilds?.map((guild) => (

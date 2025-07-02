@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Tabs, Tab, Typography, Button } from "@mui/material";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { ReactNode, useState } from "react";
 import TypeQuest from "./TypeQuest";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { finishGame, initializeGame } from "@/data/games/game";
 import { toast } from "react-toastify";
 import { Circle, Stadium } from "@mui/icons-material";
 import { User } from "@prisma/client";
+import DialogButton from "@/components/DialogButton";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -146,14 +147,26 @@ function GameTabs({ user }: { user: User }) {
             <Typography variant="h6" color="info" className="pb-4">
               You have {user.arenaTokens} <Stadium className="mx-1" />
             </Typography>
-            <Button
-              variant="contained"
-              size="large"
+            <DialogButton
+              buttonText={
+                <Typography>
+                  Buy one round (1 <Stadium className="mx-1" />)
+                </Typography>
+              }
+              dialogTitle={tab}
+              dialogContent={
+                <Typography>
+                  Are you sure you want to spend 1 <Stadium className="mx-1" />{" "}
+                  to buy a round of {tab}? The token is lost if you leave the
+                  page.
+                </Typography>
+              }
+              agreeText="Buy one round"
+              disagreeText="Cancel"
+              buttonVariant="contained"
               disabled={user.arenaTokens < 1 || gameEnabled}
-              onClick={() => handleInitializeGame(tab)}
-            >
-              Buy one round (1 <Stadium className="mx-1" />)
-            </Button>
+              dialogFunction={() => handleInitializeGame(tab)}
+            />
           </>
         )}
         <Typography variant="h6" color="info">

@@ -194,19 +194,26 @@ export const adminUpdateUser = async (
   if (session?.user.role !== "ADMIN") {
     throw new Error("Not authorized");
   }
-
-  const user = await db.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      name,
-      username,
-      lastname,
-      special,
-    },
-  });
-  return user;
+  try {
+    const user = await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name,
+        username,
+        lastname,
+        special,
+      },
+    });
+    return user;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.code === "P2002" && error.meta?.target?.includes("username")) {
+      throw new Error("Username already exists.");
+    }
+    throw error;
+  }
 };
 
 export const changeUserRole = async (userId: string, role: string) => {

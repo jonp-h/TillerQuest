@@ -4,7 +4,6 @@ import {
   Checkbox,
   TextField,
   CircularProgress,
-  Button,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -14,6 +13,8 @@ import {
   updateGuildmembers,
   updateGuildname,
 } from "@/data/guilds/updateGuilds";
+import DialogButton from "@/components/DialogButton";
+import { toast } from "react-toastify";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -45,6 +46,17 @@ function GuildForm({
     }[]
   >(guildMembers);
   const [newGuildName, setNewGuildName] = React.useState(guildName);
+
+  const handleChange = async () => {
+    await updateGuildmembers(guildName, selectedUsers);
+    if (newGuildName !== guildName) {
+      await updateGuildname(guildName, newGuildName);
+    }
+    toast.success(`Successfully updated guild ${guildName}`);
+    // reload the page to reflect the changes
+    // ensure the page is reloaded to reflect the changes
+    window.location.reload();
+  };
 
   return (
     <>
@@ -101,7 +113,17 @@ function GuildForm({
           />
         )}
       />
-      <Button
+      <DialogButton
+        buttonText="Update"
+        dialogTitle="Update Guild"
+        dialogFunction={handleChange}
+        dialogContent="Any changes to the guild name or members will be saved. Added guildmembers will be removed from other guilds.         No guilds can have the same name. Recommended number of guildmembers are
+        5."
+        buttonVariant="text"
+        agreeText="Update"
+        disagreeText="Cancel"
+      />
+      {/* <Button
         onClick={async () => {
           await updateGuildmembers(guildName, selectedUsers);
           if (newGuildName !== guildName) {
@@ -112,7 +134,7 @@ function GuildForm({
         }}
       >
         Update
-      </Button>
+      </Button> */}
     </>
   );
 }
