@@ -15,6 +15,7 @@ import {
 } from "@/data/guilds/updateGuilds";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -47,15 +48,35 @@ function GuildForm({
   >(guildMembers);
   const [newGuildName, setNewGuildName] = React.useState(guildName);
 
+  const router = useRouter();
+
   const handleChange = async () => {
-    await updateGuildmembers(guildName, selectedUsers);
+    toast.promise(updateGuildmembers(guildName, selectedUsers), {
+      pending: `Updating guild ${guildName}...`,
+      success: `Successfully updated guild members for ${guildName}`,
+      error: {
+        render({ data }) {
+          return data instanceof Error
+            ? data.message
+            : "Something went wrong while updating the guild members.";
+        },
+      },
+    });
     if (newGuildName !== guildName) {
-      await updateGuildname(guildName, newGuildName);
+      toast.promise(updateGuildname(guildName, newGuildName), {
+        pending: `Updating guild ${guildName}...`,
+        success: `Successfully updated guild name to ${newGuildName}`,
+        error: {
+          render({ data }) {
+            return data instanceof Error
+              ? data.message
+              : "Something went wrong while updating the guild name.";
+          },
+        },
+      });
     }
-    toast.success(`Successfully updated guild ${guildName}`);
-    // reload the page to reflect the changes
     // ensure the page is reloaded to reflect the changes
-    window.location.reload();
+    router.refresh();
   };
 
   return (

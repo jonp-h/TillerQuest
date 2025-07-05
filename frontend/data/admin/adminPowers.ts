@@ -9,21 +9,23 @@ import {
 } from "../validators/validators";
 import { logger } from "@/lib/logger";
 import { User } from "@prisma/client";
-import { auth } from "@/auth";
 import { sendDiscordMessage } from "@/lib/discord";
 import { addLog } from "../log/addLog";
+import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { ErrorMessage } from "@/lib/error";
 
 export const healUsers = async (
   users: { id: string }[],
   value: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
+    if (value <= 0) {
+      throw new ErrorMessage("Healing value must be greater than 0");
+    }
+
     return await db.$transaction(async (db) => {
       const healedUsers: string[] = [];
       await Promise.all(
@@ -75,12 +77,19 @@ export const healUsers = async (
       return "Healing successful. The dead are not healed";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
     logger.error("A game master failed to heal users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -90,12 +99,13 @@ export const damageUsers = async (
   value: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
+    if (value <= 0) {
+      throw new ErrorMessage("Damage value must be greater than 0");
+    }
+
     return await db.$transaction(async (db) => {
       const damagedUsers: string[] = [];
       await Promise.all(
@@ -143,12 +153,19 @@ export const damageUsers = async (
       return "Damage successful";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
     logger.error("A game master failed to heal users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -165,12 +182,9 @@ export const giveXpToUsers = async (
   xp: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
@@ -185,12 +199,15 @@ export const giveXpToUsers = async (
       return "Successfully gave XP to users";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      throw error;
+    }
+
     logger.error("A game master failed to give XP to users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -201,12 +218,9 @@ export const giveManaToUsers = async (
   mana: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
@@ -242,12 +256,15 @@ export const giveManaToUsers = async (
       return "Mana given successfully";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      throw error;
+    }
+
     logger.error("A game master failed to give mana to users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -258,12 +275,9 @@ export const giveArenatokenToUsers = async (
   arenatoken: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
@@ -291,12 +305,15 @@ export const giveArenatokenToUsers = async (
       return "Arenatoken given successfully";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      throw error;
+    }
+
     logger.error("A game master failed to give arenatoken to users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -307,12 +324,9 @@ export const giveGoldToUsers = async (
   gold: number,
   notify: boolean,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
@@ -336,12 +350,15 @@ export const giveGoldToUsers = async (
       return "Gold given successfully";
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin action attempt: " + error.message);
+      return "Unauthorized action";
+    }
+
     logger.error("A game master failed to give gold to users: " + error);
-    return (
-      "Something went wrong at " +
-      Date.now().toLocaleString("no-NO") +
-      " with error: " +
-      error
+    throw new Error(
+      "Something went wrong. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };

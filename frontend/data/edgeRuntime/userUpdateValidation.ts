@@ -6,8 +6,10 @@ import {
   newUserSchema,
   updateUserSchema,
 } from "@/lib/userValidation";
-import { getGuildmemberCount } from "../guilds/getGuilds";
+import { getGuildmemberCount } from "../edgeRuntime/edgeFunctions";
 import { db } from "@/lib/db";
+
+// Required to run in the edge runtime
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
@@ -22,22 +24,22 @@ export const validateUserCreation = async (id: string, data: any) => {
     return validatedData.error.errors.map((e) => e.message).join(", ");
   }
 
-  //TODO: use guild and schoolclass restrictions?
-  // // validate if the user guild has the same schoolclass
-  // const guildSchoolClass = await db.guild.findFirst({
-  //   where: {
-  //     name: {
-  //       equals: validatedData.data.guild,
-  //     },
-  //   },
-  //   select: {
-  //     schoolClass: true,
-  //   },
-  // });
+  //TODO: consider the need for guild and schoolclass restrictions?
+  // validate if the user guild has the same schoolclass
+  const guildSchoolClass = await db.guild.findFirst({
+    where: {
+      name: {
+        equals: validatedData.data.guild,
+      },
+    },
+    select: {
+      schoolClass: true,
+    },
+  });
 
-  // if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
-  //   return "The chosen guild is not available for your school class";
-  // }
+  if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
+    return "The chosen guild is not available for your school class";
+  }
 
   // validate if the user guild is full
   const guildCount = await getGuildmemberCount(id, validatedData.data.guild);

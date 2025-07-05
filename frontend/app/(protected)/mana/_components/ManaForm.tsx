@@ -5,6 +5,7 @@ import { Button, Tooltip, Typography } from "@mui/material";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface ManaFormProps {
   user: User;
@@ -13,7 +14,6 @@ interface ManaFormProps {
 }
 
 function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
-  const [feedback, setFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [location, setLocation] = useState<null | {
     latitude: number;
@@ -58,33 +58,45 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       user.lastMana.toISOString().slice(0, 10) ===
       currentDate.toISOString().slice(0, 10)
     ) {
-      setFeedback(
+      toast.error(
         "But while you sense the magic around you - you feel it is not yet time to attune to it.",
       );
       setLoading(false);
       return;
     } else if (isWeekend) {
-      setFeedback(
+      toast.error(
         "But the magic seems dormant today, perhaps you should try again on a different day.",
       );
       setLoading(false);
       return;
     } else if (!correctLocation) {
-      setFeedback(
+      toast.error(
         "But you feel no magic around you. You must be in the wrong place. Make sure location services are enabled.",
       );
       setLoading(false);
       return;
     } else {
       try {
-        await getDailyMana(user.id);
-        setFeedback(
-          "And as you focus, you feel your mana restoring. You also find a token in your pocket.",
-        );
+        toast.promise(getDailyMana(user.id), {
+          pending: "Attuning to the surrounding magic...",
+          success: {
+            render({ data }) {
+              return data;
+            },
+          },
+          error: {
+            render({ data }) {
+              return data instanceof Error
+                ? data.message
+                : "Something went wrong while attuning to the magic.";
+            },
+          },
+        });
+
         setLoading(false);
         router.refresh();
       } catch {
-        setFeedback(
+        toast.error(
           "But attuning to the magic fails, you feel no connection - and you feel the need to tell an adult.",
         );
         setLoading(false);
@@ -94,11 +106,6 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
 
   return (
     <div>
-      {feedback && (
-        <Typography variant="h5" align="center" color="info">
-          {feedback}
-        </Typography>
-      )}
       {!location && (
         <Typography variant="h5" align="center" color="info">
           Loading location...

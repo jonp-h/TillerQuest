@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -14,15 +14,9 @@ import { logger } from "@/lib/logger";
  * A promise that resolves to an array of root abilities with their hierarchical children, or null if an error occurs.
  */
 export const getAbilityHierarchy = async () => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     // gets all abilities that have no parents, and their children
     const roots = await db.ability.findMany({
       where: {
@@ -67,6 +61,11 @@ export const getAbilityHierarchy = async () => {
 
     return roots;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to ability hierarchy: " + error.message);
+      return null;
+    }
+
     logger.error("Failed to get ability hierarchy:" + error);
     return null;
   }
@@ -81,15 +80,9 @@ export const getAbilityHierarchy = async () => {
  * @throws Will log an error message if the retrieval fails.
  */
 export const getUserAbilities = async (userId: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const abilities = await db.userAbility.findMany({
       where: {
         userId,
@@ -104,7 +97,12 @@ export const getUserAbilities = async (userId: string) => {
       },
     });
     return abilities;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to user abilities: " + error.message);
+      return null;
+    }
+
     logger.error("Failed to get user abilities for user: " + userId);
     return null;
   }
@@ -119,15 +117,9 @@ export const getUserAbilities = async (userId: string) => {
  * @throws Will log an error message if the retrieval fails.
  */
 export const getUserProfileAbilities = async (userId: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const abilities = await db.userAbility.findMany({
       where: {
         userId,
@@ -155,7 +147,13 @@ export const getUserProfileAbilities = async (userId: string) => {
     });
 
     return abilities;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access to user profile abilities: " + error.message,
+      );
+      return null;
+    }
     logger.error("Failed to get user abilities for user: " + userId);
     return null;
   }
@@ -168,22 +166,20 @@ export const getUserProfileAbilities = async (userId: string) => {
  * @returns {Promise<object | null>} A promise that resolves to the ability object if found, or null if not found or an error occurs.
  */
 export const getAbilityByName = async (abilityName: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const ability = await db.ability.findFirst({
       where: {
         name: abilityName,
       },
     });
     return ability;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to ability by name: " + error.message);
+      return null;
+    }
     logger.error("Failed to get ability by name: " + abilityName);
     return null;
   }
@@ -200,15 +196,9 @@ export const checkIfUserOwnsAbility = async (
   userId: string,
   abilityName: string,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const ability = await db.userAbility.findFirst({
       where: {
         userId,
@@ -216,21 +206,21 @@ export const checkIfUserOwnsAbility = async (
       },
     });
     return !!ability;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access to check user ability ownership: " + error.message,
+      );
+      return false;
+    }
     return false;
   }
 };
 
 export const getDungeonAbilities = async () => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const abilities = await db.ability.findMany({
       where: {
         isDungeon: true, // Filter abilities where isDungeon is true
@@ -243,22 +233,20 @@ export const getDungeonAbilities = async () => {
       },
     });
     return abilities;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to dungeon abilities: " + error.message);
+      return null;
+    }
     logger.error("Failed to get Dungeon Abilities");
     return null;
   }
 };
 
 export const getUserDungeonAbilities = async (userId: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const userDungeonAbilities = await db.userAbility.findMany({
       where: {
         userId,
@@ -273,6 +261,12 @@ export const getUserDungeonAbilities = async (userId: string) => {
 
     return userDungeonAbilities;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access to user dungeon abilities: " + error.message,
+      );
+      return null;
+    }
     logger.error("Failed to get Dungeon Abilities", error);
     return null;
   }

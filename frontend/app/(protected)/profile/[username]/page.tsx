@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
 import {
   Chip,
@@ -38,7 +38,7 @@ export default async function ProfilePage({
 
   const session = await auth();
 
-  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
 
   const userAbilities = await getUserProfileAbilities(user.id);
   const passives = await getUserPassives(user.id);

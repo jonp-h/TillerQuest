@@ -19,7 +19,7 @@ import { checkNewUserSecret } from "@/data/validators/secretValidation";
 import { SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { validateUserCreation } from "@/data/validators/userUpdateValidation";
+import { validateUserCreation } from "@/data/edgeRuntime/userUpdateValidation";
 
 export default function CreateUserForm() {
   // FIXME: switch to unstable_update in auth.ts when unstable_update is released
@@ -41,10 +41,11 @@ export default function CreateUserForm() {
     if (!data?.user.id) {
       return;
     }
+    // frontend validation
     const isCorrectSecret = await checkNewUserSecret(data.user.id, secret);
 
     if (!isCorrectSecret) {
-      setErrorMessage("Secret code is incorrect");
+      setErrorMessage("Invalid secret code");
       return;
     }
 
@@ -59,6 +60,7 @@ export default function CreateUserForm() {
     };
 
     try {
+      // frontend validation
       const validatedData = await validateUserCreation(
         data.user.id,
         formValues,
@@ -70,6 +72,7 @@ export default function CreateUserForm() {
         return;
       }
 
+      //TODO: consider sending less in the auth.js auth update, and separating into db queries first then updating if successful with auth.js update
       // update the role from NEW to USER
       // add initial username, class and class image
       // sends to auth.ts, which updates the token and the db
@@ -78,7 +81,7 @@ export default function CreateUserForm() {
         username: validatedData.username,
         name: validatedData.name,
         lastname: validatedData.lastname,
-        class: validatedData.playerClass.slice(0, -1),
+        class: validatedData.playerClass,
         image: validatedData.playerClass,
         guild: validatedData.guild,
         schoolClass: validatedData.schoolClass,
@@ -192,6 +195,8 @@ export default function CreateUserForm() {
               organization, and banishment from the service.
             </Typography>
           </AccordionDetails>
+        </Accordion>
+        <Accordion sx={{ width: "40%" }}>
           <AccordionSummary
             expandIcon={<ArrowDownward />}
             aria-controls="panel2-content"

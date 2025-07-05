@@ -1,16 +1,14 @@
 "use server";
 
-import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { getAllUsers } from "./adminUserInteractions";
+import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { logger } from "@/lib/logger";
+import { ErrorMessage } from "@/lib/error";
 
 export const randomCosmic = async () => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
     // const now = new Date();
     // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
@@ -85,18 +83,33 @@ export const randomCosmic = async () => {
       return cosmic;
     });
   } catch (error) {
-    console.error("Unable to get random cosmic:", error);
-    throw new Error("Unable to get random cosmic");
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to get random cosmic");
+      throw error;
+    }
+
+    logger.error("Unable to get random cosmic: ", error);
+    throw new Error(
+      "Unable to get random cosmic. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const setSelectedCosmic = async (cosmicName: string) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    const session = await checkAdminAuth();
+
+    const dailyCosmic = await db.cosmicEvent.findFirst({
+      where: {
+        name: cosmicName,
+        selected: true,
+      },
+    });
+    if (dailyCosmic) {
+      throw new ErrorMessage("Cosmic event already selected");
+    }
+
     return await db.$transaction(async (db) => {
       // Unselect all events
       await db.cosmicEvent.updateMany({
@@ -215,21 +228,43 @@ export const setSelectedCosmic = async (cosmicName: string) => {
       return cosmic;
     });
   } catch (error) {
-    console.error(error);
-    throw new Error("Unable to select cosmic");
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to select cosmic");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Unable to select cosmic: ", error);
+    throw new Error(
+      "Unable to select cosmic. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getAllCosmicEvents = async () => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
+  try {
+    await checkAdminAuth();
 
-  const cosmicEvents = await db.cosmicEvent.findMany({
-    orderBy: {
-      selected: "desc",
-    },
-  });
-  return cosmicEvents;
+    const cosmicEvents = await db.cosmicEvent.findMany({
+      orderBy: {
+        selected: "desc",
+      },
+    });
+    return cosmicEvents;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to get cosmic events");
+      throw error;
+    }
+
+    logger.error("Unable to get cosmic events: ", error);
+    throw new Error(
+      "Unable to get cosmic events. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
 };

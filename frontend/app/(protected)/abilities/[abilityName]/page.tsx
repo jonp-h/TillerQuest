@@ -4,7 +4,7 @@ import {
   checkIfUserOwnsAbility,
   getAbilityByName,
 } from "@/data/abilities/getters/getAbilities";
-import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserById } from "@/data/user/getUser";
 import {
   Paper,
@@ -66,7 +66,7 @@ export default async function AbilityNamePage({
     ));
   }
 
-  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
 
   // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
   let targetHasPassive = false;

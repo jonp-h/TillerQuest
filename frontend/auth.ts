@@ -3,15 +3,15 @@ import { db } from "./lib/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config";
 import { Class, UserRole } from "@prisma/client";
-import { getUserAuthById } from "./data/user/getUser";
-import { updateUser } from "./data/user/updateUser";
+import { getUserAuthById } from "./data/edgeRuntime/edgeFunctions";
+import { updateUser } from "./data/edgeRuntime/edgeFunctions";
 
 export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   ...authConfig,
   callbacks: {
@@ -54,7 +54,6 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
           guildName: session.guild,
           schoolClass: session.schoolClass,
           publicHighscore: session.publicHighscore,
-          lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
         });
       }
 

@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
@@ -10,18 +8,18 @@ import {
   experienceAndLevelValidator,
   goldValidator,
 } from "../validators/validators";
-import { Ability, Enemy, Guild } from "@prisma/client";
+import { Ability } from "@prisma/client";
 import { GuildEnemyWithEnemy } from "@/app/(protected)/dungeons/_components/interfaces";
+import {
+  AuthorizationError,
+  checkActiveUserAuth,
+  checkUserIdAndActiveAuth,
+} from "@/lib/authUtils";
 
 export const getEnemies = async (userId: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
   try {
+    await checkActiveUserAuth();
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -71,7 +69,18 @@ export const getEnemies = async (userId: string) => {
       maxHealth: enemy.enemy.maxHealth,
     })) as GuildEnemyWithEnemy[];
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to get enemies for user: " + userId,
+      );
+      throw error;
+    }
+
     logger.error("Error fetching enemy: " + error);
+    throw new Error(
+      "Error fetching enemy. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
@@ -107,15 +116,9 @@ export const getEnemies = async (userId: string) => {
 // };
 
 export async function getUserTurns(userId: string) {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const turns = await prisma.user.findFirst({
       where: { id: userId },
       select: {
@@ -124,6 +127,11 @@ export async function getUserTurns(userId: string) {
     });
     return turns || { turns: 0 };
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get user turns: " + userId);
+      throw error;
+    }
+
     logger.error("Error checking turn: " + error);
     return { turns: 0 };
   }
@@ -134,17 +142,12 @@ export async function selectDungeonAbility(
   ability: Ability,
   targetEnemyId: string | null,
 ) {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
   try {
+    await checkUserIdAndActiveAuth(userId);
+
     return await prisma.$transaction(async (db) => {
       const user = await prisma.user.findUnique({
-        where: { id: session?.user.id },
+        where: { id: userId },
         select: {
           id: true,
           username: true,
@@ -191,7 +194,7 @@ export async function selectDungeonAbility(
       await damageEnemy(targetEnemyId, diceResult.total);
 
       await db.user.update({
-        where: { id: session.user.id },
+        where: { id: userId },
         data: { turns: { decrement: 1 } },
       });
 
@@ -210,6 +213,13 @@ export async function selectDungeonAbility(
       };
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to use dungeon ability: " + userId,
+      );
+      throw error;
+    }
+
     logger.error("Error finishing up turn: " + error);
     return (
       "Something went wrong. Please inform a game master of this timestamp: " +
@@ -217,7 +227,7 @@ export async function selectDungeonAbility(
     );
   }
 }
-
+//TODO: should be moved to lib. Named Roll or rollDice, depending on project availability
 const rollDice = (diceNotation: string) => {
   const roll = new DiceRoll(diceNotation);
   // @ts-expect-error - the package's export function is not typed correctly
@@ -234,91 +244,63 @@ const rollDice = (diceNotation: string) => {
 };
 
 async function damageEnemy(targetEnemyId: string, diceResult: number) {
-  try {
-    return await prisma.$transaction(async (db) => {
-      console.log("Dealing damage to enemy: " + targetEnemyId);
-      const enemy = await db.guildEnemy.update({
-        where: {
-          id: targetEnemyId,
-        },
-        data: { health: { decrement: diceResult } },
-        select: {
-          health: true,
-          guildName: true,
-        },
-      });
-
-      // rewards are only given when the enemy is killed
-      if (enemy.health <= 0) {
-        rewardUsers(targetEnemyId, enemy.guildName);
-      }
+  return await prisma.$transaction(async (db) => {
+    console.log("Dealing damage to enemy: " + targetEnemyId);
+    const enemy = await db.guildEnemy.update({
+      where: {
+        id: targetEnemyId,
+      },
+      data: { health: { decrement: diceResult } },
+      select: {
+        health: true,
+        guildName: true,
+      },
     });
-  } catch (error) {
-    logger.error("Error using damage ability in dungeons: " + error);
-    return (
-      "Something went wrong. Please inform a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
-    );
-  }
+
+    // rewards are only given when the enemy is killed
+    if (enemy.health <= 0) {
+      await rewardUsers(targetEnemyId, enemy.guildName);
+    }
+  });
 }
 
 async function rewardUsers(enemyId: string, guild: string) {
-  const session = await auth();
-
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-  try {
-    return await prisma.$transaction(async (db) => {
-      const users = await db.user.findMany({
-        where: {
-          guildName: guild,
-        },
-      });
-      const rewards = await db.guildEnemy.findFirst({
-        where: { id: enemyId },
-        select: {
-          enemy: {
-            select: {
-              name: true,
-              xp: true,
-              gold: true,
-            },
+  return await prisma.$transaction(async (db) => {
+    const users = await db.user.findMany({
+      where: {
+        guildName: guild,
+      },
+    });
+    const rewards = await db.guildEnemy.findFirst({
+      where: { id: enemyId },
+      select: {
+        enemy: {
+          select: {
+            name: true,
+            xp: true,
+            gold: true,
           },
         },
-      });
-
-      if (!rewards) {
-        logger.error("No rewards found for enemy: " + enemyId);
-        return;
-      }
-
-      for (const user of users) {
-        await experienceAndLevelValidator(db, user, rewards.enemy.xp);
-        const goldToGive = await goldValidator(
-          db,
-          user.id,
-          rewards?.enemy.gold,
-        );
-        await db.user.update({
-          where: { id: user.id },
-          data: { gold: { increment: goldToGive } },
-        });
-        await addLog(
-          db,
-          user.id,
-          `DUNGEON: ${rewards.enemy.name} has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
-        );
-      }
+      },
     });
-  } catch (error) {
-    logger.error("Error rewarding users: " + error);
-    return (
-      "Something went wrong. Please inform a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
-    );
-  }
+
+    if (!rewards) {
+      logger.error("No rewards found for enemy: " + enemyId);
+      return;
+    }
+
+    for (const user of users) {
+      await experienceAndLevelValidator(db, user, rewards.enemy.xp);
+      const goldToGive = await goldValidator(db, user.id, rewards?.enemy.gold);
+      await db.user.update({
+        where: { id: user.id },
+        data: { gold: { increment: goldToGive } },
+      });
+      await addLog(
+        db,
+        user.id,
+        `DUNGEON: ${rewards.enemy.name} has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
+      );
+    }
+  });
 }

@@ -1,16 +1,17 @@
 "use server";
 
-import { auth } from "@/auth";
+import {
+  AuthorizationError,
+  checkActiveUserAuth,
+  checkAdminAuth,
+} from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getAllLogs = async () => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     const logs = await db.log.findMany({
       orderBy: {
         createdAt: "desc",
@@ -27,18 +28,23 @@ export const getAllLogs = async () => {
 
     return logs;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to get all logs");
+      throw error;
+    }
+
     logger.error("Failed to get logs: ", error);
-    return null;
+    throw new Error(
+      "Failed to get logs. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getLogsByUserId = async (userId: string) => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const logs = await db.log.findMany({
       where: {
         userId,
@@ -50,7 +56,15 @@ export const getLogsByUserId = async (userId: string) => {
     });
     return logs;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get logs by user ID");
+      throw error;
+    }
+
     logger.error("Failed to get logs: ", error);
-    return null;
+    throw new Error(
+      "Failed to get logs. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
