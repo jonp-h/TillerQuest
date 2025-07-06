@@ -3,87 +3,87 @@ const guilds = [
     name: "Testers",
   },
   {
-    name: "1IM1-1",
+    name: "No-name-1IM1-1",
     schoolClass: "Class_1IM1",
   },
   {
-    name: "1IM1-2",
+    name: "No-name-1IM1-2",
     schoolClass: "Class_1IM1",
   },
   {
-    name: "1IM1-3",
+    name: "No-name-1IM1-3",
     schoolClass: "Class_1IM1",
   },
   {
-    name: "1IM2-1",
+    name: "No-name-1IM2-1",
     schoolClass: "Class_1IM2",
   },
   {
-    name: "1IM2-2",
+    name: "No-name-1IM2-2",
     schoolClass: "Class_1IM2",
   },
   {
-    name: "1IM2-3",
+    name: "No-name-1IM2-3",
     schoolClass: "Class_1IM2",
   },
   {
-    name: "1IM3-1",
+    name: "No-name-1IM3-1",
     schoolClass: "Class_1IM3",
   },
   {
-    name: "1IM3-2",
+    name: "No-name-1IM3-2",
     schoolClass: "Class_1IM3",
   },
   {
-    name: "1IM3-3",
+    name: "No-name-1IM3-3",
     schoolClass: "Class_1IM3",
   },
   {
-    name: "1IM4-1",
+    name: "No-name-1IM4-1",
     schoolClass: "Class_1IM4",
   },
   {
-    name: "1IM4-2",
+    name: "No-name-1IM4-2",
     schoolClass: "Class_1IM4",
   },
   {
-    name: "1IM4-3",
+    name: "No-name-1IM4-3",
     schoolClass: "Class_1IM4",
   },
   {
-    name: "2IT1-1",
+    name: "No-name-2IT1-1",
     schoolClass: "Class_2IT1",
   },
   {
-    name: "2IT1-2",
+    name: "No-name-2IT1-2",
     schoolClass: "Class_2IT1",
   },
   {
-    name: "2IT1-3",
+    name: "No-name-2IT1-3",
     schoolClass: "Class_2IT1",
   },
   {
-    name: "2IT2-1",
+    name: "No-name-2IT2-1",
     schoolClass: "Class_2IT2",
   },
   {
-    name: "2IT2-2",
+    name: "No-name-2IT2-2",
     schoolClass: "Class_2IT2",
   },
   {
-    name: "2IT2-3",
+    name: "No-name-2IT2-3",
     schoolClass: "Class_2IT2",
   },
   {
-    name: "2MP1-1",
+    name: "No-name-2MP1-1",
     schoolClass: "Class_2MP1",
   },
   {
-    name: "2MP1-2",
+    name: "No-name-2MP1-2",
     schoolClass: "Class_2MP1",
   },
   {
-    name: "2MP1-3",
+    name: "No-name-2MP1-3",
     schoolClass: "Class_2MP1",
   },
 ];
