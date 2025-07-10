@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { logger } from "./logger";
+import { headers } from "next/headers";
 
 export class AuthorizationError extends Error {
   constructor(
@@ -16,7 +17,7 @@ export class AuthorizationError extends Error {
  * Gets current session or throws authorization error
  */
 const getCurrentSession = async () => {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
     logger.warn("Unauthenticated access attempt. No session found.");
     throw new AuthorizationError(

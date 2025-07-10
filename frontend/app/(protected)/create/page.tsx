@@ -1,15 +1,19 @@
 import React from "react";
 import CreateUserForm from "./_components/CreateUserForm";
-import { SessionProvider } from "next-auth/react";
+import { headers } from "next/headers";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function CreatePage() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (session?.user.role !== "NEW") {
+    redirect("/"); // Redirect if the user is not a new user
+  }
   return (
     <div>
-      <SessionProvider session={session}>
-        <CreateUserForm />
-      </SessionProvider>
+      <CreateUserForm />
     </div>
   );
 }

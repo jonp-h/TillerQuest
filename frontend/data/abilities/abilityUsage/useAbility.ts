@@ -514,7 +514,10 @@ const useHealAbility = async (
 
       if (valueToHeal === 0 && targetUsersIds.length === 1) {
         throw new ErrorMessage("Target is already at full health");
-      } else if (valueToHeal === "dead" && targetUsersIds.length === 1) {
+      } else if (
+        valueToHeal === "User is dead" &&
+        targetUsersIds.length === 1
+      ) {
         throw new ErrorMessage(
           "You can't heal a dead target. The dead require a different kind of magic.",
         );

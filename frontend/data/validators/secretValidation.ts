@@ -3,9 +3,12 @@
 import { db } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 export const checkNewUserSecret = async (id: string, secret: string) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session) {
     console.warn(

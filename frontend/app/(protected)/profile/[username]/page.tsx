@@ -23,6 +23,7 @@ import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
 import { auth } from "@/auth";
 import Log from "./_components/Log";
+import { headers } from "next/headers";
 
 export default async function ProfilePage({
   params,
@@ -36,7 +37,9 @@ export default async function ProfilePage({
     notFound();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
 

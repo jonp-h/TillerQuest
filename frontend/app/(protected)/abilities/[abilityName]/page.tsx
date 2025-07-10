@@ -24,6 +24,7 @@ import { $Enums } from "@prisma/client";
 import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";
+import { headers } from "next/headers";
 
 export default async function AbilityNamePage({
   params,
@@ -32,7 +33,7 @@ export default async function AbilityNamePage({
 }) {
   const { abilityName } = await params;
   const ability = await getAbilityByName(abilityName);
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!ability || !session?.user.id) {
     console.error(

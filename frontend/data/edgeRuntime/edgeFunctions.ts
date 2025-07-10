@@ -3,9 +3,10 @@
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { checkNewUserSecret } from "../validators/secretValidation";
-import { auth } from "@/auth";
 import { $Enums } from "@prisma/client";
 import { validateUserCreation } from "./userUpdateValidation";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 // Functions mainly for use in the edge environment
 
@@ -21,33 +22,10 @@ interface UpdateUserProps {
   publicHighscore: boolean;
 }
 
-// Only used by auth.ts
-export const getUserAuthById = async (id: string) => {
-  // unstable_noStore();
-
-  try {
-    // TODO: improve authentication by reworking creation page useSession
-    // await checkNewUserAuth()
-
-    const user = await db.user.findUnique({
-      where: { id },
-      select: {
-        username: true,
-        class: true,
-        role: true,
-      },
-    });
-
-    return user;
-  } catch {
-    return null;
-  }
-};
-
 // used on account creation page
 export const updateUser = async (id: string, data: UpdateUserProps) => {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session) {
       throw new ErrorMessage("Unauthorized access");
@@ -112,7 +90,8 @@ export const getGuildmemberCount = async (
   guildName: string,
 ) => {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: await headers() });
+
     if (!session || session.user.id !== userId) {
       throw new ErrorMessage("Unauthorized access");
     }

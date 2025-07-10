@@ -1,10 +1,17 @@
+import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { getDeadUserCount } from "@/data/user/getUser";
 import { Button, Paper, Typography } from "@mui/material";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function GameMasterPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session || session.user.role !== "ADMIN") {
+    redirect("/");
+  }
   const deadUsers = await getDeadUserCount();
 
   return (
@@ -12,13 +19,13 @@ export default async function GameMasterPage() {
       <Typography variant="h1" align="center">
         Game Master
       </Typography>
-      {deadUsers > 0 && (
+      {deadUsers && (
         <Paper
           className="p-5 flex flex-col justify-center w-2/3 m-auto text-center gap-6"
           elevation={6}
         >
           <Typography color={"red"} variant="h3">
-            Dead users: {deadUsers}
+            Dead users: {JSON.stringify(deadUsers)}
           </Typography>
 
           <div className="flex justify-evenly">

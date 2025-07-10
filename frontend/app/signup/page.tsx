@@ -1,8 +1,9 @@
 "use client";
 import MainContainer from "@/components/MainContainer";
+import { signIn } from "@/lib/auth-client";
 import { GitHub } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
-import { signIn } from "next-auth/react";
+
 import React from "react";
 
 export default function SignUpPage() {
@@ -22,7 +23,9 @@ export default function SignUpPage() {
                 fontSize: "6rem",
                 margin: "auto",
               }}
-              onClick={() => signIn("github", { callbackUrl: "/" })}
+              onClick={() =>
+                signIn.social({ provider: "github", callbackURL: "/" })
+              }
             />
           </div>
           <div className="flex flex-col gap-5">
@@ -53,7 +56,9 @@ export default function SignUpPage() {
 
             <Button
               variant="contained"
-              onClick={() => signIn("github", { callbackUrl: "/" })}
+              onClick={() =>
+                signIn.social({ provider: "github", callbackURL: "/" })
+              }
             >
               Sign up
             </Button>

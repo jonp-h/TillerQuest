@@ -5,9 +5,10 @@ import { notFound } from "next/navigation";
 import { getUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
 import GameTabs from "./_components/GameTabs";
+import { headers } from "next/headers";
 
 async function Games() {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user.id) {
     return notFound();

@@ -1,6 +1,19 @@
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  // if (!session) {
+  //   redirect("/signup");
+  // }
+
+  if (session?.user.role === "NEW") {
+    redirect("/create");
+  }
+
   return (
     <main className=" bg-linear-to-b from-violet-900 to-slate-950 w-screen min-h-screen">
       <div className="w-screen flex justify-center text-center">
@@ -22,6 +35,7 @@ export default async function Home() {
           </h2>
         </div>
       </div>
+      {JSON.stringify(session?.user)}
     </main>
   );
 }

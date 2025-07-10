@@ -7,9 +7,10 @@ import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
+import { headers } from "next/headers";
 
 async function Shop() {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user.id) {
     return notFound();

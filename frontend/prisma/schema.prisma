@@ -34,6 +34,7 @@ enum Class {
 }
 
 // Categories used for ability tabs and tree-grouping
+
 enum AbilityCategory {
   // Generic types
   Health
@@ -58,6 +59,7 @@ enum AbilityCategory {
 }
 
 // The ability-logic to be used
+
 enum AbilityType {
   // Abilities
   Heal
@@ -165,16 +167,17 @@ model User {
   publicHighscore Boolean         @default(false)
   archiveConsent  Boolean         @default(false)
   email           String?         @unique
-  emailVerified   DateTime?
+  emailVerified   Boolean         @default(false)
   accounts        Account[] // Relation to OAuth account
   // sessions      Session[]      
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
 
   logs      Log[] // m-n relation to logs. A user can have many logs
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Session   Session[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
 
   @@index([username])
 }
@@ -243,6 +246,7 @@ model GuildEnemy {
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
+
 model UserAbility {
   id          String  @id @default(cuid())
   userId      String
@@ -255,6 +259,7 @@ model UserAbility {
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability
+
 model UserPassive {
   id          String      @id @default(cuid())
   userId      String
@@ -352,38 +357,42 @@ model TypeQuestText {
 }
 
 // 3rd party authentication. OAuth
+
 model Account {
-  id                       String  @id @default(cuid())
-  userId                   String  @unique
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? @db.Text
-  access_token             String? @db.Text
-  expires_at               Int?
-  token_type               String?
+  id                       String    @id @default(cuid())
+  userId                   String    @unique
+  providerId               String    @map("provider") // Maps existing `provider` field to Better Auth's `providerId`
+  accountId                String    @map("providerAccountId") // Maps existing `providerAccountId` field to Better Auth's `accountId`
+  refreshToken             String?   @map("refresh_token") @db.Text // Maps existing `refresh_token` field to Better Auth's `refreshToken`
+  accessToken              String?   @map("access_token") @db.Text // Maps existing `access_token` field to Better Auth's `accessToken`
+  accessTokenExpiresAt     DateTime? @map("expires_at") // Maps existing `expires_at` field to Better Auth's `accessTokenExpiresAt`
   scope                    String?
-  id_token                 String? @db.Text
-  session_state            String?
+  idToken                  String?   @map("id_token") @db.Text // Maps existing `id_token` field to Better Auth's `idToken`
   refresh_token_expires_in Int?
-  user                     User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                     User?     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([provider, providerAccountId])
+  refreshTokenExpiresAt DateTime?
+  password              String?
+
+  @@unique([providerId, accountId])
   @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique @map("sessionToken") // Maps existing `access_token` field to Better Auth's `token`
+  userId    String
+  expiresAt DateTime @map(name: "expires") // Maps existing `expires` field to Better Auth's `expiresAt`
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  ipAddress String?
+  userAgent String?
 
   @@index([userId])
 }
@@ -395,26 +404,13 @@ model ApplicationSettings {
   updatedAt DateTime @updatedAt
 }
 
-// model VerificationToken {
-//   identifier String
-//   token      String
-//   expires    DateTime
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
 
-//   @@unique([identifier, token])
-// }
-
-// // Optional for WebAuthn support
-// model Authenticator {
-//   credentialID         String  @id @map("_id")
-//   userId               String  @db.ObjectId
-//   providerAccountId    String
-//   credentialPublicKey  String
-//   counter              Int
-//   credentialDeviceType String
-//   credentialBackedUp   Boolean
-//   transports           String?
-
-//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//   @@unique([userId, credentialID])
-// }
+  @@map("verification")
+}

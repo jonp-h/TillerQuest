@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import {
   AuthorizationError,
   checkActiveUserAuth,
@@ -8,6 +9,7 @@ import {
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { headers } from "next/headers";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
@@ -121,6 +123,14 @@ export const getDeadUsers = async () => {
 export const getDeadUserCount = async () => {
   try {
     await checkAdminAuth();
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session || session.user.role !== "ADMIN") {
+      throw new AuthorizationError(
+        "Unauthorized access to dead user count.",
+        "Unauthorized",
+        "You do not have access",
+      );
+    }
 
     const deadUserCount = await db.user.count({
       where: {

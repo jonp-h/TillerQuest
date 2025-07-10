@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { ErrorMessage } from "@/lib/error";
 import { PrismaTransaction } from "@/types/prismaTransaction";
+import { headers } from "next/headers";
 
 /**
  * Adds a log entry to the database. Required to be available in the edge runtime.
@@ -24,7 +25,9 @@ export const addLog = async (
   debug: boolean = false, // default to false
 ) => {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     if (!session) {
       throw new ErrorMessage("Unauthorized access");
     }

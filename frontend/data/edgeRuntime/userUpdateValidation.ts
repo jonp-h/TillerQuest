@@ -8,12 +8,15 @@ import {
 } from "@/lib/userValidation";
 import { getGuildmemberCount } from "../edgeRuntime/edgeFunctions";
 import { db } from "@/lib/db";
+import { headers } from "next/headers";
 
 // Required to run in the edge runtime
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {
     return "Not authorized";
   }
@@ -109,7 +112,9 @@ export const validateUserCreation = async (id: string, data: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserUpdate = async (id: string, data: any) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   if (session?.user.id !== id || session?.user.role === "NEW" || !session) {
     return "Not authorized";
   }

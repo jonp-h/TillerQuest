@@ -33,7 +33,7 @@
 - [Material UI](https://mui.com/material-ui/) for base components.
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
 - [Prisma](https://www.prisma.io/) as Object-Relational Manager.
-- [Auth.js](https://authjs.dev/) for authentication.
+- [Better-Auth](https://www.better-auth.com) for authentication.
 - [Dice-Box](https://fantasticdice.games) for dice animations.
 - [Winston](https://github.com/winstonjs/winston/) for server-side logging.
 - [Zod](https://zod.dev/) for validation.

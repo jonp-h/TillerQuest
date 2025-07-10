@@ -9,16 +9,18 @@ import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
 import { RootAbilities } from "./_components/interfaces";
+import { headers } from "next/headers";
+import { $Enums } from "@prisma/client";
 
 export default async function AbilitiesPage() {
-  const user = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   const abilities = await getAbilityHierarchy();
-  if (user?.user.id == undefined) {
+  if (session?.user.id == undefined) {
     return notFound();
   }
 
-  const userAbilities = await getUserAbilities(user?.user?.id);
+  const userAbilities = await getUserAbilities(session.user?.id);
 
   return (
     <MainContainer>
@@ -26,7 +28,7 @@ export default async function AbilitiesPage() {
         Abilities
       </Typography>
       <AbilityTabs
-        userClass={user.user.class}
+        userClass={session?.user.class as $Enums.Class}
         rootAbilities={abilities as RootAbilities[]}
         userAbilities={userAbilities}
       />

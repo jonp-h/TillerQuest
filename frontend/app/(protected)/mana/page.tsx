@@ -6,9 +6,10 @@ import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
+import { headers } from "next/headers";
 
 export default async function ManaPage() {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user.id) {
     return null;
