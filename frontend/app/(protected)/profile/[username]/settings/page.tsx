@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { getUserProfileByUsername } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import React from "react";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
+import { requireAccessAndUsername } from "@/lib/redirectUtils";
 
 async function ProfileSettingsPage({
   params,
@@ -12,11 +12,7 @@ async function ProfileSettingsPage({
 }) {
   const { username } = await params;
 
-  const session = await auth();
-
-  if (session?.user.username !== username) {
-    notFound();
-  }
+  await requireAccessAndUsername(username);
 
   const user = await getUserProfileByUsername(username);
 

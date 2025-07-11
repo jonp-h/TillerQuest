@@ -4,8 +4,10 @@ import { Typography } from "@mui/material";
 import React from "react";
 import DeathCard from "./_components/DeathCard";
 import Image from "next/image";
+import { requireAdmin } from "@/lib/redirectUtils";
 
 export default async function ResurrectPage() {
+  await requireAdmin();
   const deadUsers = await getDeadUsers();
 
   return (

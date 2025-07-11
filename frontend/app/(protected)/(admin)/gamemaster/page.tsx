@@ -1,17 +1,12 @@
-import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { getDeadUserCount } from "@/data/user/getUser";
+import { requireAdmin } from "@/lib/redirectUtils";
 import { Button, Paper, Typography } from "@mui/material";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function GameMasterPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session || session.user.role !== "ADMIN") {
-    redirect("/");
-  }
+  await requireAdmin();
   const deadUsers = await getDeadUserCount();
 
   return (

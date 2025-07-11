@@ -5,18 +5,17 @@ import {
   getAbilityHierarchy,
   getUserAbilities,
 } from "@/data/abilities/getters/getAbilities";
-import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
 import { RootAbilities } from "./_components/interfaces";
-import { headers } from "next/headers";
 import { $Enums } from "@prisma/client";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 export default async function AbilitiesPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await requireActiveUser();
 
   const abilities = await getAbilityHierarchy();
-  if (session?.user.id == undefined) {
+  if (!session?.user) {
     return notFound();
   }
 

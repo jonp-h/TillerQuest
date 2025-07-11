@@ -2,15 +2,14 @@ import MainContainer from "@/components/MainContainer";
 import React from "react";
 import Battleground from "./_components/Battleground";
 import { getDungeonAbilities } from "@/data/dungeons/dungeonAbilities";
-import { auth } from "@/auth";
 import { getEnemies, getUserTurns } from "@/data/dungeons/dungeon";
-import { headers } from "next/headers";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 async function DungeonPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await requireActiveUser();
 
   if (!session?.user.id) {
-    throw new Error("UserId error");
+    throw new Error("User error");
   }
 
   const dungeonAbilities = await getDungeonAbilities(session.user.id);

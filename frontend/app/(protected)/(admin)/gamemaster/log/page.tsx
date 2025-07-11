@@ -1,5 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { getAllLogs } from "@/data/log/getLog";
+import { requireAdmin } from "@/lib/redirectUtils";
 import {
   Paper,
   Typography,
@@ -11,6 +12,7 @@ import {
 import React from "react";
 
 async function LogPage() {
+  await requireAdmin();
   const userLogs = await getAllLogs();
 
   const style = {

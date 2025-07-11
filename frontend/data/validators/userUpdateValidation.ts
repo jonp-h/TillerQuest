@@ -6,20 +6,14 @@ import {
   newUserSchema,
   updateUserSchema,
 } from "@/lib/userValidation";
-import { getGuildmemberCount } from "../edgeRuntime/edgeFunctions";
+import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
-
-// Required to run in the edge runtime
+import { checkNewUserAuth } from "@/lib/authUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {
-    return "Not authorized";
-  }
+  await checkNewUserAuth();
 
   const validatedData = newUserSchema.safeParse(data);
 

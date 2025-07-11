@@ -4,8 +4,10 @@ import { getGuilds } from "@/data/guilds/getGuilds";
 import { Typography } from "@mui/material";
 import React from "react";
 import GuildForm from "./_components/GuildForm";
+import { requireAdmin } from "@/lib/redirectUtils";
 
 async function Guilds() {
+  await requireAdmin();
   const guilds = await getGuilds();
   const users = await getBasicUserDetails();
 

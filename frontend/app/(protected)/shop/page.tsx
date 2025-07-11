@@ -3,14 +3,13 @@ import React from "react";
 import ShopCard from "./_components/ShopCard";
 import { getAllShopItems } from "@/data/shop/items";
 import { getUserInventory } from "@/data/user/getUser";
-import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
-import { headers } from "next/headers";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 async function Shop() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await requireActiveUser();
 
   if (!session?.user.id) {
     return notFound();

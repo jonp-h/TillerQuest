@@ -6,6 +6,7 @@ import {
   checkUserIdAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 
 export const getGuilds = async () => {
@@ -79,6 +80,50 @@ export const getGuildsAndMemberCount = async (userId: string) => {
     logger.error("Error fetching guilds and member count: " + error);
     throw new Error(
       "Something went wrong while fetching guilds and member count. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+// get guild member count, excluding the current user
+export const getGuildmemberCount = async (
+  userId: string,
+  guildName: string,
+) => {
+  try {
+    await checkUserIdAuth(userId);
+
+    const guild = await db.guild.findFirst({
+      where: {
+        name: guildName,
+      },
+      include: {
+        _count: {
+          select: {
+            members: {
+              where: {
+                id: {
+                  not: userId,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return guild?._count.members || 0;
+  } catch (error) {
+    if (error instanceof ErrorMessage) {
+      console.warn(
+        "Unauthorized access attempt to get guild member count for " +
+          guildName,
+      );
+      throw error;
+    }
+    console.error("Error fetching guild member count: " + error);
+    throw new Error(
+      "Something went wrong while fetching guild member count. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

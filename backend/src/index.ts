@@ -1,15 +1,6 @@
 import express from "express";
-import http from "http";
-import bodyParser from "body-parser";
 import cors from "cors";
 import { db } from "./lib/db.js";
-import {
-  // authenticatedGameMaster,
-  // authenticatedUser,
-  currentSession,
-} from "./middleware/auth.js";
-import { auth } from "./middleware/auth.js";
-import rateLimit from "express-rate-limit";
 import cron from "node-cron";
 import { randomCosmic } from "./data/cosmic.js";
 import {
@@ -18,44 +9,46 @@ import {
   healingValidator,
   manaValidator,
 } from "./data/validators.js";
+import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+import { auth } from "./auth.js";
+import leaderboardRoutes from "./routes/leaderboard.js";
+import rateLimit from "express-rate-limit";
 
 const app = express();
+
+app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+// Mount express json middleware after Better Auth handler
+// or only apply it to routes that don't interact with Better Auth
+app.use(express.json());
 
 // Rate limiting to prevent abuse and DoS attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 70, // limit each IP to 70 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
+
+app.use(limiter);
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // only allow requests from localhost
-    credentials: true, // include cookies in requests
+    origin: "http://localhost:3000", // The frontend's origin
+    methods: ["GET"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );
-app.use(bodyParser.json()); // Middleware to parse JSON bodies
-app.use(bodyParser.urlencoded({ extended: true })); //  URL-encoded data, allowing for rich objects and arrays to be encoded into the URL-encoded format.
 
-app.use("/auth/*", limiter, auth);
+app.use("/api/me", async (req, res) => {
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  });
+  res.json(session);
+  return;
+});
 
-app.use(currentSession);
+app.use("/api", leaderboardRoutes);
 
-const server = http.createServer(app);
-
-// app.get("/gm", authenticatedGameMaster, async (req, res) => {
-//   const users = await db.user.findMany();
-//   res.json(users);
-// });
-
-// app.get("/users", authenticatedUser, async (req, res) => {
-//   const users = await db.user.findMany();
-//   res.json(users);
-// });
-
-// app.get("/", (req, res) => {
-//   const { session } = res.locals;
-//   res.send({ user: res.locals });
-// });
+// const server = http.createServer(app);
 
 // Schedule a job to run every minute to remove expired abilities
 cron.schedule(
@@ -659,7 +652,7 @@ cron.getTasks().forEach((task, name) => {
   console.log(` - ${name}`);
 });
 
-server.listen(8080, () => {
+app.listen(8080, () => {
   console.log("🚀 Server is running at http://localhost:8080");
 });
 // Might consider to disconnect from db if there is a short script running in a long process https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections/connection-management#disconnect

@@ -18,8 +18,8 @@ import { checkNewUserSecret } from "@/data/validators/secretValidation";
 import { $Enums, SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { validateUserCreation } from "@/data/edgeRuntime/userUpdateValidation";
-import { updateUser } from "@/data/edgeRuntime/edgeFunctions";
+import { validateUserCreation } from "@/data/validators/userUpdateValidation";
+import { updateUser } from "@/data/user/updateUser";
 import { useSession } from "@/lib/auth-client";
 
 export default function CreateUserForm() {

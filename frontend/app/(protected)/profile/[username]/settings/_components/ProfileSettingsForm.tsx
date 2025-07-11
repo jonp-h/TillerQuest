@@ -1,5 +1,5 @@
 "use client";
-import { validateUserUpdate } from "@/data/edgeRuntime/userUpdateValidation";
+import { validateUserUpdate } from "@/data/validators/userUpdateValidation";
 import { updateProfile } from "@/data/user/updateUser";
 import { UserProfile } from "@/types/users";
 import { ArrowBack } from "@mui/icons-material";

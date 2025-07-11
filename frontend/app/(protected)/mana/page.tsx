@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import { getUserById } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
@@ -6,10 +5,10 @@ import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
-import { headers } from "next/headers";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 export default async function ManaPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await requireActiveUser();
 
   if (!session?.user.id) {
     return null;

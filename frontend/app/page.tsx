@@ -1,18 +1,8 @@
-import { auth } from "@/auth";
-import { headers } from "next/headers";
+import { redirectIfNewUser } from "@/lib/redirectUtils";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  // if (!session) {
-  //   redirect("/signup");
-  // }
-
-  if (session?.user.role === "NEW") {
-    redirect("/create");
-  }
+  await redirectIfNewUser();
 
   return (
     <main className=" bg-linear-to-b from-violet-900 to-slate-950 w-screen min-h-screen">
@@ -35,7 +25,6 @@ export default async function Home() {
           </h2>
         </div>
       </div>
-      {JSON.stringify(session?.user)}
     </main>
   );
 }
