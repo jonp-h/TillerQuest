@@ -1,9 +1,12 @@
 "use server";
 
-import { auth } from "@/auth";
-import { ErrorMessage } from "@/lib/error";
+import {
+  AuthorizationError,
+  checkUserIdAuth,
+  checkValidAuth,
+} from "@/lib/authUtils";
+import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
-import { headers } from "next/headers";
 
 /**
  * Adds a log entry to the database. Required to be available in the edge runtime.
@@ -25,16 +28,11 @@ export const addLog = async (
   debug: boolean = false, // default to false
 ) => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session) {
-      throw new ErrorMessage("Unauthorized access");
-    }
+    await checkValidAuth();
 
     // Users can only add debug logs for themselves
-    if (debug === true && session.user.id !== userId) {
-      throw new ErrorMessage("Unauthorized access to add debug log");
+    if (debug) {
+      await checkUserIdAuth(userId);
     }
 
     const log = await db.log.create({
@@ -47,16 +45,12 @@ export const addLog = async (
     });
     return log;
   } catch (error) {
-    if (error instanceof ErrorMessage) {
-      // not available in the edge runtime
-      // logger.warn("Error adding log: " + error.message);
-      console.warn("Error adding log: " + error.message);
+    if (error instanceof AuthorizationError) {
+      logger.warn("Authorization error: " + error.message);
       throw error;
     }
 
-    // not available in the edge runtime
-    // logger.error("Failed to add log: ", error);
-    console.error("Failed to add log: ", error);
+    logger.error("Failed to add log: ", error);
     throw new Error(
       "Failed to add log. Please inform a game master of the following timestamp" +
         Date.now().toLocaleString("no-NO"),

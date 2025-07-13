@@ -16,6 +16,7 @@ function DialogButton({
   dialogFunction,
   disabled = false,
   buttonVariant = "outlined",
+  color = "primary",
   agreeText = "Agree",
   disagreeText = "Disagree",
 }: {
@@ -25,6 +26,19 @@ function DialogButton({
   dialogFunction?: () => void;
   disabled?: boolean;
   buttonVariant?: "text" | "outlined" | "contained";
+  color?:
+    | "primary"
+    | "secondary"
+    | "error"
+    | "info"
+    | "success"
+    | "warning"
+    | "arenatoken"
+    | "gemstones"
+    | "health"
+    | "mana"
+    | "gold"
+    | "experience";
   agreeText?: string;
   disagreeText?: string;
 }) {
@@ -49,6 +63,7 @@ function DialogButton({
       <Button
         variant={buttonVariant}
         onClick={handleClickOpen}
+        color={color}
         disabled={disabled}
       >
         {buttonText}
