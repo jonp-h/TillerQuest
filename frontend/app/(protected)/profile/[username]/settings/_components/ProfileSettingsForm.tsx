@@ -39,12 +39,29 @@ function ProfileSettingsForm({ user }: { user: UserProfile }) {
       return;
     }
 
-    await updateProfile(user.id, {
-      username: validatedData.username,
-      publicHighscore: validatedData.publicHighscore,
-      archiveConsent: validatedData.archiveConsent,
-    });
-    toast.success("Profile updated");
+    toast.promise(
+      updateProfile(user.id, {
+        username: validatedData.username,
+        publicHighscore: validatedData.publicHighscore,
+        archiveConsent: validatedData.archiveConsent,
+      }),
+      {
+        pending: "Updating profile...",
+        success: {
+          render: ({ data }) => {
+            return data;
+          },
+        },
+        error: {
+          render: ({ data }) => {
+            return data instanceof Error
+              ? data.message
+              : "Something went wrong";
+          },
+        },
+      },
+    );
+
     router.push(`/profile/${validatedData.username}/settings`);
     setLoading(false);
     setTimeout(() => {

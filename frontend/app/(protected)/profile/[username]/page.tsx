@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
 import {
   Chip,
@@ -21,8 +21,8 @@ import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
-import { auth } from "@/auth";
 import Log from "./_components/Log";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 export default async function ProfilePage({
   params,
@@ -30,15 +30,14 @@ export default async function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
+  const session = await requireActiveUser();
   const user = await getUserProfileByUsername(username);
 
   if (!user) {
     notFound();
   }
 
-  const session = await auth();
-
-  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
 
   const userAbilities = await getUserProfileAbilities(user.id);
   const passives = await getUserPassives(user.id);

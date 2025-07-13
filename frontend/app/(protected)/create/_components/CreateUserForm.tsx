@@ -14,21 +14,21 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import Classes from "./Classes";
-import { useSession } from "next-auth/react";
 import { checkNewUserSecret } from "@/data/validators/secretValidation";
-import { SchoolClass } from "@prisma/client";
+import { $Enums, SchoolClass } from "@prisma/client";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
 import { validateUserCreation } from "@/data/validators/userUpdateValidation";
+import { updateUser } from "@/data/user/updateUser";
+import { useSession } from "@/lib/auth-client";
 
 export default function CreateUserForm() {
-  // FIXME: switch to unstable_update in auth.ts when unstable_update is released
-  const { update, data } = useSession();
+  const { data } = useSession();
 
   const [secret, setSecret] = useState("");
   const [username, setUsername] = useState(data?.user.username);
   const [name, setName] = useState(data?.user.name);
-  const [lastname, setLastname] = useState(data?.user.lastname);
+  const [lastname, setLastname] = useState(""); // data?.user.lastname
   const [playerClass, setPlayerClass] = useState<string>("");
   const [guild, setGuild] = useState("");
   const [schoolClass, setSchoolClass] = useState("");
@@ -41,10 +41,11 @@ export default function CreateUserForm() {
     if (!data?.user.id) {
       return;
     }
+    // frontend validation
     const isCorrectSecret = await checkNewUserSecret(data.user.id, secret);
 
     if (!isCorrectSecret) {
-      setErrorMessage("Secret code is incorrect");
+      setErrorMessage("Invalid secret code");
       return;
     }
 
@@ -59,6 +60,7 @@ export default function CreateUserForm() {
     };
 
     try {
+      // frontend validation
       const validatedData = await validateUserCreation(
         data.user.id,
         formValues,
@@ -72,23 +74,19 @@ export default function CreateUserForm() {
 
       // update the role from NEW to USER
       // add initial username, class and class image
-      // sends to auth.ts, which updates the token and the db
-      await update({
+      await updateUser(data.user.id, {
         secret,
         username: validatedData.username,
         name: validatedData.name,
         lastname: validatedData.lastname,
-        class: validatedData.playerClass.slice(0, -1),
+        class: validatedData.playerClass as $Enums.Class,
         image: validatedData.playerClass,
-        guild: validatedData.guild,
-        schoolClass: validatedData.schoolClass,
+        guildName: validatedData.guild,
+        schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
         publicHighscore: validatedData.publicHighscore,
       });
 
-      // call update to refresh session before redirecting to main page
-      await update().then(() => {
-        location.reload();
-      });
+      location.reload();
     } catch (error) {
       setErrorMessage((error as Error).message);
     }
@@ -192,6 +190,8 @@ export default function CreateUserForm() {
               organization, and banishment from the service.
             </Typography>
           </AccordionDetails>
+        </Accordion>
+        <Accordion sx={{ width: "40%" }}>
           <AccordionSummary
             expandIcon={<ArrowDownward />}
             aria-controls="panel2-content"

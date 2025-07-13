@@ -42,15 +42,15 @@ function ManageUserForm(user: {
       username !== user.username ||
       lastname !== user.lastname
     ) {
-      await toast.promise(
+      toast.promise(
         adminUpdateUser(user.id, special, name, username, lastname),
         {
           pending: "Updating user...",
-          success: "User updated",
+          success: "User information updated",
           error: {
             render({ data }) {
               return data instanceof Error
-                ? `Error: ${data.message}`
+                ? `${data.message}`
                 : "An error occurred while updating the user.";
             },
           },
@@ -59,12 +59,30 @@ function ManageUserForm(user: {
       // adminUpdateUser(user.id, special, name, username, lastname);
       // toast.success("User updated");
     } else {
-      adminUpdateUser(user.id, special);
-      toast.success("User updated");
+      toast.promise(adminUpdateUser(user.id, special), {
+        pending: "Updating user...",
+        success: "User special tags updated",
+        error: {
+          render({ data }) {
+            return data instanceof Error
+              ? `${data.message}`
+              : "An error occurred while updating the user.";
+          },
+        },
+      });
     }
     if (role !== user.role) {
-      updateRole(user.id, role);
-      toast.success("User role updated");
+      toast.promise(updateRole(user.id, role), {
+        pending: "Updating user role...",
+        success: "User role updated",
+        error: {
+          render({ data }) {
+            return data instanceof Error
+              ? `${data.message}`
+              : "An error occurred while updating the user role.";
+          },
+        },
+      });
     }
 
     router.refresh();

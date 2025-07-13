@@ -5,12 +5,13 @@ import {
   minResurrectionHP,
   guildmemberResurrectionDamage,
 } from "@/lib/gameSetting";
-import { getMembersByCurrentUserGuild } from "../user/getGuildmembers";
+import { getGuildmembersByGuildname } from "../user/getGuildmembers";
 import { damageValidator } from "../validators/validators";
-import { auth } from "@/auth";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { addLog } from "../log/addLog";
+import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { ErrorMessage } from "@/lib/error";
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
@@ -20,13 +21,27 @@ export const resurrectUsers = async ({
   userId: string;
   effect: string;
 }) => {
-  const session = await auth();
-  if (!session || session?.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkAdminAuth();
+
     await db.$transaction(async (db) => {
+      const user = await db.user.findFirst({
+        where: {
+          id: userId,
+        },
+        select: {
+          hp: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.hp !== 0) {
+        throw new ErrorMessage("User not dead!");
+      }
+
       // if the effect is free, the user will be resurrected without any consequences
       if (effect === "free") {
         await db.user.update({
@@ -69,8 +84,20 @@ export const resurrectUsers = async ({
     });
     return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized resurrection attempt by user: " + userId);
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
     logger.error("Error resurrecting user" + error);
-    return "Something went wrong with " + error;
+    throw new Error(
+      "Something went wrong during resurrection. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
@@ -92,9 +119,9 @@ const resurrectUser = async (
 
   if (user.guildName) {
     // get all guildmembers and remove the resurrected user from the guildmembers array
-    const guildMembers = await getMembersByCurrentUserGuild(
-      user.guildName,
-    ).then((member) => member!.filter((member) => member.id !== userId));
+    const guildMembers = await getGuildmembersByGuildname(user.guildName).then(
+      (member) => member!.filter((member) => member.id !== userId),
+    );
 
     await Promise.all(
       guildMembers?.map(async (member) => {
@@ -136,38 +163,33 @@ const resurrectUser = async (
   await Promise.all(
     // if the effect array is empty, none will be added
     effects.map(async (effect) => {
-      try {
-        if (effect === "Reduced-xp-gain") {
-          await db.userPassive.create({
-            data: {
-              userId: userId,
-              passiveName: effect,
-              icon: effect + ".png",
-              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
-              effectType: "Experience",
-              value: -50,
-            },
-          });
-        } else {
-          await db.userPassive.create({
-            data: {
-              userId: userId,
-              passiveName: effect,
-              icon: effect + ".png",
-              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
-              effectType: "Deathsave",
-            },
-          });
-        }
-        await addLog(
-          db,
-          userId,
-          `${user.username} was resurrected, but was affected by ${effect.replace(/-/g, " ")}.`,
-        );
-      } catch (error) {
-        logger.error("Error resurrecting user" + error);
-        return "Something went wrong with" + error;
+      if (effect === "Reduced-xp-gain") {
+        await db.userPassive.create({
+          data: {
+            userId: userId,
+            passiveName: effect,
+            icon: effect + ".png",
+            endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+            effectType: "Experience",
+            value: -50,
+          },
+        });
+      } else {
+        await db.userPassive.create({
+          data: {
+            userId: userId,
+            passiveName: effect,
+            icon: effect + ".png",
+            endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+            effectType: "Deathsave",
+          },
+        });
       }
+      await addLog(
+        db,
+        userId,
+        `${user.username} was resurrected, but was affected by ${effect.replace(/-/g, " ")}.`,
+      );
     }),
   );
 };

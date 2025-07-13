@@ -3,7 +3,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@mui/material/Button";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import StorefrontIcon from "@mui/icons-material/Storefront";
@@ -15,10 +14,24 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { IconButton } from "@mui/material";
 import { Castle } from "@mui/icons-material";
+import { signIn, signOut, useSession } from "@/lib/auth-client";
 
 export default function NavbarContent() {
   const session = useSession();
   const pathname = usePathname();
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-between w-full">
+        <Link href="/">
+          <div className="flex items-center gap-5">
+            <Image src="/TQlogo.png" alt="TillerQuest" width={70} height={70} />
+            <h1 className={"hidden md:block text-2xl"}>TillerQuest</h1>
+          </div>
+        </Link>
+      </div>
+    );
+  }
 
   const links = [
     {
@@ -42,13 +55,13 @@ export default function NavbarContent() {
       icon: <BoltIcon />,
     },
     {
-      name: session?.data ? session?.data.user.username : "Profile",
-      href: "/profile/" + session?.data?.user.username,
+      name: session.data?.user ? session.data.user.username : "Profile",
+      href: "/profile/" + (session.data?.user?.username || ""),
       icon: <AccountCircleIcon />,
     },
   ];
 
-  if (session.data?.user.role === "ADMIN") {
+  if (session.data?.user?.role === "ADMIN") {
     links.unshift({
       name: "Game Master",
       href: "/gamemaster",
@@ -66,26 +79,28 @@ export default function NavbarContent() {
       </Link>
       {/* On smaller screens only show icons */}
       <div className="flex justify-end gap-2 md:gap-8  w-full">
-        {links.map((link) => (
-          <Link href={link.href} key={link.name}>
-            <Button
-              variant={pathname === link.href ? "outlined" : "text"}
-              color={pathname === link.href ? "primary" : "inherit"}
-              startIcon={link.icon}
-              sx={{ display: { xs: "none", md: "none", lg: "flex" } }}
-            >
-              {link.name}
-            </Button>
-            <IconButton
-              sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-              color={pathname === link.href ? "primary" : "default"}
-              size="large"
-            >
-              {link.icon}
-            </IconButton>
-          </Link>
-        ))}
-        {session.data ? (
+        {session.data?.user
+          ? links.map((link) => (
+              <Link href={link.href} key={link.name}>
+                <Button
+                  variant={pathname === link.href ? "outlined" : "text"}
+                  color={pathname === link.href ? "primary" : "inherit"}
+                  startIcon={link.icon}
+                  sx={{ display: { xs: "none", md: "none", lg: "flex" } }}
+                >
+                  {link.name}
+                </Button>
+                <IconButton
+                  sx={{ display: { xs: "block", md: "block", lg: "none" } }}
+                  color={pathname === link.href ? "primary" : "default"}
+                  size="large"
+                >
+                  {link.icon}
+                </IconButton>
+              </Link>
+            ))
+          : null}
+        {session.data?.user ? (
           <>
             <Button
               className="whitespace-nowrap"
@@ -115,9 +130,7 @@ export default function NavbarContent() {
               startIcon={<LoginIcon />}
               sx={{ display: { xs: "none", md: "none", lg: "block" } }}
               onClick={() =>
-                signIn("github", {
-                  redirectTo: "/",
-                })
+                signIn.social({ provider: "github", callbackURL: "/" })
               }
             >
               Sign in
@@ -127,9 +140,7 @@ export default function NavbarContent() {
               color="secondary"
               size="large"
               onClick={() =>
-                signIn("github", {
-                  redirectTo: "/",
-                })
+                signIn.social({ provider: "github", callbackURL: "/" })
               }
             >
               <LoginIcon />

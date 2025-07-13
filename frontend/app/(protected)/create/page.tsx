@@ -1,15 +1,12 @@
 import React from "react";
 import CreateUserForm from "./_components/CreateUserForm";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
+import { requireNewUser } from "@/lib/redirectUtils";
 
 export default async function CreatePage() {
-  const session = await auth();
+  await requireNewUser();
   return (
     <div>
-      <SessionProvider session={session}>
-        <CreateUserForm />
-      </SessionProvider>
+      <CreateUserForm />
     </div>
   );
 }

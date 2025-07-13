@@ -88,7 +88,7 @@ export default function AbilityForm({
     } else if (missingParentAbility) {
       return "Buy the necessary parent ability first.";
     } else if (user.gemstones < ability.gemstoneCost) {
-      return "You don't have enough gemstones to buy this ability.";
+      return "Insufficient gemstones";
     }
     return "Buy Ability";
   };
@@ -192,25 +192,43 @@ export default function AbilityForm({
     event.preventDefault();
     setIsLoading(true);
 
+    // Frontend validation
     if (!userIsCorrectClass) {
       toast.error("You are not the correct class to buy this ability.");
+      setIsLoading(false);
       return;
     }
 
     if (missingParentAbility) {
       toast.error("Buy the necessary parent ability first.");
+      setIsLoading(false);
       return;
     }
 
     if (user.gemstones < ability.gemstoneCost) {
       toast.error("You don't have enough gemstones to buy this ability. ");
+      setIsLoading(false);
       return;
     }
 
     // when buying an abillity, check passive. if passive immediately activate
     // if passive, disable use button
 
-    toast.success(await buyAbility(user.id, ability.name));
+    toast.promise(buyAbility(user.id, ability.name), {
+      pending: "Buying ability...",
+      success: {
+        render: ({ data }) => {
+          return data;
+        },
+      },
+      error: {
+        render({ data }) {
+          return data instanceof Error
+            ? `${data.message}`
+            : "An error occurred while buying the ability.";
+        },
+      },
+    });
 
     setIsLoading(false);
     router.refresh();
@@ -255,7 +273,7 @@ export default function AbilityForm({
         <>
           {user.gemstones < ability.gemstoneCost && (
             <Typography variant="body1" color="error">
-              You don&apos;t have enough gemstones to buy this ability.
+              Insufficient gemstones
             </Typography>
           )}
           {missingParentAbility && (

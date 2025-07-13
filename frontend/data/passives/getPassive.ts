@@ -1,21 +1,15 @@
 "use server";
 
-import { auth } from "@/auth";
+import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { $Enums } from "@prisma/client";
 
 export const getUserPassives = async (userId: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const passives = await db.userPassive.findMany({
       where: {
         userId,
@@ -34,8 +28,17 @@ export const getUserPassives = async (userId: string) => {
       },
     });
     return passives;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to user passives: " + error);
+      throw error;
+    }
+
+    logger.error("Error getting user passives: " + error);
+    throw new Error(
+      "Something went wrong while fetching user passives. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
@@ -53,17 +56,11 @@ export const getUserPassiveEffect = async (
   type: $Enums.AbilityType,
   cosmic = false,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
-  const cosmicData = cosmic ? { cosmicEvent: true } : null;
-
   try {
+    await checkActiveUserAuth();
+
+    const cosmicData = cosmic ? { cosmicEvent: true } : null;
+
     const userPassives = await db.userPassive.findMany({
       where: {
         userId,
@@ -83,6 +80,11 @@ export const getUserPassiveEffect = async (
 
     return value;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to user passive by type: " + error);
+      throw error;
+    }
+
     logger.error("Error getting user passive by type " + type + ": " + error);
     return 0;
   }
@@ -100,15 +102,9 @@ export const checkIfAllTargetsHavePassive = async (
   targetUserIds: string[],
   abilityName: string,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     let allUsersHavePassive = true;
     await Promise.all(
       targetUserIds.map(async (targetUserId) => {
@@ -121,9 +117,7 @@ export const checkIfAllTargetsHavePassive = async (
             },
           },
         });
-        console.log(
-          `Checking if user ${targetUserId} has passive ${abilityName}: ${!!userPassive}`,
-        );
+
         // if one user does not have the passive, return false
         if (!userPassive) {
           allUsersHavePassive = false;
@@ -131,13 +125,15 @@ export const checkIfAllTargetsHavePassive = async (
         }
       }),
     );
-    console.log(
-      `All users have passive ${abilityName}: ${allUsersHavePassive}`,
-    );
 
     return allUsersHavePassive;
   } catch (error) {
-    logger.error("Error checking if active passive: " + error);
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to check user passives: " + error);
+      throw error;
+    }
+
+    logger.error("Error checking if all users have passive: " + error);
     return false;
   }
 };

@@ -4,49 +4,43 @@ import { db } from "@/lib/db";
 import { manaValidator } from "../validators/validators";
 import { dailyMana } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
-import { auth } from "@/auth";
 import { addLog } from "../log/addLog";
+import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import { ErrorMessage } from "@/lib/error";
 
 export const getDailyMana = async (userId: string) => {
-  const session = await auth();
-  if (!session || session.user.role === "NEW" || session?.user?.id !== userId) {
-    throw new Error("Not authorized");
-  }
+  try {
+    const session = await checkUserIdAndActiveAuth(userId);
 
-  const targetUser = await db.user.findFirst({
-    where: {
-      id: userId,
-    },
-    select: {
-      username: true,
-      lastMana: true,
-      role: true,
-    },
-  });
+    // Archived users are not allowed to get daily mana
+    if (session.user.role === "ARCHIVED") {
+      throw new ErrorMessage("You are not allowed to get daily mana.");
+    }
 
-  if (!targetUser) {
-    logger.error(
-      `User ${userId} tried to get daily mana, but the user was not found`,
-    );
-    return "User not found";
-  }
+    const targetUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        username: true,
+        lastMana: true,
+        role: true,
+      },
+    });
 
-  if (targetUser.role === "NEW" || targetUser.role === "ARCHIVED") {
-    return "You are not allowed to get daily mana.";
-  }
+    if (!targetUser) {
+      throw new Error(
+        `User ${userId} tried to get daily mana, but the user was not found`,
+      );
+    }
 
-  if (
-    targetUser?.lastMana &&
-    targetUser.lastMana >= new Date(new Date().setHours(0, 0, 0, 0))
-  ) {
-    return "Already received daily mana";
-  }
+    if (targetUser.lastMana >= new Date(new Date().setHours(0, 0, 0, 0))) {
+      throw new ErrorMessage("You have already received daily mana");
+    }
 
-  // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
-  const manaValue = await manaValidator(db, userId, dailyMana);
+    // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
+    const manaValue = await manaValidator(db, userId, dailyMana);
 
-  if (typeof manaValue === "number") {
-    // use get mana
     await db.user.update({
       where: {
         id: userId,
@@ -58,16 +52,27 @@ export const getDailyMana = async (userId: string) => {
       },
     });
 
-    addLog(
+    await addLog(
       db,
       userId,
       `${targetUser.username} recieved ${manaValue} dailyMana`,
     );
-    return "And as you focus, you feel your mana restoring. You also find a token in your pocket.";
-  } else {
-    logger.error(
-      "Error getting daily " + manaValue + " mana: " + targetUser.username,
+    return (
+      "And as you focus, you feel your mana restoring with " +
+      manaValue +
+      ". You also find a token in your pocket."
     );
-    return "Error getting daily mana";
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get daily mana");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error getting daily mana: ", error);
+    throw new Error("Error getting daily mana");
   }
 };

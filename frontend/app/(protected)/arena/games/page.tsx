@@ -1,15 +1,15 @@
 import MainContainer from "@/components/MainContainer";
 import React from "react";
-import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import { getUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
 import GameTabs from "./_components/GameTabs";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 async function Games() {
-  const session = await auth();
+  const session = await requireActiveUser();
 
-  if (!session?.user.id) {
+  if (!session?.user) {
     return notFound();
   }
 

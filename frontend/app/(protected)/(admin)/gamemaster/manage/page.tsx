@@ -6,8 +6,10 @@ import {
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import ManageUserForm from "./_components/ManageUserForm";
+import { requireAdmin } from "@/lib/redirectUtils";
 
 async function Manage() {
+  await requireAdmin();
   const userInfo = await adminGetUserInfo();
   const specialStatues = await getSpecialStatuses();
 

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
 
+//FIXME: refactor this code
 export default function RerollCosmic({
   cosmicEvents,
 }: {
@@ -44,15 +45,42 @@ export default function RerollCosmic({
   }, [cosmicEvents]);
 
   const handleReroll = async () => {
-    const cosmic = await randomCosmic();
-    if (cosmic) setRecommendedCosmicEvent(cosmic);
+    const cosmicPromise = randomCosmic();
+    toast.promise(
+      cosmicPromise,
+      {
+        pending: "Rerolling cosmic event...",
+        success: "Successfully rerolled cosmic event!",
+        error: {
+          autoClose: 5000,
+          render({ data }) {
+            return data instanceof Error
+              ? `${data.message}`
+              : "An error occurred while rerolling the cosmic event.";
+          },
+        },
+      },
+      {
+        autoClose: 1000,
+      },
+    );
+    const cosmic = await cosmicPromise;
+    setRecommendedCosmicEvent(cosmic);
   };
 
   const handleSetSelectedCosmic = async (name: string) => {
-    await setSelectedCosmic(name).then(() => {
-      toast.success(`Successfully set ${name} as daily cosmic`);
-      router.refresh();
+    toast.promise(setSelectedCosmic(name), {
+      pending: `Setting ${name} as daily cosmic...`,
+      success: `Successfully set ${name} as daily cosmic!`,
+      error: {
+        render({ data }) {
+          return data instanceof Error
+            ? `${data.message}`
+            : "An error occurred while setting the daily cosmic.";
+        },
+      },
     });
+    router.refresh();
   };
 
   return (

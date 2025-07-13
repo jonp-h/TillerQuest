@@ -1,68 +1,99 @@
 "use server";
 
-import { auth } from "@/auth";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
 import { goldValidator } from "../validators/validators";
+import {
+  AuthorizationError,
+  checkActiveUserAuth,
+  checkUserIdAndActiveAuth,
+} from "@/lib/authUtils";
+import { ErrorMessage } from "@/lib/error";
 
 export const initializeGame = async (userId: string, gameName: string) => {
-  const session = await auth();
-  if (!session || !session?.user.id || session?.user.id !== userId) {
-    return "Not authorized";
+  try {
+    await checkUserIdAndActiveAuth(userId);
+
+    return await prisma.$transaction(async (db) => {
+      const user = await db.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          username: true,
+          arenaTokens: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found when starting a game");
+      }
+
+      if (user.arenaTokens < 1) {
+        throw new ErrorMessage("You do not have enough arena tokens");
+      }
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { arenaTokens: { decrement: 1 } },
+      });
+
+      const game = await db.game.create({
+        data: {
+          userId: user.id,
+          game: gameName,
+        },
+      });
+
+      return { id: game.id, gameName };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to initialize game");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error initializing game: " + error);
+    throw new Error(
+      "Error initializing game. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
-  return await prisma.$transaction(async (db) => {
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        username: true,
-        arenaTokens: true,
-      },
-    });
-
-    if (!user) {
-      logger.error(
-        `id: ${session.user.id} tried to start a game, but the user was not found`,
-      );
-      return "User not found";
-    }
-
-    if (user.arenaTokens < 1) {
-      return false;
-    }
-
-    await db.user.update({
-      where: { id: user.id },
-      data: { arenaTokens: { decrement: 1 } },
-    });
-
-    const game = await db.game.create({
-      data: {
-        userId: user.id,
-        game: gameName,
-      },
-    });
-
-    return { id: game.id, gameName };
-  });
 };
 
 export const startGame = async (gameId: string) => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    return "Not authorized";
-  }
-  return await prisma.$transaction(async (db) => {
-    const game = await db.game.update({
-      where: { id: gameId, status: "PENDING" },
-      data: { status: "INPROGRESS", startedAt: new Date() },
+  try {
+    await checkActiveUserAuth();
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.update({
+        where: { id: gameId, status: "PENDING" },
+        data: { status: "INPROGRESS", startedAt: new Date() },
+      });
+      if (!game) {
+        throw new ErrorMessage("Invalid game session");
+      }
+      return "Game started successfully";
     });
-    if (!game) {
-      return "Invalid game session";
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to start game");
+      throw error;
     }
-    return true;
-  });
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error starting game: " + error);
+    throw new Error(
+      "Error starting game. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
 };
 
 export const updateGame = async (
@@ -70,72 +101,93 @@ export const updateGame = async (
   charIndex: number,
   mistakes: number,
 ) => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    return "Not authorized";
-  }
-  return await prisma.$transaction(async (db) => {
-    const game = await db.game.findUnique({
-      where: { id: gameId },
-    });
+  try {
+    const session = await checkActiveUserAuth();
 
-    if (
-      !game ||
-      game.userId !== session.user.id ||
-      game.status !== "INPROGRESS"
-    ) {
-      return "Invalid game state";
-    }
-
-    const maxTime = 60;
-    const timeElapsed =
-      (new Date().getTime() - new Date(game.startedAt).getTime()) / 1000;
-    const time = maxTime - timeElapsed;
-    const correctChars = charIndex - mistakes;
-    const totalTime = maxTime - time;
-
-    // words per minute. Mathmatical standard is 5 characters per word
-    let wpm = Math.round((correctChars / 5 / totalTime) * 60);
-    wpm = wpm < 0 || !wpm || wpm == Infinity ? 0 : Math.floor(wpm);
-
-    // characters per minute
-    let cpm = correctChars * (60 / totalTime);
-    cpm = cpm < 0 || !cpm || cpm == Infinity ? 0 : Math.floor(cpm);
-
-    // unrealistic values cancel the game
-    // TODO: consider checking for unrealistic mistakes to invalidate game
-    if (charIndex > 800 || wpm > 135) {
-      await db.game.delete({
-        where: { id: gameId, status: "INPROGRESS" },
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId },
       });
-      return "Invalid game state, game aborted";
+
+      if (
+        !game ||
+        game.userId !== session.user.id ||
+        game.status !== "INPROGRESS"
+      ) {
+        logger.info("Invalid game session for user: " + session.user.id);
+        throw new ErrorMessage("Invalid game state");
+      }
+
+      const maxTime = 60;
+      const timeElapsed =
+        (new Date().getTime() - new Date(game.startedAt).getTime()) / 1000;
+      const time = maxTime - timeElapsed;
+      const correctChars = charIndex - mistakes;
+      const totalTime = maxTime - time;
+
+      // words per minute. Mathmatical standard is 5 characters per word
+      let wpm = Math.round((correctChars / 5 / totalTime) * 60);
+      wpm = wpm < 0 || !wpm || wpm == Infinity ? 0 : Math.floor(wpm);
+
+      // characters per minute
+      let cpm = correctChars * (60 / totalTime);
+      cpm = cpm < 0 || !cpm || cpm == Infinity ? 0 : Math.floor(cpm);
+
+      // unrealistic values cancel the game
+      // TODO: consider checking for unrealistic mistakes to invalidate game
+      if (charIndex > 800 || wpm > 135) {
+        await db.game.delete({
+          where: { id: gameId, status: "INPROGRESS" },
+        });
+        logger.warn(
+          "Invalid game state, game aborted for user: " +
+            session.user.id +
+            ". Game data (Charindex and wpm): " +
+            charIndex +
+            wpm,
+        );
+        throw new ErrorMessage("Invalid game state, game aborted");
+      }
+
+      const mistakePenalty = 1 - mistakes / (charIndex + 1);
+      const score = Math.floor(cpm * 2 * mistakePenalty);
+      const totalCharacters = charIndex;
+
+      const metadata = {
+        wpm,
+        cpm,
+        totalCharacters,
+        mistakes,
+      };
+
+      await db.game.update({
+        where: { id: gameId },
+        data: { score, metadata },
+      });
+      return { wpm, cpm, score };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to update game");
+      throw error;
     }
 
-    const mistakePenalty = 1 - mistakes / (charIndex + 1);
-    const score = Math.floor(cpm * 2 * mistakePenalty);
-    const totalCharacters = charIndex;
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
 
-    const metadata = {
-      wpm,
-      cpm,
-      totalCharacters,
-      mistakes,
-    };
-
-    await db.game.update({
-      where: { id: gameId },
-      data: { score, metadata },
-    });
-    return { wpm, cpm, score };
-  });
+    logger.error("Error updating game: " + error);
+    throw new Error(
+      "Error updating game. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
 };
 
 export const finishGame = async (gameId: string) => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    return "Not authorized";
-  }
   try {
+    const session = await checkActiveUserAuth();
+
     return await prisma.$transaction(async (db) => {
       const game = await db.game.findUnique({
         where: { id: gameId },
@@ -147,7 +199,8 @@ export const finishGame = async (gameId: string) => {
         game.userId !== session.user.id ||
         game.status !== "INPROGRESS"
       ) {
-        return "Invalid game session";
+        logger.info("Invalid game session for user: " + session.user.id);
+        throw new ErrorMessage("Invalid game state");
       }
 
       const gold = await goldValidator(db, game.userId, game.score);
@@ -173,67 +226,93 @@ export const finishGame = async (gameId: string) => {
       return { message: "Recieved " + gold + " gold", gold };
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to finish game");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
     logger.error("Error finishing up game: " + error);
-    return (
+    throw new Error(
       "Something went wrong. Please inform a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
 
 export const getRandomTypeQuestText = async () => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
+  try {
+    await checkActiveUserAuth();
+
+    const typeQuestText = await prisma.typeQuestText.findFirst({
+      select: {
+        text: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+      skip: Math.floor(Math.random() * (await prisma.typeQuestText.count())),
+    });
+
+    return typeQuestText;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get random TypeQuest text");
+      throw error;
+    }
+
+    logger.error("Error fetching random TypeQuest text: " + error);
+    throw new Error(
+      "Error fetching random TypeQuest text. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
-
-  const typeQuestText = await prisma.typeQuestText.findFirst({
-    select: {
-      text: true,
-    },
-    orderBy: {
-      id: "asc",
-    },
-    skip: Math.floor(Math.random() * (await prisma.typeQuestText.count())),
-  });
-
-  return typeQuestText;
 };
 
 export const getGameLeaderboard = async (gameName: string) => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
+  try {
+    await checkActiveUserAuth();
 
-  const leaderboard = await prisma.game.findMany({
-    where: {
-      game: gameName,
-      status: "FINISHED",
-      user: { publicHighscore: true },
-    },
-    select: {
-      score: true,
-      metadata: true,
-      user: {
-        select: {
-          title: true,
-          image: true,
-          name: true,
-          username: true,
-          lastname: true,
+    const leaderboard = await prisma.game.findMany({
+      where: {
+        game: gameName,
+        status: "FINISHED",
+        user: { publicHighscore: true },
+      },
+      select: {
+        score: true,
+        metadata: true,
+        user: {
+          select: {
+            title: true,
+            image: true,
+            name: true,
+            username: true,
+            lastname: true,
+          },
         },
       },
-    },
-    orderBy: {
-      score: "desc",
-    },
-    distinct: ["userId"],
-    take: 10,
-  });
+      orderBy: {
+        score: "desc",
+      },
+      distinct: ["userId"],
+      take: 10,
+    });
 
-  return leaderboard;
+    return leaderboard;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get game leaderboard");
+      throw error;
+    }
+    logger.error("Error fetching game leaderboard: " + error);
+
+    throw new Error(
+      "Error fetching leaderboard. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
 };

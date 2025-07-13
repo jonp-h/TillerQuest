@@ -23,13 +23,29 @@ export default function DeathCard({ user }: { user: User }) {
   const router = useRouter();
 
   const handleRessurect = async (effect: string) => {
-    resurrectUsers({
-      userId: user.id,
-      effect: effect,
-    }).then(() => {
-      toast.success("User resurrected");
-      router.refresh();
-    });
+    toast.promise(
+      resurrectUsers({
+        userId: user.id,
+        effect: effect,
+      }),
+      {
+        pending: "Resurrecting user...",
+        success: {
+          autoClose: 10000,
+          render({ data }) {
+            return data;
+          },
+        },
+        error: {
+          render({ data }) {
+            return data instanceof Error
+              ? data.message
+              : "An error occurred during resurrection";
+          },
+        },
+      },
+    );
+    router.refresh();
   };
 
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);

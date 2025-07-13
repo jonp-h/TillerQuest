@@ -1,36 +1,37 @@
 import MainContainer from "@/components/MainContainer";
-import { getAllDeadUsers } from "@/data/admin/adminUserInteractions";
+import { getDeadUserCount } from "@/data/user/getUser";
+import { requireAdmin } from "@/lib/redirectUtils";
 import { Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";
 
 export default async function GameMasterPage() {
-  const deadUsers = await getAllDeadUsers();
+  await requireAdmin();
+  const deadUsers = await getDeadUserCount();
 
   return (
     <MainContainer>
       <Typography variant="h1" align="center">
         Game Master
       </Typography>
-      <Paper
-        className="p-5 flex flex-col justify-center w-2/3 m-auto text-center gap-6"
-        elevation={6}
-      >
-        {deadUsers && (
+      {deadUsers && (
+        <Paper
+          className="p-5 flex flex-col justify-center w-2/3 m-auto text-center gap-6"
+          elevation={6}
+        >
           <Typography color={"red"} variant="h3">
-            Dead users: {deadUsers.length}
+            Dead users: {JSON.stringify(deadUsers)}
           </Typography>
-        )}
-        <div className="flex justify-evenly">
-          {deadUsers && (
+
+          <div className="flex justify-evenly">
             <Link href={`/gamemaster/resurrect/`}>
               <Button variant="contained" color="error">
                 Resurrect
               </Button>
             </Link>
-          )}
-        </div>
-      </Paper>
+          </div>
+        </Paper>
+      )}
       <div className="flex mt-10 justify-evenly">
         <Link href="/gamemaster/guilds">
           <Button color="secondary" variant="contained">

@@ -18,7 +18,21 @@ function SystemMessage({ message, userId }: SystemMessageProps) {
   const router = useRouter();
 
   const handleDiscard = async () => {
-    toast.info(await discardSystemMessage(userId, message.id));
+    toast.promise(discardSystemMessage(userId, message.id), {
+      pending: "Discarding message...",
+      success: {
+        render({ data }) {
+          return data;
+        },
+      },
+      error: {
+        render({ data }) {
+          return data instanceof Error
+            ? data.message
+            : "An error occurred while discarding the message";
+        },
+      },
+    });
     router.refresh();
   };
   return (

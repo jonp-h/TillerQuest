@@ -1,10 +1,9 @@
-import { auth } from "@/auth";
 import MainContainer from "@/components/MainContainer";
 import {
   checkIfUserOwnsAbility,
   getAbilityByName,
 } from "@/data/abilities/getters/getAbilities";
-import { getMembersByCurrentUserGuild } from "@/data/user/getGuildmembers";
+import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserById } from "@/data/user/getUser";
 import {
   Paper,
@@ -24,15 +23,16 @@ import { $Enums } from "@prisma/client";
 import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 export default async function AbilityNamePage({
   params,
 }: {
   params: Promise<{ abilityName: string }>;
 }) {
+  const session = await requireActiveUser();
   const { abilityName } = await params;
   const ability = await getAbilityByName(abilityName);
-  const session = await auth();
 
   if (!ability || !session?.user.id) {
     console.error(
@@ -66,7 +66,7 @@ export default async function AbilityNamePage({
     ));
   }
 
-  const guildMembers = await getMembersByCurrentUserGuild(user.guildName || "");
+  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
 
   // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
   let targetHasPassive = false;

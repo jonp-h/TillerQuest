@@ -3,15 +3,17 @@ import MainContainer from "@/components/MainContainer";
 import React from "react";
 import Leaderboard from "./_components/Leaderboard";
 import { getVg1Leaderboard, getVg2Leaderboard } from "@/data/user/getUser";
-import { getAllDeadUsers } from "@/data/admin/adminUserInteractions";
+import { getDeadUsers } from "@/data/user/getUser";
 import Image from "next/image";
 import { Button, Typography } from "@mui/material";
 import Link from "next/link";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 async function ArenaPage() {
+  await requireActiveUser();
   const usersVg1 = await getVg1Leaderboard();
   const usersVg2 = await getVg2Leaderboard();
-  const deadUsers = await getAllDeadUsers();
+  const deadUsers = await getDeadUsers();
 
   return (
     <MainContainer>

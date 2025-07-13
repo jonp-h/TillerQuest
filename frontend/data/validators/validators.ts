@@ -3,27 +3,21 @@ import { PrismaTransaction } from "@/types/prismaTransaction";
 import { getUserPassiveEffect } from "../passives/getPassive";
 import { User } from "@prisma/client";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
-import { auth } from "@/auth";
 import { addLog } from "../log/addLog";
+import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
 
 export const healingValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
   hpValue: number,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    return "Not authorized";
-  }
-
-  // check if user has any health passives to add to the healing value
-  const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
-  hpValue += healthBonus;
-
   try {
+    await checkActiveUserAuth();
+
+    // check if user has any health passives to add to the healing value
+    const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
+    hpValue += healthBonus;
+
     const targetHP = await db.user.findFirst({
       where: {
         id: targetUserId,
@@ -32,17 +26,22 @@ export const healingValidator = async (
     });
 
     if (targetHP?.hp === 0) {
-      return "dead";
+      return "User is dead"; // If the user is dead, no healing can be applied
     } else if (targetHP && targetHP.hp + hpValue >= targetHP.hpMax) {
       return targetHP?.hpMax - targetHP?.hp;
     } else {
       return hpValue;
     }
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to healing validation: " + error);
+      throw error;
+    }
+
     logger.error("Error validating HP for user " + targetUserId + ": " + error);
-    return (
+    throw new Error(
       "Something went wrong. Please notify a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
+        Date.now().toLocaleString("no-NO"),
     );
   }
 };
@@ -52,44 +51,54 @@ export const manaValidator = async (
   targetUserId: string,
   manaValue: number,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-  // if mana is subtracted, skip passive effects
-  if (manaValue > 0) {
-    // check if user has any mana passives to add to the mana value
-    const manaBonus = await getUserPassiveEffect(
-      db,
-      targetUserId,
-      "ManaPassive",
-    );
-    manaValue += manaBonus;
-  }
+  try {
+    await checkActiveUserAuth();
 
-  const targetMana = await db.user.findFirst({
-    where: {
-      id: targetUserId,
-    },
-    select: { mana: true, manaMax: true },
-  });
-
-  if (!targetMana) {
-    return 0;
-  }
-
-  if (manaValue > 0) {
-    if (targetMana.mana + manaValue >= targetMana.manaMax) {
-      return targetMana.manaMax - targetMana.mana;
-    } else {
-      return manaValue;
+    // if mana is subtracted, skip passive effects
+    if (manaValue > 0) {
+      // check if user has any mana passives to add to the mana value
+      const manaBonus = await getUserPassiveEffect(
+        db,
+        targetUserId,
+        "ManaPassive",
+      );
+      manaValue += manaBonus;
     }
-  } else {
-    const newMana = targetMana.mana + manaValue;
-    return newMana < 0 ? -targetMana.mana : manaValue;
+
+    const targetMana = await db.user.findFirst({
+      where: {
+        id: targetUserId,
+      },
+      select: { mana: true, manaMax: true },
+    });
+
+    if (!targetMana) {
+      return 0;
+    }
+
+    if (manaValue > 0) {
+      if (targetMana.mana + manaValue >= targetMana.manaMax) {
+        return targetMana.manaMax - targetMana.mana;
+      } else {
+        return manaValue;
+      }
+    } else {
+      const newMana = targetMana.mana + manaValue;
+      return newMana < 0 ? -targetMana.mana : manaValue;
+    }
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to mana validation: " + error);
+      throw error;
+    }
+
+    logger.error(
+      "Error validating mana for user " + targetUserId + ": " + error,
+    );
+    throw new Error(
+      "Something went wrong. Please notify a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
@@ -110,39 +119,49 @@ export const damageValidator = async (
   damage: number,
   healthTreshold: number = 0,
 ) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
+  try {
+    await checkActiveUserAuth();
 
-  // if the target user is already dead, return 0
-  if (targetUserHp === 0) {
-    return 0;
-  }
+    // if the target user is already dead, return 0
+    if (targetUserHp === 0) {
+      return 0;
+    }
 
-  // user has a cosmic event that increases damage
-  const increasedDamage =
-    (await getUserPassiveEffect(db, targetUserId, "Damage", true)) / 100;
+    // user has a cosmic event that increases damage
+    const increasedDamage =
+      (await getUserPassiveEffect(db, targetUserId, "Damage", true)) / 100;
 
-  damage = damage * (1 + increasedDamage);
+    damage = damage * (1 + increasedDamage);
 
-  // reduce the damage by the passive effects
-  const newDamage = await protectionValidator(db, targetUserId, damage);
+    // reduce the damage by the passive effects
+    const newDamage = await protectionValidator(db, targetUserId, damage);
 
-  // ensure the damage does not become negative
-  const finalDamage = newDamage < 0 ? 0 : newDamage;
+    // ensure the damage does not become negative
+    const finalDamage = newDamage < 0 ? 0 : newDamage;
 
-  // return the damage to take, unless it brings the user below the health treshhold, then return the damage to bring the user to the health treshold
-  if (targetUserHp - finalDamage <= healthTreshold) {
-    return targetUserHp - healthTreshold;
-  } else {
-    return finalDamage;
+    // return the damage to take, unless it brings the user below the health treshhold, then return the damage to bring the user to the health treshold
+    if (targetUserHp - finalDamage <= healthTreshold) {
+      return targetUserHp - healthTreshold;
+    } else {
+      return finalDamage;
+    }
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to damage validation: " + error);
+      throw error;
+    }
+
+    logger.error(
+      "Error validating damage for user " + targetUserId + ": " + error,
+    );
+    throw new Error(
+      "Something went wrong. Please notify a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
+// Local function to handle protection passives
 const protectionValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
@@ -186,12 +205,9 @@ export const experienceAndLevelValidator = async (
   user: User,
   xp: number,
 ) => {
-  const session = await auth();
-  if (session?.user.role === "NEW" || !session) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const targetUser = await db.user.findFirst({
       where: {
         id: user.id,
@@ -229,7 +245,7 @@ export const experienceAndLevelValidator = async (
       });
       return "Successfully removed XP from user";
     }
-    // ---------------------------------------------------------
+    // ------------- handle positive XP ---------------------
 
     const xpMultipler =
       (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
@@ -274,6 +290,11 @@ export const experienceAndLevelValidator = async (
     }
     return "Successfully gave XP to user";
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to experience validation: " + error);
+      throw error;
+    }
+
     logger.error("Validating experience and leveling up failed: " + error);
     return (
       "Something went wrong at " +
@@ -289,12 +310,9 @@ export const goldValidator = async (
   userId: string,
   gold: number,
 ) => {
-  const session = await auth();
-  if (session?.user.role === "NEW" || !session) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const targetUser = await db.user.findFirst({
       where: {
         id: userId,
@@ -312,6 +330,11 @@ export const goldValidator = async (
 
     return goldToGive;
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to gold validation: " + error);
+      throw error;
+    }
+
     logger.error("Validating gold failed: " + error);
     throw new Error(
       "Something went wrong at " +

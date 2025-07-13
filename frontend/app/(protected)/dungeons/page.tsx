@@ -2,19 +2,19 @@ import MainContainer from "@/components/MainContainer";
 import React from "react";
 import Battleground from "./_components/Battleground";
 import { getDungeonAbilities } from "@/data/dungeons/dungeonAbilities";
-import { auth } from "@/auth";
 import { getEnemies, getUserTurns } from "@/data/dungeons/dungeon";
+import { requireActiveUser } from "@/lib/redirectUtils";
 
 async function DungeonPage() {
-  const user = await auth();
+  const session = await requireActiveUser();
 
-  if (!user?.user.id) {
-    throw new Error("UserId error");
+  if (!session?.user.id) {
+    throw new Error("User error");
   }
 
-  const dungeonAbilities = await getDungeonAbilities(user.user.id);
-  const enemies = await getEnemies(user.user.id);
-  const userTurns = await getUserTurns(user.user.id);
+  const dungeonAbilities = await getDungeonAbilities(session.user.id);
+  const enemies = await getEnemies(session.user.id);
+  const userTurns = await getUserTurns(session.user.id);
 
   return (
     <MainContainer>
@@ -23,7 +23,7 @@ async function DungeonPage() {
       {enemies ? (
         <Battleground
           abilities={dungeonAbilities ?? []}
-          userId={user.user.id}
+          userId={session.user.id}
           enemies={enemies}
           userTurns={userTurns}
         />

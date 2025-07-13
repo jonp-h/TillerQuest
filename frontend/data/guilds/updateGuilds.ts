@@ -1,25 +1,51 @@
 "use server";
 
-import { auth } from "@/auth";
+import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { ErrorMessage } from "@/lib/error";
+import { logger } from "@/lib/logger";
 import { SchoolClass } from "@prisma/client";
 
 export const updateGuildname = async (oldName: string, newName: string) => {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
+  try {
+    await checkAdminAuth();
+
+    const guildExists = await db.guild.findUnique({
+      where: {
+        name: newName,
+      },
+    });
+
+    if (guildExists) {
+      throw new ErrorMessage("A guild with this name already exists.");
+    }
+
+    const guilds = await db.guild.update({
+      where: {
+        name: oldName,
+      },
+      data: {
+        name: newName,
+      },
+    });
+
+    return guilds;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to update guild name");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error updating guild name: " + error);
+    throw new Error(
+      "Something went wrong while updating the guild name. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
-
-  const guilds = await db.guild.update({
-    where: {
-      name: oldName,
-    },
-    data: {
-      name: newName,
-    },
-  });
-
-  return guilds;
 };
 
 export const updateGuildmembers = async (
@@ -31,21 +57,31 @@ export const updateGuildmembers = async (
     schoolClass: SchoolClass | null;
   }[],
 ) => {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Not authorized");
-  }
+  try {
+    await checkAdminAuth();
 
-  const guilds = await db.guild.update({
-    where: {
-      name: name,
-    },
-    data: {
-      members: {
-        set: newMembers,
+    const guilds = await db.guild.update({
+      where: {
+        name: name,
       },
-    },
-  });
+      data: {
+        members: {
+          set: newMembers,
+        },
+      },
+    });
 
-  return guilds;
+    return guilds;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to update guild members");
+      throw error;
+    }
+
+    logger.error("Error updating guild members: " + error);
+    throw new Error(
+      "Something went wrong while updating the guild members. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
 };

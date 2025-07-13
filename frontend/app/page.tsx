@@ -1,6 +1,9 @@
+import { redirectIfNewUser } from "@/lib/redirectUtils";
 import Image from "next/image";
 
 export default async function Home() {
+  await redirectIfNewUser();
+
   return (
     <main className=" bg-linear-to-b from-violet-900 to-slate-950 w-screen min-h-screen">
       <div className="w-screen flex justify-center text-center">

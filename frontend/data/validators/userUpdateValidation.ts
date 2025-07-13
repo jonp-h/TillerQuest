@@ -8,13 +8,12 @@ import {
 } from "@/lib/userValidation";
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
+import { headers } from "next/headers";
+import { checkNewUserAuth } from "@/lib/authUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
-  const session = await auth();
-  if (session?.user.id !== id || session?.user.role !== "NEW" || !session) {
-    return "Not authorized";
-  }
+  await checkNewUserAuth();
 
   const validatedData = newUserSchema.safeParse(data);
 
@@ -22,22 +21,22 @@ export const validateUserCreation = async (id: string, data: any) => {
     return validatedData.error.errors.map((e) => e.message).join(", ");
   }
 
-  //TODO: use guild and schoolclass restrictions?
-  // // validate if the user guild has the same schoolclass
-  // const guildSchoolClass = await db.guild.findFirst({
-  //   where: {
-  //     name: {
-  //       equals: validatedData.data.guild,
-  //     },
-  //   },
-  //   select: {
-  //     schoolClass: true,
-  //   },
-  // });
+  //TODO: consider the need for guild and schoolclass restrictions?
+  // validate if the user guild has the same schoolclass
+  const guildSchoolClass = await db.guild.findFirst({
+    where: {
+      name: {
+        equals: validatedData.data.guild,
+      },
+    },
+    select: {
+      schoolClass: true,
+    },
+  });
 
-  // if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
-  //   return "The chosen guild is not available for your school class";
-  // }
+  if (guildSchoolClass?.schoolClass !== validatedData.data.schoolClass) {
+    return "The chosen guild is not available for your school class";
+  }
 
   // validate if the user guild is full
   const guildCount = await getGuildmemberCount(id, validatedData.data.guild);
@@ -107,7 +106,9 @@ export const validateUserCreation = async (id: string, data: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserUpdate = async (id: string, data: any) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   if (session?.user.id !== id || session?.user.role === "NEW" || !session) {
     return "Not authorized";
   }

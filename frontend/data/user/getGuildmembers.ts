@@ -1,19 +1,13 @@
 "use server";
 
-import { auth } from "@/auth";
+import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
 
-// get all the users that are in the same guild as the current user
-export const getMembersByCurrentUserGuild = async (guildName: string) => {
-  const session = await auth();
-  if (
-    !session ||
-    (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-  ) {
-    throw new Error("Not authorized");
-  }
-
+export const getGuildmembersByGuildname = async (guildName: string) => {
   try {
+    await checkActiveUserAuth();
+
     const members = await db.user.findMany({
       where: { guildName },
       select: {
@@ -28,7 +22,16 @@ export const getMembersByCurrentUserGuild = async (guildName: string) => {
       },
     });
     return members;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to guild members: " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching guild members: " + error);
+    throw new Error(
+      "Something went wrong while fetching guild members. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };

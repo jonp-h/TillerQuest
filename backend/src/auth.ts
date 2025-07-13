@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
-import { db } from "./lib/db";
+import { db } from "./lib/db.js";
 import { $Enums } from "@prisma/client";
 
 export const auth = betterAuth({
@@ -37,6 +37,13 @@ export const auth = betterAuth({
         enum: $Enums.Class,
       },
     },
+  },
+  rateLimit: {
+    enabled: true,
+    max: 100, // 100 requests
+    window: 10 * 60 * 5, // 5 minutes
+    storage: "memory",
+    modelName: "RateLimit",
   },
   socialProviders: {
     github: {

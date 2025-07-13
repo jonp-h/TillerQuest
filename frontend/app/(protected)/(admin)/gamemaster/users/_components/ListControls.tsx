@@ -42,37 +42,133 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for healing");
             return;
           }
-          toast.success(await healUsers(selectedUsers, value, notify));
+          toast.promise(healUsers(selectedUsers, value, notify), {
+            pending: "Healing users...",
+            success: {
+              render: ({ data }) => {
+                return data;
+              },
+            },
+            error: {
+              render: ({ data }) => {
+                return data instanceof Error
+                  ? `${data.message}`
+                  : "An error occurred while healing users.";
+              },
+            },
+          });
           break;
         case "damage":
           if (value < 0) {
             toast.error("Negative values are not allowed for damage");
             return;
           }
-          toast.success(await damageUsers(selectedUsers, value, notify));
+          toast.promise(damageUsers(selectedUsers, value, notify), {
+            pending: "Damaging users...",
+            success: {
+              render: ({ data }) => {
+                return data;
+              },
+            },
+            error: {
+              render: ({ data }) => {
+                return data instanceof Error
+                  ? `${data.message}`
+                  : "An error occurred while damaging users.";
+              },
+            },
+          });
           break;
         case "xp":
           if (value < 0) {
+            toast.promise(giveXpToUsers(selectedUsers, value, notify), {
+              pending: "Removing XP from users...",
+              success: {
+                render: () => {
+                  return "XP removed successfully.";
+                },
+              },
+              error: {
+                render: ({ data }) => {
+                  return data instanceof Error
+                    ? `${data.message}`
+                    : "An error occurred while removing XP from users.";
+                },
+              },
+            });
             toast.warning(
-              "Successfully removed XP from selected users. Warning: Users may end with negative gemstones.",
+              "Warning: Users may end up with negative gemstones.",
+              { autoClose: false },
             );
-            await giveXpToUsers(selectedUsers, value, notify);
           } else {
-            toast.success(await giveXpToUsers(selectedUsers, value, notify));
+            toast.promise(giveXpToUsers(selectedUsers, value, notify), {
+              pending: "Giving XP to users...",
+              success: {
+                render: ({ data }) => {
+                  return data;
+                },
+              },
+              error: {
+                render: ({ data }) => {
+                  return data instanceof Error
+                    ? `${data.message}`
+                    : "An error occurred while giving XP to users.";
+                },
+              },
+            });
           }
 
           break;
         case "mana":
-          // TODO: rework to return boolean
-          toast.success(await giveManaToUsers(selectedUsers, value, notify));
+          toast.promise(giveManaToUsers(selectedUsers, value, notify), {
+            pending: "Giving mana to users...",
+            success: {
+              render: ({ data }) => {
+                return data;
+              },
+            },
+            error: {
+              render: ({ data }) => {
+                return data instanceof Error
+                  ? `${data.message}`
+                  : "An error occurred while giving mana to users.";
+              },
+            },
+          });
           break;
         case "arenatoken":
-          toast.success(
-            await giveArenatokenToUsers(selectedUsers, value, notify),
-          );
+          toast.promise(giveArenatokenToUsers(selectedUsers, value, notify), {
+            pending: "Giving arenatokens to users...",
+            success: {
+              render: ({ data }) => {
+                return data;
+              },
+            },
+            error: {
+              render: ({ data }) => {
+                return data instanceof Error
+                  ? `${data.message}`
+                  : "An error occurred while giving arenatokens to users.";
+              },
+            },
+          });
           break;
         case "gold":
-          toast.success(await giveGoldToUsers(selectedUsers, value, notify));
+          toast.promise(giveGoldToUsers(selectedUsers, value, notify), {
+            pending: "Giving gold to users...",
+            success: {
+              render: ({ data }) => {
+                return data;
+              },
+            },
+            error: {
+              render: ({ data }) => {
+                return data instanceof Error
+                  ? `${data.message}`
+                  : "An error occurred while giving gold to users.";
+              },
+            },
+          });
           break;
         default:
           toast.error("No action selected");

@@ -9,11 +9,11 @@ import {
   healingValidator,
   manaValidator,
 } from "@/data/validators/validators";
-import { auth } from "@/auth";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
 import { addLog } from "@/data/log/addLog";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 import { ErrorMessage } from "@/lib/error";
+import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -33,74 +33,74 @@ export const selectAbility = async (
   targetUsersIds: string[],
   abilityName: string,
 ) => {
-  const session = await auth();
-  if (session?.user?.id !== userId) {
-    return "Not authorized";
-  }
-
-  const castingUser = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-
-  if (!castingUser) {
-    return "Something went wrong. Please notify a game master.";
-  }
-
-  if (castingUser.hp === 0) {
-    return "You can't use abilities while dead";
-  }
-
-  const ability = await prisma.ability.findFirst({
-    where: {
-      name: abilityName,
-    },
-  });
-
-  if (!ability) {
-    logger.error(
-      `User ${castingUser.username} tried to use ability ${abilityName} but it does not exist`,
-    );
-    return "Ability not found";
-  }
-
-  const cosmic = await prisma.cosmicEvent.findFirst({
-    where: {
-      selected: true,
-    },
-    select: {
-      increaseCostType: true,
-      blockAbilityType: true,
-    },
-  });
-
-  if (cosmic?.blockAbilityType === ability.type) {
-    return "This ability is blocked by a cosmic event";
-  }
-
-  // check if the user has a cosmic event passive that increases the cost. If the type is all, all abilities cost more
-  const increasedCostType =
-    cosmic?.increaseCostType === "All" ? "All" : ability.type;
-  const increasedCost =
-    (await getUserPassiveEffect(
-      prisma,
-      castingUser.id,
-      increasedCostType,
-      true,
-    )) / 100;
-
-  ability.manaCost = ability.manaCost! * (1 + increasedCost);
-  ability.healthCost = ability.healthCost! * (1 + increasedCost);
-
-  if (castingUser.mana < (ability.manaCost || 0)) {
-    return "Insufficient mana. The cost is " + ability.manaCost;
-  }
-  if (castingUser.hp <= (ability.healthCost || 0)) {
-    return "Insufficient health. The cost is " + ability.healthCost;
-  }
-
   try {
+    await checkUserIdAndActiveAuth(userId);
+
+    const castingUser = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!castingUser) {
+      throw new ErrorMessage(
+        "Something went wrong. Please notify a game master.",
+      );
+    }
+
+    if (castingUser.hp === 0) {
+      throw new ErrorMessage("You can't use abilities while dead");
+    }
+
+    const ability = await prisma.ability.findFirst({
+      where: {
+        name: abilityName,
+      },
+    });
+
+    if (!ability) {
+      throw new ErrorMessage("Ability not found");
+    }
+
+    const cosmic = await prisma.cosmicEvent.findFirst({
+      where: {
+        selected: true,
+      },
+      select: {
+        increaseCostType: true,
+        blockAbilityType: true,
+      },
+    });
+
+    if (cosmic?.blockAbilityType === ability.type) {
+      throw new ErrorMessage("This ability is blocked by a cosmic event");
+    }
+
+    // check if the user has a cosmic event passive that increases the cost. If the type is all, all abilities cost more
+    const increasedCostType =
+      cosmic?.increaseCostType === "All" ? "All" : ability.type;
+    const increasedCost =
+      (await getUserPassiveEffect(
+        prisma,
+        castingUser.id,
+        increasedCostType,
+        true,
+      )) / 100;
+
+    ability.manaCost = ability.manaCost! * (1 + increasedCost);
+    ability.healthCost = ability.healthCost! * (1 + increasedCost);
+
+    if (castingUser.mana < (ability.manaCost || 0)) {
+      throw new ErrorMessage(
+        "Insufficient mana. The cost is " + ability.manaCost,
+      );
+    }
+    if (castingUser.hp <= (ability.healthCost || 0)) {
+      throw new ErrorMessage(
+        "Insufficient health. The cost is " + ability.healthCost,
+      );
+    }
+
     return await prisma.$transaction(async (db) => {
       // check ability type and call the appropriate function
       switch (ability.type) {
@@ -280,15 +280,21 @@ export const selectAbility = async (
       }
     });
   } catch (error) {
+    // if the error is an instance of AuthError, it means the user does not have the required permissions
+    if (error instanceof AuthorizationError) {
+      logger.warn(`Auth violation: ${error.message}`);
+      return error.userMessage || "Access denied";
+    }
+
     // if the error is an instance of ErrorMessage, the message can be returned directly
     if (error instanceof ErrorMessage) {
       return error.message;
     }
     logger.error(
       "Error using " +
-        ability.name +
+        abilityName +
         " by user " +
-        castingUser.username +
+        userId +
         " on targets " +
         targetUsersIds +
         ": " +
@@ -296,7 +302,7 @@ export const selectAbility = async (
     );
     return (
       "Something went wrong using " +
-      ability.name +
+      abilityName +
       ". Please notify a game master of this timestamp: " +
       new Date().toLocaleString("no-NO")
     );
@@ -367,10 +373,6 @@ const activatePassive = async (
           },
         });
       }
-
-      console.log(
-        `Activating passive ${ability.name} for user ${targetUserId}`,
-      );
 
       // if the ability decreases health or mana, the value should be set to the cost
       if (ability.type === "DecreaseHealth") {
@@ -512,7 +514,10 @@ const useHealAbility = async (
 
       if (valueToHeal === 0 && targetUsersIds.length === 1) {
         throw new ErrorMessage("Target is already at full health");
-      } else if (valueToHeal === "dead" && targetUsersIds.length === 1) {
+      } else if (
+        valueToHeal === "User is dead" &&
+        targetUsersIds.length === 1
+      ) {
         throw new ErrorMessage(
           "You can't heal a dead target. The dead require a different kind of magic.",
         );
@@ -533,7 +538,7 @@ const useHealAbility = async (
           username: true,
         },
       });
-      addLog(
+      await addLog(
         db,
         targetUserId,
         `${targetUser.username} was healed for ${valueToHeal} by ${castingUser.username}`,
@@ -587,7 +592,7 @@ const useReviveAbility = async (
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
   );
 
-  addLog(
+  await addLog(
     db,
     targetUser.id,
     `REVIVAL: ${castingUser.username} revived ${target.username}`,
@@ -631,7 +636,7 @@ const useManaAbility = async (
           username: true,
         },
       });
-      addLog(
+      await addLog(
         db,
         targetUserId,
         `${targetUser.username} recieved ${value} mana from ${castingUser.username}`,
@@ -909,7 +914,7 @@ const useProtectionAbility = async (
             : undefined, // 1 * 60000 = 1 minute
         },
       });
-      addLog(
+      await addLog(
         db,
         targetUserId,
         `${castingUser.username} is shielding you`,
@@ -1092,7 +1097,7 @@ const useTwistOfFateAbility = async (
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
 
-  addLog(
+  await addLog(
     db,
     castingUser.id,
     `${castingUser.username} used Twist of Fate, and rolled a ${dice.total}`,

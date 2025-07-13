@@ -1,25 +1,39 @@
 "use server";
 
-import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { addLog } from "../log/addLog";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 export const checkNewUserSecret = async (id: string, secret: string) => {
-  // should be available to users with a valid session
-  const session = await auth();
-  if (!session || session?.user.role !== "NEW" || session?.user.id !== id) {
-    throw new Error("Not authorized");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    console.warn(
+      "Unauthorized access attempt to check new user secret without session",
+    );
+    return false;
   }
 
-  addLog(
+  if (session.user.id !== id) {
+    console.warn(
+      "Unauthorized access attempt to check new user secret for user ID: " + id,
+    );
+    return false;
+  }
+
+  // should be available to users with a valid session
+
+  await addLog(
     db,
     id,
     "User " +
-      session.user.username +
+      session?.user.username +
       " (id: " +
       id +
-      ") is checking new user secret: " +
-      secret,
+      ") is checking new user secret",
     false,
     true, // debug log. excluded from global logs
   );

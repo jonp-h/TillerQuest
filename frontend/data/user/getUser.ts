@@ -1,62 +1,47 @@
 "use server";
 
 import { auth } from "@/auth";
+import {
+  AuthorizationError,
+  checkActiveUserAuth,
+  checkAdminAuth,
+  checkUserIdAndActiveAuth,
+} from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
+import { headers } from "next/headers";
 
 export const getUserById = async (id: string) => {
   // unstable_noStore();
 
-  const session = await auth();
-  if (session?.user.role === "NEW" || !session) {
-    return null;
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const user = await db.user.findUnique({
       where: { id },
     });
 
     return user;
-  } catch {
-    return null;
-  }
-};
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to user with ID. " + error);
+      throw error;
+    }
 
-// Only used by auth.ts
-export const getUserAuthById = async (id: string) => {
-  // unstable_noStore();
-
-  // TODO: improve authentication by reworking creation page useSession
-  // const session = await auth();
-  // if (session?.user.role === "NEW" || !session) {
-  //   return null;
-  // }
-
-  try {
-    const user = await db.user.findUnique({
-      where: { id },
-      select: {
-        username: true,
-        class: true,
-        role: true,
-      },
-    });
-
-    return user;
-  } catch {
-    return null;
+    logger.error("Error fetching user by ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching user by ID. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getUserProfileByUsername = async (username: string) => {
   // unstable_noStore();
 
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const user = await db.user.findUnique({
       where: { username },
       select: {
@@ -94,20 +79,89 @@ export const getUserProfileByUsername = async (username: string) => {
     });
 
     return user;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to user profile. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching user profile by username: " + error);
+    throw new Error(
+      "Something went wrong while fetching user profile by username. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getDeadUsers = async () => {
+  try {
+    await checkActiveUserAuth();
+
+    const deadUsers = await db.user.findMany({
+      where: {
+        hp: {
+          equals: 0,
+        },
+      },
+    });
+    return deadUsers;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to all dead users. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching all dead users: " + error);
+    throw new Error(
+      "Something went wrong while fetching all dead users. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+// Only used by game masters
+export const getDeadUserCount = async () => {
+  try {
+    await checkAdminAuth();
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session || session.user.role !== "ADMIN") {
+      throw new AuthorizationError(
+        "Unauthorized access to dead user count.",
+        "Unauthorized",
+        "You do not have access",
+      );
+    }
+
+    const deadUserCount = await db.user.count({
+      where: {
+        hp: {
+          equals: 0,
+        },
+      },
+    });
+    return deadUserCount;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to count all dead users. " + error,
+      );
+      throw error;
+    }
+
+    logger.error("Error counting all dead users: " + error);
+    throw new Error(
+      "Something went wrong while counting all dead users. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getUserInventory = async (id: string) => {
   // unstable_noStore();
 
-  const session = await auth();
-  if (session?.user.id !== id) {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkUserIdAndActiveAuth(id);
+
     const inventory = await db.user.findFirst({
       where: { id },
       select: {
@@ -122,20 +176,26 @@ export const getUserInventory = async (id: string) => {
     });
 
     return inventory;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to user inventory. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching user inventory: " + error);
+    throw new Error(
+      "Something went wrong while fetching user inventory. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getVg1Leaderboard = async () => {
   // unstable_noStore();
 
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const users = await db.user.findMany({
       where: {
         role: { not: "ARCHIVED" },
@@ -161,19 +221,25 @@ export const getVg1Leaderboard = async () => {
     });
 
     return users;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to VG1 leaderboard. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching VG1 leaderboard: " + error);
+    throw new Error(
+      "Something went wrong while fetching VG1 leaderboard. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 export const getVg2Leaderboard = async () => {
   // unstable_noStore();
 
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const users = await db.user.findMany({
       where: {
         role: { not: "ARCHIVED" },
@@ -187,18 +253,24 @@ export const getVg2Leaderboard = async () => {
     });
 
     return users;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to VG2 leaderboard. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching VG2 leaderboard: " + error);
+    throw new Error(
+      "Something went wrong while fetching VG2 leaderboard. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
 
 export const getValhallaUsers = async () => {
-  const session = await auth();
-  if (!session || session?.user.role === "NEW") {
-    throw new Error("Not authorized");
-  }
-
   try {
+    await checkActiveUserAuth();
+
     const users = await db.user.findMany({
       where: {
         publicHighscore: true,
@@ -230,7 +302,16 @@ export const getValhallaUsers = async () => {
     });
 
     return users;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to Valhalla users. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching Valhalla users: " + error);
+    throw new Error(
+      "Something went wrong while fetching Valhalla users. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
   }
 };
