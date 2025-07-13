@@ -63,6 +63,11 @@ export default async function GameMasterPage() {
             Log
           </Button>
         </Link>
+        <Link href="/gamemaster/systemMessages">
+          <Button color="secondary" variant="contained">
+            System messages
+          </Button>
+        </Link>
         <Link href="/gamemaster/abilities">
           <Button color="secondary" variant="contained" disabled={true}>
             Ability management

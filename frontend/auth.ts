@@ -9,9 +9,9 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   // should be automatically set to true in production
-  // advanced: {
-  //   useSecureCookies: true,
-  // },
+  advanced: {
+    useSecureCookies: true,
+  },
   user: {
     additionalFields: {
       username: {

@@ -315,3 +315,21 @@ export const getValhallaUsers = async () => {
     );
   }
 };
+
+export const getTotalUserCount = async () => {
+  try {
+    await checkAdminAuth();
+    const totalUserCount = await db.user.count();
+    return totalUserCount;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to total user count. " + error);
+      throw error;
+    }
+    logger.error("Error fetching total user count: " + error);
+    throw new Error(
+      "Something went wrong while fetching total user count. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
