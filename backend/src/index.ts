@@ -326,7 +326,7 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every day before midnight to remove all cosmic passives, abilities and 14 day old logs
+// Schedule a job to run every day before midnight to remove all cosmic passives, abilities and 14 day old logs. Also updates rarities of shopitems
 cron.schedule(
   "59 23 * * *",
   async () => {
@@ -352,9 +352,16 @@ cron.schedule(
         },
       });
 
-      console.log("Removed cosmic passives, abilities and logs");
+      // await calculateRarity();
+
+      console.log(
+        "Removed cosmic passives, abilities and logs. Updated rarities for shopitems.",
+      );
     } catch (error) {
-      console.error("Error removing cosmic passives and abilities:", error);
+      console.error(
+        "Error removing cosmic passives, abilities and logs. And updating rarities:",
+        error,
+      );
     }
   },
   {

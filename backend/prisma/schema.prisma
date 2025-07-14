@@ -121,6 +121,7 @@ enum Rarity {
   Rare
   Epic
   Legendary
+  Mythic
 }
 
 enum ShopItemType {
@@ -134,6 +135,7 @@ model User {
   username    String?      @unique
   lastname    String?
   title       String?      @default("Newborn")
+  titleRarity Rarity?      @default(Common)
   schoolClass SchoolClass?
   class       Class?
   image       String?

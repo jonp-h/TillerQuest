@@ -12,10 +12,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Class, SchoolClass } from "@prisma/client";
+import RarityText from "@/components/RarityText";
 
 interface LeaderboardUser {
   image: string | null;
   title: string | null;
+  titleRarity: string | null;
   name: string | null;
   guildName: string | null;
   username: string | null;
@@ -77,9 +79,9 @@ async function Leaderboard({ users, title }: LeaderboardProps) {
                 <TableCell sx={{ fontSize: "125%" }} align="center">
                   <Link key={user.username} href={"/profile/" + user.username}>
                     <div className="flex flex-col text-purple-400 text-center text-lg items-center ">
-                      <Typography variant="overline" color="primary">
+                      <RarityText rarity={user.titleRarity || "Common"}>
                         {user.title}
-                      </Typography>
+                      </RarityText>
                       <Typography>{user.name}</Typography>
                       <Typography variant="h6" color="Highlight">
                         &quot;{user.username}&quot;

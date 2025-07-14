@@ -1,13 +1,16 @@
 import React from "react";
 import Image from "next/image";
-import { Tooltip, Typography } from "@mui/material";
+import { Tooltip } from "@mui/material";
+import RarityText from "@/components/RarityText";
 
 function ProfileBadge({
   badgeTitle,
+  badgeRarity,
   badgeSpecialReq,
   badgeDescription,
 }: {
   badgeTitle: string;
+  badgeRarity: string;
   badgeSpecialReq: string | null;
   badgeDescription: string | null;
 }) {
@@ -21,9 +24,9 @@ function ProfileBadge({
           alt={badgeTitle}
           draggable={false}
         />
-        <Typography variant="subtitle1">
+        <RarityText rarity={badgeRarity} className="text-lg mt-2">
           {badgeTitle.replace("-", " ").toUpperCase()}
-        </Typography>
+        </RarityText>
       </div>
     </Tooltip>
   );

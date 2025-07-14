@@ -162,6 +162,41 @@ export const checkUserIdAndActiveAuth = async (userId: string) => {
 };
 
 /**
+ * Checks if the current session's username matches the provided username and verifies that the user is fully activated.
+ * Combined auth check for username and active status (optimization for common case).
+ *
+ * @param username - The expected usernameto validate against the current session.
+ * @returns The authenticated user object from the current session if validation passes.
+ * @throws {AuthorizationError} If the username does not match the session's username.
+ * @throws {AuthorizationError} If the user's role is "NEW" and the account is not fully activated.
+ */
+export const checkUsernameAndActiveAuth = async (username: string) => {
+  const session = await getCurrentSession();
+
+  // Check user ID match
+  if (session.user.username !== username) {
+    logger.warn("Username mismatch detected");
+    throw new AuthorizationError(
+      "Username mismatch",
+      "USERNAME_MISMATCH",
+      "You do not have permission to access this resource.",
+    );
+  }
+
+  // Check active status
+  if (session.user.role === "NEW") {
+    logger.warn("NEW user attempted restricted action");
+    throw new AuthorizationError(
+      "User not fully activated",
+      "USER_NOT_ACTIVATED",
+      "Please complete your account setup to perform this action.",
+    );
+  }
+
+  return session;
+};
+
+/**
  * Checks if the current session belongs to an authenticated user with the "NEW" role (for onboarding actions).
  *
  * @throws {AuthorizationError} If the user is not authenticated.

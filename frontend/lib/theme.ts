@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 // import { Roboto } from "next/font/google";
 
 const inter = Inter({
-  weight: ["300", "400", "500", "700"],
+  weight: ["300", "400", "500", "700", "800"],
   subsets: ["latin"],
   display: "swap",
 });

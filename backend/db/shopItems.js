@@ -8,6 +8,7 @@ const shopItems = [
     levelReq: 2,
     classReq: null,
     specialReq: null,
+    rarity: "Common",
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ const shopItems = [
     levelReq: 4,
     classReq: null,
     specialReq: null,
+    rarity: "Common",
   },
   {
     id: 3,
@@ -28,6 +30,7 @@ const shopItems = [
     levelReq: 6,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 4,
@@ -38,6 +41,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 5,
@@ -48,6 +52,7 @@ const shopItems = [
     levelReq: 5,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 6,
@@ -58,6 +63,7 @@ const shopItems = [
     levelReq: 5,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 7,
@@ -68,6 +74,7 @@ const shopItems = [
     levelReq: 5,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 8,
@@ -78,6 +85,7 @@ const shopItems = [
     levelReq: 5,
     classReq: null,
     specialReq: null,
+    rarity: "Uncommon",
   },
   {
     id: 9,
@@ -88,6 +96,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Epic",
   },
   {
     id: 10,
@@ -98,6 +107,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 11,
@@ -108,6 +118,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 12,
@@ -118,6 +129,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 13,
@@ -128,6 +140,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 14,
@@ -138,6 +151,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 15,
@@ -148,6 +162,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 16,
@@ -158,6 +173,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 17,
@@ -168,6 +184,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 18,
@@ -178,16 +195,18 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 19,
-    name: "HACKZOR",
+    name: "Script Kiddie",
     description: null,
     price: 12000,
     type: "Title",
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 20,
@@ -198,6 +217,7 @@ const shopItems = [
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 21,
@@ -208,6 +228,7 @@ const shopItems = [
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 22,
@@ -218,16 +239,18 @@ const shopItems = [
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 23,
-    name: "Arc",
+    name: "Safari",
     description: null,
     price: 5000,
     type: "Title",
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 24,
@@ -238,6 +261,7 @@ const shopItems = [
     levelReq: 15,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 25,
@@ -248,6 +272,7 @@ const shopItems = [
     levelReq: 17,
     classReq: null,
     specialReq: null,
+    rarity: "Rare",
   },
   {
     id: 26,
@@ -258,6 +283,7 @@ const shopItems = [
     levelReq: 20,
     classReq: null,
     specialReq: null,
+    rarity: "Epic",
   },
   {
     id: 27,
@@ -268,6 +294,7 @@ const shopItems = [
     levelReq: 25,
     classReq: null,
     specialReq: null,
+    rarity: "Epic",
   },
   {
     id: 28,
@@ -278,6 +305,7 @@ const shopItems = [
     levelReq: 25,
     classReq: null,
     specialReq: null,
+    rarity: "Epic",
   },
   {
     id: 29,
@@ -288,6 +316,7 @@ const shopItems = [
     levelReq: 35,
     classReq: null,
     specialReq: null,
+    rarity: "Epic",
   },
   {
     id: 30,
@@ -295,29 +324,54 @@ const shopItems = [
     description: null,
     price: 0,
     type: "Title",
-    levelReq: 40,
+    levelReq: 45,
     classReq: null,
     specialReq: null,
+    rarity: "Legendary",
   },
   {
-    id: 31,
-    name: "Demi-God",
+    id: 50,
+    name: "Immortal",
     description: null,
-    price: 99000,
+    price: 0,
     type: "Title",
     levelReq: 50,
     classReq: null,
     specialReq: null,
+    rarity: "Legendary",
+  },
+  {
+    id: 51,
+    name: "Divine",
+    description: null,
+    price: 0,
+    type: "Title",
+    levelReq: 60,
+    classReq: null,
+    specialReq: null,
+    rarity: "Legendary",
+  },
+  {
+    id: 31,
+    name: "Demigod",
+    description: null,
+    price: 99000,
+    type: "Title",
+    levelReq: 65,
+    classReq: null,
+    specialReq: null,
+    rarity: "Mythic",
   },
   {
     id: 32,
-    name: "Hackerman",
+    name: "HACKER",
     description: "Granted for participating in the CTF",
     price: 0,
     type: "Title",
     levelReq: null,
     classReq: null,
     specialReq: "ctf",
+    rarity: "Epic",
   },
   {
     id: 33,
@@ -328,6 +382,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "ctf-winner",
+    rarity: "Mythic",
   },
   {
     id: 34,
@@ -338,6 +393,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "king",
+    rarity: "Legendary",
   },
   {
     id: 35,
@@ -348,6 +404,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "queen",
+    rarity: "Legendary",
   },
   {
     id: 36,
@@ -359,6 +416,7 @@ const shopItems = [
     levelReq: 10,
     classReq: null,
     specialReq: "vm",
+    rarity: "Rare",
   },
   {
     id: 37,
@@ -369,6 +427,7 @@ const shopItems = [
     levelReq: 20,
     classReq: null,
     specialReq: "computer",
+    rarity: "Epic",
   },
   {
     id: 38,
@@ -379,6 +438,7 @@ const shopItems = [
     levelReq: 25,
     classReq: null,
     specialReq: "lab",
+    rarity: "Legendary",
   },
   {
     id: 39,
@@ -389,6 +449,7 @@ const shopItems = [
     levelReq: 25,
     classReq: null,
     specialReq: "maker",
+    rarity: "Legendary",
   },
   {
     id: 40,
@@ -399,6 +460,7 @@ const shopItems = [
     levelReq: 7,
     classReq: null,
     specialReq: "nintendo",
+    rarity: "Epic",
   },
   {
     id: 41,
@@ -409,6 +471,7 @@ const shopItems = [
     levelReq: 7,
     classReq: null,
     specialReq: "playstation",
+    rarity: "Epic",
   },
   {
     id: 42,
@@ -419,6 +482,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "bug",
+    rarity: "Rare",
   },
   {
     id: 43,
@@ -429,6 +493,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "bugmaster",
+    rarity: "Epic",
   },
   {
     id: 44,
@@ -439,6 +504,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "bugfixer",
+    rarity: "Legendary",
   },
   {
     id: 45,
@@ -449,6 +515,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "alpha",
+    rarity: "Legendary",
   },
   {
     id: 46,
@@ -459,6 +526,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "beta",
+    rarity: "Epic",
   },
   {
     id: 47,
@@ -469,6 +537,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "gm",
+    rarity: "Mythic",
   },
   {
     id: 48,
@@ -479,6 +548,7 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "dev",
+    rarity: "Mythic",
   },
   {
     id: 49,
@@ -489,6 +559,21 @@ const shopItems = [
     levelReq: null,
     classReq: null,
     specialReq: "artist",
+    rarity: "Epic",
+  },
+  // 50
+  // 51
+  {
+    id: 52,
+    name: "Chosen Champion",
+    description:
+      "Entrusted with maintaining the lab servers by the game masters",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    specialReq: "champion",
+    rarity: "Mythic",
   },
 ];
 
