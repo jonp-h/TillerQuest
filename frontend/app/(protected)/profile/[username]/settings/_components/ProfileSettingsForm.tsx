@@ -1,7 +1,6 @@
 "use client";
 import { validateUserUpdate } from "@/data/validators/userUpdateValidation";
 import { updateProfile } from "@/data/user/updateUser";
-import { UserProfile } from "@/types/users";
 import { ArrowBack } from "@mui/icons-material";
 import {
   TextField,
@@ -16,7 +15,16 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
 
-function ProfileSettingsForm({ user }: { user: UserProfile }) {
+function ProfileSettingsForm({
+  user,
+}: {
+  user: {
+    id: string;
+    username: string | null;
+    publicHighscore: boolean;
+    archiveConsent: boolean;
+  };
+}) {
   const [username, setUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
   const [archiveConsent, setArchiveConsent] = useState(user.archiveConsent);

@@ -20,3 +20,9 @@ export const guildmemberResurrectionDamage = 10;
 
 // Default effect time setting
 export const defaultEffectTime = 8 * 60 * 60 * 1000; // 8 hours
+
+export const uncommonRarity = 0.6; // 60%
+export const rareRarity = 0.4; // 40%
+export const epicRarity = 0.2; // 20%
+export const legendaryRarity = 0.1; // 10%
+export const mythicRarity = 0.02; // 2%

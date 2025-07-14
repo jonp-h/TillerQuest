@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import { requireActiveUser } from "@/lib/redirectUtils";
+import RarityModal from "./_components/RarityModal";
 
 async function Shop() {
   const session = await requireActiveUser();
@@ -39,6 +40,9 @@ async function Shop() {
           <HelpOutline className="text-white cursor-help" />
         </Tooltip>
       </h2>
+      <div className="flex justify-center mt-5">
+        <RarityModal />
+      </div>
       <h3 className="text-xl text-center mt-5">
         You have {user.gold} <Circle htmlColor="gold" /> gold
       </h3>

@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getUserProfileByUsername } from "@/data/user/getUser";
+import { getUserSettingsByUsername } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import React from "react";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
@@ -14,7 +14,7 @@ async function ProfileSettingsPage({
 
   await requireAccessAndUsername(username);
 
-  const user = await getUserProfileByUsername(username);
+  const user = await getUserSettingsByUsername(username);
 
   if (!user) {
     notFound();

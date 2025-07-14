@@ -131,6 +131,7 @@ export const equipItem = async (userId: string, itemId: number) => {
       where: { id: userId },
       data: {
         title: item.name,
+        titleRarity: item.rarity,
       },
     });
     return "Sucessfully equipped " + item.name;

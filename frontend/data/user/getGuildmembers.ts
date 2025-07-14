@@ -13,6 +13,7 @@ export const getGuildmembersByGuildname = async (guildName: string) => {
       select: {
         id: true,
         title: true,
+        titleRarity: true,
         username: true,
         image: true,
         hp: true,

@@ -1,12 +1,15 @@
 import { LinearProgress, Typography } from "@mui/material";
+import { $Enums } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import RarityText from "./RarityText";
 
 interface MiniatureProfileProps {
   member: {
     id: string;
     image: string | null;
     title: string | null;
+    titleRarity: $Enums.Rarity | null;
     username: string | null;
     hp: number;
     hpMax: number;
@@ -31,14 +34,9 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
           />
         </div>
         <div className="flex flex-col gap-1 text-center">
-          <Typography
-            variant="overline"
-            flexWrap="wrap"
-            color="textSecondary"
-            sx={{ marginBottom: -1.25, marginTop: -0.25 }}
-          >
+          <RarityText className="-mb-1.5" rarity={member.titleRarity ?? ""}>
             {member.title}
-          </Typography>
+          </RarityText>
           <Typography variant="body1" flexWrap="wrap">
             {member.username}
           </Typography>

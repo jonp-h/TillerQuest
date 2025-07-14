@@ -6,6 +6,13 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
+
+  --color-common: #e5e7eb;
+  --color-uncommon: #1eff00;
+  --color-rare: #2491ff;
+  --color-epic: #a335ee;
+  --color-legendary: #ff8000;
+  --color-mythic: #ef4444;
 }
 
 /*
@@ -81,6 +88,40 @@ h1 {
   }
 }
 
+@keyframes shadow-pulse {
+  0% {
+    text-shadow:
+      0 0 2px rgba(255, 128, 0, 0.7),
+      0 0 5px rgba(255, 128, 0, 0.5);
+  }
+  100% {
+    text-shadow:
+      0 0 5px rgba(255, 128, 0, 0.8),
+      0 0 10px rgba(255, 128, 0, 0.6);
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: 100%;
+    background-size: 100;
+  }
+
+  50% {
+    background-position: -100%;
+    background-size: 100;
+  }
+
+  90% {
+    background-position: -100%;
+    background-size: 0;
+  }
+  100% {
+    background-position: -100%;
+    background-size: 0;
+  }
+}
+
 @layer utilities {
   .animate-move-up-down-0 {
     animation: move-up-down 3.5s ease-in-out infinite;
@@ -93,5 +134,40 @@ h1 {
   }
   .animate-move-up-down-3 {
     animation: move-up-down 4.5s ease-in-out infinite;
+  }
+
+  .text-common {
+    color: var(--color-common);
+  }
+  .text-uncommon {
+    color: var(--color-uncommon);
+  }
+  .text-rare {
+    color: var(--color-rare);
+  }
+  .text-epic {
+    color: var(--color-epic);
+  }
+  .text-legendary {
+    color: var(--color-legendary);
+  }
+  .text-mythic {
+    color: var(--color-mythic);
+  }
+
+  .rarity {
+    /* color: rgba(255, 128, 0, 0.7); */
+    /* Adjust this color to change intensity/style  */
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    display: inline-block;
+    animation: shine 5s linear infinite;
   }
 }
