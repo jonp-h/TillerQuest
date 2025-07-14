@@ -136,25 +136,6 @@ h1 {
     animation: move-up-down 4.5s ease-in-out infinite;
   }
 
-  .text-common {
-    color: var(--color-common);
-  }
-  .text-uncommon {
-    color: var(--color-uncommon);
-  }
-  .text-rare {
-    color: var(--color-rare);
-  }
-  .text-epic {
-    color: var(--color-epic);
-  }
-  .text-legendary {
-    color: var(--color-legendary);
-  }
-  .text-mythic {
-    color: var(--color-mythic);
-  }
-
   .rarity {
     /* color: rgba(255, 128, 0, 0.7); */
     /* Adjust this color to change intensity/style  */

@@ -13,7 +13,6 @@ import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import rateLimit from "express-rate-limit";
-import { calculateRarity } from "./data/calculateRarity.js";
 
 const app = express();
 
@@ -329,7 +328,7 @@ cron.schedule(
 
 // Schedule a job to run every day before midnight to remove all cosmic passives, abilities and 14 day old logs. Also updates rarities of shopitems
 cron.schedule(
-  "* * * * *",
+  "59 23 * * *",
   async () => {
     try {
       await db.userPassive.deleteMany({
@@ -353,7 +352,7 @@ cron.schedule(
         },
       });
 
-      await calculateRarity();
+      // await calculateRarity();
 
       console.log(
         "Removed cosmic passives, abilities and logs. Updated rarities for shopitems.",

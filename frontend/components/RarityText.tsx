@@ -6,7 +6,7 @@ const RARITY_CLASSES = {
   uncommon: "text-uncommon/80",
   rare: "text-rare/80",
   epic: "rarity text-epic/80",
-  legendary: "rarity text-shadow-lg text-legendary/80",
+  legendary: "rarity text-legendary/80",
   mythic: "rarity text-mythic/80",
 } as const;
 
