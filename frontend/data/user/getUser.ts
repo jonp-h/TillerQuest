@@ -255,7 +255,31 @@ export const getVg1Leaderboard = async () => {
       },
     });
 
-    return users;
+    type LeaderboardUser = (typeof users)[number] & { userTitle: string };
+
+    const leaderboardUsers: LeaderboardUser[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      let userTitle = "Common";
+      if (user.title) {
+        const shopItem = await db.shopItem.findFirst({
+          where: {
+            name: user.title,
+          },
+          select: {
+            rarity: true,
+          },
+        });
+        userTitle = shopItem?.rarity || "Common";
+      }
+      leaderboardUsers.push({
+        ...user,
+        userTitle,
+      });
+    }
+
+    return leaderboardUsers;
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to VG1 leaderboard. " + error);
