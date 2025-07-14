@@ -23,6 +23,7 @@ import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
 import Log from "./_components/Log";
 import { requireActiveUser } from "@/lib/redirectUtils";
+import RarityText from "@/components/RarityText";
 
 export default async function ProfilePage({
   params,
@@ -104,9 +105,12 @@ export default async function ProfilePage({
             <Typography variant="h5">{user?.lastname}</Typography>
           </div>
           <div className="flex gap-5">
-            <Typography variant="h6" color="aquamarine">
+            <RarityText
+              className="text-2xl"
+              rarity={user.titleRarity || "Common"}
+            >
               {user.title}
-            </Typography>
+            </RarityText>
             <Typography variant="h6" color="aquamarine">
               {user.class}
             </Typography>
@@ -152,6 +156,7 @@ export default async function ProfilePage({
               <ProfileBadge
                 key={badge.name}
                 badgeTitle={badge.name}
+                badgeRarity={badge.rarity}
                 badgeSpecialReq={badge.specialReq}
                 badgeDescription={badge.description}
               />

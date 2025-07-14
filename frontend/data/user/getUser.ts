@@ -6,6 +6,7 @@ import {
   checkActiveUserAuth,
   checkAdminAuth,
   checkUserIdAndActiveAuth,
+  checkUsernameAndActiveAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
@@ -47,6 +48,7 @@ export const getUserProfileByUsername = async (username: string) => {
       select: {
         id: true,
         title: true,
+        titleRarity: true,
         name: true,
         username: true,
         lastname: true,
@@ -73,6 +75,7 @@ export const getUserProfileByUsername = async (username: string) => {
             name: true,
             specialReq: true,
             description: true,
+            rarity: true,
           },
         },
       },
@@ -88,6 +91,37 @@ export const getUserProfileByUsername = async (username: string) => {
     logger.error("Error fetching user profile by username: " + error);
     throw new Error(
       "Something went wrong while fetching user profile by username. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getUserSettingsByUsername = async (username: string) => {
+  // unstable_noStore();
+
+  try {
+    await checkUsernameAndActiveAuth(username);
+
+    const user = await db.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+        publicHighscore: true,
+        archiveConsent: true,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get user settings. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching user settings by username: " + error);
+    throw new Error(
+      "Something went wrong while fetching user settings. Please inform a game master of the following timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }
@@ -209,6 +243,7 @@ export const getVg1Leaderboard = async () => {
       select: {
         xp: true,
         title: true,
+        titleRarity: true,
         name: true,
         username: true,
         lastname: true,
@@ -220,7 +255,31 @@ export const getVg1Leaderboard = async () => {
       },
     });
 
-    return users;
+    type LeaderboardUser = (typeof users)[number] & { userTitle: string };
+
+    const leaderboardUsers: LeaderboardUser[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      let userTitle = "Common";
+      if (user.title) {
+        const shopItem = await db.shopItem.findFirst({
+          where: {
+            name: user.title,
+          },
+          select: {
+            rarity: true,
+          },
+        });
+        userTitle = shopItem?.rarity || "Common";
+      }
+      leaderboardUsers.push({
+        ...user,
+        userTitle,
+      });
+    }
+
+    return leaderboardUsers;
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to VG1 leaderboard. " + error);

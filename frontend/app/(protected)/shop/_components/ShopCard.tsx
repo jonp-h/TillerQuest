@@ -1,5 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
+import RarityText from "@/components/RarityText";
 import { equipItem, purchaseItem } from "@/data/shop/items";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
@@ -81,13 +82,9 @@ function ShopCard({
         />
       )}
       <div className="flex flex-col items-center gap-2">
-        <Typography
-          variant="h5"
-          className="text-2xl"
-          color={item.specialReq ? "violet" : "lightgreen"}
-        >
+        <RarityText className="text-3xl" rarity={item.rarity}>
           {item.name}
-        </Typography>
+        </RarityText>
         {item.specialReq && (
           <Typography
             variant="body1"
