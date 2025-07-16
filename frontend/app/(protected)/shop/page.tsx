@@ -1,11 +1,15 @@
 import MainContainer from "@/components/MainContainer";
 import React from "react";
 import ShopCard from "./_components/ShopCard";
-import { getAllShopItems } from "@/data/shop/items";
+import {
+  getShopBadges,
+  getShopObjects,
+  getShopTitles,
+} from "@/data/shop/items";
 import { getUserInventory } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import { requireActiveUser } from "@/lib/redirectUtils";
 import RarityModal from "./_components/RarityModal";
 
@@ -16,7 +20,9 @@ async function Shop() {
     return notFound();
   }
 
-  const shopItems = await getAllShopItems();
+  const shopBadges = await getShopBadges();
+  const shopTitles = await getShopTitles();
+  const shopObjects = await getShopObjects();
   const user = await getUserInventory(session.user.id);
   if (!user) {
     return notFound();
@@ -47,7 +53,22 @@ async function Shop() {
         You have {user.gold} <Circle htmlColor="gold" /> gold
       </h3>
       <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
-        {shopItems?.map((item) => (
+        <Typography variant="h4" className="col-span-3 text-center mb-4">
+          Badges
+        </Typography>
+        {shopBadges?.map((item) => (
+          <ShopCard key={item.name} user={user} item={item} />
+        ))}
+        <Typography variant="h4" className="col-span-3 text-center mb-4">
+          Titles
+        </Typography>
+        {shopTitles?.map((item) => (
+          <ShopCard key={item.name} user={user} item={item} />
+        ))}
+        <Typography variant="h4" className="col-span-3 text-center mb-4">
+          Objects
+        </Typography>
+        {shopObjects?.map((item) => (
           <ShopCard key={item.name} user={user} item={item} />
         ))}
       </div>

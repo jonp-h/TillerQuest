@@ -69,11 +69,11 @@ export const getUserProfileByUsername = async (username: string) => {
         archiveConsent: true,
         inventory: {
           where: {
-            specialReq: { not: null },
+            type: "Badge",
           },
           select: {
             name: true,
-            specialReq: true,
+            icon: true,
             description: true,
             rarity: true,
           },

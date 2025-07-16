@@ -6,19 +6,19 @@ import RarityText from "@/components/RarityText";
 function ProfileBadge({
   badgeTitle,
   badgeRarity,
-  badgeSpecialReq,
+  badgeIcon,
   badgeDescription,
 }: {
   badgeTitle: string;
   badgeRarity: string;
-  badgeSpecialReq: string | null;
+  badgeIcon: string | null;
   badgeDescription: string | null;
 }) {
   return (
     <Tooltip title={badgeDescription} placement="bottom">
       <div className="flex flex-col justify-center items-center text-center">
         <Image
-          src={"/badges/" + badgeSpecialReq + ".png"}
+          src={"/items/" + badgeIcon + ".png"}
           width={125}
           height={125}
           alt={badgeTitle}

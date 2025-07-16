@@ -71,10 +71,10 @@ function ShopCard({
       elevation={3}
       className="min-h-24 text-center p-4 rounded-3xl hover:bg-inherit"
     >
-      {item.specialReq && (
+      {item.icon && (
         <Image
           className="mx-auto my-2"
-          src={"/badges/" + item.specialReq + ".png"}
+          src={"/items/" + item.icon + ".png"}
           width={125}
           height={125}
           alt={item.name}

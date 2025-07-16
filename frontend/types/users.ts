@@ -20,7 +20,7 @@ export interface UserProfile {
   archiveConsent: boolean;
   inventory: {
     name: string;
-    specialReq: string | null;
+    icon: string | null;
     description: string | null;
   }[];
   lastMana: Date;

@@ -127,6 +127,7 @@ enum Rarity {
 enum ShopItemType {
   Title
   Badge
+  Object
 }
 
 model User {

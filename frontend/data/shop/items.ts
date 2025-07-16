@@ -9,12 +9,57 @@ import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 
-export const getAllShopItems = async () => {
+export const getShopTitles = async () => {
   try {
     await checkActiveUserAuth();
 
     return await db.shopItem.findMany({
-      orderBy: [{ specialReq: "asc" }, { levelReq: "asc" }, { price: "asc" }],
+      where: { type: "Title" },
+      orderBy: [{ rarity: "asc" }, { price: "asc" }, { levelReq: "asc" }],
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to shop items: " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching shopitems: " + error);
+    throw new Error(
+      "Something went wrong while fetching shop items. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getShopBadges = async () => {
+  try {
+    await checkActiveUserAuth();
+
+    return await db.shopItem.findMany({
+      where: { type: "Badge" },
+      orderBy: [{ rarity: "asc" }, { price: "asc" }, { levelReq: "asc" }],
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to shop items: " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching shopitems: " + error);
+    throw new Error(
+      "Something went wrong while fetching shop items. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getShopObjects = async () => {
+  try {
+    await checkActiveUserAuth();
+
+    return await db.shopItem.findMany({
+      where: { type: "Object" },
+      orderBy: [{ rarity: "asc" }, { price: "asc" }, { levelReq: "asc" }],
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {

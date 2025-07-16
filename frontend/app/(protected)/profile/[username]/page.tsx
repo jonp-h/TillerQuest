@@ -157,7 +157,7 @@ export default async function ProfilePage({
                 key={badge.name}
                 badgeTitle={badge.name}
                 badgeRarity={badge.rarity}
-                badgeSpecialReq={badge.specialReq}
+                badgeIcon={badge.icon}
                 badgeDescription={badge.description}
               />
             ))}
