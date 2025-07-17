@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 
 function ManageUserForm(user: {
   special: string[];
+  access: string[];
   id: string;
   name: string | null;
   username: string | null;
@@ -27,6 +28,7 @@ function ManageUserForm(user: {
   role: UserRole;
 }) {
   const [special, setSpecial] = useState<string[]>(user.special);
+  const [access, setAccess] = useState<string[]>(user.access);
   const [role, setRole] = useState<UserRole>(user.role);
   const [name, setName] = useState<string | null>(user.name);
   const [username, setUsername] = useState<string | null>(user.username);
@@ -40,10 +42,11 @@ function ManageUserForm(user: {
     if (
       name !== user.name ||
       username !== user.username ||
-      lastname !== user.lastname
+      lastname !== user.lastname ||
+      access.join(" ") !== user.access.join(" ")
     ) {
       toast.promise(
-        adminUpdateUser(user.id, special, name, username, lastname),
+        adminUpdateUser(user.id, special, access, name, username, lastname),
         {
           pending: "Updating user...",
           success: "User information updated",
@@ -56,8 +59,6 @@ function ManageUserForm(user: {
           },
         },
       );
-      // adminUpdateUser(user.id, special, name, username, lastname);
-      // toast.success("User updated");
     } else {
       toast.promise(adminUpdateUser(user.id, special), {
         pending: "Updating user...",
@@ -115,6 +116,13 @@ function ManageUserForm(user: {
         sx={{ marginLeft: 2 }}
         value={special.join(" ")}
         onChange={(e) => setSpecial(e.target.value.split(" "))}
+      />
+      <TextField
+        variant="outlined"
+        label="Access"
+        sx={{ marginLeft: 2 }}
+        value={access.join(" ")}
+        onChange={(e) => setAccess(e.target.value.split(" "))}
       />
       <FormControl sx={{ marginX: 1, minWidth: 80 }}>
         <InputLabel>Role</InputLabel>

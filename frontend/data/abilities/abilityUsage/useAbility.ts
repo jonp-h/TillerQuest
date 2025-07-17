@@ -1,6 +1,6 @@
 "use server";
 
-import { Ability, User } from "@prisma/client";
+import { $Enums, Ability, User } from "@prisma/client";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
@@ -105,7 +105,7 @@ export const selectAbility = async (
       // check ability type and call the appropriate function
       switch (ability.type) {
         // ---------------------------- Passive abilities ----------------------------
-
+        // TODO: make passives default in switch case
         case "IncreaseHealth":
           return await activatePassive(
             db,
@@ -130,7 +130,15 @@ export const selectAbility = async (
             ability,
           );
 
-        case "ManaPassive": // give mana passive to target
+        case "DailyMana": // gives daily mana to the target
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+
+        case "ManaPassive": // gives extra mana to the target on every mana granting ability
           return await activatePassive(
             db,
             castingUser,
@@ -147,6 +155,14 @@ export const selectAbility = async (
           );
 
         case "Experience":
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+
+        case "ArenaToken":
           return await activatePassive(
             db,
             castingUser,
@@ -182,6 +198,13 @@ export const selectAbility = async (
             targetUsersIds,
             ability,
           );
+        case "ManaShield":
+          return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
         case "GoldPassive":
           return await activatePassive(
             db,
@@ -202,6 +225,13 @@ export const selectAbility = async (
             },
           });
           return await activatePassive(
+            db,
+            castingUser,
+            targetUsersIds,
+            ability,
+          );
+        case "Access":
+          return await useAccessAbility(
             db,
             castingUser,
             targetUsersIds,
@@ -277,6 +307,9 @@ export const selectAbility = async (
 
         case "XP":
           return await useXPAbility(db, castingUser, ability);
+
+        default:
+          throw new ErrorMessage("Unknown ability");
       }
     });
   } catch (error) {
@@ -491,6 +524,60 @@ const getAbilityValue = (ability: Ability) => {
     // rolls: any[];
     total: number;
     type: string;
+  };
+};
+
+/**
+ * Uses an ability that grants access to a feature or area.
+ *
+ * @param db - The Prisma transaction object.
+ * @param castingUser - The user who is using the ability.
+ * @param targetUsersIds - The IDs of the users who are the targets of the ability.
+ * @param ability - The ability being used.
+ * @returns A message indicating the result of the ability usage.
+ */
+const useAccessAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUsersIds: string[],
+  ability: Ability,
+) => {
+  await Promise.all(
+    targetUsersIds.map(async (targetUserId) => {
+      // validate access
+      const userAccess = await db.user.findUnique({
+        where: {
+          id: targetUserId,
+        },
+        select: {
+          access: true,
+        },
+      });
+
+      // names are written with slug format, but enum is in camelCase
+      const accessName = ability.name.replace(/-/g, "") as $Enums.Access;
+      if (userAccess?.access.includes(accessName)) {
+        throw new ErrorMessage("User already has access to this feature");
+      }
+
+      // apply ability effects
+      await db.user.update({
+        where: {
+          id: targetUserId,
+        },
+        data: {
+          access: {
+            push: accessName,
+          },
+        },
+      });
+    }),
+  );
+
+  await activatePassive(db, castingUser, targetUsersIds, ability);
+  return {
+    message: "Granted access to " + ability.name.replace(/-/g, " ") + "!",
+    diceRoll: "",
   };
 };
 

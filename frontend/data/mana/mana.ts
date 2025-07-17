@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { manaValidator } from "../validators/validators";
-import { dailyMana } from "@/lib/gameSetting";
+import { dailyArenaTokenBase, dailyManaBase } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
 import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
@@ -14,7 +14,9 @@ export const getDailyMana = async (userId: string) => {
 
     // Archived users are not allowed to get daily mana
     if (session.user.role === "ARCHIVED") {
-      throw new ErrorMessage("You are not allowed to get daily mana.");
+      throw new ErrorMessage(
+        "You are not allowed to get daily mana anymore. Nice try! ;)",
+      );
     }
 
     const targetUser = await db.user.findFirst({
@@ -38,8 +40,36 @@ export const getDailyMana = async (userId: string) => {
       throw new ErrorMessage("You have already received daily mana");
     }
 
+    const passiveMana = await db.userPassive.aggregate({
+      where: {
+        userId,
+        effectType: "DailyMana",
+      },
+      _sum: {
+        value: true,
+      },
+    });
+
     // get passiveValue from mana passive and add it to the daily mana, based on the user's max mana
-    const manaValue = await manaValidator(db, userId, dailyMana);
+    const passiveValue = passiveMana._sum?.value ?? 0;
+    const manaValue = await manaValidator(
+      db,
+      userId,
+      passiveValue + dailyManaBase,
+    );
+
+    const arenaTokens = await db.userPassive.aggregate({
+      where: {
+        userId,
+        effectType: "ArenaToken",
+      },
+      _sum: {
+        value: true,
+      },
+    });
+
+    const arenaTokenValue = arenaTokens._sum?.value ?? 0;
+    const totalArenaTokensToGive = arenaTokenValue + dailyArenaTokenBase;
 
     await db.user.update({
       where: {
@@ -47,7 +77,7 @@ export const getDailyMana = async (userId: string) => {
       },
       data: {
         mana: { increment: manaValue },
-        arenaTokens: { increment: 1 },
+        arenaTokens: { increment: totalArenaTokensToGive },
         lastMana: new Date(),
       },
     });
@@ -60,7 +90,9 @@ export const getDailyMana = async (userId: string) => {
     return (
       "And as you focus, you feel your mana restoring with " +
       manaValue +
-      ". You also find a token in your pocket."
+      ". You also find " +
+      totalArenaTokensToGive +
+      " arena tokens in your pocket."
     );
   } catch (error) {
     if (error instanceof AuthorizationError) {

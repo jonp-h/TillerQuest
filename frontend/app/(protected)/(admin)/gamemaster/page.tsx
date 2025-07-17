@@ -14,13 +14,13 @@ export default async function GameMasterPage() {
       <Typography variant="h1" align="center">
         Game Master
       </Typography>
-      {deadUsers && (
+      {deadUsers > 0 && (
         <Paper
           className="p-5 flex flex-col justify-center w-2/3 m-auto text-center gap-6"
           elevation={6}
         >
           <Typography color={"red"} variant="h3">
-            Dead users: {JSON.stringify(deadUsers)}
+            Dead users: {deadUsers}
           </Typography>
 
           <div className="flex justify-evenly">

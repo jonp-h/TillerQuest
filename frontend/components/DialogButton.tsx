@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
 } from "@mui/material";
 import { Fragment, useState } from "react";
@@ -75,11 +74,7 @@ function DialogButton({
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {dialogContent}
-          </DialogContentText>
-        </DialogContent>
+        <DialogContent>{dialogContent}</DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="error">
             {disagreeText}

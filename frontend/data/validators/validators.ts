@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { getUserPassiveEffect } from "../passives/getPassive";
-import { User } from "@prisma/client";
+import { $Enums, User } from "@prisma/client";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 import { addLog } from "../log/addLog";
 import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
@@ -46,6 +46,21 @@ export const healingValidator = async (
   }
 };
 
+/**
+ * Validates and adjusts the amount of mana to be added or subtracted for a user.
+ *
+ * - If mana is being added (manaValue > 0), applies any passive mana bonuses.
+ * - Ensures that the user's mana does not exceed their maximum mana.
+ * - If mana is being subtracted, ensures that the user's mana does not drop below zero.
+ * - Handles authorization and logs errors appropriately.
+ *
+ * @param db - The Prisma transaction object for database operations.
+ * @param targetUserId - The ID of the user whose mana is being validated.
+ * @param manaValue - The amount of mana to add (positive) or subtract (negative).
+ * @returns The validated amount of mana to apply (may be adjusted to fit within bounds). The value is positive if mana is being added, or negative if mana is being subtracted.
+ * @throws {AuthorizationError} If the user is not authorized.
+ * @throws {Error} For other unexpected errors, with a timestamp for debugging.
+ */
 export const manaValidator = async (
   db: PrismaTransaction,
   targetUserId: string,
@@ -117,6 +132,7 @@ export const damageValidator = async (
   targetUserId: string,
   targetUserHp: number,
   damage: number,
+  targetUserClass: $Enums.Class | null,
   healthTreshold: number = 0,
 ) => {
   try {
@@ -134,7 +150,12 @@ export const damageValidator = async (
     damage = damage * (1 + increasedDamage);
 
     // reduce the damage by the passive effects
-    const newDamage = await protectionValidator(db, targetUserId, damage);
+    let newDamage = await protectionValidator(db, targetUserId, damage);
+
+    // check class specific damage reduction (currently only for BloodMage)
+    if (targetUserClass === "BloodMage") {
+      newDamage = await manaShieldValidator(db, targetUserId, newDamage);
+    }
 
     // ensure the damage does not become negative
     const finalDamage = newDamage < 0 ? 0 : newDamage;
@@ -196,6 +217,38 @@ const protectionValidator = async (
 
   // Ensure the damage does not become negative
   const finalDamage = newDamage < 0 ? 0 : newDamage;
+
+  return finalDamage;
+};
+
+// Local function to handle manaShield passives
+const manaShieldValidator = async (
+  db: PrismaTransaction,
+  targetUserId: string,
+  damage: number,
+) => {
+  const bloodShield = await getUserPassiveEffect(
+    db,
+    targetUserId,
+    "ManaShield",
+  );
+
+  if (bloodShield > 0 && damage > 0) {
+    const reduction = Math.floor(damage / bloodShield);
+    const damageToReduce = await manaValidator(db, targetUserId, -reduction);
+
+    // the returned value from manaValidator is negative
+    await db.user.update({
+      where: { id: targetUserId },
+      data: {
+        mana: { increment: damageToReduce },
+      },
+    });
+    damage += damageToReduce;
+  }
+
+  // Ensure the damage does not become negative
+  const finalDamage = damage < 0 ? 0 : damage;
 
   return finalDamage;
 };

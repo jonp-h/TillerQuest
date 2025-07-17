@@ -37,6 +37,38 @@ export const getUserById = async (id: string) => {
   }
 };
 
+export const getGameUserById = async (id: string) => {
+  // unstable_noStore();
+
+  try {
+    await checkActiveUserAuth();
+
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        arenaTokens: true,
+        access: true,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to get game user with ID. " + error,
+      );
+      throw error;
+    }
+
+    logger.error("Error fetching game user by ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching game user by ID. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
 export const getUserProfileByUsername = async (username: string) => {
   // unstable_noStore();
 

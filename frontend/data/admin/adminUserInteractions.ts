@@ -4,7 +4,7 @@ import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
-import { UserRole } from "@prisma/client";
+import { $Enums, UserRole } from "@prisma/client";
 
 export const getAllUsers = async () => {
   try {
@@ -95,6 +95,7 @@ export const adminGetUserInfo = async () => {
         username: true,
         special: true,
         role: true,
+        access: true,
       },
       orderBy: [
         {
@@ -234,6 +235,7 @@ export const getSpecialStatuses = async () => {
 export const adminUpdateUser = async (
   userId: string,
   special: string[],
+  access?: string[],
   name?: string | null,
   username?: string | null,
   lastname?: string | null,
@@ -249,9 +251,13 @@ export const adminUpdateUser = async (
         },
       });
 
-      if (existingUser) {
+      if (existingUser && existingUser.id !== userId) {
         throw new ErrorMessage("Username already exists.");
       }
+    }
+    // If access is provided and contains an empty string, treat as removing all access
+    if (access && access.length === 1 && access[0] === "") {
+      access = [];
     }
 
     const user = await db.user.update({
@@ -263,6 +269,7 @@ export const adminUpdateUser = async (
         username,
         lastname,
         special,
+        access: access as $Enums.Access[],
       },
     });
     return user;

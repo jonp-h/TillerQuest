@@ -7,7 +7,10 @@ export const xpMultiplier = 1.5;
 export const gemstonesOnLevelUp = 2;
 
 // Daily mana
-export const dailyMana = 4;
+export const dailyManaBase = 2;
+
+// Daily arena tokens
+export const dailyArenaTokenBase = 1;
 
 // Max distance from magical area
 export const magicalArea = 0.00144;

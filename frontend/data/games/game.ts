@@ -10,6 +10,7 @@ import {
   checkUserIdAndActiveAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
+import { $Enums } from "@prisma/client";
 
 export const initializeGame = async (userId: string, gameName: string) => {
   try {
@@ -22,11 +23,16 @@ export const initializeGame = async (userId: string, gameName: string) => {
           id: true,
           username: true,
           arenaTokens: true,
+          access: true,
         },
       });
 
       if (!user) {
         throw new Error("User not found when starting a game");
+      }
+
+      if (!user.access.includes(gameName as $Enums.Access)) {
+        throw new ErrorMessage("You do not have access to this game");
       }
 
       if (user.arenaTokens < 1) {

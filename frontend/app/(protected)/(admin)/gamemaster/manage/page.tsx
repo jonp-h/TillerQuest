@@ -7,6 +7,7 @@ import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import ManageUserForm from "./_components/ManageUserForm";
 import { requireAdmin } from "@/lib/redirectUtils";
+import { $Enums } from "@prisma/client";
 
 async function Manage() {
   await requireAdmin();
@@ -16,7 +17,7 @@ async function Manage() {
   const style = {
     p: 0,
     width: "90%",
-    maxWidth: 1350,
+    maxWidth: 1600,
     borderRadius: 2,
     border: "1px solid",
     borderColor: "divider",
@@ -31,8 +32,19 @@ async function Manage() {
       <Typography variant="h6" align="center">
         Write special statuses separated by space
       </Typography>
-      <Typography variant="body1" align="center">
+      <Typography
+        variant="body1"
+        align="center"
+        color="text.secondary"
+        gutterBottom
+      >
         OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
+      </Typography>
+      <Typography variant="h6" align="center">
+        Write player access separated by space
+      </Typography>
+      <Typography variant="body1" align="center" color="text.secondary">
+        {Object.values($Enums.Access).join(", ")}
       </Typography>
       <div className="flex justify-center mt-2">
         <List sx={style}>
@@ -43,6 +55,7 @@ async function Manage() {
                 id={user.id}
                 role={user.role}
                 special={user.special}
+                access={user.access}
                 username={user.username}
                 lastname={user.lastname}
               />

@@ -7,17 +7,19 @@ import { useRouter } from "next/navigation";
 import { finishGame, initializeGame } from "@/data/games/game";
 import { toast } from "react-toastify";
 import { Circle, Stadium } from "@mui/icons-material";
-import { User } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import DialogButton from "@/components/DialogButton";
+import ErrorPage from "@/components/ErrorPage";
 
 interface TabPanelProps {
   children?: ReactNode;
   value: string;
   tab: string;
+  ownsGame: boolean;
 }
 
 function GameTabPanel(props: TabPanelProps) {
-  const { children, value, tab, ...other } = props;
+  const { children, value, tab, ownsGame, ...other } = props;
 
   return (
     <div
@@ -27,7 +29,18 @@ function GameTabPanel(props: TabPanelProps) {
       aria-labelledby={`game-tab-${tab}`}
       {...other}
     >
-      {value === tab && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === tab && (
+        <Box sx={{ p: 3 }}>
+          {!ownsGame ? (
+            <ErrorPage
+              text="You do not have access to this game. Buy access in the abilities tab."
+              redirectLink="/abilities"
+            />
+          ) : (
+            children
+          )}
+        </Box>
+      )}
     </div>
   );
 }
@@ -39,7 +52,15 @@ function a11yProps(gameName: string) {
   };
 }
 
-function GameTabs({ user }: { user: User }) {
+function GameTabs({
+  user,
+}: {
+  user: {
+    id: string;
+    arenaTokens: number;
+    access: $Enums.Access[];
+  };
+}) {
   const [tab, setTab] = useState<string>("TypeQuest");
   const [gameVisible, setGameVisible] = useState(false);
   const [score, setScore] = useState(0);
@@ -47,6 +68,8 @@ function GameTabs({ user }: { user: User }) {
   const [gameId, setGameId] = useState<string | null>(null);
 
   const router = useRouter();
+
+  const ownsGame = user.access.includes(tab as $Enums.Access);
 
   const handleInitializeGame = async (gameName: string) => {
     const game = await initializeGame(user.id, gameName);
@@ -100,14 +123,14 @@ function GameTabs({ user }: { user: User }) {
             value={"TypeQuest"}
           />
           <Tab
-            disabled={true}
+            disabled={gameEnabled}
             label="Dice Corner"
             {...a11yProps("Dice Corner")}
-            value="Dice Corner"
+            value="DiceCorner"
           />
         </Tabs>
       </Box>
-      <GameTabPanel tab={tab} value={"TypeQuest"}>
+      <GameTabPanel tab={tab} value={"TypeQuest"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-4xl font-bold">TypeQuest</h1>
           <Typography variant="subtitle1" color="success">
@@ -136,7 +159,7 @@ function GameTabs({ user }: { user: User }) {
           )}
         </div>
       </GameTabPanel>
-      <GameTabPanel tab={tab} value={"Dice Corner"}>
+      <GameTabPanel tab={tab} value={"DiceCorner"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-4xl font-bold">Dice Corner</h1>
         </div>

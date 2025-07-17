@@ -110,38 +110,47 @@ export const damageUsers = async (
       const damagedUsers: string[] = [];
       await Promise.all(
         users.map(async (user) => {
-          const targetHP = await db.user.findFirst({
+          const targetUser = await db.user.findFirst({
             where: {
               id: user.id,
             },
-            select: { hp: true },
+            select: { hp: true, class: true },
           });
+
+          if (!targetUser) {
+            throw new ErrorMessage(`User with ID ${user.id} not found`);
+          }
 
           const valueToDamage = await damageValidator(
             db,
             user.id,
-            targetHP!.hp,
+            targetUser.hp,
             value,
+            targetUser?.class,
           );
 
-          const targetUser = await db.user.update({
+          const updatedUser = await db.user.update({
             where: {
               id: user.id,
             },
             data: {
               hp: { decrement: valueToDamage },
             },
+            select: {
+              username: true,
+              hp: true,
+            },
           });
-          damagedUsers.push(targetUser.username ?? "Hidden");
+          damagedUsers.push(updatedUser.username ?? "Hidden");
 
           await addLog(
             db,
             user.id,
-            `${targetUser.username} was damaged for ${valueToDamage} HP.`,
+            `${updatedUser.username} was damaged for ${valueToDamage} HP.`,
           );
-          if (targetUser.hp === 0) {
-            logger.info("DEATH: User " + targetUser.username + " died.");
-            await addLog(db, user.id, `DEATH: ${targetUser.username} died.`);
+          if (updatedUser.hp === 0) {
+            logger.info("DEATH: User " + updatedUser.username + " died.");
+            await addLog(db, user.id, `DEATH: ${updatedUser.username} died.`);
           }
         }),
       );
