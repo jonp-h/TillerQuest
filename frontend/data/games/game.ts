@@ -11,6 +11,7 @@ import {
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 import { $Enums } from "@prisma/client";
+import { addAnalytics } from "../analytics/analytics";
 
 export const initializeGame = async (userId: string, gameName: string) => {
   try {
@@ -229,6 +230,13 @@ export const finishGame = async (gameId: string) => {
         game.userId,
         `GAME: ${targetUser.username} finished a game of TypeQuest, and recieved ${gold} gold`,
       );
+
+      await addAnalytics(db, game.userId, "game_completion", {
+        gameId: game.id,
+        category: game.game,
+        goldChange: gold,
+      });
+
       return { message: "Recieved " + gold + " gold", gold };
     });
   } catch (error) {

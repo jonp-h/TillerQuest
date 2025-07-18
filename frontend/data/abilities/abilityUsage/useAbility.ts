@@ -14,6 +14,7 @@ import { addLog } from "@/data/log/addLog";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 import { ErrorMessage } from "@/lib/error";
 import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import { addAnalytics } from "@/data/analytics/analytics";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -370,6 +371,21 @@ const finalizeAbilityUsage = async (
   await addLog(db, user.id, `${user.username} used ${ability.name}`);
   if (ability.xpGiven)
     await experienceAndLevelValidator(db, user, ability.xpGiven!);
+
+  await addAnalytics(db, user.id, "ability_use", {
+    category: ability.category,
+    abilityId: ability.id,
+
+    hpChange: -(ability.healthCost || 0),
+    manaChange: -(ability.manaCost || 0),
+    xpChange: ability.xpGiven || 0,
+    manaCost: ability.manaCost || 0,
+    healthCost: ability.healthCost || 0,
+    gemstoneCost: ability.gemstoneCost || 0,
+    userLevel: user.level || 0,
+    userClass: user.class || "",
+    guildName: user.guildName || "",
+  });
 };
 
 // ---------------------------- Helper function for passive abilities ----------------------------
