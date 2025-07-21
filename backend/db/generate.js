@@ -8,6 +8,7 @@ import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
 import enemies from "./enemies.js";
 import gameSettings from "./gameSettings.js";
+import wordQuestWords from "./wordQuestWords.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -30,6 +31,7 @@ async function main() {
   8. Add Type Quest Texts
   9. Add Enemies
   10. Add Game Settings
+  11. Add WordQuest Words
   `;
 
   rl.question(options, async (answer) => {
@@ -63,6 +65,9 @@ async function main() {
         break;
       case "10":
         await addGameSettings();
+        break;
+      case "11":
+        await addWordQuestWords();
         break;
       default:
         console.log("Invalid option");
@@ -143,6 +148,21 @@ async function addTypeQuestTexts() {
   console.info("Type quest texts have been added to the database.");
 }
 
+async function addWordQuestWords() {
+  for (const word of wordQuestWords) {
+    try {
+      await db.wordQuestWord.upsert({
+        where: { id: word.id },
+        update: word,
+        create: word,
+      });
+    } catch (error) {
+      console.error("Error adding", word.word + ": ", error);
+    }
+  }
+  console.info("Word quest words have been added to the database.");
+}
+
 async function addEnemies() {
   for (const enemy of enemies) {
     try {
@@ -193,6 +213,7 @@ async function addAll() {
   await addUsers();
   await addEnemies();
   await addGameSettings();
+  await addWordQuestWords();
 }
 
 async function addAllWithoutUsers() {
@@ -203,6 +224,7 @@ async function addAllWithoutUsers() {
   await addTypeQuestTexts();
   await addEnemies();
   await addGameSettings();
+  await addWordQuestWords();
 }
 
 // Run the main function and handle any errors

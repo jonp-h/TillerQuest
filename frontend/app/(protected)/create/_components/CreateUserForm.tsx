@@ -21,6 +21,7 @@ import ClassGuilds from "./ClassGuilds";
 import { validateUserCreation } from "@/data/validators/userUpdateValidation";
 import { updateUser } from "@/data/user/updateUser";
 import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function CreateUserForm() {
   const { data } = useSession();
@@ -34,6 +35,8 @@ export default function CreateUserForm() {
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -86,7 +89,7 @@ export default function CreateUserForm() {
         publicHighscore: validatedData.publicHighscore,
       });
 
-      location.reload();
+      router.push("/");
     } catch (error) {
       setErrorMessage((error as Error).message);
     }
