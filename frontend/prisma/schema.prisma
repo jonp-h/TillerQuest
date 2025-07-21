@@ -183,6 +183,7 @@ model User {
   role UserRole @default(NEW)
 
   readMessages    SystemMessage[] @relation("ReadMessages") // m-n relation to system messages. A user can read many system messages
+  wishVotes       WishVote[] // m-n relation to wishes. A user can vote on many wishes
   publicHighscore Boolean         @default(false)
   archiveConsent  Boolean         @default(false)
   email           String?         @unique
@@ -337,6 +338,33 @@ model ShopItem {
 
   @@index([name])
   @@index([type])
+}
+
+model Wish {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  image       String?
+  value       Int       @default(0)
+  scheduled   DateTime? // If the wish is scheduled
+
+  wishVotes WishVote[]
+}
+
+model WishVote {
+  id       String @id @default(cuid())
+  userId   String
+  username String
+  wishId   Int
+  amount   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  wish Wish @relation(fields: [wishId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, wishId])
 }
 
 model Log {
