@@ -9,6 +9,7 @@ import typeQuestTexts from "./typeQuestTexts.js";
 import enemies from "./enemies.js";
 import gameSettings from "./gameSettings.js";
 import wordQuestWords from "./wordQuestWords.js";
+import wishes from "./wishes.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -32,6 +33,7 @@ async function main() {
   9. Add Enemies
   10. Add Game Settings
   11. Add WordQuest Words
+  12. Add Wishes
   `;
 
   rl.question(options, async (answer) => {
@@ -68,6 +70,9 @@ async function main() {
         break;
       case "11":
         await addWordQuestWords();
+        break;
+      case "12":
+        await addWishes();
         break;
       default:
         console.log("Invalid option");
@@ -204,6 +209,21 @@ async function addUsers() {
   }
 }
 
+async function addWishes() {
+  for (const wish of wishes) {
+    try {
+      await db.wish.upsert({
+        where: { id: wish.id },
+        update: wish,
+        create: wish,
+      });
+    } catch (error) {
+      console.error("Error adding", wish.name + ": ", error);
+    }
+  }
+  console.info("Wishes have been added to the database.");
+}
+
 async function addAll() {
   await addGuilds();
   await addAbilities();
@@ -214,6 +234,7 @@ async function addAll() {
   await addEnemies();
   await addGameSettings();
   await addWordQuestWords();
+  await addWishes();
 }
 
 async function addAllWithoutUsers() {
@@ -225,6 +246,7 @@ async function addAllWithoutUsers() {
   await addEnemies();
   await addGameSettings();
   await addWordQuestWords();
+  await addWishes();
 }
 
 // Run the main function and handle any errors
