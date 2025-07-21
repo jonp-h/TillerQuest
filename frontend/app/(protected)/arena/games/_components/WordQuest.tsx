@@ -39,6 +39,7 @@ function WordQuest({
   const [manualSelectionOrder, setManualSelectionOrder] = useState<number[]>(
     [],
   );
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   // Clear board state when gameId changes (new round purchased)
   useEffect(() => {
@@ -66,6 +67,7 @@ function WordQuest({
     if (!gameEnabled) {
       return;
     }
+    setGameStarted(true);
     const gameData = await getRandomWordQuestBoard(gameId);
     setWords(gameData.words);
     setGameBoard(gameData.board.flat());
@@ -300,6 +302,7 @@ function WordQuest({
   };
 
   const handleFinish = () => {
+    setGameStarted(false);
     setGameEnabled(false);
     handleFinishGame();
   };
@@ -422,12 +425,25 @@ function WordQuest({
           </>
         )}
       </div>
+
       <div className="text-center text-sm text-gray-400 mb-2">
         {gameBoard.length === 0
           ? "Purchase a round and click 'Start Game' to begin playing!"
           : isManualMode
             ? "Click letters in order to spell a word (numbers show selection order). Letters must form a straight line."
             : "Drag across letters to select them in order, then click 'Check Word' to validate."}
+      </div>
+      <div className="text-center">
+        {!gameStarted && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={initializeGame}
+            disabled={!gameId || !gameEnabled || gameStarted}
+          >
+            Start Game
+          </Button>
+        )}
       </div>
       <div
         className="mx-72 grid grid-cols-16 gap-2 text-center rounded-xl border-2 border-white p-5 mt-5"
@@ -484,16 +500,6 @@ function WordQuest({
                 </div>
               );
             })}
-      </div>
-      <div className="text-center mt-4">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={initializeGame}
-          disabled={!gameId}
-        >
-          Start Game
-        </Button>
       </div>
     </>
   );

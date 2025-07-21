@@ -199,9 +199,12 @@ export const finishGame = async (gameId: string) => {
 
       const gold = await goldValidator(db, game.userId, game.score);
 
+      // Ensure gold is non-negative
+      const finalGold = gold < 0 ? 0 : gold;
+
       const targetUser = await db.user.update({
         where: { id: game.userId },
-        data: { gold: { increment: gold } },
+        data: { gold: { increment: finalGold } },
         select: {
           username: true,
         },
@@ -215,16 +218,16 @@ export const finishGame = async (gameId: string) => {
       await addLog(
         db,
         game.userId,
-        `GAME: ${targetUser.username} finished a game of ${game.game}, and recieved ${gold} gold`,
+        `GAME: ${targetUser.username} finished a game of ${game.game}, and recieved ${finalGold} gold`,
       );
 
       await addAnalytics(db, game.userId, "game_completion", {
         gameId: game.id,
         category: game.game,
-        goldChange: gold,
+        goldChange: finalGold,
       });
 
-      return { message: "Recieved " + gold + " gold", gold };
+      return { message: "Recieved " + finalGold + " gold", gold: finalGold };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
@@ -442,9 +445,9 @@ export const getRandomWordQuestBoard = async (gameId: string) => {
       throw new ErrorMessage("No words available for WordQuest");
     }
 
-    // Select 5-8 random words for the game
+    // Select 5-10 random words for the game
     const selectedWords = [];
-    const wordCount = Math.min(8, words.length);
+    const wordCount = 10;
     const usedIndices = new Set<number>();
 
     while (

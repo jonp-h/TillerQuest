@@ -135,6 +135,38 @@ function GameTabs({
           />
         </Tabs>
       </Box>
+      <div className="text-center mt-5 gap-5">
+        {!gameEnabled && (
+          <>
+            <Typography variant="h6" color="info" className="pb-4">
+              You have {user.arenaTokens} <Stadium className="mx-1" />
+            </Typography>
+            <DialogButton
+              buttonText={
+                <Typography>
+                  Buy one round (1 <Stadium className="mx-1" />)
+                </Typography>
+              }
+              dialogTitle={tab}
+              dialogContent={
+                <Typography>
+                  Are you sure you want to spend 1 <Stadium className="mx-1" />{" "}
+                  to buy a round of {tab}? The token is lost if you leave the
+                  page.
+                </Typography>
+              }
+              agreeText="Buy one round"
+              disagreeText="Cancel"
+              buttonVariant="contained"
+              disabled={user.arenaTokens < 1 || gameEnabled}
+              dialogFunction={() => handleInitializeGame(tab)}
+            />
+          </>
+        )}
+        <Typography variant="h6" color="info">
+          {score > 0 && `You earned ${score} gold coins`}
+        </Typography>
+      </div>
       <GameTabPanel tab={tab} value={"TypeQuest"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-4xl font-bold">TypeQuest</h1>
@@ -193,38 +225,6 @@ function GameTabs({
           />
         </div>
       </GameTabPanel>
-      <div className="text-center mt-5 gap-5">
-        {!gameEnabled && (
-          <>
-            <Typography variant="h6" color="info" className="pb-4">
-              You have {user.arenaTokens} <Stadium className="mx-1" />
-            </Typography>
-            <DialogButton
-              buttonText={
-                <Typography>
-                  Buy one round (1 <Stadium className="mx-1" />)
-                </Typography>
-              }
-              dialogTitle={tab}
-              dialogContent={
-                <Typography>
-                  Are you sure you want to spend 1 <Stadium className="mx-1" />{" "}
-                  to buy a round of {tab}? The token is lost if you leave the
-                  page.
-                </Typography>
-              }
-              agreeText="Buy one round"
-              disagreeText="Cancel"
-              buttonVariant="contained"
-              disabled={user.arenaTokens < 1 || gameEnabled}
-              dialogFunction={() => handleInitializeGame(tab)}
-            />
-          </>
-        )}
-        <Typography variant="h6" color="info">
-          {score > 0 && `You earned ${score} gold coins`}
-        </Typography>
-      </div>
     </>
   );
 }
