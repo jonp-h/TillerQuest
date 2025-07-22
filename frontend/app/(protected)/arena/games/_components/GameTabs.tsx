@@ -208,10 +208,11 @@ function GameTabs({
           <div className="my-5">
             <Typography variant="body1">
               Search for words hidden in a 16x16 grid of letters! Words can be
-              found horizontally, vertically, or diagonally in any direction.
+              found horizontally, vertically, or diagonally in{" "}
+              <strong>any</strong> direction.
             </Typography>
             <Typography variant="body1">
-              You earn 100 points for each word found, but lose 50 points for
+              | You earn 100 points for each word found, but lose 60 points for
               each hint used. Find all words to maximize your score!
             </Typography>
           </div>

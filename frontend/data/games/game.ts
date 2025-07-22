@@ -659,8 +659,8 @@ export const getWordQuestHint = async (gameId: string, word: string) => {
       throw new ErrorMessage("Word not found in the current game");
     }
 
-    // Add 50 to hint penalties and recalculate score
-    const newHintPenalties = currentHintPenalties + 50;
+    // Add 60 to hint penalties and recalculate score
+    const newHintPenalties = currentHintPenalties + 60;
     const newScore = foundWords.length * 100 - newHintPenalties;
 
     // Update game with new metadata and score

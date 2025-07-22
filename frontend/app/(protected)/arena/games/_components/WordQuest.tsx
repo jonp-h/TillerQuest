@@ -61,6 +61,60 @@ function WordQuest({
     }
   }, [gameId, setScore]);
 
+  // Helper function to find all indices that belong to found words
+  const getFoundWordIndices = (): Set<number> => {
+    const foundIndices = new Set<number>();
+
+    foundWords.forEach((foundWord) => {
+      // Try to find this word in all possible positions and directions
+      for (let startRow = 0; startRow < 16; startRow++) {
+        for (let startCol = 0; startCol < 16; startCol++) {
+          // Try all 8 directions
+          const directions = [
+            [-1, -1],
+            [-1, 0],
+            [-1, 1], // up-left, up, up-right
+            [0, -1],
+            [0, 1], // left, right
+            [1, -1],
+            [1, 0],
+            [1, 1], // down-left, down, down-right
+          ];
+
+          for (const [rowDir, colDir] of directions) {
+            let wordMatches = true;
+            const wordIndices: number[] = [];
+
+            for (let i = 0; i < foundWord.length; i++) {
+              const row = startRow + i * rowDir;
+              const col = startCol + i * colDir;
+
+              // Check bounds
+              if (row < 0 || row >= 16 || col < 0 || col >= 16) {
+                wordMatches = false;
+                break;
+              }
+
+              const index = row * 16 + col;
+              if (gameBoard[index] !== foundWord[i]) {
+                wordMatches = false;
+                break;
+              }
+
+              wordIndices.push(index);
+            }
+
+            if (wordMatches) {
+              wordIndices.forEach((index) => foundIndices.add(index));
+            }
+          }
+        }
+      }
+    });
+
+    return foundIndices;
+  };
+
   const initializeGame = async () => {
     if (!gameId) return;
 
@@ -455,32 +509,31 @@ function WordQuest({
             Array.from({ length: 256 }, (_, index) => (
               <div
                 key={`placeholder-${index}`}
-                className="border p-2 rounded-xl max-w-10 font-mono font-bold select-none bg-gray-800 text-gray-600"
-              >
-                •
-              </div>
+                className="p-2 rounded-xl min-w-10 min-h-10 font-mono font-bold select-none bg-gray-800 text-gray-600"
+              />
             ))
           : gameBoard.map((letter, index) => {
               const isDragSelected = selectedIndices.has(index);
               const isManualSelected = manualSelectedIndices.has(index);
               const isHinted = hints.includes(index);
+              const foundWordIndices = getFoundWordIndices();
+              const isFoundWord = foundWordIndices.has(index);
               const manualOrderIndex = manualSelectionOrder.indexOf(index);
               const dragOrderIndex = dragSelectionOrder.indexOf(index);
 
               return (
                 <div
                   key={`${letter}-${index}`}
-                  className={`border p-2 rounded-xl max-w-10 cursor-pointer font-mono font-bold select-none transition-colors relative ${
-                    isDragSelected || isManualSelected
-                      ? "bg-blue-500 text-white"
-                      : "hover:bg-gray-700"
-                  } ${isHinted ? "bg-yellow-300 text-black" : ""} ${
-                    isManualSelected ? "ring-2 ring-purple-400" : ""
-                  } ${
-                    isDragSelected && !isManualSelected
-                      ? "ring-2 ring-blue-400"
-                      : ""
-                  }`}
+                  className={[
+                    "p-2 rounded-xl min-w-10 min-h-10 cursor-pointer font-mono font-bold select-none transition-colors relative",
+                    isFoundWord
+                      ? "bg-green-500 text-white"
+                      : isHinted
+                        ? "bg-yellow-500 text-black"
+                        : isDragSelected || isManualSelected
+                          ? "bg-blue-500 text-white"
+                          : "hover:bg-gray-700",
+                  ].join(" ")}
                   onMouseDown={() => handleMouseDown(index)}
                   onMouseEnter={() => handleMouseEnter(index)}
                 >

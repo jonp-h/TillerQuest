@@ -1,4 +1,4 @@
-// max word length is 16 characters
+// max word length is 16 characters, min length is 3 characters
 const wordQuestWords = [
   { id: 1, genre: "Misc", word: "WITCHER" },
   { id: 2, genre: "Misc", word: "LOREMIPSUM" },
@@ -13,7 +13,7 @@ const wordQuestWords = [
   { id: 11, genre: "IT", word: "DOCKER" },
   { id: 12, genre: "Programming", word: "AGILE" },
   { id: 13, genre: "IT", word: "CYBERSECURITY" },
-  { id: 14, genre: "IT", word: "AI" },
+  { id: 14, genre: "IT", word: "ROBOT" },
   { id: 15, genre: "IT", word: "INTERNET" },
   { id: 16, genre: "IT", word: "HTTPS" },
   { id: 17, genre: "IT", word: "SQL" },
@@ -55,7 +55,7 @@ const wordQuestWords = [
   { id: 53, genre: "MP", word: "PREMIEREPRO" },
   { id: 54, genre: "MP", word: "AFTEREFFECTS" },
   { id: 55, genre: "MP", word: "FIGMA" },
-  { id: 56, genre: "MP", word: "XD" },
+  { id: 56, genre: "MP", word: "SECUREDIGITAL" },
   { id: 57, genre: "Misc", word: "TILLER" },
   { id: 58, genre: "Misc", word: "WORDQUEST" },
   { id: 59, genre: "IT", word: "TECHNOLOGY" },
@@ -128,6 +128,13 @@ const wordQuestWords = [
   { id: 126, genre: "Programming", word: "ACCESSCONTROL" },
   { id: 127, genre: "IT", word: "VPN" },
   { id: 128, genre: "IT", word: "PROXYSERVER" },
+  { id: 129, genre: "IT", word: "ARDUINO" },
+  { id: 130, genre: "IT", word: "RASPBERRYPI" },
+  { id: 131, genre: "IT", word: "LINUX" },
+  { id: 132, genre: "IT", word: "WINDOWS" },
+  { id: 133, genre: "IT", word: "MACOS" },
+  { id: 134, genre: "IT", word: "ANDROID" },
+  { id: 135, genre: "IT", word: "IOS" },
 ];
 
 export default wordQuestWords;
