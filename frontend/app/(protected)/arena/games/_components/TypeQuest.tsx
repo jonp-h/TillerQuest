@@ -59,14 +59,18 @@ function TypeQuest({
         setTime((time) => time - 1);
         // Update game data every 2 seconds to reduce the number of requests
         if (time % 2 === 0) {
-          const gamedata = await updateGame(gameId || "", charIndex, mistakes);
+          const gamedata = await updateGame(
+            gameId || "",
+            [charIndex],
+            mistakes,
+          );
           if (typeof gamedata === "string") {
             toast.error(gamedata);
             return;
           }
-          const { wpm, cpm, score } = gamedata || { wpm: 0, cpm: 0, score: 0 };
-          setWPM(wpm);
-          setCPM(cpm);
+          const { score, metadata } = gamedata || {};
+          setWPM(metadata.wpm || 0);
+          setCPM(metadata.cpm || 0);
           // the money reward given to the player upon completion of the game
           setScore(score);
         }

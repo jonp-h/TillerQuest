@@ -121,7 +121,9 @@ enum Access {
   Dungeons
   GuildLeader
   TypeQuest
+  WordQuest
   DiceCorner
+  WIP
 }
 
 enum GameStatus {
@@ -392,6 +394,8 @@ model Game {
   game      String
   userId    String
   score     Int         @default(0)
+  mistakes  Int?        @default(0)
+  data      Int[] // Array of integers to store game-specific data, e.g., character indices
   startedAt DateTime    @default(now())
   status    GameStatus  @default(PENDING)
   metadata  Json?
@@ -404,6 +408,12 @@ model Game {
 model TypeQuestText {
   id   Int    @id @default(autoincrement())
   text String @unique
+}
+
+model WordQuestWord {
+  id    Int    @id @default(autoincrement())
+  genre String
+  word  String @unique
 }
 
 model Analytics {

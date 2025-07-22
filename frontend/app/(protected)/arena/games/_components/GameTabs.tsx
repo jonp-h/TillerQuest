@@ -10,6 +10,7 @@ import { Circle, Stadium } from "@mui/icons-material";
 import { $Enums } from "@prisma/client";
 import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
+import WordQuest from "./WordQuest";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -62,7 +63,6 @@ function GameTabs({
   };
 }) {
   const [tab, setTab] = useState<string>("TypeQuest");
-  const [gameVisible, setGameVisible] = useState(false);
   const [score, setScore] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -78,7 +78,6 @@ function GameTabs({
       return;
     }
     if (game) {
-      setGameVisible(true);
       setGameEnabled(true);
       setScore(0);
       setGameId(game.id);
@@ -124,46 +123,18 @@ function GameTabs({
           />
           <Tab
             disabled={gameEnabled}
+            label="WordQuest"
+            {...a11yProps("WordQuest")}
+            value="WordQuest"
+          />
+          <Tab
+            disabled={gameEnabled}
             label="Dice Corner"
             {...a11yProps("Dice Corner")}
             value="DiceCorner"
           />
         </Tabs>
       </Box>
-      <GameTabPanel tab={tab} value={"TypeQuest"} ownsGame={ownsGame}>
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">TypeQuest</h1>
-          <Typography variant="subtitle1" color="success">
-            Type the text as fast as you can
-          </Typography>
-          <div className="my-5">
-            <Typography variant="body1">
-              You earn gold <Circle htmlColor="gold" /> depending on your typing
-              speed (measured in words per minute, or WPM) and the number of
-              mistakes you make!
-            </Typography>
-            <Typography variant="body1">
-              Try your mettle in the arena and see how fast you can type! ...And
-              who knows, you might even learn something!
-            </Typography>
-          </div>
-
-          {gameVisible && (
-            <TypeQuest
-              gameEnabled={gameEnabled}
-              setGameEnabled={setGameEnabled}
-              handleFinishGame={handleFinishGame}
-              setScore={setScore}
-              gameId={gameId}
-            />
-          )}
-        </div>
-      </GameTabPanel>
-      <GameTabPanel tab={tab} value={"DiceCorner"} ownsGame={ownsGame}>
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">Dice Corner</h1>
-        </div>
-      </GameTabPanel>
       <div className="text-center mt-5 gap-5">
         {!gameEnabled && (
           <>
@@ -196,6 +167,65 @@ function GameTabs({
           {score > 0 && `You earned ${score} gold coins`}
         </Typography>
       </div>
+      <GameTabPanel tab={tab} value={"TypeQuest"} ownsGame={ownsGame}>
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-bold">TypeQuest</h1>
+          <Typography variant="subtitle1" color="success">
+            Type the text as fast as you can
+          </Typography>
+          <div className="my-5">
+            <Typography variant="body1">
+              You earn gold <Circle htmlColor="gold" /> depending on your typing
+              speed (measured in words per minute, or WPM) and the number of
+              mistakes you make!
+            </Typography>
+            <Typography variant="body1">
+              Try your mettle in the arena and see how fast you can type! ...And
+              who knows, you might even learn something!
+            </Typography>
+          </div>
+
+          <TypeQuest
+            gameEnabled={gameEnabled}
+            setGameEnabled={setGameEnabled}
+            handleFinishGame={handleFinishGame}
+            setScore={setScore}
+            gameId={gameId}
+          />
+        </div>
+      </GameTabPanel>
+      <GameTabPanel tab={tab} value={"DiceCorner"} ownsGame={ownsGame}>
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-bold">Dice Corner</h1>
+        </div>
+      </GameTabPanel>
+      <GameTabPanel tab={tab} value={"WordQuest"} ownsGame={ownsGame}>
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-bold">WordQuest</h1>
+          <Typography variant="subtitle1" color="success">
+            Find hidden words in the letter grid
+          </Typography>
+          <div className="my-5">
+            <Typography variant="body1">
+              Search for words hidden in a 16x16 grid of letters! Words can be
+              found horizontally, vertically, or diagonally in{" "}
+              <strong>any</strong> direction.
+            </Typography>
+            <Typography variant="body1">
+              | You earn 100 points for each word found, but lose 60 points for
+              each hint used. Find all words to maximize your score!
+            </Typography>
+          </div>
+
+          <WordQuest
+            gameEnabled={gameEnabled}
+            setGameEnabled={setGameEnabled}
+            handleFinishGame={handleFinishGame}
+            setScore={setScore}
+            gameId={gameId}
+          />
+        </div>
+      </GameTabPanel>
     </>
   );
 }
