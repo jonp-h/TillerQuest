@@ -14,6 +14,7 @@ import { ErrorMessage } from "@/lib/error";
 import { $Enums, Game } from "@prisma/client";
 import { addAnalytics } from "../analytics/analytics";
 import { PrismaTransaction } from "@/types/prismaTransaction";
+import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 
 export const initializeGame = async (userId: string, gameName: string) => {
   try {
@@ -152,6 +153,10 @@ export const updateGame = async (
             data,
           ));
           break;
+        case "BinaryJack":
+          // BinaryJack uses its own dedicated functions (rollBinaryJackDice, applyBinaryOperation)
+          // This case shouldn't be reached in normal gameplay
+          break;
       }
 
       await db.game.update({
@@ -185,7 +190,7 @@ export const finishGame = async (gameId: string) => {
     return await prisma.$transaction(async (db) => {
       const game = await db.game.findUnique({
         where: { id: gameId },
-        include: { user: true },
+        include: { user: { select: { id: true, gold: true } } },
       });
 
       if (
@@ -197,14 +202,43 @@ export const finishGame = async (gameId: string) => {
         throw new ErrorMessage("Invalid game state");
       }
 
-      const gold = await goldValidator(db, game.userId, game.score);
+      let gold = 0;
+      let message = "";
 
-      // Ensure gold is non-negative
-      const finalGold = gold < 0 ? 0 : gold;
+      // Handle BinaryJack wagering system
+      if (game.game === "BinaryJack") {
+        let metadata: any = game.metadata || {};
+        if (typeof metadata === "string") {
+          try {
+            metadata = JSON.parse(metadata);
+          } catch {
+            metadata = {};
+          }
+        }
+
+        const stake = game.score; // the stake is stored in the score field
+        const targetNumber = metadata.targetNumber;
+        const currentValue = metadata.currentValue;
+
+        if (currentValue === targetNumber) {
+          // Player won - return double the stake. No need to add additional passive multiplies with goldValidator
+          gold = stake * 2;
+          message = `🎉 Target hit! Won ${gold} gold (doubled your ${stake} stake)`;
+        } else {
+          // Player lost - they already lost their stake when game started
+          gold = 0;
+          message = `💀 Game over. You lost your ${stake} gold stake. Perhaps you should practice some binary operations? 🤡`;
+        }
+      } else {
+        // For other games, use the existing gold validation system
+        gold = await goldValidator(db, game.userId, game.score);
+        gold = gold < 0 ? 0 : gold; // Ensure gold is non-negative
+        message = "Received " + gold + " gold";
+      }
 
       const targetUser = await db.user.update({
         where: { id: game.userId },
-        data: { gold: { increment: finalGold } },
+        data: { gold: { increment: gold } },
         select: {
           username: true,
         },
@@ -218,16 +252,16 @@ export const finishGame = async (gameId: string) => {
       await addLog(
         db,
         game.userId,
-        `GAME: ${targetUser.username} finished a game of ${game.game}, and recieved ${finalGold} gold`,
+        `GAME: ${targetUser.username} finished a game of ${game.game}, and received ${gold} gold`,
       );
 
       await addAnalytics(db, game.userId, "game_completion", {
         gameId: game.id,
         category: game.game,
-        goldChange: finalGold,
+        goldChange: gold,
       });
 
-      return { message: "Recieved " + finalGold + " gold", gold: finalGold };
+      return { message, gold };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
@@ -689,6 +723,349 @@ export const getWordQuestHint = async (gameId: string, word: string) => {
     logger.error("Error fetching WordQuest hint: " + error);
     throw new Error(
       "Error fetching WordQuest hint. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+// -------- BinaryJack specific functions --------
+
+const BINARY_JACK_MAX_TURNS = 6; // Change this value to adjust maximum rounds/turns for BinaryJack
+
+export const initializeBinaryJackGame = async (
+  gameId: string,
+  targetNumber: number,
+  stake: number,
+) => {
+  try {
+    await checkActiveUserAuth();
+
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId, status: "PENDING" },
+        include: { user: { select: { id: true, gold: true } } },
+      });
+
+      if (!game) {
+        throw new ErrorMessage("Game not found or not in correct state");
+      }
+
+      // Validate target number (1-30 for 5-bit binary)
+      if (targetNumber < 1 || targetNumber > 30) {
+        throw new ErrorMessage("Target number must be between 1 and 30");
+      }
+
+      // Validate stake
+      if (stake < 1) {
+        throw new ErrorMessage("Stake must be at least 1 gold");
+      }
+
+      const userGold = game.user.gold;
+      const maxStake = Math.floor(userGold * 0.5); // 50% of user's gold
+
+      if (stake > maxStake) {
+        throw new ErrorMessage(
+          `Stake cannot exceed 50% of your gold (${maxStake} gold)`,
+        );
+      }
+
+      if (stake > userGold) {
+        throw new ErrorMessage("You don't have enough gold for this stake");
+      }
+
+      // Deduct the stake from user's gold
+      await db.user.update({
+        where: { id: game.userId },
+        data: { gold: { decrement: stake } },
+      });
+
+      // TODO: redundant?
+      await addLog(
+        db,
+        game.userId,
+        `GAME: You entered a BinaryJack game with a stake of ${stake} gold`,
+        false,
+      );
+
+      const metadata = {
+        targetNumber,
+        currentValue: 0,
+        turns: 0,
+        maxTurns: BINARY_JACK_MAX_TURNS,
+        stake,
+      };
+
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          status: "INPROGRESS",
+          startedAt: new Date(),
+          metadata,
+          score: stake, // Store the stake as the initial score
+        },
+      });
+
+      return {
+        targetNumber,
+        currentValue: 0,
+        turnsRemaining: BINARY_JACK_MAX_TURNS,
+        stake,
+      };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to initialize BinaryJack game");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error initializing BinaryJack game: " + error);
+    throw new Error(
+      "Error initializing BinaryJack game. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const startBinaryJackRound = async (gameId: string) => {
+  try {
+    await checkActiveUserAuth();
+
+    const game = await prisma.game.findUnique({
+      where: { id: gameId, status: "INPROGRESS" },
+    });
+
+    if (!game) {
+      throw new ErrorMessage("Invalid game session");
+    }
+
+    // Available dice types and operations
+    const allDice = ["d4", "d6", "d8", "d10", "d20"];
+    const allOperations = ["AND", "OR", "XOR", "NAND", "NOR", "XNOR"];
+
+    // Randomly select 2 dice and 2 operations
+    const selectedDice: string[] = [];
+    const selectedOperations: string[] = [];
+
+    // Select 2 random dice
+    const diceIndices = new Set<number>();
+    while (diceIndices.size < 2) {
+      diceIndices.add(Math.floor(Math.random() * allDice.length));
+    }
+    diceIndices.forEach((index) => selectedDice.push(allDice[index]));
+
+    // Select 2 random operations
+    const opIndices = new Set<number>();
+    while (opIndices.size < 2) {
+      opIndices.add(Math.floor(Math.random() * allOperations.length));
+    }
+    opIndices.forEach((index) => selectedOperations.push(allOperations[index]));
+
+    // Store the available choices in game metadata
+    let metadata: any = game.metadata || {};
+    if (typeof metadata === "string") {
+      try {
+        metadata = JSON.parse(metadata);
+      } catch {
+        metadata = {};
+      }
+    }
+
+    const updatedMetadata = {
+      ...metadata,
+      availableDice: selectedDice,
+      availableOperations: selectedOperations,
+    };
+
+    await prisma.game.update({
+      where: { id: gameId },
+      data: { metadata: updatedMetadata },
+    });
+
+    return {
+      availableDice: selectedDice,
+      availableOperations: selectedOperations,
+    };
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to start BinaryJack round");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error starting BinaryJack round: " + error);
+    throw new Error(
+      "Error starting BinaryJack round. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const rollBinaryJackDice = async (gameId: string, dice: string) => {
+  try {
+    await checkActiveUserAuth();
+
+    const game = await prisma.game.findUnique({
+      where: { id: gameId, status: "INPROGRESS" },
+    });
+
+    if (!game) {
+      throw new ErrorMessage("Invalid game session");
+    }
+
+    // Get game metadata and validate dice choice
+    let metadata: any = game.metadata || {};
+    if (typeof metadata === "string") {
+      try {
+        metadata = JSON.parse(metadata);
+      } catch {
+        metadata = {};
+      }
+    }
+
+    const availableDice = metadata.availableDice || [];
+    if (!availableDice.includes(dice)) {
+      throw new ErrorMessage("Die not available for this round");
+    }
+
+    const roll = new DiceRoll(dice);
+    // @ts-expect-error - the package's export function is not typed correctly
+    const rolledValue = roll.export(exportFormats.OBJECT) as {
+      averageTotal: number;
+      maxTotal: number;
+      minTotal: number;
+      notation: string;
+      output: string;
+      // rolls: any[];
+      total: number;
+      type: string;
+    };
+
+    return {
+      rolledValue: rolledValue.total,
+      diceRoll: rolledValue.output.split("[")[1].split("]")[0],
+    };
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to roll BinaryJack dice");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error rolling BinaryJack dice: " + error);
+    throw new Error(
+      "Error rolling BinaryJack dice. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const applyBinaryOperation = async (
+  gameId: string,
+  operation: string,
+  currentValue: number,
+  rolledValue: number,
+) => {
+  try {
+    await checkActiveUserAuth();
+
+    const game = await prisma.game.findUnique({
+      where: { id: gameId, status: "INPROGRESS" },
+    });
+
+    if (!game) {
+      throw new ErrorMessage("Invalid game session");
+    }
+
+    // Get game metadata
+    let metadata: any = game.metadata || {};
+    if (typeof metadata === "string") {
+      try {
+        metadata = JSON.parse(metadata);
+      } catch {
+        metadata = {};
+      }
+    }
+
+    const targetNumber = metadata.targetNumber;
+    const availableOperations = metadata.availableOperations || [];
+    if (targetNumber === undefined) {
+      throw new ErrorMessage("Game not properly initialized");
+    }
+
+    // Validate operation against round's available operations
+    if (!availableOperations.includes(operation)) {
+      throw new ErrorMessage("Operation not available for this round");
+    }
+
+    // Calculate the new value based on the binary operation
+    let newValue = 0;
+    switch (operation) {
+      case "AND":
+        newValue = currentValue & rolledValue;
+        break;
+      case "OR":
+        newValue = currentValue | rolledValue;
+        break;
+      case "XOR":
+        newValue = currentValue ^ rolledValue;
+        break;
+      case "NAND":
+        newValue = ~(currentValue & rolledValue) & 0x1f; // Mask to 5 bits
+        break;
+      case "NOR":
+        newValue = ~(currentValue | rolledValue) & 0x1f; // Mask to 5 bits
+        break;
+      case "XNOR":
+        newValue = ~(currentValue ^ rolledValue) & 0x1f; // Mask to 5 bits
+        break;
+      default:
+        throw new ErrorMessage("Invalid binary operation");
+    }
+
+    // Update game metadata with the new value and increment turn count
+    const newMetadata = {
+      ...metadata,
+      currentValue: newValue,
+      turns: (metadata.turns || 0) + 1,
+      lastOperation: operation,
+      lastRolledValue: rolledValue,
+    };
+
+    await prisma.game.update({
+      where: { id: gameId },
+      data: {
+        metadata: newMetadata,
+      },
+    });
+
+    return {
+      newValue,
+      hitTarget: newValue === targetNumber,
+      turnsRemaining: Math.max(0, BINARY_JACK_MAX_TURNS - newMetadata.turns),
+    };
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to apply binary operation");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error applying binary operation: " + error);
+    throw new Error(
+      "Error applying binary operation. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

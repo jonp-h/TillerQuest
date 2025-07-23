@@ -11,6 +11,7 @@ import { $Enums } from "@prisma/client";
 import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";
+import BinaryJack from "./BinaryJack";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -60,6 +61,7 @@ function GameTabs({
     id: string;
     arenaTokens: number;
     access: $Enums.Access[];
+    gold: number;
   };
 }) {
   const [tab, setTab] = useState<string>("TypeQuest");
@@ -93,7 +95,9 @@ function GameTabs({
       if (typeof game === "string") {
         toast.error(game);
       } else {
-        toast.success(game.message);
+        toast.success(game.message, {
+          autoClose: false,
+        });
         setScore(game.gold);
       }
       setGameId(null);
@@ -129,9 +133,9 @@ function GameTabs({
           />
           <Tab
             disabled={gameEnabled}
-            label="Dice Corner"
-            {...a11yProps("Dice Corner")}
-            value="DiceCorner"
+            label="BinaryJack"
+            {...a11yProps("BinaryJack")}
+            value="BinaryJack"
           />
         </Tabs>
       </Box>
@@ -194,11 +198,6 @@ function GameTabs({
           />
         </div>
       </GameTabPanel>
-      <GameTabPanel tab={tab} value={"DiceCorner"} ownsGame={ownsGame}>
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">Dice Corner</h1>
-        </div>
-      </GameTabPanel>
       <GameTabPanel tab={tab} value={"WordQuest"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-4xl font-bold">WordQuest</h1>
@@ -223,6 +222,28 @@ function GameTabs({
             handleFinishGame={handleFinishGame}
             setScore={setScore}
             gameId={gameId}
+          />
+        </div>
+      </GameTabPanel>
+      <GameTabPanel tab={tab} value={"BinaryJack"} ownsGame={ownsGame}>
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-bold">BinaryJack</h1>
+          <Typography variant="subtitle1" color="success">
+            Stake your gold in a high risk binary version of Blackjack
+          </Typography>
+          <div className="my-5">
+            <Typography variant="body1">
+              Write a binary number up to 5 bits long. Next use binary
+              operations and your trusty dice to get to that number.
+            </Typography>
+          </div>
+
+          <BinaryJack
+            gameEnabled={gameEnabled}
+            setGameEnabled={setGameEnabled}
+            handleFinishGame={handleFinishGame}
+            gameId={gameId}
+            userGold={user.gold} // Pass user's gold to BinaryJack
           />
         </div>
       </GameTabPanel>

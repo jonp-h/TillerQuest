@@ -49,6 +49,7 @@ export const getGameUserById = async (id: string) => {
         id: true,
         arenaTokens: true,
         access: true,
+        gold: true,
       },
     });
 

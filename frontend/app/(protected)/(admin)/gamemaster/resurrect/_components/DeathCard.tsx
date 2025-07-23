@@ -69,6 +69,7 @@ export default function DeathCard({ user }: { user: User }) {
       toast.error("Dice failed to initialize");
       return;
     }
+    // TODO: check if dice does not work on big screens because of client side
     diceBox.roll("1d6").then((results) => setNumber(results.total));
   };
 

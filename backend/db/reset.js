@@ -117,6 +117,9 @@ async function resetUsers() {
                 userId: user.id,
               },
             },
+            access: {
+              set: null,
+            },
             abilities: {
               deleteMany: {
                 userId: user.id,
@@ -182,6 +185,9 @@ async function resetUsersAndShopItems() {
               deleteMany: {
                 userId: user.id,
               },
+            },
+            access: {
+              set: null,
             },
             abilities: {
               deleteMany: {

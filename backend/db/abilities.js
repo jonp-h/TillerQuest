@@ -1197,11 +1197,12 @@ const arena = [
   },
   {
     id: 77,
-    name: "Dice-Corner",
+    name: "BinaryJack",
     category: "Arena",
     type: "Access",
     target: "Self",
-    description: "Gain access to the Dice Corner arena.",
+    description:
+      "Gain access to BinaryJack. Stake your gold in a high risk binary version of Blackjack.",
     duration: null,
     icon: "Test.jpg",
     gemstoneCost: 2,
