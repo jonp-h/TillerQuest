@@ -9,9 +9,9 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   // should be automatically set to true in production
-  // advanced: {
-  //   useSecureCookies: true,
-  // },
+  advanced: {
+    useSecureCookies: true,
+  },
   user: {
     additionalFields: {
       username: {
@@ -45,6 +45,14 @@ export const auth = betterAuth({
     storage: "memory",
     modelName: "RateLimit",
   },
+  // TODO: ensure session token does not constantly refresh
+  // session: {
+  //   // Increase session expiration time
+  //   expiresIn: 60 * 60 * 24 * 7, // 7 days instead of default
+
+  //   // Control when tokens refresh (default is 60% of expiration)
+  //   updateAge: 60 * 60 * 24, // Only refresh after 1 day
+  // },
   socialProviders: {
     github: {
       clientId: process.env.AUTH_GITHUB_ID as string,

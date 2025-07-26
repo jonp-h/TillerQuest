@@ -74,14 +74,19 @@ $ npm i
   - Create the following variables and replace the "..."
 
 ```
-AUTH_SECRET=...
+BETTER_AUTH_SECRET=...
 # This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+
+BETTER_AUTH_URL=...
+# Base URL of the backend. For development this can be [localhost:8080](http://localhost:8080)
 
 AUTH_GITHUB_ID=...
 # In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# This can be a specific API GitHub Oauth connection
 
 AUTH_GITHUB_SECRET=...
 # Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# This can be a specific API GitHub Oauth connection
 
 DATABASE_URL=...
 # Your connection string to the postgresql database. Should contain username and password.
@@ -99,17 +104,30 @@ NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
   - Create the following variables and replace the "..."
 
 ```
-AUTH_SECRET=...
+
+BETTER_AUTH_SECRET=...
 # This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+
+BETTER_AUTH_URL=...
+# Base URL of the backend. For development this can be [localhost:8080](http://localhost:8080)
 
 AUTH_GITHUB_ID=...
 # In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# This can be a specific API GitHub Oauth connection
 
 AUTH_GITHUB_SECRET=...
 # Write the secret from the same GitHub app here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
+# This can be a specific API GitHub Oauth connection
 
 DATABASE_URL=...
 # Your connection string to the postgresql database. Should contain username and password.
+
+API_KEY=...
+# The internal API key other services need to connect to the backend API
+
+API_SECRET=...
+# The internal API secret other services need to connect to the backend API
+
 
 ```
 

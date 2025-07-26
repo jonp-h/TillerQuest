@@ -9,14 +9,20 @@ import {
   healingValidator,
   manaValidator,
 } from "./data/validators.js";
-import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
-import { auth } from "./auth.js";
+// import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+// import { auth } from "./auth.js";
+// import authRoutes from "./routes/auth.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import rateLimit from "express-rate-limit";
 
 const app = express();
 
-app.all("/api/auth/{*any}", toNodeHandler(auth));
+// ------ Uncomment the following line to enable Better Auth authentication ------
+// app.use("/auth", authRoutes);
+
+// app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+// ----------------------------------------------------------------------------
 
 // Mount express json middleware after Better Auth handler
 // or only apply it to routes that don't interact with Better Auth
@@ -38,13 +44,13 @@ app.use(
   }),
 );
 
-app.use("/api/me", async (req, res) => {
-  const session = await auth.api.getSession({
-    headers: fromNodeHeaders(req.headers),
-  });
-  res.json(session);
-  return;
-});
+// app.use("/api/me", async (req, res) => {
+//   const session = await auth.api.getSession({
+//     headers: fromNodeHeaders(req.headers),
+//   });
+//   res.json(session);
+//   return;
+// });
 
 app.use("/api", leaderboardRoutes);
 
