@@ -90,11 +90,18 @@ export const validateUserCreation = async (id: string, data: any) => {
     );
   }
 
+  // Capitalize all parts of the name, including middle names
+  const capitalizeFullName = (str: string) =>
+    str
+      .split(" ")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(" ");
+
   // Sanitize inputs
   const sanitizedData = {
     username: escapeHtml(validatedData.data.username),
-    name: escapeHtml(validatedData.data.name),
-    lastname: escapeHtml(validatedData.data.lastname),
+    name: capitalizeFullName(escapeHtml(validatedData.data.name)),
+    lastname: capitalizeFullName(escapeHtml(validatedData.data.lastname)),
     playerClass: escapeHtml(validatedData.data.playerClass),
     guild: escapeHtml(validatedData.data.guild),
     schoolClass: escapeHtml(validatedData.data.schoolClass),

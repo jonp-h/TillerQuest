@@ -27,18 +27,18 @@ export const newUserSchema = z.object({
     .max(20, "Username must be below 20 characters")
     .regex(
       /^[a-zA-Z0-9-_]+$/,
-      "Username may only contain letters, numbers, - and _",
+      "Username may only contain latin letters, numbers, - and _",
     ),
   name: z
     .string()
     .min(3, "Given name must be above 3 characters")
     .max(20, "Given name must be below 20 characters")
-    .regex(/^[a-zA-Z]+$/, "Given name may only contain letters"),
+    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Given name may only contain letters"),
   lastname: z
     .string()
     .min(3, "Lastname must be above 3 characters")
     .max(20, "Lastname must be below 20 characters")
-    .regex(/^[a-zA-Z]+$/, "Lastname may only contain letters"),
+    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
   playerClass: z.string(),
   guild: z.string(),
   schoolClass: z.nativeEnum($Enums.SchoolClass, {
@@ -54,7 +54,7 @@ export const updateUserSchema = z.object({
     .max(20, "Username must be below 20 characters")
     .regex(
       /^[a-zA-Z0-9-_]+$/,
-      "Username may only contain letters, numbers, - and _",
+      "Username may only contain latin letters, numbers, - and _",
     ),
   publicHighscore: z.boolean(),
   archiveConsent: z.boolean(),
