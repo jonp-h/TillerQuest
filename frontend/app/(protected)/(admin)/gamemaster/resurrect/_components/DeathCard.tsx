@@ -51,9 +51,19 @@ export default function DeathCard({ user }: { user: User }) {
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
 
   const initializeDiceBox = async () => {
+    const diceContainer = document.querySelector("#dice-canvas");
+    if (diceContainer) {
+      const existingCanvases = diceContainer.querySelectorAll("canvas");
+      if (existingCanvases.length > 0) {
+        console.info("Removing existing dice canvases");
+        existingCanvases.forEach((canvas) => canvas.remove());
+      }
+    }
+
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
       await newDiceBox.initialize();
+      console.info("DiceBox initialized successfully");
       setDiceBox(newDiceBox);
     } catch (error) {
       console.error("Error initializing DiceBox:", error);
