@@ -1,4 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, SchoolClass } from "@prisma/client";
+import guilds from "./guilds.js";
+import { PrismaTransaction } from "../types/prismaTransaction.js";
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
@@ -7,16 +9,16 @@ async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  1 - reset. Set all users to the NEW role
-  2 - reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role
-  3 - single. Reset a single user
+  1 - normal reset. Set all users to the NEW role. Only Gemstones, passives, abilities, and guilds are reset.
+  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role or reset guilds.
+  3 - single normal reset. Reset a single user
   4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
   `);
 
   process.stdin.setEncoding("utf8");
 
   process.stdin.on("data", async (input) => {
-    const answer = input.trim(); // Trim whitespace and newlines
+    const answer = input.toString().trim(); // Trim whitespace and newlines
 
     switch (answer) {
       case "1":
@@ -24,7 +26,7 @@ async function main() {
           "Are you sure you want to reset all users? Type 'yes' to confirm:",
         );
         process.stdin.once("data", async (confirmation) => {
-          if (confirmation.trim().toLowerCase() === "yes") {
+          if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Resetting all users...");
             await resetUsers();
           } else {
@@ -38,7 +40,7 @@ async function main() {
           "Are you sure you want to reset all users and their shop items? Type 'yes' to confirm:",
         );
         process.stdin.once("data", async (confirmation) => {
-          if (confirmation.trim().toLowerCase() === "yes") {
+          if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Resetting all users...");
             await resetUsersAndShopItems();
           } else {
@@ -50,12 +52,12 @@ async function main() {
       case "3":
         console.log("Enter username of user to reset:");
         process.stdin.once("data", async (username) => {
-          const trimmedUsername = username.trim();
+          const trimmedUsername = username.toString().trim();
           console.log(
             `Are you sure you want to reset the user "${trimmedUsername}"? Retype the username to confirm:`,
           );
           process.stdin.once("data", async (confirmation) => {
-            if (confirmation.trim() === trimmedUsername) {
+            if (confirmation.toString().trim() === trimmedUsername) {
               await resetSingleUser(trimmedUsername);
             } else {
               console.log("Operation canceled. Usernames did not match.");
@@ -69,7 +71,7 @@ async function main() {
           "Are you sure you want to delete ALL non-consenting VG2 users? Type 'yes' to confirm:",
         );
         process.stdin.once("data", async (confirmation) => {
-          if (confirmation.trim().toLowerCase() === "yes") {
+          if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Resetting all users...");
             await deleteNonConsentingVG2Users();
           } else {
@@ -95,46 +97,95 @@ async function resetUsers() {
             },
           },
         },
+        where: {
+          role: {
+            notIn: ["ARCHIVED", "ADMIN"],
+          },
+        },
       });
 
       for (const user of users) {
-        const abilitiesRemoved = user.abilities.length;
-        const gemstonesToAdd = abilitiesRemoved * 2;
-
-        await db.user.update({
-          where: { id: user.id },
-          data: {
-            role: "NEW",
-            hp: 40,
-            hpMax: 40,
-            mana: Math.min(user.mana, 40),
-            manaMax: 40,
-            gemstones: {
-              increment: gemstonesToAdd,
-            },
-            passives: {
-              deleteMany: {
-                userId: user.id,
-              },
-            },
-            access: {
-              set: null,
-            },
-            abilities: {
-              deleteMany: {
-                userId: user.id,
-              },
-            },
-          },
-        });
+        await normalResetUserHandler(db, user);
       }
+
+      // Remove and recreate guilds
+      await db.guild.deleteMany();
+      await db.guild.createMany({
+        data: guilds.map((g) => ({
+          name: g.name,
+          schoolClass: g.schoolClass as SchoolClass,
+        })),
+        skipDuplicates: true,
+      });
     });
     console.info(
-      "All users have been set to NEW. Only Gemstones, passives and abilities have been reset.",
+      "All users have been set to NEW. Gemstones, classes, passives, abilities and guilds have been reset.",
     );
   } catch (error) {
     console.error("Error: ", error);
   }
+}
+
+// local helper function to reset a single user
+async function normalResetUserHandler(
+  db: PrismaTransaction,
+  user: {
+    id: string;
+    mana: number;
+    abilities: {
+      id: string;
+    }[];
+  },
+) {
+  const abilitiesRemoved = user.abilities.length;
+  const gemstonesToAdd = abilitiesRemoved * 2;
+
+  await db.user.update({
+    where: { id: user.id },
+    data: {
+      role: "NEW",
+      hp: 40,
+      hpMax: 40,
+      mana: Math.min(user.mana, 40),
+      manaMax: 40,
+      gemstones: {
+        increment: gemstonesToAdd,
+      },
+      class: null,
+      guildName: null,
+      games: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      logs: {
+        create: {
+          global: false,
+          message: `RESET: Your account has been reset. You have been refunded ${gemstonesToAdd} gemstones.`,
+        },
+      },
+      title: "Newborn",
+      titleRarity: "Common",
+      sessions: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      passives: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      access: {
+        set: [],
+      },
+      abilities: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+    },
+  });
 }
 
 async function resetUsersAndShopItems() {
@@ -159,46 +210,7 @@ async function resetUsersAndShopItems() {
       });
 
       for (const user of users) {
-        const abilitiesRemoved = user.abilities.length;
-        const gemstonesToAdd = abilitiesRemoved * 2;
-        let goldFromShopItems = 0;
-        for (const shopItem of user.inventory) {
-          goldFromShopItems += shopItem.price;
-        }
-
-        await db.user.update({
-          where: { id: user.id },
-          data: {
-            // role: "NEW",
-            hp: Math.min(user.hp, 40),
-            hpMax: 40,
-            mana: Math.min(user.mana, 40),
-            manaMax: 40,
-            gemstones: {
-              increment: gemstonesToAdd,
-            },
-            gold: {
-              increment: goldFromShopItems,
-            },
-            title: "Newborn",
-            passives: {
-              deleteMany: {
-                userId: user.id,
-              },
-            },
-            access: {
-              set: null,
-            },
-            abilities: {
-              deleteMany: {
-                userId: user.id,
-              },
-            },
-            inventory: {
-              deleteMany: {},
-            },
-          },
-        });
+        await softResetUserHandler(db, user);
       }
     });
     console.info(
@@ -209,7 +221,77 @@ async function resetUsersAndShopItems() {
   }
 }
 
-async function resetSingleUser(username) {
+// local helper function to reset a single user
+async function softResetUserHandler(
+  db: PrismaTransaction,
+  user: {
+    id: string;
+    hp: number;
+    mana: number;
+    inventory: {
+      price: number;
+    }[];
+    abilities: {
+      id: string;
+    }[];
+  },
+) {
+  const abilitiesRemoved = user.abilities.length;
+  const gemstonesToAdd = abilitiesRemoved * 2;
+
+  let goldFromShopItems = 0;
+  for (const shopItem of user.inventory) {
+    goldFromShopItems += shopItem.price;
+  }
+
+  await db.user.update({
+    where: { id: user.id },
+    data: {
+      // role: "NEW",
+      hp: Math.min(user.hp, 40),
+      hpMax: 40,
+      mana: Math.min(user.mana, 40),
+      manaMax: 40,
+      gemstones: {
+        increment: gemstonesToAdd,
+      },
+      gold: {
+        increment: goldFromShopItems,
+      },
+      title: "Newborn",
+      titleRarity: "Common",
+      sessions: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      passives: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      access: {
+        set: [],
+      },
+      abilities: {
+        deleteMany: {
+          userId: user.id,
+        },
+      },
+      inventory: {
+        deleteMany: {},
+      },
+      logs: {
+        create: {
+          global: false,
+          message: `RESET: Your shopitems and abilities have been reset. You have been refunded ${gemstonesToAdd} gemstones and ${goldFromShopItems} gold.`,
+        },
+      },
+    },
+  });
+}
+
+async function resetSingleUser(username: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { username: username },
@@ -229,28 +311,7 @@ async function resetSingleUser(username) {
       return;
     }
 
-    const abilitiesRemoved = user.abilities.length;
-    const gemstonesToAdd = abilitiesRemoved * 2;
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        role: "NEW",
-        hp: 40,
-        hpMax: 40,
-        mana: Math.min(user.mana, 40),
-        manaMax: 40,
-        gemstones: {
-          increment: gemstonesToAdd,
-        },
-        passives: {
-          deleteMany: {},
-        },
-        abilities: {
-          deleteMany: {},
-        },
-      },
-    });
+    await normalResetUserHandler(prisma, user);
 
     console.info(`User with username "${username}" has been reset.`);
   } catch (error) {

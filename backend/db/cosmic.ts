@@ -1,4 +1,20 @@
-const cosmic = [
+interface CosmicEvent {
+  id: number;
+  name: string;
+  description: string;
+  // icon: string;
+  // presetDate?: string;
+  frequency: number; // Frequency of the event
+  automatic: boolean; // Whether the event is automatic or not
+  increaseCostType: "All" | "Damage" | "Heal" | "XP" | null; // Type of cost increase, if any
+  increaseCostValue: number | null; // Value of the cost increase, if any
+  blockAbilityType: "Heal" | null; // Type of ability that is blocked, if any
+  triggerAtNoon: boolean; // Whether the event triggers at noon or not
+  grantAbility: boolean; // Whether the event grants an ability or not
+  abilityName: string | null; // Name of the ability granted by the event, if any
+}
+
+const cosmic: CosmicEvent[] = [
   {
     id: 1,
     name: "Poor-Harvest",

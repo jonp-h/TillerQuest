@@ -1,4 +1,30 @@
-const users = [
+interface User {
+  id: string;
+  username: string;
+  name: string;
+  lastname: string;
+  email: string;
+  image: string; // image identifier, e.g., "Druid1"
+  hp: number; // current health points
+  hpMax: number; // maximum health points
+  mana: number; // current mana points
+  manaMax: number; // maximum mana points
+  level: number; // user level
+  guildName: string; // name of the guild the user belongs to
+  role: "NEW" | "USER" | "ADMIN" | "ARCHIVED";
+  class?: "Druid" | "Barbarian" | "BloodMage" | "Wizard";
+  schoolClass?:
+    | "Class_1IM1"
+    | "Class_1IM2"
+    | "Class_1IM3"
+    | "Class_1IM4"
+    | "Class_2IT1"
+    | "Class_2IT2"
+    | "Class_2IT3"
+    | "Class_2MP1";
+}
+
+const users: User[] = [
   {
     id: "99991",
     username: "Ymir",
@@ -65,10 +91,10 @@ const users = [
   },
   {
     id: "99995",
-    username: "dawdawdwad",
-    name: "adwdawdawd",
-    lastname: "adwdawdawd",
-    email: "ola@example.com",
+    username: "aaaLANGTaaaa123",
+    name: "aaaLANGTaaaa123",
+    lastname: "aaaLANGTaaaa123",
+    email: "aaa@example.com",
     image: "Wizard2",
     hp: 33,
     hpMax: 100,
@@ -76,7 +102,7 @@ const users = [
     manaMax: 50,
     level: 8,
     guildName: "Testers",
-    schoolClass: "Class_1IM4",
+    schoolClass: "Class_2IT3",
     role: "USER",
     class: "Wizard",
   },

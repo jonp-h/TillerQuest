@@ -488,6 +488,32 @@ cron.schedule(
     name: "resetTurn",
   },
 );
+
+cron.schedule(
+  "3 0 * * *",
+  async () => {
+    try {
+      await db.session.deleteMany({
+        where: {
+          OR: [
+            { expiresAt: { lt: new Date() } }, // Expired sessions
+            {
+              updatedAt: {
+                lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Sessions not used in 30 days
+              },
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "clearExpiredSessions",
+  },
+);
+
 // TODO: might change to weekly
 // Schedule a job to run every day at 07:59 AM, resets the guilds enemy if it's dead.
 cron.schedule(

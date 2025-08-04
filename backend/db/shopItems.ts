@@ -1,4 +1,17 @@
-const shopItems = [
+interface ShopItems {
+  id: number;
+  name: string;
+  description: string | null; // optional, can be null if no description
+  icon?: string; // optional
+  price: number; // in gold
+  type: "Title" | "Badge" | "Object"; // type of the item
+  levelReq: number | null; // level requirement, can be null if no requirement
+  classReq: string | null; // class requirement
+  specialReq: string | null; // special requirement, can be null if no requirement
+  rarity: "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary" | "Mythic"; // rarity of the item
+}
+
+const shopItems: ShopItems[] = [
   {
     id: 1,
     name: "Peasant",
@@ -627,7 +640,6 @@ const shopItems = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    icon: null,
     specialReq: null,
     rarity: "Uncommon",
   },
@@ -639,7 +651,6 @@ const shopItems = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    icon: null,
     specialReq: null,
     rarity: "Uncommon",
   },
@@ -651,7 +662,6 @@ const shopItems = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    icon: null,
     specialReq: null,
     rarity: "Rare",
   },
@@ -663,7 +673,6 @@ const shopItems = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    icon: null,
     specialReq: null,
     rarity: "Rare",
   },
@@ -675,7 +684,6 @@ const shopItems = [
     type: "Title",
     levelReq: null,
     classReq: null,
-    icon: null,
     specialReq: null,
     rarity: "Rare",
   },

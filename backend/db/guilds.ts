@@ -1,6 +1,12 @@
-const guilds = [
+interface Guild {
+  name: string;
+  schoolClass?: string; // optional, used for guilds with specific classes
+}
+
+const guilds: Guild[] = [
   {
     name: "Testers",
+    schoolClass: "Class_1IM1", // example class, can be omitted if not applicable
   },
   {
     name: "No-name-1IM1-1",

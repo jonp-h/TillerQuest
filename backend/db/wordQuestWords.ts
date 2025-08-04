@@ -1,5 +1,11 @@
+interface WordQuestWord {
+  id: number;
+  genre: "Misc" | "Programming" | "IT" | "MP"; // genre of the word
+  word: string; // the word to guess, max length 16 characters
+}
+
 // max word length is 16 characters, min length is 3 characters
-const wordQuestWords = [
+const wordQuestWords: WordQuestWord[] = [
   { id: 1, genre: "Misc", word: "WITCHER" },
   { id: 2, genre: "Misc", word: "LOREMIPSUM" },
   { id: 3, genre: "Programming", word: "OOP" },

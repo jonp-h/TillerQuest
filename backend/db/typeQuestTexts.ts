@@ -1,4 +1,9 @@
-const typeQuestTexts = [
+interface TypeQuestText {
+  id: number;
+  text: string;
+}
+
+const typeQuestTexts: TypeQuestText[] = [
   {
     id: 1,
     text: "the witcher 3: wild hunt is often considered the best rpg due to its rich, immersive world, deep storytelling, and complex characters. the game offers unparalleled freedom, with meaningful choices that shape the outcome of its intricate narrative. its vast open world is visually stunning, filled with detailed quests and dynamic interactions. coupled with its excellent combat system, impactful decisions, and expansions that further enhance the experience, the witcher 3 stands as a masterclass in game design, capturing the hearts of players and critics alike.",

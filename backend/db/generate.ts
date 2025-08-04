@@ -1,15 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-import guilds from "./guilds.js";
-import users from "./users.js";
-import abilities from "./abilities.js";
-import cosmics from "./cosmic.js";
-import shopItems from "./shopItems.js";
+import { AbilityType, Class, PrismaClient, SchoolClass } from "@prisma/client";
+import guilds from "./guilds.ts";
+import users from "./users.ts";
+import abilities from "./abilities.ts";
+import cosmics from "./cosmic.ts";
+import shopItems from "./shopItems.ts";
 import readline from "readline";
-import typeQuestTexts from "./typeQuestTexts.js";
-import enemies from "./enemies.js";
-import gameSettings from "./gameSettings.js";
-import wordQuestWords from "./wordQuestWords.js";
-import wishes from "./wishes.js";
+import typeQuestTexts from "./typeQuestTexts.ts";
+import enemies from "./enemies.ts";
+import gameSettings from "./gameSettings.ts";
+import wordQuestWords from "./wordQuestWords.ts";
+import wishes from "./wishes.ts";
 
 // Initialize Prisma Client
 const db = new PrismaClient();
@@ -84,7 +84,10 @@ async function main() {
 async function addGuilds() {
   try {
     await db.guild.createMany({
-      data: guilds,
+      data: guilds.map((guild) => ({
+        ...guild,
+        schoolClass: guild.schoolClass as SchoolClass,
+      })),
       skipDuplicates: true,
     });
     console.info("Guilds have been added to the database.");
@@ -96,10 +99,17 @@ async function addGuilds() {
 async function addAbilities() {
   for (const ability of abilities) {
     try {
+      const { type, ...rest } = ability;
       await db.ability.upsert({
         where: { id: ability.id },
-        update: ability,
-        create: ability,
+        update: {
+          ...rest,
+          type: type as AbilityType,
+        },
+        create: {
+          ...rest,
+          type: type as AbilityType,
+        },
       });
     } catch (error) {
       console.error("Error adding", ability.name + ": ", error);
@@ -126,10 +136,17 @@ async function addCosmicEvents() {
 async function addShopItems() {
   for (const item of shopItems) {
     try {
+      const { classReq, ...rest } = item;
       await db.shopItem.upsert({
         where: { id: item.id },
-        update: item,
-        create: item,
+        update: {
+          ...rest,
+          classReq: classReq as Class,
+        },
+        create: {
+          ...rest,
+          classReq: classReq as Class,
+        },
       });
     } catch (error) {
       console.error("Error adding", item.name + ": ", error);

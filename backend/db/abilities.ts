@@ -1,6 +1,37 @@
-// duration is an integer: x * 10 minutes
+interface Ability {
+  id: number;
+  name: string;
+  category:
+    | "Health"
+    | "Mana"
+    | "Heal"
+    | "Trickery"
+    | "Wizard"
+    | "Druid"
+    | "BloodMage"
+    | "Barbarian"
+    | "Bard"
+    | "Arena"
+    | "Dungeon"
+    | "Cosmic";
+  type: string;
+  target: "Self" | "SingleTarget" | "All" | "Others";
+  description: string;
+  duration: 60 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
+  icon: string;
+  gemstoneCost: 0 | 1 | 2 | 4;
+  manaCost: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
+  healthCost: 2 | 3 | 5 | 6 | 10 | 12 | null;
+  xpGiven: 25 | 50 | 100 | 150 | 200 | 250 | 300 | 400 | 600 | null;
+  diceNotation: string | null;
+  value: number | null;
+  parentAbility: string | null;
+  isDungeon?: boolean; // optional, used for dungeon abilities
+  purchaseable?: boolean; // optional, used for cosmic abilities
+  cosmicEvent?: string[]; // optional, used for cosmic abilities
+}
 
-const health = [
+const health: Ability[] = [
   {
     id: 2,
     name: "Bandage",
@@ -90,7 +121,7 @@ const health = [
   // },
 ];
 
-const mana = [
+const mana: Ability[] = [
   {
     id: 5,
     name: "Arcane-Focus",
@@ -144,7 +175,7 @@ const mana = [
   },
 ];
 
-const trickery = [
+const trickery: Ability[] = [
   {
     id: 8,
     name: "Evade",
@@ -255,7 +286,7 @@ const trickery = [
   },
 ];
 
-const adventurer = [
+const adventurer: Ability[] = [
   // {
   // id: 14
   //   name: "Adventurer",
@@ -294,7 +325,7 @@ const adventurer = [
   // },
 ];
 
-const wizard = [
+const wizard: Ability[] = [
   {
     id: 16,
     name: "Arcane-Gift",
@@ -454,7 +485,7 @@ const wizard = [
   },
 ];
 
-const druid = [
+const druid: Ability[] = [
   {
     id: 69,
     name: "Blessing-of-the-Earth",
@@ -616,7 +647,7 @@ const druid = [
   },
 ];
 
-const barbarian = [
+const barbarian: Ability[] = [
   {
     id: 30,
     name: "Toughness",
@@ -779,7 +810,7 @@ const barbarian = [
   },
 ];
 
-const bloodMage = [
+const bloodMage: Ability[] = [
   {
     id: 70,
     name: "Bloodshield",
@@ -942,7 +973,7 @@ const bloodMage = [
   },
 ];
 
-const bard = [
+const bard: Ability[] = [
   {
     id: 68,
     name: "An-Eye-for-Gold",
@@ -1107,7 +1138,7 @@ const bard = [
   },
 ];
 
-const arena = [
+const arena: Ability[] = [
   {
     id: 72,
     name: "Arena",
@@ -1215,7 +1246,7 @@ const arena = [
   },
 ];
 
-const dungeon = [
+const dungeon: Ability[] = [
   {
     id: 52,
     name: "Courage",
@@ -1329,7 +1360,7 @@ const dungeon = [
   },
 ];
 
-const cosmic = [
+const cosmic: Ability[] = [
   {
     id: 58,
     name: "Poor-Harvest",

@@ -7,9 +7,9 @@
     "start": "nodemon",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --write .",
-    "gen": "prisma generate && node db/generate.js",
-    "generate": "prisma generate && node db/generate.js",
-    "reset": "prisma generate && node db/reset.js"
+    "gen": "prisma generate && tsx db/generate.ts",
+    "generate": "prisma generate && tsx db/generate.ts",
+    "reset": "prisma generate && tsx db/reset.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
@@ -31,7 +31,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.3.0",
     "prisma": "^6.4.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.36.0"
   }
