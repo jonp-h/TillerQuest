@@ -6,6 +6,7 @@ import {
   checkActiveUserAuth,
   checkAdminAuth,
   checkUserIdAndActiveAuth,
+  checkUserIdAuth,
   checkUsernameAndActiveAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
@@ -65,6 +66,40 @@ export const getGameUserById = async (id: string) => {
     logger.error("Error fetching game user by ID: " + error);
     throw new Error(
       "Something went wrong while fetching game user by ID. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getCreateUserById = async (id: string) => {
+  // unstable_noStore();
+
+  try {
+    await checkUserIdAuth(id);
+
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        lastname: true,
+        publicHighscore: true,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to get create user with ID. " + error,
+      );
+      throw error;
+    }
+
+    logger.error("Error fetching create user by ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching create user by ID. Please inform a game master of the following timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

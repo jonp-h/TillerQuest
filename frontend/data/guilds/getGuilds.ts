@@ -8,6 +8,7 @@ import {
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
+import { SchoolClass } from "@prisma/client";
 
 export const getGuilds = async () => {
   try {
@@ -44,12 +45,20 @@ export const getGuilds = async () => {
 };
 
 // get guild member count of all guilds, excluding the current user in the count
-export const getGuildsAndMemberCount = async (userId: string) => {
+export const getGuildsAndMemberCountBySchoolClass = async (
+  userId: string,
+  schoolClass: string,
+) => {
   try {
     // Should be open to new users / users with a valid session
     await checkUserIdAuth(userId);
 
     const guilds = await db.guild.findMany({
+      where: {
+        schoolClass: {
+          equals: schoolClass as SchoolClass,
+        },
+      },
       include: {
         _count: {
           select: {
@@ -114,16 +123,72 @@ export const getGuildmemberCount = async (
 
     return guild?._count.members || 0;
   } catch (error) {
-    if (error instanceof ErrorMessage) {
-      console.warn(
+    if (error instanceof AuthorizationError) {
+      logger.warn(
         "Unauthorized access attempt to get guild member count for " +
           guildName,
       );
       throw error;
     }
-    console.error("Error fetching guild member count: " + error);
+
+    if (error instanceof ErrorMessage) {
+      logger.warn(
+        "Unauthorized access attempt to get guild member count for " +
+          guildName,
+      );
+      throw error;
+    }
+    logger.error("Error fetching guild member count: " + error);
     throw new Error(
       "Something went wrong while fetching guild member count. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+// get guild member count, excluding the current user
+export const getGuildClasses = async (userId: string, guildName: string) => {
+  try {
+    await checkUserIdAuth(userId);
+
+    const guild = await db.guild.findFirst({
+      where: {
+        name: guildName,
+      },
+      select: {
+        members: {
+          select: {
+            class: true,
+          },
+          where: {
+            id: {
+              not: userId,
+            },
+          },
+        },
+      },
+    });
+
+    return guild?.members || [];
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to get guild taken classes for " +
+          guildName,
+      );
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      logger.warn(
+        "Unauthorized access attempt to get guild taken classes for " +
+          guildName,
+      );
+      throw error;
+    }
+    logger.error("Error fetching guild taken classes: " + error);
+    throw new Error(
+      "Something went wrong while fetching guild taken classes. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

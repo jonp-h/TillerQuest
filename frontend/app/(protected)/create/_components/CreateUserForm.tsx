@@ -1,7 +1,6 @@
 "use client";
 import {
   Button,
-  Paper,
   Typography,
   TextField,
   Switch,
@@ -20,32 +19,46 @@ import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
 import { validateUserCreation } from "@/data/validators/userUpdateValidation";
 import { updateUser } from "@/data/user/updateUser";
-import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import MainContainer from "@/components/MainContainer";
 
-export default function CreateUserForm() {
-  const { data } = useSession();
-
+export default function CreateUserForm({
+  data,
+}: {
+  data: {
+    name: string | null;
+    id: string;
+    username: string | null;
+    lastname: string | null;
+    publicHighscore: boolean;
+  } | null;
+}) {
   const [secret, setSecret] = useState("");
-  const [username, setUsername] = useState(data?.user.username);
-  const [name, setName] = useState(data?.user.name);
-  const [lastname, setLastname] = useState(""); // data?.user.lastname
+  const [username, setUsername] = useState(data?.username || "");
+  const [name, setName] = useState(data?.name || "");
+  const [lastname, setLastname] = useState(data?.lastname || "");
   const [playerClass, setPlayerClass] = useState<string>("");
   const [guild, setGuild] = useState("");
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const router = useRouter();
+
+  const refreshClasses = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    if (!data?.user.id) {
+    if (!data?.id) {
       return;
     }
+
     // frontend validation
-    const isCorrectSecret = await checkNewUserSecret(data.user.id, secret);
+    const isCorrectSecret = await checkNewUserSecret(data.id, secret);
 
     if (!isCorrectSecret) {
       setErrorMessage("Invalid secret code");
@@ -64,20 +77,21 @@ export default function CreateUserForm() {
 
     try {
       // frontend validation
-      const validatedData = await validateUserCreation(
-        data.user.id,
-        formValues,
-      );
+      const validatedData = await validateUserCreation(data.id, formValues);
 
       // if the data is a string, it is an error message
       if (typeof validatedData == "string") {
         setErrorMessage(validatedData);
+        // if the error message includes "class", we need to ensure class selection UI is refreshed
+        if (validatedData.includes("class")) {
+          refreshClasses();
+        }
         return;
       }
 
       // update the role from NEW to USER
       // add initial username, class and class image
-      await updateUser(data.user.id, {
+      await updateUser(data.id, {
         secret,
         username: validatedData.username,
         name: validatedData.name,
@@ -96,7 +110,7 @@ export default function CreateUserForm() {
   };
 
   return (
-    <Paper elevation={2} className="mx-10">
+    <MainContainer>
       <form
         className="flex flex-col gap-5 py-5 items-center text-center"
         onSubmit={handleSubmit}
@@ -155,12 +169,18 @@ export default function CreateUserForm() {
         </RadioGroup>
         <Typography variant="h5">Choose Guild</Typography>
         <ClassGuilds
-          userId={data?.user.id || ""}
-          guild={guild}
+          userId={data?.id || ""}
+          schoolClass={schoolClass}
           setGuild={setGuild}
         />
         <Typography variant="h5">Choose player class</Typography>
-        <Classes playerClass={playerClass} setPlayerClass={setPlayerClass} />
+        <Classes
+          playerClass={playerClass}
+          setPlayerClass={setPlayerClass}
+          userId={data?.id || ""}
+          guild={guild}
+          refreshTrigger={refreshTrigger}
+        />
         <Typography variant="body1">
           Do you want to be visible on public highscore lists?
         </Typography>
@@ -229,6 +249,6 @@ export default function CreateUserForm() {
           Create user
         </Button>
       </form>
-    </Paper>
+    </MainContainer>
   );
 }

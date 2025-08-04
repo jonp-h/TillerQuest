@@ -1,5 +1,5 @@
-import { getGuildsAndMemberCount } from "@/data/guilds/getGuilds";
-import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { getGuildsAndMemberCountBySchoolClass } from "@/data/guilds/getGuilds";
+import { RadioGroup, FormControlLabel, Radio, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 interface Guild {
@@ -9,29 +9,48 @@ interface Guild {
 
 function ClassGuilds({
   userId,
+  schoolClass,
   setGuild,
 }: {
   userId: string;
-  guild: string;
+  schoolClass: string;
   setGuild: (guild: string) => void;
 }) {
   const [guilds, setGuilds] = useState<Guild[]>([]);
 
   useEffect(() => {
+    if (!schoolClass) {
+      return;
+    }
     const fetchGuildNames = async () => {
-      const guilds = await getGuildsAndMemberCount(userId);
+      const guilds = await getGuildsAndMemberCountBySchoolClass(
+        userId,
+        schoolClass,
+      );
       setGuilds(guilds.map((guild) => guild));
     };
 
     fetchGuildNames();
-  }, [setGuild, userId]);
+  }, [setGuild, userId, schoolClass]);
 
   const handleClick = (guildName: string) => {
     setGuild(guildName);
   };
 
+  if (!schoolClass) {
+    return (
+      <Typography variant="body1">
+        Please select a school class to view available guilds.
+      </Typography>
+    );
+  }
+
+  if (guilds.length === 0) {
+    return <Typography variant="body1">Loading guilds...</Typography>;
+  }
+
   return (
-    <div className="w-2/3">
+    <div className="w-2/3 flex flex-col items-center">
       <RadioGroup row name="row-radio-buttons-group">
         {guilds.map((guildWithCount) => (
           <FormControlLabel

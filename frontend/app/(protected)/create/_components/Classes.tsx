@@ -2,6 +2,8 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Tooltip, Zoom } from "@mui/material";
+import { useEffect, useState } from "react";
+import { getGuildClasses } from "@/data/guilds/getGuilds";
 
 const classes = [
   {
@@ -125,26 +127,56 @@ const classes = [
 interface ClassesProps {
   playerClass: string;
   setPlayerClass: (playerClass: string) => void;
+  userId: string;
+  guild: string;
+  refreshTrigger: number;
 }
 
-export default function Classes({ playerClass, setPlayerClass }: ClassesProps) {
+export default function Classes({
+  playerClass,
+  setPlayerClass,
+  userId,
+  guild,
+  refreshTrigger,
+}: ClassesProps) {
+  const [takenClasses, setTakenClasses] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function fetchClasses() {
+      if (guild) {
+        const takenClasses = await getGuildClasses(userId, guild);
+        setTakenClasses(takenClasses.map((member) => member.class as string));
+      }
+    }
+    fetchClasses();
+  }, [guild, refreshTrigger, userId]);
+
   return (
     <main className="grid grid-cols-4 gap-7">
       {classes.map((classType) => {
         const className = classType.name;
         const src = classType.src;
         const description = classType.description;
+        const isTaken = takenClasses.includes(className.slice(0, -1));
         return (
           <Tooltip
             key={className}
             TransitionComponent={Zoom}
             TransitionProps={{ timeout: 600 }}
-            title={description}
+            title={
+              (isTaken
+                ? "A different guildmember has chosen this class. "
+                : "") + description
+            }
             arrow
           >
             <div
-              className="text-center hover:cursor-pointer"
-              onClick={() => setPlayerClass(className)}
+              className={
+                isTaken
+                  ? "text-center opacity-50 hover:cursor-not-allowed"
+                  : "text-center hover:cursor-pointer"
+              }
+              onClick={() => !isTaken && setPlayerClass(className)}
             >
               <Image
                 src={src}
