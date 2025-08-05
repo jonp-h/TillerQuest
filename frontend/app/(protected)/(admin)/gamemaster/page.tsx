@@ -1,6 +1,17 @@
 import MainContainer from "@/components/MainContainer";
 import { getDeadUserCount } from "@/data/user/getUser";
 import { requireAdmin } from "@/lib/redirectUtils";
+import {
+  AutoAwesome,
+  BarChart,
+  Bolt,
+  Edit,
+  Group,
+  Info,
+  Message,
+  Settings,
+  Star,
+} from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";
@@ -32,57 +43,84 @@ export default async function GameMasterPage() {
           </div>
         </Paper>
       )}
-      <div className="flex mt-10 justify-evenly">
-        <Link href="/gamemaster/guilds">
-          <Button color="secondary" variant="contained">
-            Guilds
-          </Button>
-        </Link>
-        <Link href="/gamemaster/manage">
-          <Button color="secondary" variant="contained">
-            Manage users
-          </Button>
-        </Link>
-        <Link href="/gamemaster/dungeons">
-          <Button color="secondary" variant="contained">
-            Dungeons
-          </Button>
-        </Link>
-        <Link href="/gamemaster/cosmic">
-          <Button color="secondary" variant="contained">
-            Cosmic
-          </Button>
-        </Link>
-        <Link href="/gamemaster/users">
-          <Button color="secondary" variant="contained">
-            GM powers
-          </Button>
-        </Link>
-        <Link href="/gamemaster/log">
-          <Button color="secondary" variant="contained">
-            Log
-          </Button>
-        </Link>
-        <Link href="/gamemaster/systemMessages">
-          <Button color="secondary" variant="contained">
-            System messages
-          </Button>
-        </Link>
-        <Link href="/gamemaster/analytics">
-          <Button color="secondary" variant="contained">
-            Analytics
-          </Button>
-        </Link>
-        <Link href="/gamemaster/gameSettings">
-          <Button color="secondary" variant="contained">
-            Gamesettings
-          </Button>
-        </Link>
-        <Link href="/gamemaster/wishingWell">
-          <Button color="secondary" variant="contained">
-            Wishing well
-          </Button>
-        </Link>
+      <div className="flex flex-col items-center mt-10 gap-5">
+        <Typography variant="h3" align="center" className="mt-10">
+          Actions
+        </Typography>
+        <div className="flex justify-center gap-10">
+          <Link href="/gamemaster/cosmic">
+            <Button color="primary" variant="contained" startIcon={<Star />}>
+              Cosmic
+            </Button>
+          </Link>
+          <Link href="/gamemaster/users">
+            <Button color="primary" variant="contained" startIcon={<Bolt />}>
+              GM powers
+            </Button>
+          </Link>
+        </div>
+        <Typography variant="h3" align="center" className="mt-10">
+          Edit
+        </Typography>
+        <div className="flex justify-center gap-10">
+          <Link href="/gamemaster/manage">
+            <Button color="secondary" variant="contained" startIcon={<Edit />}>
+              Manage users
+            </Button>
+          </Link>
+          <Link href="/gamemaster/guilds">
+            <Button color="secondary" variant="contained" startIcon={<Group />}>
+              Guilds
+            </Button>
+          </Link>
+          <Link href="/gamemaster/dungeons">
+            <Button color="secondary" variant="contained">
+              Dungeons
+            </Button>
+          </Link>
+          <Link href="/gamemaster/gameSettings">
+            <Button
+              color="secondary"
+              variant="contained"
+              startIcon={<Settings />}
+            >
+              Gamesettings
+            </Button>
+          </Link>
+          <Link href="/gamemaster/wishingWell">
+            <Button
+              color="secondary"
+              variant="contained"
+              startIcon={<AutoAwesome />}
+            >
+              Wishing well
+            </Button>
+          </Link>
+        </div>
+        <Typography variant="h3" align="center" className="mt-10">
+          Analytics
+        </Typography>
+        <div className="flex justify-center gap-10">
+          <Link href="/gamemaster/log">
+            <Button color="warning" variant="contained" startIcon={<Info />}>
+              Log
+            </Button>
+          </Link>
+          <Link href="/gamemaster/systemMessages">
+            <Button color="warning" variant="contained" startIcon={<Message />}>
+              System messages
+            </Button>
+          </Link>
+          <Link href="/gamemaster/analytics">
+            <Button
+              color="warning"
+              variant="contained"
+              startIcon={<BarChart />}
+            >
+              Analytics
+            </Button>
+          </Link>
+        </div>
       </div>
     </MainContainer>
   );
