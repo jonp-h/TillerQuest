@@ -74,13 +74,13 @@ export default async function GameMasterPage() {
           </Button>
         </Link>
         <Link href="/gamemaster/gameSettings">
-          <Button color="secondary" variant="contained" disabled={false}>
+          <Button color="secondary" variant="contained">
             Gamesettings
           </Button>
         </Link>
-        <Link href="/gamemaster/abilities">
-          <Button color="secondary" variant="contained" disabled={true}>
-            Ability management
+        <Link href="/gamemaster/wishingWell">
+          <Button color="secondary" variant="contained">
+            Wishing well
           </Button>
         </Link>
       </div>

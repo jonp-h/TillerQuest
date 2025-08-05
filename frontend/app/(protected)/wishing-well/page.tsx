@@ -18,19 +18,19 @@ async function WishingWellPage() {
     <MainContainer>
       <div className="relative min-h-screen flex flex-col">
         <div
-          className="fixed inset-0 z-0"
+          className="absolute inset-0 z-0"
           style={{
             backgroundImage: "url('/Well.png')",
             backgroundSize: "cover",
-            filter: "blur(20px)",
+            // filter: "blur(20px)",
             backgroundPosition: "center",
-            opacity: 0.1,
+            opacity: 0.4,
           }}
           aria-hidden="true"
         />
         <div className="relative z-10 flex-1 mt-10 mx-60 flex flex-col">
           <h1 className="text-6xl text-center ">The Wishing Well</h1>
-          <Typography variant="h6" align="center" color="success" gutterBottom>
+          <Typography variant="h6" align="center" color="primary" gutterBottom>
             Would you like for something extraordinary to happen?
           </Typography>
 
@@ -41,7 +41,7 @@ async function WishingWellPage() {
             The more votes a wish receives, the more likely it is to grab the
             attention of the game masters.
           </Typography>
-          <div className="flex flex-col items-center gap-4 mt-8 flex-1">
+          <div className="grid grid-cols-4 gap-4 my-8">
             {wishes.map((wish) => (
               <WishCard key={wish.id} userId={session.user.id} wish={wish} />
             ))}

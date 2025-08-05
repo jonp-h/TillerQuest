@@ -66,7 +66,17 @@ function WishCard({
   };
 
   return (
-    <Card sx={{ maxWidth: 400, position: "relative" }} elevation={4}>
+    <Card
+      sx={{
+        maxWidth: 400,
+        position: "relative",
+        background: "rgba(255, 255, 255, 0.1)",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255, 255, 255, 0.2)",
+        borderRadius: 2,
+      }}
+      elevation={0}
+    >
       {wish.scheduled && (
         <div className="absolute top-0 right-0 z-10">
           <div className="w-0 h-0 border-l-[80px] border-l-transparent border-t-[80px] border-t-purple-600 relative">
@@ -92,8 +102,14 @@ function WishCard({
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" fullWidth onClick={() => setOpen(true)}>
-          Vote
+        <Button
+          size="small"
+          variant="text"
+          color="inherit"
+          fullWidth
+          onClick={() => setOpen(true)}
+        >
+          Read More
         </Button>
         <Dialog open={open} onClose={() => setOpen(false)}>
           <div className="flex flex-col gap-4 p-4">
@@ -104,12 +120,22 @@ function WishCard({
               height={250}
               className="mx-auto rounded-full"
             />
+            <Typography gutterBottom variant="h4" align="center">
+              {wish.name}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ color: "text.secondary" }}
+              align="center"
+            >
+              {wish.description}
+            </Typography>
             {wish.scheduled && (
               <Typography variant="h6" align="center" color="secondary">
                 Scheduled for {wish.scheduled.toLocaleDateString()}
               </Typography>
             )}
-            <Typography variant="h6">
+            <Typography variant="h6" align="center">
               Enter the amount of gold to throw into the wishing well
             </Typography>
             <div className="flex justify-center text-wrap items-center gap-2">
@@ -138,13 +164,18 @@ function WishCard({
               </Button>
             </div>
 
-            <Typography
-              variant="h5"
-              align="center"
-              sx={{ mt: 2, color: "text.secondary" }}
-            >
-              Voting history:
-            </Typography>
+            <div className="flex justify-between items-center mt-2">
+              <Typography
+                variant="h5"
+                align="center"
+                sx={{ color: "text.secondary" }}
+              >
+                Voting history:
+              </Typography>
+              <Typography variant="h6" color="text.secondary">
+                Total: {wish.value}
+              </Typography>
+            </div>
             <List
               sx={{
                 maxHeight: 200,

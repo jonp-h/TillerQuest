@@ -26,7 +26,7 @@ function GameSettingsForm({
     await toast.promise(
       adminUpdateApplicationSettings(userId, { key: setting.key, value }),
       {
-        pending: "Updating user...",
+        pending: "Updating setting...",
         success: {
           render: ({ data }) => {
             return data;
@@ -36,7 +36,7 @@ function GameSettingsForm({
           render({ data }) {
             return data instanceof Error
               ? `${data.message}`
-              : "An error occurred while updating the user.";
+              : "An error occurred while updating the setting.";
           },
         },
       },

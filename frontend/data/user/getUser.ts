@@ -300,7 +300,7 @@ export const getVg1Leaderboard = async () => {
 
     const users = await db.user.findMany({
       where: {
-        role: { not: "ARCHIVED" },
+        role: "USER",
         publicHighscore: true,
         schoolClass: {
           in: ["Class_1IM1", "Class_1IM2", "Class_1IM3", "Class_1IM4"],
@@ -345,7 +345,7 @@ export const getVg2Leaderboard = async () => {
 
     const users = await db.user.findMany({
       where: {
-        role: { not: "ARCHIVED" },
+        role: "USER",
         publicHighscore: true,
         schoolClass: {
           in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],

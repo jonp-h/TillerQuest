@@ -24,7 +24,7 @@ async function Games() {
   if (!user.access.includes($Enums.Access.Arena)) {
     return (
       <ErrorPage
-        text="You do not have access to the Arena. Buy access in the abilities tab."
+        text="You do not have access to the Arena games. Buy access in the abilities tab."
         redirectLink="/abilities"
       />
     );
