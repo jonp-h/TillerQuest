@@ -1,12 +1,13 @@
 interface Guild {
   name: string;
   schoolClass?: string; // optional, used for guilds with specific classes
+  archived?: boolean; // optional, used for guilds that are archived
 }
 
 const guilds: Guild[] = [
   {
-    name: "Testers",
-    schoolClass: "Class_1IM1", // example class, can be omitted if not applicable
+    name: "Game Masters",
+    archived: true,
   },
   {
     name: "No-name-1IM1-1",

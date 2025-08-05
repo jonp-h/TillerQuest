@@ -1,4 +1,10 @@
-import { AbilityType, Class, PrismaClient, SchoolClass } from "@prisma/client";
+import {
+  $Enums,
+  AbilityType,
+  Class,
+  PrismaClient,
+  SchoolClass,
+} from "@prisma/client";
 import guilds from "./guilds.ts";
 import users from "./users.ts";
 import abilities from "./abilities.ts";
@@ -34,6 +40,7 @@ async function main() {
   10. Add Game Settings
   11. Add WordQuest Words
   12. Add Wishes
+  13. Update player title rarities
   `;
 
   rl.question(options, async (answer) => {
@@ -73,6 +80,9 @@ async function main() {
         break;
       case "12":
         await addWishes();
+        break;
+      case "13":
+        await updatePlayerTitleRarities();
         break;
       default:
         console.log("Invalid option");
@@ -239,6 +249,30 @@ async function addWishes() {
     }
   }
   console.info("Wishes have been added to the database.");
+}
+
+async function updatePlayerTitleRarities() {
+  try {
+    const titles = await db.shopItem.findMany({
+      select: {
+        name: true,
+        rarity: true,
+      },
+    });
+
+    for (const { name, rarity } of titles) {
+      await db.user.updateMany({
+        where: { title: name },
+        data: { titleRarity: rarity as $Enums.Rarity },
+      });
+    }
+
+    console.info(
+      "Player title rarities have been updated based on shop items.",
+    );
+  } catch (error) {
+    console.error("Error updating player title rarities: ", error);
+  }
 }
 
 async function addAll() {

@@ -109,7 +109,13 @@ async function resetUsers() {
       }
 
       // Remove and recreate guilds
-      await db.guild.deleteMany();
+      await db.guild.deleteMany({
+        where: {
+          NOT: {
+            archived: true,
+          },
+        },
+      });
       await db.guild.createMany({
         data: guilds.map((g) => ({
           name: g.name,
@@ -336,13 +342,31 @@ async function deleteNonConsentingVG2Users() {
         },
       });
 
+      // Find consenting users and their guilds
+      const consentingUsers = await db.user.findMany({
+        where: {
+          AND: [
+            { archiveConsent: true },
+            { role: "USER" },
+            {
+              schoolClass: {
+                in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
+              },
+            },
+          ],
+        },
+        select: {
+          id: true,
+          guildName: true,
+        },
+      });
+
+      // Archive the users
       await db.user.updateMany({
         where: {
           AND: [
             { archiveConsent: true },
-            {
-              role: "USER",
-            },
+            { role: "USER" },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -356,6 +380,25 @@ async function deleteNonConsentingVG2Users() {
         },
       });
 
+      // Archive their guilds (if any)
+      const guildNames = [
+        ...new Set(
+          consentingUsers
+            .map((u) => u.guildName)
+            .filter((name): name is string => !!name),
+        ),
+      ];
+      if (guildNames.length > 0) {
+        await db.guild.updateMany({
+          where: {
+            name: { in: guildNames },
+          },
+          data: {
+            archived: true,
+          },
+        });
+      }
+
       await db.user.deleteMany({
         where: {
           role: "NEW",
@@ -363,7 +406,7 @@ async function deleteNonConsentingVG2Users() {
       });
     });
     console.info(
-      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
+      "All NEW users and all non-consenting VG2 users have been deleted. Consenting users and guilds have been archived.",
     );
   } catch (error) {
     console.error("Error: ", error);

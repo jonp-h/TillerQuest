@@ -209,6 +209,7 @@ model Guild {
   name        String       @id
   icon        String?
   schoolClass SchoolClass?
+  archived    Boolean      @default(false)
 
   enemies GuildEnemy[]
   members User[]

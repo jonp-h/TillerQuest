@@ -44,7 +44,12 @@ export const addAnalytics = async (
 ) => {
   try {
     // Users can only add analytics for themselves, not others. Only active users can add analytics.
-    await checkUserIdAndActiveAuth(userId);
+    const session = await checkUserIdAndActiveAuth(userId);
+
+    // Analytics are only tracking users
+    if (session.user.role !== "USER") {
+      return;
+    }
 
     await db.analytics.create({
       data: {
@@ -128,6 +133,9 @@ export const getResourceAverages = async () => {
         xp: true,
         gold: true,
       },
+      where: {
+        role: "USER",
+      },
     });
 
     const guildAverages = await db.user.groupBy({
@@ -139,7 +147,11 @@ export const getResourceAverages = async () => {
         gold: true,
       },
       where: {
+        role: "USER",
         guildName: { not: null },
+        guild: {
+          archived: false, // Only include guilds that are not archived
+        },
       },
     });
 
@@ -152,6 +164,7 @@ export const getResourceAverages = async () => {
         gold: true,
       },
       where: {
+        role: "USER",
         class: { not: null },
       },
     });

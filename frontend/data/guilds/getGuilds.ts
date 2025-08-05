@@ -44,7 +44,7 @@ export const getGuilds = async () => {
   }
 };
 
-// get guild member count of all guilds, excluding the current user in the count
+// get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
 export const getGuildsAndMemberCountBySchoolClass = async (
   userId: string,
   schoolClass: string,
@@ -58,6 +58,7 @@ export const getGuildsAndMemberCountBySchoolClass = async (
         schoolClass: {
           equals: schoolClass as SchoolClass,
         },
+        archived: false,
       },
       include: {
         _count: {
