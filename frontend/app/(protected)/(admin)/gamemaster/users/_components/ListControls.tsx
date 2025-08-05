@@ -42,7 +42,7 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for healing");
             return;
           }
-          toast.promise(healUsers(selectedUsers, value, notify), {
+          await toast.promise(healUsers(selectedUsers, value, notify), {
             pending: "Healing users...",
             success: {
               render: ({ data }) => {
@@ -63,7 +63,7 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for damage");
             return;
           }
-          toast.promise(damageUsers(selectedUsers, value, notify), {
+          await toast.promise(damageUsers(selectedUsers, value, notify), {
             pending: "Damaging users...",
             success: {
               render: ({ data }) => {
@@ -81,7 +81,7 @@ export default function ListControls({ users }: { users: User[] }) {
           break;
         case "xp":
           if (value < 0) {
-            toast.promise(giveXpToUsers(selectedUsers, value, notify), {
+            await toast.promise(giveXpToUsers(selectedUsers, value, notify), {
               pending: "Removing XP from users...",
               success: {
                 render: () => {
@@ -101,7 +101,7 @@ export default function ListControls({ users }: { users: User[] }) {
               { autoClose: false },
             );
           } else {
-            toast.promise(giveXpToUsers(selectedUsers, value, notify), {
+            await toast.promise(giveXpToUsers(selectedUsers, value, notify), {
               pending: "Giving XP to users...",
               success: {
                 render: ({ data }) => {
@@ -120,7 +120,7 @@ export default function ListControls({ users }: { users: User[] }) {
 
           break;
         case "mana":
-          toast.promise(giveManaToUsers(selectedUsers, value, notify), {
+          await toast.promise(giveManaToUsers(selectedUsers, value, notify), {
             pending: "Giving mana to users...",
             success: {
               render: ({ data }) => {
@@ -137,24 +137,27 @@ export default function ListControls({ users }: { users: User[] }) {
           });
           break;
         case "arenatoken":
-          toast.promise(giveArenatokenToUsers(selectedUsers, value, notify), {
-            pending: "Giving arenatokens to users...",
-            success: {
-              render: ({ data }) => {
-                return data;
+          await toast.promise(
+            giveArenatokenToUsers(selectedUsers, value, notify),
+            {
+              pending: "Giving arenatokens to users...",
+              success: {
+                render: ({ data }) => {
+                  return data;
+                },
+              },
+              error: {
+                render: ({ data }) => {
+                  return data instanceof Error
+                    ? `${data.message}`
+                    : "An error occurred while giving arenatokens to users.";
+                },
               },
             },
-            error: {
-              render: ({ data }) => {
-                return data instanceof Error
-                  ? `${data.message}`
-                  : "An error occurred while giving arenatokens to users.";
-              },
-            },
-          });
+          );
           break;
         case "gold":
-          toast.promise(giveGoldToUsers(selectedUsers, value, notify), {
+          await toast.promise(giveGoldToUsers(selectedUsers, value, notify), {
             pending: "Giving gold to users...",
             success: {
               render: ({ data }) => {

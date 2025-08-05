@@ -46,7 +46,7 @@ export default function RerollCosmic({
 
   const handleReroll = async () => {
     const cosmicPromise = randomCosmic();
-    toast.promise(
+    await toast.promise(
       cosmicPromise,
       {
         pending: "Rerolling cosmic event...",
@@ -69,7 +69,7 @@ export default function RerollCosmic({
   };
 
   const handleSetSelectedCosmic = async (name: string) => {
-    toast.promise(setSelectedCosmic(name), {
+    await toast.promise(setSelectedCosmic(name), {
       pending: `Setting ${name} as daily cosmic...`,
       success: `Successfully set ${name} as daily cosmic!`,
       error: {

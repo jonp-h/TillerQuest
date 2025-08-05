@@ -18,7 +18,7 @@ function CreateSystemMessageForm() {
       return;
     }
 
-    toast.promise(adminCreateSystemMessage(title, content), {
+    await toast.promise(adminCreateSystemMessage(title, content), {
       pending: "Creating system message...",
       success: "System message created successfully",
       error: {

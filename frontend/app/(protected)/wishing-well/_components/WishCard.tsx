@@ -46,7 +46,7 @@ function WishCard({
   const router = useRouter();
 
   const handleWish = async (amount: number) => {
-    toast.promise(voteForWish(wish.id, userId, amount, anonymous), {
+    await toast.promise(voteForWish(wish.id, userId, amount, anonymous), {
       pending: "Processing...",
       success: {
         render({ data }) {

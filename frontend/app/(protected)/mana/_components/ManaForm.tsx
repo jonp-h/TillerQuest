@@ -77,7 +77,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else {
       try {
-        toast.promise(getDailyMana(user.id), {
+        await toast.promise(getDailyMana(user.id), {
           pending: "Attuning to the surrounding magic...",
           success: {
             render({ data }) {

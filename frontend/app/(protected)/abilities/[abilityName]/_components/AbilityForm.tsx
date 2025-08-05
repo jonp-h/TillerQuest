@@ -214,10 +214,11 @@ export default function AbilityForm({
     // when buying an abillity, check passive. if passive immediately activate
     // if passive, disable use button
 
-    toast.promise(buyAbility(user.id, ability.name), {
+    await toast.promise(buyAbility(user.id, ability.name), {
       pending: "Buying ability...",
       success: {
         render: ({ data }) => {
+          // router.refresh();
           return data;
         },
       },
@@ -229,6 +230,8 @@ export default function AbilityForm({
         },
       },
     });
+
+    console.log("Buying ability", ability.name);
 
     setIsLoading(false);
     router.refresh();

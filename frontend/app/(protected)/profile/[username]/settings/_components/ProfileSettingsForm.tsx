@@ -47,7 +47,7 @@ function ProfileSettingsForm({
       return;
     }
 
-    toast.promise(
+    await toast.promise(
       updateProfile(user.id, {
         username: validatedData.username,
         publicHighscore: validatedData.publicHighscore,

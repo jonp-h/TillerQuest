@@ -27,7 +27,7 @@ function ShopCard({
   const router = useRouter();
 
   const handlePurchase = async (itemId: number) => {
-    toast.promise(purchaseItem(user.id, itemId), {
+    await toast.promise(purchaseItem(user.id, itemId), {
       pending: "Processing purchase...",
       success: {
         render({ data }) {
@@ -47,7 +47,7 @@ function ShopCard({
   };
 
   const handleEquip = async (itemId: number) => {
-    toast.promise(equipItem(user.id, itemId), {
+    await toast.promise(equipItem(user.id, itemId), {
       pending: "Equipping item...",
       success: {
         render({ data }) {

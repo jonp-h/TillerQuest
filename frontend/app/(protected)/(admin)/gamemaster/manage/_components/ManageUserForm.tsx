@@ -45,7 +45,7 @@ function ManageUserForm(user: {
       lastname !== user.lastname ||
       access.join(" ") !== user.access.join(" ")
     ) {
-      toast.promise(
+      await toast.promise(
         adminUpdateUser(user.id, special, access, name, username, lastname),
         {
           pending: "Updating user...",
@@ -60,7 +60,7 @@ function ManageUserForm(user: {
         },
       );
     } else {
-      toast.promise(adminUpdateUser(user.id, special), {
+      await toast.promise(adminUpdateUser(user.id, special), {
         pending: "Updating user...",
         success: "User special tags updated",
         error: {
@@ -73,7 +73,7 @@ function ManageUserForm(user: {
       });
     }
     if (role !== user.role) {
-      toast.promise(updateRole(user.id, role), {
+      await toast.promise(updateRole(user.id, role), {
         pending: "Updating user role...",
         success: "User role updated",
         error: {

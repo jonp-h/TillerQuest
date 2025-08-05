@@ -73,6 +73,9 @@ export const getGuildsAndMemberCountBySchoolClass = async (
           },
         },
       },
+      orderBy: {
+        name: "asc",
+      },
     });
 
     const guildsWithMemberCount = guilds.map((guild) => ({

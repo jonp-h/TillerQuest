@@ -28,7 +28,7 @@ function SystemMessageForm(message: {
       return;
     }
 
-    toast.promise(adminUpdateSystemMessage(message.id, title, content), {
+    await toast.promise(adminUpdateSystemMessage(message.id, title, content), {
       pending: "Updating message...",
       success: {
         render({ data }) {
@@ -52,7 +52,7 @@ function SystemMessageForm(message: {
       return;
     }
 
-    toast.promise(adminDeleteSystemMessage(message.id), {
+    await toast.promise(adminDeleteSystemMessage(message.id), {
       pending: "Updating message...",
       success: {
         render({ data }) {

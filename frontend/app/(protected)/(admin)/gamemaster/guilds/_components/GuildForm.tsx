@@ -51,7 +51,7 @@ function GuildForm({
   const router = useRouter();
 
   const handleChange = async () => {
-    toast.promise(updateGuildmembers(guildName, selectedUsers), {
+    await toast.promise(updateGuildmembers(guildName, selectedUsers), {
       pending: `Updating guild ${guildName}...`,
       success: `Successfully updated guild members for ${guildName}`,
       error: {
@@ -63,7 +63,7 @@ function GuildForm({
       },
     });
     if (newGuildName !== guildName) {
-      toast.promise(updateGuildname(guildName, newGuildName), {
+      await toast.promise(updateGuildname(guildName, newGuildName), {
         pending: `Updating guild ${guildName}...`,
         success: `Successfully updated guild name to ${newGuildName}`,
         error: {
