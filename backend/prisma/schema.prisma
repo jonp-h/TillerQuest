@@ -211,6 +211,12 @@ model Guild {
   schoolClass SchoolClass?
   archived    Boolean      @default(false)
 
+  guildLeader     String? // The userId of the guild leader
+  nextGuildLeader String? // The userId of the next guild leader
+
+  fighting Boolean @default(false)
+  battles  Int     @default(0) // Number of battles fought by the guild
+
   enemies GuildEnemy[]
   members User[]
 }

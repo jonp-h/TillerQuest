@@ -53,21 +53,46 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
       throw new ErrorMessage(validatedData);
     }
 
-    await db.user.update({
-      where: { id },
-      data: {
-        role: "USER",
-        username: validatedData.username,
-        name: validatedData.name,
-        lastname: validatedData.lastname,
-        class: validatedData.playerClass.slice(0, -1) as $Enums.Class,
-        image: validatedData.playerClass,
-        guildName: validatedData.guild,
-        schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
-        publicHighscore: validatedData.publicHighscore,
-        lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
-      },
+    await db.$transaction(async (db) => {
+      const guildMemberCount = await db.user.count({
+        where: { guildName: validatedData.guild },
+      });
+
+      // if the guild has no members, set the user as the guild leader
+      if (guildMemberCount === 0) {
+        await db.guild.update({
+          where: { name: validatedData.guild },
+          data: {
+            guildLeader: id,
+          },
+        });
+        // if the guild has one member, set the user as the next guild leader
+      } else if (guildMemberCount === 1) {
+        await db.guild.update({
+          where: { name: validatedData.guild },
+          data: {
+            nextGuildLeader: id,
+          },
+        });
+      }
+
+      await db.user.update({
+        where: { id },
+        data: {
+          role: "USER",
+          username: validatedData.username,
+          name: validatedData.name,
+          lastname: validatedData.lastname,
+          class: validatedData.playerClass.slice(0, -1) as $Enums.Class,
+          image: validatedData.playerClass,
+          guildName: validatedData.guild,
+          schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
+          publicHighscore: validatedData.publicHighscore,
+          lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
+        },
+      });
     });
+
     return true;
   } catch (error) {
     if (error instanceof ErrorMessage) {

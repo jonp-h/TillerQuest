@@ -1,19 +1,20 @@
 "use server";
 
-import { auth } from "@/auth";
 import {
   escapeHtml,
   newUserSchema,
   updateUserSchema,
-} from "@/lib/userValidation";
+} from "@/lib/validationUtils";
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
-import { checkNewUserAuth } from "@/lib/authUtils";
+import {
+  checkUserIdAndActiveAuth,
+  checkUserIdAndNewUserAuth,
+} from "@/lib/authUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
-  await checkNewUserAuth();
+  await checkUserIdAndNewUserAuth(id);
 
   const validatedData = newUserSchema.safeParse(data);
 
@@ -21,7 +22,7 @@ export const validateUserCreation = async (id: string, data: any) => {
     return validatedData.error.errors.map((e) => e.message).join(", ");
   }
 
-  //TODO: consider the need for guild and schoolclass restrictions?
+  //TODO: consider if guild and schoolclass restrictions are necessary
   // validate if the user guild has the same schoolclass
   const guildSchoolClass = await db.guild.findFirst({
     where: {
@@ -113,12 +114,7 @@ export const validateUserCreation = async (id: string, data: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserUpdate = async (id: string, data: any) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (session?.user.id !== id || session?.user.role === "NEW" || !session) {
-    return "Not authorized";
-  }
+  await checkUserIdAndActiveAuth(id);
 
   const validatedData = updateUserSchema.safeParse(data);
 

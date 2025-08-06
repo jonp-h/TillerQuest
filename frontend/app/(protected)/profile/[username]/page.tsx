@@ -2,6 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
 import {
+  Button,
   Chip,
   LinearProgress,
   Paper,
@@ -12,7 +13,13 @@ import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
-import { Circle, Diamond, Settings, Stadium } from "@mui/icons-material";
+import {
+  Circle,
+  Diamond,
+  LocalPolice,
+  Settings,
+  Stadium,
+} from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { getUserProfileAbilities } from "@/data/abilities/getters/getAbilities";
 import { getUserPassives } from "@/data/passives/getPassive";
@@ -56,13 +63,21 @@ export default async function ProfilePage({
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
-            <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-4 items-center p-5">
+            <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-4 items-center p-5 flex-grow">
               {guildMembers?.map((member) =>
                 member.username !== user.username ? (
                   <MiniatureProfile key={member.id} member={member} />
                 ) : null,
               )}
             </div>
+            <Button
+              variant="text"
+              color="inherit"
+              fullWidth
+              className="mt-auto"
+            >
+              <Link href={`/guild`}>View Guild</Link>
+            </Button>
           </Paper>
         )}
         <Paper
@@ -79,7 +94,7 @@ export default async function ProfilePage({
               </Link>
             </div>
           )}
-          <div className="from-zinc-600 to-zinc-700 bg-radial p-3 rounded-full">
+          <div className="relative from-zinc-600 to-zinc-700 bg-radial p-3 rounded-full">
             <Image
               className="rounded-full"
               src={
@@ -92,6 +107,13 @@ export default async function ProfilePage({
               height={250}
               draggable={false}
             />
+            {guildMembers[0].guild?.guildLeader === user.id && (
+              <div className="absolute top-5 right-5">
+                <Tooltip title="This week's guild leader" arrow placement="top">
+                  <LocalPolice sx={{ color: "#f59e42", fontSize: 50 }} />
+                </Tooltip>
+              </div>
+            )}
           </div>
           <div className=" flex justify-evenly gap-3 items-center text-2xl">
             <Typography variant="h5">{user.name}</Typography>

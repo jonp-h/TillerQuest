@@ -4,14 +4,16 @@ import {
   Checkbox,
   TextField,
   CircularProgress,
+  Switch,
+  Typography,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { SchoolClass } from "@prisma/client";
 import React from "react";
 import {
+  adminUpdateGuildname,
   updateGuildmembers,
-  updateGuildname,
 } from "@/data/guilds/updateGuilds";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
@@ -22,6 +24,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 function GuildForm({
   guildName,
   guildMembers,
+  archived,
   users,
 }: {
   guildName: string;
@@ -31,6 +34,7 @@ function GuildForm({
     lastname: string | null;
     schoolClass: SchoolClass | null;
   }[];
+  archived: boolean;
   users: {
     id: string;
     name: string | null;
@@ -47,6 +51,7 @@ function GuildForm({
     }[]
   >(guildMembers);
   const [newGuildName, setNewGuildName] = React.useState(guildName);
+  const [guildArchived, setGuildArchived] = React.useState(archived);
 
   const router = useRouter();
 
@@ -63,7 +68,7 @@ function GuildForm({
       },
     });
     if (newGuildName !== guildName) {
-      await toast.promise(updateGuildname(guildName, newGuildName), {
+      await toast.promise(adminUpdateGuildname(guildName, newGuildName), {
         pending: `Updating guild ${guildName}...`,
         success: `Successfully updated guild name to ${newGuildName}`,
         error: {
@@ -85,6 +90,7 @@ function GuildForm({
         defaultValue={guildName}
         onChange={(value) => setNewGuildName(value.target.value)}
       />
+
       <Autocomplete
         multiple
         options={users}
@@ -134,6 +140,15 @@ function GuildForm({
           />
         )}
       />
+      <div className="min-w-20 items-center text-center">
+        <Switch
+          checked={guildArchived}
+          onChange={() => setGuildArchived(!guildArchived)}
+        />
+        <Typography variant="body2">
+          {guildArchived ? "Archived" : "Active"}
+        </Typography>
+      </div>
       <DialogButton
         buttonText="Update"
         dialogTitle="Update Guild"

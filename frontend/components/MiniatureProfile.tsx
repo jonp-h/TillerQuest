@@ -3,18 +3,23 @@ import { $Enums } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import RarityText from "./RarityText";
+import { LocalPolice } from "@mui/icons-material";
 
 interface MiniatureProfileProps {
   member: {
     id: string;
-    image: string | null;
+    username: string | null;
     title: string | null;
     titleRarity: $Enums.Rarity | null;
-    username: string | null;
+    image: string | null;
     hp: number;
     hpMax: number;
     mana: number;
     manaMax: number;
+    guild: {
+      guildLeader: string | null;
+      nextGuildLeader?: string | null;
+    } | null;
   };
 }
 
@@ -23,7 +28,7 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
   return (
     <Link key={member.username} href={"/profile/" + member.username}>
       <div className="flex flex-col justify-center">
-        <div className="flex justify-center self-center from-zinc-600 to-zinc-700 bg-radial p-1.5 rounded-full">
+        <div className="relative flex justify-center self-center from-zinc-600 to-zinc-700 bg-radial p-1.5 rounded-full">
           <Image
             className="rounded-full"
             draggable="false"
@@ -32,6 +37,16 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
             width={100}
             height={100}
           />
+          {member.guild?.guildLeader === member.id && (
+            <div className="absolute top-0 right-0 text-amber-500">
+              <LocalPolice />
+            </div>
+          )}
+          {member.guild?.nextGuildLeader === member.id && (
+            <div className="absolute top-0 right-0 opacity-20 animate-pulse text-amber-500">
+              <LocalPolice />
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-1 text-center">
           <RarityText className="-mb-1.5" rarity={member.titleRarity ?? ""}>

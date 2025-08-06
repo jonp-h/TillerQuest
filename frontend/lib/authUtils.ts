@@ -228,3 +228,29 @@ export const checkNewUserAuth = async () => {
   }
   return session;
 };
+
+export const checkUserIdAndNewUserAuth = async (userId: string) => {
+  const session = await getCurrentSession();
+
+  // Check user ID match
+  if (session.user.id !== userId) {
+    logger.warn("User ID mismatch detected");
+    throw new AuthorizationError(
+      "User ID mismatch",
+      "USER_ID_MISMATCH",
+      "You do not have permission to access this resource.",
+    );
+  }
+
+  if (session.user.role !== "NEW") {
+    logger.warn(
+      `User ${session.user.id} attempted new user access without permissions`,
+    );
+    throw new AuthorizationError(
+      "User is not a new user",
+      "NOT_NEW_USER",
+      "You do not have permission to perform this action.",
+    );
+  }
+  return session;
+};

@@ -10,14 +10,18 @@ import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 import { SchoolClass } from "@prisma/client";
 
-export const getGuilds = async () => {
+export const getGuilds = async (archived: boolean) => {
   try {
     await checkAdminAuth();
 
     const guilds = await db.guild.findMany({
+      where: {
+        archived,
+      },
       select: {
         name: true,
         schoolClass: true,
+        archived: true,
         members: {
           select: {
             id: true,
@@ -39,6 +43,53 @@ export const getGuilds = async () => {
     logger.error("Error fetching guilds: " + error);
     throw new Error(
       "Something went wrong while fetching guilds. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getGuildByUserId = async (userId: string) => {
+  try {
+    await checkUserIdAuth(userId);
+
+    const guild = await db.guild.findFirst({
+      where: {
+        members: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+      select: {
+        name: true,
+        schoolClass: true,
+        guildLeader: true,
+        nextGuildLeader: true,
+        members: {
+          select: {
+            id: true,
+            image: true,
+            title: true,
+            titleRarity: true,
+            username: true,
+            hp: true,
+            hpMax: true,
+            mana: true,
+            manaMax: true,
+          },
+        },
+      },
+    });
+
+    return guild;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get guild by user ID");
+      throw error;
+    }
+    logger.error("Error fetching guild by user ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching guild by user ID. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

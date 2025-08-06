@@ -11,6 +11,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { UserRole } from "@prisma/client";
 import Link from "next/link";
@@ -25,6 +26,7 @@ function ManageUserForm(user: {
   name: string | null;
   username: string | null;
   lastname: string | null;
+  schoolClass?: string | null;
   role: UserRole;
 }) {
   const [special, setSpecial] = useState<string[]>(user.special);
@@ -91,6 +93,9 @@ function ManageUserForm(user: {
 
   return (
     <>
+      <Typography variant="h6" sx={{ marginRight: 1 }}>
+        {user.schoolClass?.split("_")[1]}
+      </Typography>
       <TextField
         variant="standard"
         label="Name"
@@ -132,12 +137,13 @@ function ManageUserForm(user: {
           onChange={(value) => {
             setRole(value.target.value as UserRole);
           }}
-          sx={{ width: 120 }}
+          sx={{ width: 130 }}
           label="Role"
         >
-          <MenuItem value={"ADMIN"}>ADMIN</MenuItem>
-          <MenuItem value={"USER"}>USER</MenuItem>
           <MenuItem value={"NEW"}>NEW</MenuItem>
+          <MenuItem value={"USER"}>USER</MenuItem>
+          <MenuItem value={"ARCHIVED"}>ARCHIVED</MenuItem>
+          <MenuItem value={"ADMIN"}>ADMIN</MenuItem>
         </Select>
       </FormControl>
       <DialogButton

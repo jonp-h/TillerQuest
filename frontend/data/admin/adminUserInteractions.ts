@@ -6,14 +6,14 @@ import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 import { $Enums, UserRole } from "@prisma/client";
 
-export const getAllUsers = async () => {
+export const getAllActiveUsers = async () => {
   try {
     await checkAdminAuth();
 
     const users = await db.user.findMany({
       where: {
         role: {
-          not: "NEW",
+          notIn: ["NEW", "ARCHIVED"],
         },
       },
       orderBy: [
@@ -95,11 +95,12 @@ export const adminGetUserInfo = async () => {
         username: true,
         special: true,
         role: true,
+        schoolClass: true,
         access: true,
       },
       orderBy: [
         {
-          schoolClass: "desc",
+          schoolClass: "asc",
         },
         {
           name: "asc",

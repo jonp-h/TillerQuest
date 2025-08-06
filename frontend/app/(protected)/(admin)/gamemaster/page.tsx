@@ -5,6 +5,7 @@ import {
   AutoAwesome,
   BarChart,
   Bolt,
+  Castle,
   Edit,
   Group,
   Info,
@@ -74,7 +75,11 @@ export default async function GameMasterPage() {
             </Button>
           </Link>
           <Link href="/gamemaster/dungeons">
-            <Button color="secondary" variant="contained">
+            <Button
+              color="secondary"
+              variant="contained"
+              startIcon={<Castle />}
+            >
               Dungeons
             </Button>
           </Link>

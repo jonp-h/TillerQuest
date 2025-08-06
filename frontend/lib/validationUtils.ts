@@ -59,3 +59,11 @@ export const updateUserSchema = z.object({
   publicHighscore: z.boolean(),
   archiveConsent: z.boolean(),
 });
+
+export const updateGuildnameSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Guild name must be above 3 characters")
+    .max(25, "Guild name must be below 25 characters")
+    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
+});

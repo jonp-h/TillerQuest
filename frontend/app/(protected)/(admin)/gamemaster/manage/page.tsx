@@ -17,7 +17,7 @@ async function Manage() {
   const style = {
     p: 0,
     width: "90%",
-    maxWidth: 1600,
+    maxWidth: 1650,
     borderRadius: 2,
     border: "1px solid",
     borderColor: "divider",
@@ -56,6 +56,7 @@ async function Manage() {
                 role={user.role}
                 special={user.special}
                 access={user.access}
+                schoolClass={user.schoolClass}
                 username={user.username}
                 lastname={user.lastname}
               />
