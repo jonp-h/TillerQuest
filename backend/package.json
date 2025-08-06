@@ -7,9 +7,9 @@
     "start": "nodemon",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --write .",
-    "gen": "prisma generate && tsx db/generate.ts",
-    "generate": "prisma generate && tsx db/generate.ts",
-    "reset": "prisma generate && tsx db/reset.ts"
+    "gen": "prisma generate && tsx src/db/generate.ts",
+    "generate": "prisma generate && tsx src/db/generate.ts",
+    "reset": "prisma generate && tsx src/db/reset.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
