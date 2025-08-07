@@ -74,6 +74,9 @@ function WishCard({
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(255, 255, 255, 0.2)",
         borderRadius: 2,
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
       elevation={0}
     >
@@ -92,7 +95,7 @@ function WishCard({
         height="140"
         image={wish.image || "/abilities/Test.jpg"}
       />
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography gutterBottom variant="h5" component="div">
           {wish.name}
         </Typography>
@@ -111,107 +114,104 @@ function WishCard({
         >
           Read More
         </Button>
-        <Dialog open={open} onClose={() => setOpen(false)}>
-          <div className="flex flex-col gap-4 p-4">
-            <Image
-              src="/wish.png"
-              alt="Wishing Well"
-              width={250}
-              height={250}
-              className="mx-auto rounded-full"
+      </CardActions>
+
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <div className="flex flex-col gap-4 p-4">
+          <Image
+            src="/wish.png"
+            alt="Wishing Well"
+            width={250}
+            height={250}
+            className="mx-auto rounded-full"
+          />
+          <Typography gutterBottom variant="h4" align="center">
+            {wish.name}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary" }}
+            align="center"
+          >
+            {wish.description}
+          </Typography>
+          {wish.scheduled && (
+            <Typography variant="h6" align="center" color="secondary">
+              Scheduled for {wish.scheduled.toLocaleDateString()}
+            </Typography>
+          )}
+          <Typography variant="h6" align="center">
+            Enter the amount of gold to throw into the wishing well
+          </Typography>
+          <div className="flex justify-center text-wrap items-center gap-2">
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {anonymous
+                ? "I want to remain anonymous in the voting history"
+                : "I want my username visible in the voting history"}
+            </Typography>
+            <Switch
+              checked={anonymous}
+              onChange={(e) => setAnonymous(e.target.checked)}
+              color="primary"
             />
-            <Typography gutterBottom variant="h4" align="center">
-              {wish.name}
-            </Typography>
+          </div>
+          <div className="flex gap-2 justify-center">
+            <Input
+              placeholder="Enter amount"
+              type="number"
+              inputProps={{ min: 1 }}
+              onChange={(e) => {
+                setAmount(Number(e.target.value));
+              }}
+            />
+            <Button variant="contained" onClick={() => handleWish(amount)}>
+              Throw gold
+            </Button>
+          </div>
+
+          <div className="flex justify-between items-center mt-2">
             <Typography
-              variant="body2"
-              sx={{ color: "text.secondary" }}
+              variant="h5"
               align="center"
+              sx={{ color: "text.secondary" }}
             >
-              {wish.description}
+              Voting history:
             </Typography>
-            {wish.scheduled && (
-              <Typography variant="h6" align="center" color="secondary">
-                Scheduled for {wish.scheduled.toLocaleDateString()}
+            <Typography variant="h6" color="text.secondary">
+              Total: {wish.value}
+            </Typography>
+          </div>
+          <List
+            sx={{
+              maxHeight: 200,
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              backgroundColor: "background.paper",
+              overflow: "auto",
+            }}
+          >
+            {wish.wishVotes.length > 0 ? (
+              wish.wishVotes.map((vote) => (
+                <ListItem
+                  key={vote.userId}
+                  className="flex flex-col items-center"
+                >
+                  <Typography align="center" variant="body1" color="gold">
+                    <strong className="text-white">{vote.username}</strong>:{" "}
+                    {vote.amount}{" "}
+                    <Circle fontSize="small" sx={{ color: "gold" }} />
+                  </Typography>
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" align="center" color="text.secondary">
+                No votes yet.
               </Typography>
             )}
-            <Typography variant="h6" align="center">
-              Enter the amount of gold to throw into the wishing well
-            </Typography>
-            <div className="flex justify-center text-wrap items-center gap-2">
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {anonymous
-                  ? "I want to remain anonymous in the voting history"
-                  : "I want my username visible in the voting history"}
-              </Typography>
-              <Switch
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-                color="primary"
-              />
-            </div>
-            <div className="flex gap-2 justify-center">
-              <Input
-                placeholder="Enter amount"
-                type="number"
-                inputProps={{ min: 1 }}
-                onChange={(e) => {
-                  setAmount(Number(e.target.value));
-                }}
-              />
-              <Button variant="contained" onClick={() => handleWish(amount)}>
-                Throw gold
-              </Button>
-            </div>
-
-            <div className="flex justify-between items-center mt-2">
-              <Typography
-                variant="h5"
-                align="center"
-                sx={{ color: "text.secondary" }}
-              >
-                Voting history:
-              </Typography>
-              <Typography variant="h6" color="text.secondary">
-                Total: {wish.value}
-              </Typography>
-            </div>
-            <List
-              sx={{
-                maxHeight: 200,
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                backgroundColor: "background.paper",
-                overflow: "auto",
-              }}
-            >
-              {wish.wishVotes.length > 0 ? (
-                wish.wishVotes.map((vote) => (
-                  <ListItem
-                    key={vote.userId}
-                    className="flex flex-col items-center"
-                  >
-                    <Typography align="center" variant="body1" color="gold">
-                      <strong className="text-white">{vote.username}</strong>:{" "}
-                      {vote.amount}{" "}
-                      <Circle fontSize="small" sx={{ color: "gold" }} />
-                    </Typography>
-                  </ListItem>
-                ))
-              ) : (
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
-                  No votes yet.
-                </Typography>
-              )}
-            </List>
-          </div>
-        </Dialog>
-      </CardActions>
+          </List>
+        </div>
+      </Dialog>
     </Card>
   );
 }

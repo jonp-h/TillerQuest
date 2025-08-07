@@ -110,7 +110,7 @@ export default async function ProfilePage({
             {guildMembers[0].guild?.guildLeader === user.id && (
               <div className="absolute top-5 right-5">
                 <Tooltip title="This week's guild leader" arrow placement="top">
-                  <LocalPolice sx={{ color: "#f59e42", fontSize: 50 }} />
+                  <LocalPolice sx={{ color: "silver", fontSize: 50 }} />
                 </Tooltip>
               </div>
             )}

@@ -38,12 +38,12 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
             height={100}
           />
           {member.guild?.guildLeader === member.id && (
-            <div className="absolute top-0 right-0 text-amber-500">
+            <div className="absolute top-0 right-0 text-gray-300">
               <LocalPolice />
             </div>
           )}
           {member.guild?.nextGuildLeader === member.id && (
-            <div className="absolute top-0 right-0 opacity-20 animate-pulse text-amber-500">
+            <div className="absolute top-0 right-0 opacity-20 animate-pulse text-gray-300">
               <LocalPolice />
             </div>
           )}

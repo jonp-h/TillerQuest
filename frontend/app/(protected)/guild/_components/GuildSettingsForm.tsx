@@ -8,6 +8,7 @@ import { $Enums } from "@prisma/client";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { validateGuildNameUpdate } from "@/data/validators/guildUpdateValidation";
 import { updateGuildname } from "@/data/guilds/updateGuilds";
+import { startGuildBattle } from "@/data/dungeons/dungeon";
 
 function ProfileSettingsForm({
   userId,
@@ -17,8 +18,13 @@ function ProfileSettingsForm({
   guild: {
     name: string;
     schoolClass: $Enums.SchoolClass | null;
+    level: number;
     guildLeader: string | null;
     nextGuildLeader: string | null;
+    enemies: {
+      name: string;
+      health: number;
+    }[];
     members: {
       id: string;
       username: string | null;
@@ -35,6 +41,8 @@ function ProfileSettingsForm({
   const [name, setName] = useState(guild.name);
   const [loading, setLoading] = useState(false);
 
+  const fighting = guild.enemies && guild.enemies.length > 0;
+
   const router = useRouter();
 
   const handleUpdate = async () => {
@@ -50,7 +58,32 @@ function ProfileSettingsForm({
 
     await toast
       .promise(updateGuildname(userId, guild.name, validatedData.name), {
-        pending: "Updating profile...",
+        pending: "Updating guildname...",
+        success: {
+          render: ({ data }) => {
+            return data;
+          },
+        },
+        error: {
+          render: ({ data }) => {
+            return data instanceof Error
+              ? data.message
+              : "Something went wrong";
+          },
+        },
+      })
+      .finally(() => {
+        setLoading(false);
+        router.refresh();
+      });
+  };
+
+  const handleStartBattle = async () => {
+    setLoading(true);
+
+    await toast
+      .promise(startGuildBattle(userId), {
+        pending: "Starting battle...",
         success: {
           render: ({ data }) => {
             return data;
@@ -80,9 +113,14 @@ function ProfileSettingsForm({
         elevation={2}
         className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
       >
-        <Typography variant="h2" align="center">
-          {guild.name}
-        </Typography>
+        <Paper variant="outlined" className="flex flex-col gap-3 p-5 w-full">
+          <Typography variant="h2" align="center">
+            {guild.name}
+          </Typography>
+          <Typography variant="h3" className="text-center" color="success">
+            Level {guild.level}
+          </Typography>
+        </Paper>
         <div className="flex gap-3">
           <TextField
             label="Guild Name"
@@ -101,6 +139,35 @@ function ProfileSettingsForm({
           agreeText="Update"
           disagreeText="Cancel"
         />
+        <div className="text-center items-center">
+          <Typography
+            variant="h6"
+            className="text-center"
+            color="text.secondary"
+          >
+            Guild Battle
+          </Typography>
+          {!fighting && (
+            <DialogButton
+              buttonText="Start Fighting"
+              dialogTitle="Start Fighting"
+              dialogContent={
+                "Are you sure you want to enter a battle? When you start fighting, you cannot stop until you defeat the enemy."
+              }
+              dialogFunction={handleStartBattle}
+              buttonVariant="contained"
+              color="error"
+              disabled={loading || fighting || guild.guildLeader !== userId}
+              agreeText="Start Battle"
+              disagreeText="Cancel"
+            />
+          )}
+          <Typography variant="body1" className="text-center" color="warning">
+            {fighting
+              ? "Your guild is currently in a battle. Enter the dungeons to help your guild win!"
+              : "Your guild is not currently in a battle."}
+          </Typography>
+        </div>
         <Typography variant="h6" className="text-center" color="text.secondary">
           Current guild leader and upcoming guild leader next week:
         </Typography>

@@ -65,6 +65,13 @@ export const getGuildByUserId = async (userId: string) => {
         schoolClass: true,
         guildLeader: true,
         nextGuildLeader: true,
+        level: true,
+        enemies: {
+          select: {
+            name: true,
+            health: true,
+          },
+        },
         members: {
           select: {
             id: true,

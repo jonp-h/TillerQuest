@@ -1,6 +1,6 @@
 "use server";
 
-import { db as prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
@@ -9,18 +9,110 @@ import {
   goldValidator,
 } from "../validators/validators";
 import { Ability } from "@prisma/client";
-import { GuildEnemyWithEnemy } from "@/app/(protected)/dungeons/_components/interfaces";
 import {
   AuthorizationError,
   checkActiveUserAuth,
   checkUserIdAndActiveAuth,
 } from "@/lib/authUtils";
+import { ErrorMessage } from "@/lib/error";
+
+export const startGuildBattle = async (userId: string) => {
+  await checkUserIdAndActiveAuth(userId);
+
+  try {
+    return await db.$transaction(async (db) => {
+      const guild = await db.guild.findFirst({
+        where: { guildLeader: userId },
+      });
+
+      if (!guild) {
+        throw new ErrorMessage("Only the guild leader can start a battle.");
+      }
+
+      const totalEnemies = await db.enemy.count();
+      const randomOffset = Math.floor(Math.random() * totalEnemies);
+
+      const enemy = await db.enemy.findFirst({
+        select: {
+          id: true,
+          name: true,
+          icon: true,
+        },
+        orderBy: {
+          name: "asc",
+        },
+        skip: randomOffset,
+      });
+
+      if (!enemy) {
+        throw new Error("No enemy found for the battle.");
+      }
+
+      const maxHealth = Math.floor(Math.sqrt(guild.level) * 12 * 5);
+      const attack = Math.floor(Math.sqrt(guild.level) + 0.5);
+      const xp = Math.floor(Math.sqrt(guild.level) * 80);
+      const gold = Math.floor(guild.level * 50);
+
+      // Number of enemies scales with guild level: 1 at low levels, up to 4 at high levels
+      const maxEnemies = 5;
+      // Use sqrt(level) to bias towards more enemies at higher levels
+      const levelFactor = Math.sqrt(guild.level);
+      // Clamp between 1 and maxEnemies
+      const numberOfEnemies = Math.min(maxEnemies, 1 + Math.floor(levelFactor));
+
+      const enemyHealth = Math.floor(maxHealth / numberOfEnemies);
+      const enemyXp = Math.floor(xp / numberOfEnemies);
+      const enemyGold = Math.floor(gold / numberOfEnemies);
+
+      for (let i = 0; i < numberOfEnemies; i++) {
+        await db.guildEnemy.create({
+          data: {
+            guildName: guild.name,
+            enemyId: enemy.id,
+            icon: enemy.icon,
+            name: enemy.name,
+            health: enemyHealth,
+            maxHealth: enemyHealth,
+            attack: attack,
+            xp: enemyXp,
+            gold: enemyGold,
+          },
+        });
+      }
+
+      await addLog(
+        db,
+        userId,
+        `DUNGEON: ${guild.name} has started a guild battle against ${enemy.name}.`,
+      );
+
+      return `Battle started against ${enemy.name}!`;
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized access attempt to start guild battle for user: " + userId,
+      );
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error starting guild battle: " + error);
+    throw new Error(
+      "Something went wrong while starting the guild battle. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
 
 export const getEnemies = async (userId: string) => {
   try {
     await checkActiveUserAuth();
 
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: userId },
       select: {
         guildName: true, // Select the guildName
@@ -34,18 +126,14 @@ export const getEnemies = async (userId: string) => {
       return null;
     }
 
-    const enemy = await prisma.guildEnemy.findMany({
+    const enemy = await db.guildEnemy.findMany({
       where: {
         guildName: user.guildName,
       },
       select: {
-        enemy: {
-          select: {
-            icon: true,
-            maxHealth: true,
-          },
-        },
         id: true,
+        icon: true,
+        maxHealth: true,
         enemyId: true,
         guildName: true,
         health: true,
@@ -55,19 +143,8 @@ export const getEnemies = async (userId: string) => {
         id: "asc",
       },
     });
-    if (!enemy) {
-      return;
-    }
 
-    return enemy.map((enemy) => ({
-      id: enemy.id,
-      name: enemy.name,
-      health: enemy.health,
-      guildName: enemy.guildName,
-      enemyId: enemy.enemyId,
-      icon: enemy.enemy.icon,
-      maxHealth: enemy.enemy.maxHealth,
-    })) as GuildEnemyWithEnemy[];
+    return enemy;
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
@@ -84,42 +161,11 @@ export const getEnemies = async (userId: string) => {
   }
 };
 
-// TODO: Rework
-// export const getRandomEnemy = async () => {
-//   const session = await auth();
-//   if (
-//     !session ||
-//     (session?.user.role !== "USER" && session?.user.role !== "ADMIN")
-//   ) {
-//     throw new Error("Not authorized");
-//   }
-
-//   const totalEnemies = await prisma.enemy.count();
-//   const randomOffset = Math.floor(Math.random() * totalEnemies);
-
-//   const enemy = await prisma.enemy.findFirst({
-//     select: {
-//       name: true,
-//       icon: true,
-//       attack: true,
-//       health: true,
-//       maxHealth: true,
-//       xp: true,
-//       gold: true,
-//     },
-//     orderBy: {
-//       name: "asc",
-//     },
-//     skip: randomOffset,
-//   });
-//   return enemy;
-// };
-
 export async function getUserTurns(userId: string) {
   try {
     await checkActiveUserAuth();
 
-    const turns = await prisma.user.findFirst({
+    const turns = await db.user.findFirst({
       where: { id: userId },
       select: {
         turns: true,
@@ -145,8 +191,8 @@ export async function selectDungeonAbility(
   try {
     await checkUserIdAndActiveAuth(userId);
 
-    return await prisma.$transaction(async (db) => {
-      const user = await prisma.user.findUnique({
+    return await db.$transaction(async (db) => {
+      const user = await db.user.findUnique({
         where: { id: userId },
         select: {
           id: true,
@@ -178,7 +224,7 @@ export async function selectDungeonAbility(
         return { message: "User doesn't own the ability" };
       }
 
-      const enemy = await prisma.guildEnemy.findFirst({
+      const enemy = await db.guildEnemy.findFirst({
         where: { id: targetEnemyId },
         select: {
           health: true,
@@ -244,7 +290,7 @@ const rollDice = (diceNotation: string) => {
 };
 
 async function damageEnemy(targetEnemyId: string, diceResult: number) {
-  return await prisma.$transaction(async (db) => {
+  return await db.$transaction(async (db) => {
     console.log("Dealing damage to enemy: " + targetEnemyId);
     const enemy = await db.guildEnemy.update({
       where: {
@@ -265,7 +311,7 @@ async function damageEnemy(targetEnemyId: string, diceResult: number) {
 }
 
 async function rewardUsers(enemyId: string, guild: string) {
-  return await prisma.$transaction(async (db) => {
+  return await db.$transaction(async (db) => {
     const users = await db.user.findMany({
       where: {
         guildName: guild,
@@ -274,13 +320,9 @@ async function rewardUsers(enemyId: string, guild: string) {
     const rewards = await db.guildEnemy.findFirst({
       where: { id: enemyId },
       select: {
-        enemy: {
-          select: {
-            name: true,
-            xp: true,
-            gold: true,
-          },
-        },
+        name: true,
+        xp: true,
+        gold: true,
       },
     });
 
@@ -290,8 +332,8 @@ async function rewardUsers(enemyId: string, guild: string) {
     }
 
     for (const user of users) {
-      await experienceAndLevelValidator(db, user, rewards.enemy.xp);
-      const goldToGive = await goldValidator(db, user.id, rewards?.enemy.gold);
+      await experienceAndLevelValidator(db, user, rewards.xp);
+      const goldToGive = await goldValidator(db, user.id, rewards?.gold);
       await db.user.update({
         where: { id: user.id },
         data: { gold: { increment: goldToGive } },
@@ -299,7 +341,7 @@ async function rewardUsers(enemyId: string, guild: string) {
       await addLog(
         db,
         user.id,
-        `DUNGEON: ${rewards.enemy.name} has been slain, ${user.username} gained ${rewards.enemy.xp} XP and ${rewards.enemy.gold} gold.`,
+        `DUNGEON: ${rewards.name} has been slain, ${user.username} gained ${rewards.xp} XP and ${rewards.gold} gold.`,
       );
     }
   });

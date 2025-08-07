@@ -214,8 +214,7 @@ model Guild {
   guildLeader     String? // The userId of the guild leader
   nextGuildLeader String? // The userId of the next guild leader
 
-  fighting Boolean @default(false)
-  battles  Int     @default(0) // Number of battles fought by the guild
+  level Int @default(1)
 
   enemies GuildEnemy[]
   members User[]
@@ -255,13 +254,9 @@ model Ability {
 }
 
 model Enemy {
-  id        Int    @id @default(autoincrement())
-  name      String
-  icon      String
-  attack    Int
-  maxHealth Int    @default(10)
-  xp        Int    @default(0)
-  gold      Int    @default(0)
+  id   Int    @id @default(autoincrement())
+  name String
+  icon String
 
   GuildEnemy GuildEnemy[]
 }
@@ -269,11 +264,17 @@ model Enemy {
 model GuildEnemy {
   id        String @id @default(cuid())
   enemyId   Int
-  enemy     Enemy  @relation(fields: [enemyId], references: [id])
   guildName String
-  guild     Guild  @relation(fields: [guildName], references: [name])
   name      String
+  icon      String
   health    Int
+  maxHealth Int
+  attack    Int
+  xp        Int
+  gold      Int
+
+  enemy Enemy @relation(fields: [enemyId], references: [id])
+  guild Guild @relation(fields: [guildName], references: [name])
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability

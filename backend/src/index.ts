@@ -476,234 +476,161 @@ cron.schedule(
 );
 
 //TODO: implement passives to give increased # of turns
-// Schedule a job to run every morning at 00:02 AM, resets all users turn.
-// FIXME: removed until dungeons are fixed/replaced
-// cron.schedule(
-//   "2 0 * * *",
-//   async () => {
-//     try {
-//       const usersWithTurnFinished = await db.user.findMany({
-//         where: {
-//           turns: 0,
-//         },
-//         select: {
-//           id: true,
-//           username: true,
-//           turns: true,
-//         },
-//       });
-//       for (const user of usersWithTurnFinished) {
-//         // Check if user has a TurnPassive and get its value
-//         const turnPassive = await db.userPassive.findMany({
-//           where: {
-//             userId: user.id,
-//             effectType: "TurnPassive",
-//           },
-//           select: {
-//             value: true,
-//           },
-//         });
+// Schedule a job to run every weekday morning at 00:02 AM, resets all users turn.
+cron.schedule(
+  "2 0 * * 1-5",
+  async () => {
+    try {
+      const usersWithTurnFinished = await db.user.findMany({
+        where: {
+          turns: 0,
+        },
+        select: {
+          id: true,
+          username: true,
+          turns: true,
+        },
+      });
+      for (const user of usersWithTurnFinished) {
+        // Check if user has a TurnPassive and get its value
+        const turnPassive = await db.userPassive.findMany({
+          where: {
+            userId: user.id,
+            effectType: "TurnPassive",
+          },
+          select: {
+            value: true,
+          },
+        });
 
-//         let turnsToSet = 0;
-//         for (const turn of turnPassive) {
-//           if (turn.value) turnsToSet += turn.value;
-//         }
+        let turnsToSet = 0;
+        for (const turn of turnPassive) {
+          if (turn.value) turnsToSet += turn.value;
+        }
 
-//         await db.user.update({
-//           where: { id: user.id },
-//           data: { turns: turnsToSet },
-//         });
+        await db.user.update({
+          where: { id: user.id },
+          data: { turns: turnsToSet },
+        });
 
-//         await db.log.create({
-//           data: {
-//             global: false,
-//             userId: user.id,
-//             message: `You have regained your strength and are now ready to enter the dungeon once again!`,
-//           },
-//         });
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   },
-//   {
-//     name: "resetTurn",
-//   }
-// );
+        await db.log.create({
+          data: {
+            global: false,
+            userId: user.id,
+            message: `You have regained your strength and are now ready to enter the dungeon once again!`,
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "resetTurn",
+  },
+);
 
-// TODO: might change to weekly
-// Schedule a job to run every day at 07:59 AM, resets the guilds enemy if it's dead.
-// FIXME: removed until dungeons are fixed/replaced
-// cron.schedule(
-//   "59 7 * * *",
-//   async () => {
-//     try {
-//       const deadEnemies = await db.guildEnemy.findMany({
-//         where: {
-//           health: {
-//             lte: 0,
-//           },
-//         },
-//         select: {
-//           id: true,
-//           guild: true,
-//           enemy: true,
-//           health: true,
-//         },
-//       });
-//       // For each dead enemy, pick the next enemy by incrementing the enemyId
-//       for (const enemy of deadEnemies) {
-//         // Find the next enemy in the enemy table
-//         const nextEnemy = await db.enemy.findFirst({
-//           where: {
-//             id: { gt: enemy.enemy.id },
-//           },
-//           orderBy: { id: "asc" },
-//         });
+// Schedule a job to run every weekday at 00:05 AM, removes the guilds enemy if it's dead.
+cron.schedule(
+  "5 0 * * 1-5",
+  async () => {
+    try {
+      await db.$transaction(async (db) => {
+        const deadEnemies = await db.guildEnemy.findMany({
+          where: {
+            health: {
+              lte: 0,
+            },
+          },
+        });
 
-//         // If there is a next enemy, assign it; otherwise, restart from the first enemy
-//         let newEnemy = nextEnemy;
-//         if (!newEnemy) {
-//           newEnemy = await db.enemy.findFirst({
-//             orderBy: { id: "asc" },
-//           });
-//         }
+        for (const enemy of deadEnemies) {
+          await db.guild.update({
+            where: { name: enemy.guildName },
+            data: {
+              level: {
+                increment: 1, // Increment guild level by 1
+              },
+            },
+          });
 
-//         if (newEnemy) {
-//           await db.guildEnemy.update({
-//             where: { id: enemy.id },
-//             data: {
-//               enemyId: newEnemy.id,
-//               name: newEnemy.name,
-//               health: newEnemy.maxHealth,
-//             },
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   },
-//   {
-//     name: "resetSlainEnemies",
-//   }
-// );
-
-// FIXME: should be changed
-// TODO: Change to a fully CRUD-like system
-// Schedule a job to run every monday at 09:00 AM, creates an enemy for all guilds.
-//FIXME: removed until dungeons are fixed/replaced
-// cron.schedule(
-//   "0 9 * * *",
-//   async () => {
-//     try {
-//       const guilds = await db.guild.findMany();
-//       // For each guild, check if it already has an enemy. If not, create one.
-//       for (const guild of guilds) {
-//         const existingEnemy = await db.guildEnemy.findFirst({
-//           where: { guildName: guild.name },
-//         });
-
-//         if (!existingEnemy) {
-//           const enemy = await db.enemy.findFirst({
-//             where: {
-//               id: 1, // Hardcoded for now. All guilds start with the easiest enemy
-//             },
-//           });
-
-//           if (enemy) {
-//             await db.guildEnemy.create({
-//               data: {
-//                 guildName: guild.name,
-//                 enemyId: enemy.id,
-//                 name: enemy.name,
-//                 health: enemy.maxHealth,
-//               },
-//             });
-//           }
-//         }
-//         console.log("Enemy created for guilds");
-//       }
-//     } catch (error) {
-//       console.error("Error generating unique enemies:", error);
-//     }
-//   },
-//   {
-//     name: "generateEnemies",
-//   }
-// );
+          await db.guildEnemy.delete({
+            where: { id: enemy.id },
+          });
+        }
+      });
+      console.log("Removed dead guild enemies and updated guild levels.");
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "resetSlainEnemies",
+  },
+);
 
 // Schedule a job to run at 15:15 every weekday to damage active players if the Enemy hasn't been defeated.
-// FIXME: removed until dungeons are fixed/replaced
-// cron.schedule(
-//   "15 15 * * 1-5",
-//   async () => {
-//     try {
-//       // For each guild enemy, damage all members of that guild by 5 HP
-//       const guildEnemies = await db.guildEnemy.findMany({
-//         where: {
-//           health: { gt: 0 },
-//         },
-//         select: {
-//           guildName: true,
-//           name: true,
-//           enemy: {
-//             select: {
-//               attack: true,
-//             },
-//           },
-//         },
-//       });
+cron.schedule(
+  "15 15 * * 1-5",
+  async () => {
+    try {
+      // For each guild enemy, damage all members of that guild by 5 HP
+      const guildEnemies = await db.guildEnemy.findMany({
+        where: {
+          health: { gt: 0 },
+        },
+        select: {
+          guildName: true,
+          name: true,
+          attack: true,
+        },
+      });
 
-//       for (const enemy of guildEnemies) {
-//         // Only select users from this guild who has fetched mana today
-//         const startOfToday = new Date();
-//         startOfToday.setHours(0, 0, 0, 0);
+      for (const enemy of guildEnemies) {
+        // Only select users from this guild who has fetched mana today
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
 
-//         const users = await db.user.findMany({
-//           where: {
-//             guildName: enemy.guildName,
-//             lastMana: {
-//               gte: startOfToday,
-//             },
-//           },
-//           select: {
-//             id: true,
-//             username: true,
-//             guildName: true,
-//           },
-//         });
+        const users = await db.user.findMany({
+          where: {
+            guildName: enemy.guildName,
+            lastMana: {
+              gte: startOfToday,
+            },
+          },
+          select: {
+            id: true,
+            username: true,
+            guildName: true,
+          },
+        });
 
-//         for (const user of users) {
-//           const damageToTake = await damageValidator(
-//             db,
-//             user.id,
-//             enemy.enemy.attack
-//           );
-//           await db.user.update({
-//             where: { id: user.id },
-//             data: {
-//               hp: { decrement: damageToTake },
-//             },
-//           });
+        for (const user of users) {
+          const damageToTake = await damageValidator(db, user.id, enemy.attack);
+          await db.user.update({
+            where: { id: user.id },
+            data: {
+              hp: { decrement: damageToTake },
+            },
+          });
 
-//           await db.log.create({
-//             data: {
-//               global: false,
-//               userId: user.id,
-//               message: `${user.username} ventured into the dungeon and took ${damageToTake} damage from a scary ${enemy.name}`,
-//             },
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   },
-//   {
-//     name: "dungeonDamage",
-//   }
-// );
+          await db.log.create({
+            data: {
+              global: false,
+              userId: user.id,
+              message: `${user.username} fought alongside their guildmates in the dungeon, and took ${damageToTake} damage from a spooky ${enemy.name}`,
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    name: "dungeonDamage",
+  },
+);
 
 // print out scheduled tasks
 console.log("Started cron jobs:");

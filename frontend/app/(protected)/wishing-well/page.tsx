@@ -30,7 +30,12 @@ async function WishingWellPage() {
         />
         <div className="relative z-10 flex-1 mt-10 mx-60 flex flex-col">
           <h1 className="text-6xl text-center ">The Wishing Well</h1>
-          <Typography variant="h6" align="center" color="primary" gutterBottom>
+          <Typography
+            variant="h6"
+            align="center"
+            color="secondary"
+            gutterBottom
+          >
             Would you like for something extraordinary to happen?
           </Typography>
 

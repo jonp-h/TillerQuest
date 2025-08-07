@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
 import { selectDungeonAbility } from "@/data/dungeons/dungeon";
-import { AbilityGridProps, GuildEnemyWithEnemy } from "./interfaces";
+import { AbilityGridProps } from "./interfaces";
 import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -18,12 +18,21 @@ function Battleground({
   userTurns,
 }: AbilityGridProps & {
   userId: string;
-  enemies: GuildEnemyWithEnemy[];
+  enemies:
+    | {
+        name: string;
+        id: string;
+        guildName: string;
+        icon: string;
+        enemyId: number;
+        health: number;
+        maxHealth: number;
+      }[]
+    | null;
   userTurns: { turns: number };
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
-  const [selectedEnemy, setSelectedEnemy] =
-    useState<GuildEnemyWithEnemy | null>(enemies[0] || null);
+  const [selectedEnemy, setSelectedEnemy] = useState<string | null>(null);
   const [thrown, setThrown] = useState<boolean>(false);
 
   const router = useRouter();
@@ -62,7 +71,7 @@ function Battleground({
     const result = await selectDungeonAbility(
       userId,
       ability,
-      selectedEnemy?.id || "",
+      selectedEnemy || "",
     );
 
     // if result is only a string, it's an error message
@@ -123,20 +132,12 @@ function Battleground({
           </div>
         )}
         {enemies &&
-          enemies.map((enemy: GuildEnemyWithEnemy, index: number) => (
-            <div onClick={() => setSelectedEnemy(enemy)} key={enemy.id}>
+          enemies.map((enemy, index: number) => (
+            <div onClick={() => setSelectedEnemy(enemy.id)} key={enemy.id}>
               <EnemyComponent
-                selected={selectedEnemy === enemy}
+                selected={selectedEnemy === enemy.id}
                 animateSpeed={index % 4} // get a number between 0 and 3 to animate the enemies
-                enemy={{
-                  id: enemy.id,
-                  enemyId: enemy.enemyId,
-                  name: enemy.name,
-                  guildName: enemy.guildName,
-                  health: enemy.health,
-                  icon: enemy.icon,
-                  maxHealth: enemy.maxHealth,
-                }}
+                enemy={enemy}
               />
             </div>
           ))}
@@ -155,8 +156,8 @@ function Battleground({
                 />
               </div>
               <p>
-                before you can muster your strength enough to enter the dungeons
-                again
+                before you can muster your strength enough to fight in the
+                dungeons again
               </p>
             </div>
           )}
@@ -165,9 +166,8 @@ function Battleground({
           abilities={abilities}
           onAbilityRoll={rollAbility}
           disabled={
-            thrown ||
-            userTurns.turns <= 0 ||
-            !!(selectedEnemy && selectedEnemy?.health <= 0)
+            thrown || userTurns.turns <= 0 || !selectedEnemy || !enemies
+            // TODO: add a check for if the target is dead
           }
         />
       </div>

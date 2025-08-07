@@ -1,14 +1,21 @@
 import { Typography, LinearProgress } from "@mui/material";
 import Image from "next/image";
 import React from "react";
-import { GuildEnemyWithEnemy } from "./interfaces";
 
 function EnemyComponent({
   enemy,
   animateSpeed,
   selected,
 }: {
-  enemy: GuildEnemyWithEnemy;
+  enemy: {
+    name: string;
+    id: string;
+    guildName: string;
+    icon: string;
+    enemyId: number;
+    health: number;
+    maxHealth: number;
+  };
   animateSpeed: number;
   selected: boolean;
 }) {
