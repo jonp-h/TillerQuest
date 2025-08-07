@@ -1,12 +1,12 @@
 import MainContainer from "@/components/MainContainer";
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { adminGetApplicationSettings } from "@/data/admin/gameSettings";
 import GameSettingsForm from "./_components/GameSettingsForm";
 
 async function GameSettings() {
-  const session = await requireAdmin();
+  const session = await redirectIfNotAdmin();
   const applicationSettings = await adminGetApplicationSettings(
     session.user.id,
   );

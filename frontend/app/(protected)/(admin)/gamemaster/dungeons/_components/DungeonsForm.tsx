@@ -16,8 +16,6 @@ interface DungeonsFormProps {
       enemy: {
         name: string;
         icon: string;
-        attack: number;
-        maxHealth: number;
       };
       health: number;
     }[];

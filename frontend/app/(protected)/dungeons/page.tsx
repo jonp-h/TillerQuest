@@ -3,10 +3,10 @@ import React from "react";
 import Battleground from "./_components/Battleground";
 import { getDungeonAbilities } from "@/data/dungeons/dungeonAbilities";
 import { getEnemies, getUserTurns } from "@/data/dungeons/dungeon";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 async function DungeonPage() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
     throw new Error("User error");

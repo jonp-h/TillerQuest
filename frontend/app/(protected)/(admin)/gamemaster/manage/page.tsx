@@ -6,11 +6,11 @@ import {
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import ManageUserForm from "./_components/ManageUserForm";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { $Enums } from "@prisma/client";
 
 async function Manage() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const userInfo = await adminGetUserInfo();
   const specialStatues = await getSpecialStatuses();
 

@@ -3,7 +3,7 @@ import { getUserSettingsByUsername } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import React from "react";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
-import { requireAccessAndUsername } from "@/lib/redirectUtils";
+import { redirectIfWrongUsernameOrNotActiveUser } from "@/lib/redirectUtils";
 
 async function ProfileSettingsPage({
   params,
@@ -12,7 +12,7 @@ async function ProfileSettingsPage({
 }) {
   const { username } = await params;
 
-  await requireAccessAndUsername(username);
+  await redirectIfWrongUsernameOrNotActiveUser(username);
 
   const user = await getUserSettingsByUsername(username);
 

@@ -6,10 +6,10 @@ import {
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import DungeonsForm from "./_components/DungeonsForm";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 
 async function Dungeons() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const dungeonInfo = await adminGetDungeonInfo();
   const enemyTypes = await getAllEnemyTypes();
 

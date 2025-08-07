@@ -9,10 +9,10 @@ import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
 import { RootAbilities } from "./_components/interfaces";
 import { $Enums } from "@prisma/client";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 export default async function AbilitiesPage() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   const abilities = await getAbilityHierarchy();
   if (!session?.user) {

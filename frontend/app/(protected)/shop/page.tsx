@@ -10,11 +10,11 @@ import { getUserInventory } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
 import { Tooltip, Typography } from "@mui/material";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityModal from "./_components/RarityModal";
 
 async function Shop() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
     return notFound();

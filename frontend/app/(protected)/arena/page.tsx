@@ -7,10 +7,10 @@ import { getDeadUsers } from "@/data/user/getUser";
 import Image from "next/image";
 import { Button, Typography } from "@mui/material";
 import Link from "next/link";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 async function ArenaPage() {
-  await requireActiveUser();
+  await redirectIfNotActiveUser();
   const usersVg1 = await getVg1Leaderboard();
   const usersVg2 = await getVg2Leaderboard();
   const deadUsers = await getDeadUsers();

@@ -3,12 +3,12 @@ import { adminGetSystemMessageReadCounts } from "@/data/admin/systemMessages";
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import SystemMessageForm from "./_components/SystemMessageForm";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import CreateSystemMessageForm from "./_components/CreateSystemMessageForm";
 import { getTotalUserCount } from "@/data/user/getUser";
 
 async function Manage() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const userInfo = await adminGetSystemMessageReadCounts();
   const totalUserCount = await getTotalUserCount();
 

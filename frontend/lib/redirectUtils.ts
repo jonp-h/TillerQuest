@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 /**
  * Redirects unauthenticated users to the sign-in page
  */
-const requireAuth = async () => {
+const redirectIfUnauthenticated = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user) {
@@ -33,8 +33,8 @@ export const redirectIfNewUser = async (redirectTo: string = "/create") => {
 /**
  * Redirects users who don't have admin role
  */
-export const requireAdmin = async (redirectTo: string = "/") => {
-  const session = await requireAuth();
+export const redirectIfNotAdmin = async (redirectTo: string = "/") => {
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.role !== "ADMIN") {
     logger.warn(
@@ -49,8 +49,10 @@ export const requireAdmin = async (redirectTo: string = "/") => {
 /**
  * Redirects users with "NEW" role (not fully activated) to the creation page
  */
-export const requireActiveUser = async (redirectTo: string = "/create") => {
-  const session = await requireAuth();
+export const redirectIfNotActiveUser = async (
+  redirectTo: string = "/create",
+) => {
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.role === "NEW") {
     logger.warn(
@@ -65,8 +67,8 @@ export const requireActiveUser = async (redirectTo: string = "/create") => {
 /**
  * Redirects users who are NOT new (for onboarding pages)
  */
-export const requireNewUser = async (redirectTo: string = "/") => {
-  const session = await requireAuth();
+export const redirectIfNotNewUser = async (redirectTo: string = "/") => {
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.role !== "NEW") {
     logger.warn(
@@ -81,11 +83,11 @@ export const requireNewUser = async (redirectTo: string = "/") => {
 /**
  * Redirects users who don't match the required user ID
  */
-export const requireUserId = async (
+export const redirectIfWrongUserId = async (
   userId: string,
   redirectTo: string = "/",
 ) => {
-  const session = await requireAuth();
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.id !== userId) {
     logger.warn(
@@ -100,11 +102,11 @@ export const requireUserId = async (
 /**
  * Combined check: require auth + active user + matching user ID
  */
-export const requireUserAccess = async (
+export const redirectIfWrongUserIdOrNotActiveUser = async (
   userId: string,
   redirectTo: string = "/",
 ) => {
-  const session = await requireAuth();
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.id !== userId) {
     logger.warn(
@@ -123,11 +125,11 @@ export const requireUserAccess = async (
 /**
  * Combined check: require auth + active user + matching username
  */
-export const requireAccessAndUsername = async (
+export const redirectIfWrongUsernameOrNotActiveUser = async (
   username: string,
   redirectTo: string = "/",
 ) => {
-  const session = await requireAuth();
+  const session = await redirectIfUnauthenticated();
 
   if (session.user.username !== username) {
     logger.warn(

@@ -1,12 +1,12 @@
 import MainContainer from "@/components/MainContainer";
 import React from "react";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import WishCard from "./_components/WishCard";
 import { getWishes } from "@/data/wish/wish";
 import { Typography } from "@mui/material";
 
 async function WishingWellPage() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
     throw new Error("User error");

@@ -2,7 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
 import React from "react";
 
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import {
   getAbilityUsageStats,
   getResourceAverages,
@@ -17,7 +17,7 @@ import ManaEfficiencySelector from "./_components/ManaEfficiencySelector";
 import GameGoldSelector from "./_components/GameGoldSelector";
 
 async function Manage() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
 
   const [
     abilityStats2Weeks,

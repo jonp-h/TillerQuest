@@ -4,10 +4,10 @@ import React from "react";
 
 import { getAllActiveUsers } from "@/data/admin/adminUserInteractions";
 import ListControls from "./_components/ListControls";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 
 export default async function UsersPage() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const users = await getAllActiveUsers();
 
   return (

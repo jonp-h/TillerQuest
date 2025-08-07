@@ -4,10 +4,10 @@ import { getGuilds } from "@/data/guilds/getGuilds";
 import { Typography } from "@mui/material";
 import React from "react";
 import GuildForm from "./_components/GuildForm";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 
 async function Guilds() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const activeGuilds = await getGuilds(false);
   const archivedGuilds = await getGuilds(true);
   const users = await getBasicUserDetails();

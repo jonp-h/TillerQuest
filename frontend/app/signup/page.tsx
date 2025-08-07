@@ -1,12 +1,19 @@
 "use client";
 import MainContainer from "@/components/MainContainer";
-import { signIn } from "@/lib/auth-client";
+import { signIn, useSession } from "@/lib/auth-client";
 import { GitHub } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
+import { redirect } from "next/navigation";
 
 import React from "react";
 
 export default function SignUpPage() {
+  // If the user is already signed in, redirect them to the home page
+  const session = useSession();
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <MainContainer>
       <div className="flex justify-center lg:pt-10">

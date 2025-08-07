@@ -4,12 +4,12 @@ import { notFound } from "next/navigation";
 import { getGameUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
 import GameTabs from "./_components/GameTabs";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import { $Enums } from "@prisma/client";
 import ErrorPage from "@/components/ErrorPage";
 
 async function Games() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   if (!session?.user) {
     return notFound();

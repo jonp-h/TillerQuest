@@ -3,10 +3,10 @@ import { getValhallaUsers } from "@/data/user/getUser";
 import React from "react";
 import Leaderboard from "../_components/Leaderboard";
 import { Typography } from "@mui/material";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 async function ValhallaPage() {
-  await requireActiveUser();
+  await redirectIfNotActiveUser();
   const renownedPlayers = await getValhallaUsers();
 
   return (

@@ -5,10 +5,10 @@ import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 export default async function ManaPage() {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
     return null;

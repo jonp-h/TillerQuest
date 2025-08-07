@@ -23,14 +23,14 @@ import { $Enums } from "@prisma/client";
 import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 export default async function AbilityNamePage({
   params,
 }: {
   params: Promise<{ abilityName: string }>;
 }) {
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
   const { abilityName } = await params;
   const ability = await getAbilityByName(abilityName);
 

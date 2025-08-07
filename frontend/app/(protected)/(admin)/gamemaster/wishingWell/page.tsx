@@ -1,12 +1,12 @@
 import MainContainer from "@/components/MainContainer";
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import WishingWellForm from "./_components/WishingWellForm";
 import { adminGetWishes } from "@/data/admin/wishingWell";
 
 async function WishingWell() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const wishes = await adminGetWishes();
 
   const style = {

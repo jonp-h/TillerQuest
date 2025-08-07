@@ -29,7 +29,7 @@ import AbilityCard from "@/components/AbilityCard";
 import Link from "next/link";
 import ProfileBadge from "./_components/ProfileBadge";
 import Log from "./_components/Log";
-import { requireActiveUser } from "@/lib/redirectUtils";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityText from "@/components/RarityText";
 
 export default async function ProfilePage({
@@ -38,7 +38,7 @@ export default async function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const session = await requireActiveUser();
+  const session = await redirectIfNotActiveUser();
   const user = await getUserProfileByUsername(username);
 
   if (!user) {

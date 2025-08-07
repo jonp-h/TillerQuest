@@ -1,6 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { getDeadUserCount } from "@/data/user/getUser";
-import { requireAdmin } from "@/lib/redirectUtils";
+import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import {
   AutoAwesome,
   BarChart,
@@ -18,7 +18,7 @@ import Link from "next/link";
 import React from "react";
 
 export default async function GameMasterPage() {
-  await requireAdmin();
+  await redirectIfNotAdmin();
   const deadUsers = await getDeadUserCount();
 
   return (
