@@ -11,13 +11,13 @@ import {
 import { Ability } from "@prisma/client";
 import {
   AuthorizationError,
-  checkActiveUserAuth,
-  checkUserIdAndActiveAuth,
+  validateActiveUserAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 
 export const startGuildBattle = async (userId: string) => {
-  await checkUserIdAndActiveAuth(userId);
+  await validateUserIdAndActiveUserAuth(userId);
 
   try {
     return await db.$transaction(async (db) => {
@@ -110,7 +110,7 @@ export const startGuildBattle = async (userId: string) => {
 
 export const getEnemies = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const user = await db.user.findUnique({
       where: { id: userId },
@@ -163,7 +163,7 @@ export const getEnemies = async (userId: string) => {
 
 export async function getUserTurns(userId: string) {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const turns = await db.user.findFirst({
       where: { id: userId },
@@ -189,7 +189,7 @@ export async function selectDungeonAbility(
   targetEnemyId: string | null,
 ) {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     return await db.$transaction(async (db) => {
       const user = await db.user.findUnique({

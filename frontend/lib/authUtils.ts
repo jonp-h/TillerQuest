@@ -38,7 +38,7 @@ const getCurrentSession = async () => {
  * @returns The current session if the user is authenticated.
  * @throws AuthorizationError If the user is not authenticated.
  */
-export const checkValidAuth = async () => {
+export const validateAuthentication = async () => {
   const session = await getCurrentSession();
   return session;
 };
@@ -54,7 +54,7 @@ export const checkValidAuth = async () => {
  * @param userId - The user ID to check against the authenticated user's ID.
  * @throws AuthorizationError If the user is not authenticated or the user ID does not match.
  */
-export const checkUserIdAuth = async (userId: string) => {
+export const validateUserIdAuth = async (userId: string) => {
   const session = await getCurrentSession();
 
   if (session.user.id !== userId) {
@@ -84,7 +84,7 @@ export const checkUserIdAuth = async (userId: string) => {
  *   // Handle unauthorized access
  * }
  */
-export const checkAdminAuth = async () => {
+export const validateAdminAuth = async () => {
   const session = await getCurrentSession();
 
   if (session.user.role !== "ADMIN") {
@@ -110,7 +110,7 @@ export const checkAdminAuth = async () => {
  * @throws {AuthorizationError} If the user is not authenticated or not authorized.
  * @returns {Promise<void>} Resolves if the user is authenticated and authorized.
  */
-export const checkActiveUserAuth = async () => {
+export const validateActiveUserAuth = async () => {
   const session = await getCurrentSession();
 
   if (session.user.role === "NEW") {
@@ -135,7 +135,7 @@ export const checkActiveUserAuth = async () => {
  * @throws {AuthorizationError} If the user ID does not match the session's user ID.
  * @throws {AuthorizationError} If the user's role is "NEW" and the account is not fully activated.
  */
-export const checkUserIdAndActiveAuth = async (userId: string) => {
+export const validateUserIdAndActiveUserAuth = async (userId: string) => {
   const session = await getCurrentSession();
 
   // Check user ID match
@@ -170,7 +170,7 @@ export const checkUserIdAndActiveAuth = async (userId: string) => {
  * @throws {AuthorizationError} If the username does not match the session's username.
  * @throws {AuthorizationError} If the user's role is "NEW" and the account is not fully activated.
  */
-export const checkUsernameAndActiveAuth = async (username: string) => {
+export const validateUsernameAndActiveUserAuth = async (username: string) => {
   const session = await getCurrentSession();
 
   // Check user ID match
@@ -213,7 +213,7 @@ export const checkUsernameAndActiveAuth = async (username: string) => {
  * // Proceed with actions for new users
  * ```
  */
-export const checkNewUserAuth = async () => {
+export const validateNewUserAuth = async () => {
   const session = await getCurrentSession();
 
   if (session.user.role !== "NEW") {
@@ -229,7 +229,7 @@ export const checkNewUserAuth = async () => {
   return session;
 };
 
-export const checkUserIdAndNewUserAuth = async (userId: string) => {
+export const validateUserIdAndNewUserAuth = async (userId: string) => {
   const session = await getCurrentSession();
 
   // Check user ID match

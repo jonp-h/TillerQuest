@@ -5,12 +5,15 @@ import { manaValidator } from "../validators/validators";
 import { dailyArenaTokenBase, dailyManaBase } from "@/lib/gameSetting";
 import { logger } from "@/lib/logger";
 import { addLog } from "../log/addLog";
-import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import {
+  AuthorizationError,
+  validateUserIdAndActiveUserAuth,
+} from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 
 export const getDailyMana = async (userId: string) => {
   try {
-    const session = await checkUserIdAndActiveAuth(userId);
+    const session = await validateUserIdAndActiveUserAuth(userId);
 
     // Archived users are not allowed to get daily mana
     if (session.user.role === "ARCHIVED") {

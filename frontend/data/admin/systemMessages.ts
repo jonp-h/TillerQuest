@@ -1,13 +1,13 @@
 "use server";
 
-import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "better-auth";
 
 export const adminGetSystemMessages = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const messages = await db.systemMessage.findMany();
     return messages;
@@ -31,7 +31,7 @@ export const adminUpdateSystemMessage = async (
   content: string,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const messages = await db.systemMessage.findFirst({
       where: { id },
@@ -74,7 +74,7 @@ export const adminCreateSystemMessage = async (
   content: string,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     await db.systemMessage.create({
       data: {
@@ -106,7 +106,7 @@ export const adminCreateSystemMessage = async (
 
 export const adminDeleteSystemMessage = async (id: number) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     await db.systemMessage.delete({
       where: { id },
@@ -135,7 +135,7 @@ export const adminDeleteSystemMessage = async (id: number) => {
 
 export const adminGetSystemMessageReadCounts = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     // Assuming there is a SystemMessageRead table with systemMessageId and userId
     const readCounts = await db.systemMessage.findMany({

@@ -1,9 +1,9 @@
 "use server";
 
 import {
-  checkActiveUserAuth,
+  validateActiveUserAuth,
   AuthorizationError,
-  checkUserIdAndActiveAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
@@ -11,7 +11,7 @@ import { logger } from "better-auth";
 
 export const getWishes = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
     const wishes = await db.wish.findMany({
       orderBy: {
         value: "desc",
@@ -54,7 +54,7 @@ export const voteForWish = async (
   try {
     const {
       user: { username },
-    } = await checkUserIdAndActiveAuth(userId);
+    } = await validateUserIdAndActiveUserAuth(userId);
     const wish = await db.wish.findUnique({
       where: { id: wishId },
     });

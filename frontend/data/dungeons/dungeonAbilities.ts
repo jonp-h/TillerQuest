@@ -1,11 +1,11 @@
 "use server";
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getDungeonAbilities = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
     const abilities = await prisma.ability.findMany({
       where: { users: { some: { userId } }, isDungeon: true },
     });

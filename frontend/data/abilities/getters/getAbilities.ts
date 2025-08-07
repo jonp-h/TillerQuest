@@ -1,6 +1,6 @@
 "use server";
 
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -15,7 +15,7 @@ import { logger } from "@/lib/logger";
  */
 export const getAbilityHierarchy = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     // gets all abilities that have no parents, and their children
     const roots = await db.ability.findMany({
@@ -81,7 +81,7 @@ export const getAbilityHierarchy = async () => {
  */
 export const getUserAbilities = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const abilities = await db.userAbility.findMany({
       where: {
@@ -118,7 +118,7 @@ export const getUserAbilities = async (userId: string) => {
  */
 export const getUserProfileAbilities = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const abilities = await db.userAbility.findMany({
       where: {
@@ -167,7 +167,7 @@ export const getUserProfileAbilities = async (userId: string) => {
  */
 export const getAbilityByName = async (abilityName: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const ability = await db.ability.findFirst({
       where: {
@@ -197,7 +197,7 @@ export const checkIfUserOwnsAbility = async (
   abilityName: string,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const ability = await db.userAbility.findFirst({
       where: {
@@ -219,7 +219,7 @@ export const checkIfUserOwnsAbility = async (
 
 export const getDungeonAbilities = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const abilities = await db.ability.findMany({
       where: {
@@ -245,7 +245,7 @@ export const getDungeonAbilities = async () => {
 
 export const getUserDungeonAbilities = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const userDungeonAbilities = await db.userAbility.findMany({
       where: {

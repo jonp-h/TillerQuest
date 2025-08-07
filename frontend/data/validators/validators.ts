@@ -4,7 +4,7 @@ import { getUserPassiveEffect } from "../passives/getPassive";
 import { $Enums, User } from "@prisma/client";
 import { gemstonesOnLevelUp } from "@/lib/gameSetting";
 import { addLog } from "../log/addLog";
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 
 export const healingValidator = async (
   db: PrismaTransaction,
@@ -12,7 +12,7 @@ export const healingValidator = async (
   hpValue: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     // check if user has any health passives to add to the healing value
     const healthBonus = await getUserPassiveEffect(db, targetUserId, "Health");
@@ -67,7 +67,7 @@ export const manaValidator = async (
   manaValue: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     // if mana is subtracted, skip passive effects
     if (manaValue > 0) {
@@ -136,7 +136,7 @@ export const damageValidator = async (
   healthTreshold: number = 0,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     // if the target user is already dead, return 0
     if (targetUserHp === 0) {
@@ -259,7 +259,7 @@ export const experienceAndLevelValidator = async (
   xp: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const targetUser = await db.user.findFirst({
       where: {
@@ -364,7 +364,7 @@ export const goldValidator = async (
   gold: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const targetUser = await db.user.findFirst({
       where: {

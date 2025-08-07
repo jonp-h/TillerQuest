@@ -2,8 +2,8 @@
 
 import {
   AuthorizationError,
-  checkActiveUserAuth,
-  checkUserIdAndActiveAuth,
+  validateActiveUserAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
@@ -11,7 +11,7 @@ import { logger } from "@/lib/logger";
 
 export const getShopTitles = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     return await db.shopItem.findMany({
       where: { type: "Title" },
@@ -33,7 +33,7 @@ export const getShopTitles = async () => {
 
 export const getShopBadges = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     return await db.shopItem.findMany({
       where: { type: "Badge" },
@@ -55,7 +55,7 @@ export const getShopBadges = async () => {
 
 export const getShopObjects = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     return await db.shopItem.findMany({
       where: { type: "Object" },
@@ -77,7 +77,7 @@ export const getShopObjects = async () => {
 
 export const purchaseItem = async (userId: string, itemId: number) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     const user = await db.user.findUnique({
       where: { id: userId },
@@ -151,7 +151,7 @@ export const purchaseItem = async (userId: string, itemId: number) => {
 
 export const equipItem = async (userId: string, itemId: number) => {
   try {
-    checkUserIdAndActiveAuth(userId);
+    validateUserIdAndActiveUserAuth(userId);
 
     const user = await db.user.findUnique({
       where: { id: userId },

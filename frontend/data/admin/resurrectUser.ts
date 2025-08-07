@@ -10,7 +10,7 @@ import { damageValidator } from "../validators/validators";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { addLog } from "../log/addLog";
-import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 
 //FIXME: requires updates from oldData
@@ -22,7 +22,7 @@ export const resurrectUsers = async ({
   effect: string;
 }) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     await db.$transaction(async (db) => {
       const user = await db.user.findFirst({

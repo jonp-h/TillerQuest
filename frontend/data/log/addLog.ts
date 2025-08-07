@@ -2,8 +2,8 @@
 
 import {
   AuthorizationError,
-  checkUserIdAuth,
-  checkValidAuth,
+  validateUserIdAuth,
+  validateAuthentication,
 } from "@/lib/authUtils";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
@@ -28,11 +28,11 @@ export const addLog = async (
   debug: boolean = false, // default to false
 ) => {
   try {
-    await checkValidAuth();
+    await validateAuthentication();
 
     // Users can only add debug logs for themselves
     if (debug) {
-      await checkUserIdAuth(userId);
+      await validateUserIdAuth(userId);
     }
 
     const log = await db.log.create({

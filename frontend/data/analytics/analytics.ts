@@ -3,8 +3,8 @@
 import { db } from "@/lib/db";
 import {
   AuthorizationError,
-  checkAdminAuth,
-  checkUserIdAndActiveAuth,
+  validateAdminAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { logger } from "@/lib/logger";
@@ -44,7 +44,7 @@ export const addAnalytics = async (
 ) => {
   try {
     // Users can only add analytics for themselves, not others. Only active users can add analytics.
-    const session = await checkUserIdAndActiveAuth(userId);
+    const session = await validateUserIdAndActiveUserAuth(userId);
 
     // Analytics are only tracking users
     if (session.user.role !== "USER") {
@@ -71,7 +71,7 @@ export const addAnalytics = async (
 
 export const getAbilityUsageStats = async (days: number = 14) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
@@ -124,7 +124,7 @@ export const getAbilityUsageStats = async (days: number = 14) => {
 
 export const getResourceAverages = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const userAverages = await db.user.aggregate({
       _avg: {
@@ -186,7 +186,7 @@ export const getResourceAverages = async () => {
 
 export const getResourceGainStatsMultiple = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -339,7 +339,7 @@ export const getResourceGainStatsMultiple = async () => {
 
 export const getManaEfficiencyStats = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const efficiency = await db.analytics.groupBy({
       by: ["abilityId"],
@@ -388,7 +388,7 @@ export const getManaEfficiencyStats = async () => {
 
 export const getManaEfficiencyStatsMultiple = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -580,7 +580,7 @@ export const getManaEfficiencyStatsMultiple = async () => {
 
 export const getGameGoldStatsMultiple = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

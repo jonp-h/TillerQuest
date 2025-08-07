@@ -3,7 +3,10 @@
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { selectAbility } from "../abilityUsage/useAbility";
-import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import {
+  AuthorizationError,
+  validateUserIdAndActiveUserAuth,
+} from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 
 /**
@@ -15,7 +18,7 @@ import { ErrorMessage } from "@/lib/error";
  */
 export const buyAbility = async (userId: string, abilityName: string) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     const user = await db.user.findUnique({
       where: {

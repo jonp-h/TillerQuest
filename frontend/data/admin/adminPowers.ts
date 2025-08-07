@@ -11,7 +11,7 @@ import { logger } from "@/lib/logger";
 import { User } from "@prisma/client";
 import { sendDiscordMessage } from "@/lib/discord";
 import { addLog } from "../log/addLog";
-import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 
 export const healUsers = async (
@@ -20,7 +20,7 @@ export const healUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     if (value <= 0) {
       throw new ErrorMessage("Healing value must be greater than 0");
@@ -100,7 +100,7 @@ export const damageUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     if (value <= 0) {
       throw new ErrorMessage("Damage value must be greater than 0");
@@ -192,7 +192,7 @@ export const giveXpToUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -228,7 +228,7 @@ export const giveManaToUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -285,7 +285,7 @@ export const giveArenatokenToUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
       await Promise.all(
@@ -334,7 +334,7 @@ export const giveGoldToUsers = async (
   notify: boolean,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
       await Promise.all(

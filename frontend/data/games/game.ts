@@ -7,8 +7,8 @@ import { addLog } from "../log/addLog";
 import { goldValidator } from "../validators/validators";
 import {
   AuthorizationError,
-  checkActiveUserAuth,
-  checkUserIdAndActiveAuth,
+  validateActiveUserAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 import { $Enums, Game } from "@prisma/client";
@@ -18,7 +18,7 @@ import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 
 export const initializeGame = async (userId: string, gameName: string) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     return await prisma.$transaction(async (db) => {
       const user = await db.user.findUnique({
@@ -77,7 +77,7 @@ export const initializeGame = async (userId: string, gameName: string) => {
 
 export const startGame = async (gameId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
     return await prisma.$transaction(async (db) => {
       const game = await db.game.update({
         where: { id: gameId, status: "PENDING" },
@@ -112,7 +112,7 @@ export const updateGame = async (
   mistakes: number,
 ) => {
   try {
-    const session = await checkActiveUserAuth();
+    const session = await validateActiveUserAuth();
 
     return await prisma.$transaction(async (db) => {
       const game = await db.game.findUnique({
@@ -185,7 +185,7 @@ export const updateGame = async (
 
 export const finishGame = async (gameId: string) => {
   try {
-    const session = await checkActiveUserAuth();
+    const session = await validateActiveUserAuth();
 
     return await prisma.$transaction(async (db) => {
       const game = await db.game.findUnique({
@@ -283,7 +283,7 @@ export const finishGame = async (gameId: string) => {
 
 export const getGameLeaderboard = async (gameName: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const leaderboard = await prisma.game.findMany({
       where: {
@@ -330,7 +330,7 @@ export const getGameLeaderboard = async (gameName: string) => {
 
 export const getRandomTypeQuestText = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const typeQuestText = await prisma.typeQuestText.findFirst({
       select: {
@@ -414,7 +414,7 @@ const updateTypeQuestGame = async (
 
 export const getRandomWordQuestBoard = async (gameId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     // First check if the game already has board data
     const existingGame = await prisma.game.findUnique({
@@ -662,7 +662,7 @@ const updateWordQuestGame = async (
 
 export const getWordQuestHint = async (gameId: string, word: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const game = await prisma.game.findUnique({
       where: { id: gameId, status: "INPROGRESS" },
@@ -738,7 +738,7 @@ export const initializeBinaryJackGame = async (
   stake: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     return await prisma.$transaction(async (db) => {
       const game = await db.game.findUnique({
@@ -832,7 +832,7 @@ export const initializeBinaryJackGame = async (
 
 export const startBinaryJackRound = async (gameId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const game = await prisma.game.findUnique({
       where: { id: gameId, status: "INPROGRESS" },
@@ -909,7 +909,7 @@ export const startBinaryJackRound = async (gameId: string) => {
 
 export const rollBinaryJackDice = async (gameId: string, dice: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const game = await prisma.game.findUnique({
       where: { id: gameId, status: "INPROGRESS" },
@@ -976,7 +976,7 @@ export const applyBinaryOperation = async (
   rolledValue: number,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const game = await prisma.game.findUnique({
       where: { id: gameId, status: "INPROGRESS" },

@@ -2,8 +2,8 @@
 
 import {
   AuthorizationError,
-  checkAdminAuth,
-  checkUserIdAndActiveAuth,
+  validateAdminAuth,
+  validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
@@ -17,7 +17,7 @@ export const updateGuildname = async (
   newName: string,
 ) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     if (oldName === newName) {
       throw new ErrorMessage(
@@ -119,7 +119,7 @@ export const adminUpdateGuildname = async (
   newName: string,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const guildExists = await db.guild.findUnique({
       where: {
@@ -169,7 +169,7 @@ export const updateGuildmembers = async (
   }[],
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const guilds = await db.guild.update({
       where: {

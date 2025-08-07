@@ -8,13 +8,13 @@ import {
 import { getGuildmemberCount } from "../guilds/getGuilds";
 import { db } from "@/lib/db";
 import {
-  checkUserIdAndActiveAuth,
-  checkUserIdAndNewUserAuth,
+  validateUserIdAndActiveUserAuth,
+  validateUserIdAndNewUserAuth,
 } from "@/lib/authUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
-  await checkUserIdAndNewUserAuth(id);
+  await validateUserIdAndNewUserAuth(id);
 
   const validatedData = newUserSchema.safeParse(data);
 
@@ -114,7 +114,7 @@ export const validateUserCreation = async (id: string, data: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserUpdate = async (id: string, data: any) => {
-  await checkUserIdAndActiveAuth(id);
+  await validateUserIdAndActiveUserAuth(id);
 
   const validatedData = updateUserSchema.safeParse(data);
 

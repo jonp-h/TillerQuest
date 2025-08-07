@@ -1,14 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getAllUsers } from "./adminUserInteractions";
-import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { getAllActiveUsers } from "./adminUserInteractions";
+import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { logger } from "@/lib/logger";
 import { ErrorMessage } from "@/lib/error";
 
 export const randomCosmic = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
     // const now = new Date();
     // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
@@ -98,7 +98,7 @@ export const randomCosmic = async () => {
 
 export const setSelectedCosmic = async (cosmicName: string) => {
   try {
-    const session = await checkAdminAuth();
+    const session = await validateAdminAuth();
 
     const dailyCosmic = await db.cosmicEvent.findFirst({
       where: {
@@ -148,7 +148,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
       });
 
       // add passives to all users
-      const users = await getAllUsers();
+      const users = await getAllActiveUsers();
 
       for (const user of users) {
         // user should recieve a passive with a ticking bomb, and it should enable itself at 11:40
@@ -247,7 +247,7 @@ export const setSelectedCosmic = async (cosmicName: string) => {
 
 export const getAllCosmicEvents = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const cosmicEvents = await db.cosmicEvent.findMany({
       orderBy: {

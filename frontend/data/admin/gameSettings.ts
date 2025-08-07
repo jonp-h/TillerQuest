@@ -1,17 +1,17 @@
 "use server";
 
 import {
-  checkAdminAuth,
+  validateAdminAuth,
   AuthorizationError,
-  checkUserIdAuth,
+  validateUserIdAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "better-auth";
 
 export const adminGetApplicationSettings = async (userId: string) => {
   try {
-    await checkAdminAuth();
-    await checkUserIdAuth(userId);
+    await validateAdminAuth();
+    await validateUserIdAuth(userId);
 
     const applicationSettings = await db.applicationSettings.findMany();
 
@@ -37,8 +37,8 @@ export const adminUpdateApplicationSettings = async (
   setting: { key: string; value: string },
 ) => {
   try {
-    await checkAdminAuth();
-    await checkUserIdAuth(userId);
+    await validateAdminAuth();
+    await validateUserIdAuth(userId);
 
     await db.applicationSettings.update({
       where: {

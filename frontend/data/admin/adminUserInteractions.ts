@@ -1,6 +1,6 @@
 "use server";
 
-import { AuthorizationError, checkAdminAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
@@ -8,7 +8,7 @@ import { $Enums, UserRole } from "@prisma/client";
 
 export const getAllActiveUsers = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const users = await db.user.findMany({
       where: {
@@ -45,7 +45,7 @@ export const getAllActiveUsers = async () => {
 
 export const getBasicUserDetails = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const users = await db.user.findMany({
       select: {
@@ -85,7 +85,7 @@ export const getBasicUserDetails = async () => {
 
 export const adminGetUserInfo = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const users = await db.user.findMany({
       select: {
@@ -127,7 +127,7 @@ export const adminGetUserInfo = async () => {
 
 export const adminGetDungeonInfo = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const dungeons = await db.guild.findMany({
       select: {
@@ -139,9 +139,7 @@ export const adminGetDungeonInfo = async () => {
             enemy: {
               select: {
                 name: true,
-                attack: true,
                 icon: true,
-                maxHealth: true,
               },
             },
           },
@@ -185,7 +183,7 @@ export const adminGetDungeonInfo = async () => {
 
 export const getAllEnemyTypes = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const enemyTypes = await db.enemy.findMany();
 
@@ -206,7 +204,7 @@ export const getAllEnemyTypes = async () => {
 
 export const getSpecialStatuses = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const specialReqs = await db.shopItem.findMany({
       where: {
@@ -242,7 +240,7 @@ export const adminUpdateUser = async (
   lastname?: string | null,
 ) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     // Check if username already exists
     if (username) {
@@ -293,7 +291,7 @@ export const adminUpdateUser = async (
 
 export const updateRole = async (userId: string, role: UserRole) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const user = await db.user.update({
       where: {

@@ -3,11 +3,11 @@
 import { auth } from "@/auth";
 import {
   AuthorizationError,
-  checkActiveUserAuth,
-  checkAdminAuth,
-  checkUserIdAndActiveAuth,
-  checkUserIdAuth,
-  checkUsernameAndActiveAuth,
+  validateActiveUserAuth,
+  validateAdminAuth,
+  validateUserIdAndActiveUserAuth,
+  validateUserIdAuth,
+  validateUsernameAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
@@ -17,7 +17,7 @@ export const getUserById = async (id: string) => {
   // unstable_noStore();
 
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const user = await db.user.findUnique({
       where: { id },
@@ -42,7 +42,7 @@ export const getGameUserById = async (id: string) => {
   // unstable_noStore();
 
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const user = await db.user.findUnique({
       where: { id },
@@ -75,7 +75,7 @@ export const getCreateUserById = async (id: string) => {
   // unstable_noStore();
 
   try {
-    await checkUserIdAuth(id);
+    await validateUserIdAuth(id);
 
     const user = await db.user.findUnique({
       where: { id },
@@ -109,7 +109,7 @@ export const getUserProfileByUsername = async (username: string) => {
   // unstable_noStore();
 
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const user = await db.user.findUnique({
       where: { username },
@@ -168,7 +168,7 @@ export const getUserSettingsByUsername = async (username: string) => {
   // unstable_noStore();
 
   try {
-    await checkUsernameAndActiveAuth(username);
+    await validateUsernameAndActiveUserAuth(username);
 
     const user = await db.user.findUnique({
       where: { username },
@@ -197,7 +197,7 @@ export const getUserSettingsByUsername = async (username: string) => {
 
 export const getDeadUsers = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const deadUsers = await db.user.findMany({
       where: {
@@ -224,7 +224,7 @@ export const getDeadUsers = async () => {
 // Only used by game masters
 export const getDeadUserCount = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session || session.user.role !== "ADMIN") {
       throw new AuthorizationError(
@@ -262,7 +262,7 @@ export const getUserInventory = async (id: string) => {
   // unstable_noStore();
 
   try {
-    await checkUserIdAndActiveAuth(id);
+    await validateUserIdAndActiveUserAuth(id);
 
     const inventory = await db.user.findFirst({
       where: { id },
@@ -296,7 +296,7 @@ export const getVg1Leaderboard = async () => {
   // unstable_noStore();
 
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const users = await db.user.findMany({
       where: {
@@ -341,7 +341,7 @@ export const getVg2Leaderboard = async () => {
   // unstable_noStore();
 
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const users = await db.user.findMany({
       where: {
@@ -385,7 +385,7 @@ export const getVg2Leaderboard = async () => {
 
 export const getValhallaUsers = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const users = await db.user.findMany({
       where: {
@@ -435,7 +435,7 @@ export const getValhallaUsers = async () => {
 
 export const getTotalUserCount = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
     const totalUserCount = await db.user.count();
     return totalUserCount;
   } catch (error) {

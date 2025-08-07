@@ -1,6 +1,6 @@
 "use server";
 
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
@@ -8,7 +8,7 @@ import { $Enums } from "@prisma/client";
 
 export const getUserPassives = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const passives = await db.userPassive.findMany({
       where: {
@@ -57,7 +57,7 @@ export const getUserPassiveEffect = async (
   cosmic = false,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const cosmicData = cosmic ? { cosmicEvent: true } : null;
 
@@ -103,7 +103,7 @@ export const checkIfAllTargetsHavePassive = async (
   abilityName: string,
 ) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     let allUsersHavePassive = true;
     await Promise.all(

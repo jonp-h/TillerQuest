@@ -1,12 +1,12 @@
 "use server";
 
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getGuildmembersByGuildname = async (guildName: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const members = await db.user.findMany({
       where: { guildName },

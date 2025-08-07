@@ -2,10 +2,10 @@
 
 import { escapeHtml, updateGuildnameSchema } from "@/lib/validationUtils";
 import { db } from "@/lib/db";
-import { checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import { validateUserIdAndActiveUserAuth } from "@/lib/authUtils";
 
 export const validateGuildNameUpdate = async (id: string, name: string) => {
-  await checkUserIdAndActiveAuth(id);
+  await validateUserIdAndActiveUserAuth(id);
 
   const validatedData = updateGuildnameSchema.safeParse({ name });
 

@@ -1,12 +1,15 @@
 "use server";
 
-import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import {
+  AuthorizationError,
+  validateUserIdAndActiveUserAuth,
+} from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getSystemMessages = async (userId: string) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     const logs = await db.systemMessage.findMany({
       where: {
@@ -40,7 +43,7 @@ export const discardSystemMessage = async (
   messageId: number,
 ) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     await db.systemMessage.update({
       where: {

@@ -3,9 +3,9 @@
 import { db } from "@/lib/db";
 import {
   AuthorizationError,
-  checkNewUserAuth,
-  checkUserIdAndActiveAuth,
-  checkUserIdAuth,
+  validateNewUserAuth,
+  validateUserIdAndActiveUserAuth,
+  validateUserIdAuth,
 } from "@/lib/authUtils";
 import { logger } from "@/lib/logger";
 import { ErrorMessage } from "@/lib/error";
@@ -28,8 +28,8 @@ interface UpdateUserProps {
 // used on account creation page
 export const updateUser = async (id: string, data: UpdateUserProps) => {
   try {
-    await checkUserIdAuth(id);
-    await checkNewUserAuth();
+    await validateUserIdAuth(id);
+    await validateNewUserAuth();
 
     // backend validation
     if (!(await checkNewUserSecret(id, data.secret))) {
@@ -111,7 +111,7 @@ export const updateProfile = async (
   data: { username: string; publicHighscore: boolean; archiveConsent: boolean },
 ) => {
   try {
-    await checkUserIdAndActiveAuth(id);
+    await validateUserIdAndActiveUserAuth(id);
 
     await db.user.update({
       where: { id },

@@ -1,12 +1,12 @@
 "use server";
 
-import { checkAdminAuth, AuthorizationError } from "@/lib/authUtils";
+import { validateAdminAuth, AuthorizationError } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "better-auth";
 
 export const adminGetWishes = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const wishes = await db.wish.findMany({
       include: {
@@ -47,7 +47,7 @@ export const adminGetWishes = async () => {
 
 export const adminActivateWish = async (wishId: number, scheduleDate: Date) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     await db.wish.update({
       where: {
@@ -75,7 +75,7 @@ export const adminActivateWish = async (wishId: number, scheduleDate: Date) => {
 
 export const adminResetWish = async (wishId: number) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     await db.wish.update({
       where: {

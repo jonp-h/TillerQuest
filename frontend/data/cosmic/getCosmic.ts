@@ -1,12 +1,12 @@
 "use server";
 
-import { AuthorizationError, checkActiveUserAuth } from "@/lib/authUtils";
+import { AuthorizationError, validateActiveUserAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getCosmic = async () => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const cosmic = await db.cosmicEvent.findFirst({
       where: {

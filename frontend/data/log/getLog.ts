@@ -2,15 +2,15 @@
 
 import {
   AuthorizationError,
-  checkActiveUserAuth,
-  checkAdminAuth,
+  validateActiveUserAuth,
+  validateAdminAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const getAllLogs = async () => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const logs = await db.log.findMany({
       orderBy: {
@@ -43,7 +43,7 @@ export const getAllLogs = async () => {
 
 export const getLogsByUserId = async (userId: string) => {
   try {
-    await checkActiveUserAuth();
+    await validateActiveUserAuth();
 
     const logs = await db.log.findMany({
       where: {

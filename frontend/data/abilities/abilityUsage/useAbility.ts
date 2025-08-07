@@ -13,7 +13,10 @@ import { getUserPassiveEffect } from "@/data/passives/getPassive";
 import { addLog } from "@/data/log/addLog";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 import { ErrorMessage } from "@/lib/error";
-import { AuthorizationError, checkUserIdAndActiveAuth } from "@/lib/authUtils";
+import {
+  AuthorizationError,
+  validateUserIdAndActiveUserAuth,
+} from "@/lib/authUtils";
 import { addAnalytics } from "@/data/analytics/analytics";
 
 /**
@@ -35,7 +38,7 @@ export const selectAbility = async (
   abilityName: string,
 ) => {
   try {
-    await checkUserIdAndActiveAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
 
     const castingUser = await prisma.user.findUnique({
       where: {

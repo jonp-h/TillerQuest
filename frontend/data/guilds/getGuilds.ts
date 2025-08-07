@@ -2,8 +2,8 @@
 
 import {
   AuthorizationError,
-  checkAdminAuth,
-  checkUserIdAuth,
+  validateAdminAuth,
+  validateUserIdAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
@@ -12,7 +12,7 @@ import { SchoolClass } from "@prisma/client";
 
 export const getGuilds = async (archived: boolean) => {
   try {
-    await checkAdminAuth();
+    await validateAdminAuth();
 
     const guilds = await db.guild.findMany({
       where: {
@@ -50,7 +50,7 @@ export const getGuilds = async (archived: boolean) => {
 
 export const getGuildByUserId = async (userId: string) => {
   try {
-    await checkUserIdAuth(userId);
+    await validateUserIdAuth(userId);
 
     const guild = await db.guild.findFirst({
       where: {
@@ -109,7 +109,7 @@ export const getGuildsAndMemberCountBySchoolClass = async (
 ) => {
   try {
     // Should be open to new users / users with a valid session
-    await checkUserIdAuth(userId);
+    await validateUserIdAuth(userId);
 
     const guilds = await db.guild.findMany({
       where: {
@@ -162,7 +162,7 @@ export const getGuildmemberCount = async (
   guildName: string,
 ) => {
   try {
-    await checkUserIdAuth(userId);
+    await validateUserIdAuth(userId);
 
     const guild = await db.guild.findFirst({
       where: {
@@ -211,7 +211,7 @@ export const getGuildmemberCount = async (
 // get guild member count, excluding the current user
 export const getGuildClasses = async (userId: string, guildName: string) => {
   try {
-    await checkUserIdAuth(userId);
+    await validateUserIdAuth(userId);
 
     const guild = await db.guild.findFirst({
       where: {
