@@ -216,8 +216,9 @@ model Guild {
 
   level Int @default(1)
 
-  enemies GuildEnemy[]
-  members User[]
+  enemies   GuildEnemy[]
+  members   User[]
+  analytics Analytics[] // m-n relation to analytics. A guild can have many analytics records
 }
 
 model Ability {
@@ -429,8 +430,12 @@ model Analytics {
   createdAt DateTime @default(now())
 
   // User context
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Guild context
+  guildName String?
+  guild     Guild?  @relation(fields: [guildName], references: [name], onDelete: Cascade, onUpdate: Cascade)
 
   // Action context
   triggerType String // type of action that triggered the analytics event, e.g., "ability_use", "game_start", etc.
@@ -443,6 +448,7 @@ model Analytics {
   abilityId   Int?
   ability     Ability? @relation(fields: [abilityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   targetCount Int? // number of targets for multi-target abilities
+  value       Int? // value of the ability used, e.g., damage dealt, health restored, etc.
 
   // Resource changes
   hpChange   Int?
@@ -458,7 +464,6 @@ model Analytics {
   // Context data
   userLevel Int?
   userClass String?
-  guildName String?
 
   @@index([userId, createdAt])
   @@index([triggerType, createdAt])

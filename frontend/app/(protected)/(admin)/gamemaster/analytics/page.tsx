@@ -9,12 +9,14 @@ import {
   getResourceGainStatsMultiple,
   getManaEfficiencyStatsMultiple,
   getGameGoldStatsMultiple,
+  getDungeonStatsMultiple,
 } from "@/data/analytics/analytics";
 import ResourceAverageSelector from "./_components/ResourceAverageSelector";
 import AbilityUsageSelector from "./_components/AbilityUsageSelector";
 import ResourceGainSelector from "./_components/ResourceGainSelector";
 import ManaEfficiencySelector from "./_components/ManaEfficiencySelector";
 import GameGoldSelector from "./_components/GameGoldSelector";
+import DungeonSelector from "./_components/DungeonSelector";
 
 async function Manage() {
   await redirectIfNotAdmin();
@@ -27,6 +29,7 @@ async function Manage() {
     resourceGainStats,
     manaEfficiencyStats,
     gameGoldStats,
+    dungeonStats,
   ] = await Promise.all([
     getAbilityUsageStats(14),
     getAbilityUsageStats(7),
@@ -35,6 +38,7 @@ async function Manage() {
     getResourceGainStatsMultiple(),
     getManaEfficiencyStatsMultiple(),
     getGameGoldStatsMultiple(),
+    getDungeonStatsMultiple(),
   ]);
 
   return (
@@ -55,6 +59,8 @@ async function Manage() {
         <ManaEfficiencySelector data={manaEfficiencyStats} />
 
         <GameGoldSelector data={gameGoldStats} />
+
+        <DungeonSelector data={dungeonStats} />
 
         <ResourceAverageSelector data={resourceAverages} />
       </div>

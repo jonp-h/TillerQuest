@@ -237,6 +237,12 @@ export async function selectDungeonAbility(
 
       const diceResult = rollDice(ability?.diceNotation);
 
+      await addLog(
+        db,
+        userId,
+        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult.total} damage.`,
+      );
+
       await damageEnemy(targetEnemyId, diceResult.total);
 
       await db.user.update({
@@ -244,11 +250,7 @@ export async function selectDungeonAbility(
         data: { turns: { decrement: 1 } },
       });
 
-      await addLog(
-        db,
-        userId,
-        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult.total} damage.`,
-      );
+      // TODO: considering adding analytics to inspect ability usage and effectiveness
 
       return {
         message: "Rolled " + diceResult.total + "!",
@@ -273,6 +275,7 @@ export async function selectDungeonAbility(
     );
   }
 }
+
 //TODO: should be moved to lib. Named Roll or rollDice, depending on project availability
 const rollDice = (diceNotation: string) => {
   const roll = new DiceRoll(diceNotation);
@@ -291,7 +294,6 @@ const rollDice = (diceNotation: string) => {
 
 async function damageEnemy(targetEnemyId: string, diceResult: number) {
   return await db.$transaction(async (db) => {
-    console.log("Dealing damage to enemy: " + targetEnemyId);
     const enemy = await db.guildEnemy.update({
       where: {
         id: targetEnemyId,
@@ -323,6 +325,7 @@ async function rewardUsers(enemyId: string, guild: string) {
         name: true,
         xp: true,
         gold: true,
+        guildName: true,
       },
     });
 
@@ -344,5 +347,14 @@ async function rewardUsers(enemyId: string, guild: string) {
         `DUNGEON: ${rewards.name} has been slain, ${user.username} gained ${rewards.xp} XP and ${rewards.gold} gold.`,
       );
     }
+
+    await db.analytics.create({
+      data: {
+        triggerType: "dungeon_reward",
+        xpChange: rewards.xp,
+        goldChange: rewards.gold,
+        guildName: rewards.guildName,
+      },
+    });
   });
 }

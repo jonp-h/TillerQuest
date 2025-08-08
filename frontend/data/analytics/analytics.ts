@@ -264,15 +264,16 @@ export const getResourceGainStatsMultiple = async () => {
         totalMana += manaChange;
 
         // Group by user
-        if (!byUser.has(stat.userId)) {
-          byUser.set(stat.userId, {
+        const userKey = stat.userId ?? "Unknown User";
+        if (!byUser.has(userKey)) {
+          byUser.set(userKey, {
             xpChange: 0,
             goldChange: 0,
             manaChange: 0,
             username: stat.user?.username || "Unknown User",
           });
         }
-        const userStats = byUser.get(stat.userId)!;
+        const userStats = byUser.get(userKey)!;
         userStats.xpChange += xpChange;
         userStats.goldChange += goldChange;
         userStats.manaChange += manaChange;
@@ -656,14 +657,15 @@ export const getGameGoldStatsMultiple = async () => {
         gameStats.gameCount += 1;
 
         // Group by user
-        if (!byUser.has(stat.userId)) {
-          byUser.set(stat.userId, {
+        const userKey = stat.userId ?? "Unknown User";
+        if (!byUser.has(userKey)) {
+          byUser.set(userKey, {
             totalGold: 0,
             gameCount: 0,
             username: stat.user?.username || "Unknown User",
           });
         }
-        const userStats = byUser.get(stat.userId)!;
+        const userStats = byUser.get(userKey)!;
         userStats.totalGold += goldEarned;
         userStats.gameCount += 1;
 
@@ -737,5 +739,166 @@ export const getGameGoldStatsMultiple = async () => {
     }
     logger.error("Failed to get game gold stats:", error);
     throw new Error("Failed to retrieve game gold statistics");
+  }
+};
+
+export const getDungeonStatsMultiple = async () => {
+  try {
+    await validateAdminAuth();
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const fourteenDaysAgo = new Date(today);
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+    // Get all dungeon damage data for the last 14 days
+    const dungeonDamageStats = await db.analytics.findMany({
+      where: {
+        createdAt: { gte: fourteenDaysAgo },
+        triggerType: "dungeon_damage",
+        guildName: { not: null },
+      },
+      select: {
+        createdAt: true,
+        guildName: true,
+        value: true, // This contains the total damage taken
+      },
+    });
+
+    // Get all dungeon reward data for the last 14 days
+    const dungeonRewardStats = await db.analytics.findMany({
+      where: {
+        createdAt: { gte: fourteenDaysAgo },
+        triggerType: "dungeon_reward",
+        guildName: { not: null },
+      },
+      select: {
+        createdAt: true,
+        guildName: true,
+        xpChange: true,
+        goldChange: true,
+      },
+    });
+
+    // Process data for different time periods and groupings
+    const processDungeonStatsByGroup = (filterDate: Date) => {
+      const filteredDamageStats = dungeonDamageStats.filter(
+        (stat) => stat.createdAt >= filterDate,
+      );
+      const filteredRewardStats = dungeonRewardStats.filter(
+        (stat) => stat.createdAt >= filterDate,
+      );
+
+      // Group damage data by guild
+      const damageByGuild = filteredDamageStats.reduce(
+        (acc, stat) => {
+          if (!stat.guildName) return acc;
+          if (!acc[stat.guildName]) {
+            acc[stat.guildName] = {
+              guildName: stat.guildName,
+              totalDamage: 0,
+              damageInstances: 0,
+            };
+          }
+          acc[stat.guildName].totalDamage += stat.value || 0;
+          acc[stat.guildName].damageInstances += 1;
+          return acc;
+        },
+        {} as Record<
+          string,
+          {
+            guildName: string;
+            totalDamage: number;
+            damageInstances: number;
+          }
+        >,
+      );
+
+      // Group reward data by guild
+      const rewardsByGuild = filteredRewardStats.reduce(
+        (acc, stat) => {
+          if (!stat.guildName) return acc;
+          if (!acc[stat.guildName]) {
+            acc[stat.guildName] = {
+              guildName: stat.guildName,
+              totalXp: 0,
+              totalGold: 0,
+              rewardInstances: 0,
+            };
+          }
+          acc[stat.guildName].totalXp += stat.xpChange || 0;
+          acc[stat.guildName].totalGold += stat.goldChange || 0;
+          acc[stat.guildName].rewardInstances += 1;
+          return acc;
+        },
+        {} as Record<
+          string,
+          {
+            guildName: string;
+            totalXp: number;
+            totalGold: number;
+            rewardInstances: number;
+          }
+        >,
+      );
+
+      // Combine damage and reward data by guild
+      const allGuilds = new Set([
+        ...Object.keys(damageByGuild),
+        ...Object.keys(rewardsByGuild),
+      ]);
+
+      const combinedStats = Array.from(allGuilds).map((guildName) => {
+        const damage = damageByGuild[guildName] || {
+          guildName,
+          totalDamage: 0,
+          damageInstances: 0,
+        };
+        const rewards = rewardsByGuild[guildName] || {
+          guildName,
+          totalXp: 0,
+          totalGold: 0,
+          rewardInstances: 0,
+        };
+
+        return {
+          guildName,
+          totalDamage: damage.totalDamage,
+          averageDamage:
+            damage.damageInstances > 0
+              ? damage.totalDamage / damage.damageInstances
+              : 0,
+          damageInstances: damage.damageInstances,
+          totalXp: rewards.totalXp,
+          totalGold: rewards.totalGold,
+          averageXp:
+            rewards.rewardInstances > 0
+              ? rewards.totalXp / rewards.rewardInstances
+              : 0,
+          averageGold:
+            rewards.rewardInstances > 0
+              ? rewards.totalGold / rewards.rewardInstances
+              : 0,
+          rewardInstances: rewards.rewardInstances,
+        };
+      });
+
+      return combinedStats.sort((a, b) => b.totalDamage - a.totalDamage);
+    };
+
+    return {
+      today: processDungeonStatsByGroup(today),
+      week: processDungeonStatsByGroup(sevenDaysAgo),
+      twoWeeks: processDungeonStatsByGroup(fourteenDaysAgo),
+    };
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get dungeon stats");
+      throw error;
+    }
+    logger.error("Failed to get dungeon stats multiple:", error);
+    throw new Error("Failed to retrieve multiple dungeon statistics");
   }
 };

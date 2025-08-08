@@ -2,7 +2,11 @@ import express from "express";
 import cors from "cors";
 import { db } from "./lib/db.js";
 import cron from "node-cron";
-import { randomCosmic, weeklyGuildReset } from "./cronjobs.js";
+import {
+  randomCosmic,
+  triggerGuildEnemyDamage,
+  weeklyGuildReset,
+} from "./cronjobs.js";
 import {
   damageValidator,
   experienceAndLevelValidator,
@@ -571,58 +575,13 @@ cron.schedule(
 
 // Schedule a job to run at 15:15 every weekday to damage active players if the Enemy hasn't been defeated.
 cron.schedule(
-  "15 15 * * 1-5",
+  "* * * * *",
   async () => {
     try {
-      // For each guild enemy, damage all members of that guild by 5 HP
-      const guildEnemies = await db.guildEnemy.findMany({
-        where: {
-          health: { gt: 0 },
-        },
-        select: {
-          guildName: true,
-          name: true,
-          attack: true,
-        },
+      await db.$transaction(async (db) => {
+        await triggerGuildEnemyDamage(db);
       });
-
-      for (const enemy of guildEnemies) {
-        // Only select users from this guild who has fetched mana today
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
-
-        const users = await db.user.findMany({
-          where: {
-            guildName: enemy.guildName,
-            lastMana: {
-              gte: startOfToday,
-            },
-          },
-          select: {
-            id: true,
-            username: true,
-            guildName: true,
-          },
-        });
-
-        for (const user of users) {
-          const damageToTake = await damageValidator(db, user.id, enemy.attack);
-          await db.user.update({
-            where: { id: user.id },
-            data: {
-              hp: { decrement: damageToTake },
-            },
-          });
-
-          await db.log.create({
-            data: {
-              global: false,
-              userId: user.id,
-              message: `${user.username} fought alongside their guildmates in the dungeon, and took ${damageToTake} damage from a spooky ${enemy.name}`,
-            },
-          });
-        }
-      }
+      console.log("Guild enemies damage triggered.");
     } catch (error) {
       console.log(error);
     }
