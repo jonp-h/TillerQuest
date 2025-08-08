@@ -1,110 +1,126 @@
 "use client";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
-import { Enemy } from "@prisma/client";
+import { adminDeleteGuildEnemies } from "@/data/admin/adminUserInteractions";
+import { Button, Typography } from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 interface DungeonsFormProps {
   dungeonInfo: {
     name: string;
     enemies: {
       id: string;
-      enemy: {
-        name: string;
-        icon: string;
-      };
+      name: string;
+      icon: string;
+      xp: number;
+      gold: number;
       health: number;
+      attack: number;
     }[];
   };
-  enemyTypes: Enemy[] | null;
 }
 
-function DungeonsForm({ dungeonInfo, enemyTypes }: DungeonsFormProps) {
-  // const [special, setSpecial] = useState<string[]>(user.special);
-  // const [enemy, setEnemy] = useState<Enemy[]>(
-  //   dungeonInfo.enemies.map(
-  //     (e) => enemyTypes?.find((et) => et.name === e.enemy.name) as Enemy,
-  //   ) || [],
-  // ); // Initialize with the array of Enemy objects or an empty array
-  // const [name, setName] = useState<string | null>(user.name);
-  // const [username, setUsername] = useState<string | null>(user.username);
-  // const [lastname, setLastname] = useState<string | null>(user.lastname);
+function DungeonsForm({ dungeonInfo }: DungeonsFormProps) {
+  const router = useRouter();
 
-  // const router = useRouter();
+  const handleDeleteEnemies = async () => {
+    await toast
+      .promise(adminDeleteGuildEnemies(dungeonInfo.name), {
+        pending: "Deleting enemies...",
+        success: {
+          render({ data }) {
+            return data;
+          },
+        },
+        error: "Failed to delete enemies.",
+      })
+      .finally(() => {
+        router.refresh();
+      });
+  };
 
   return (
-    <>
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>
-        {dungeonInfo.name}
-      </Typography>
-      {dungeonInfo.enemies.map((enemy) => (
-        <FormControl key={enemy.id} sx={{ marginX: 1, minWidth: 120 }}>
-          <InputLabel>Enemy</InputLabel>
-          <Select
-            id="role"
-            value={enemy.enemy.name}
-            renderValue={(value) => (
-              <div className="flex items-center">
-                <img
-                  src={enemy.enemy.icon}
-                  alt={enemy.enemy.name}
-                  className="w-6 h-6 mr-2"
-                />
-                {value}
-              </div>
-            )}
-            // onChange={(event) => {
-            //   const selected = enemyTypes?.find(
-            //     (e) => e.id === Number(event.target.value),
-            //   );
-            //   if (selected) {
-            //     setEnemy((prev) => {
-            //       const updated = [...prev];
-            //       updated[index] = selected;
-            //       return updated;
-            //     });
-            //   }
-            // }}
-            label="Role"
-          >
-            {enemyTypes?.map((enemyType) => (
-              <MenuItem key={enemyType.id} value={enemyType.id}>
-                {enemyType.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      ))}
-      {/* <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          // Check if any of the values have changed
-          if (
-            name !== user.name ||
-            username !== user.username ||
-            lastname !== user.lastname
-          ) {
-            adminUpdateUser(user.id, special, name, username, lastname);
-            toast.success("User updated");
-          } else {
-            adminUpdateUser(user.id, special);
-            toast.success("User updated");
-          }
-          if (role !== user.role) {
-            updateRole(user.id, role);
-            toast.success("User role updated");
-          }
-          router.refresh();
+    <div
+      style={{
+        background: "#0f172a",
+        padding: "2rem",
+        borderRadius: "1rem",
+        boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
+        maxWidth: 600,
+        margin: "0 auto",
+      }}
+    >
+      <Typography
+        variant="h4"
+        sx={{
+          color: "#fff",
+          fontWeight: 700,
+          mb: 3,
+          textAlign: "center",
+          letterSpacing: 1,
         }}
       >
-        Update
-      </Button> */}
-    </>
+        {dungeonInfo.name}
+      </Typography>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        {dungeonInfo.enemies.map((enemy) => (
+          <div
+            key={enemy.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              background: "#1e293b",
+              borderRadius: "0.75rem",
+              padding: "1rem",
+              boxShadow: "0 1px 6px rgba(80,0,120,0.15)",
+              gap: "1.25rem",
+            }}
+          >
+            <Image
+              src={enemy.icon}
+              alt={enemy.name}
+              width={56}
+              height={56}
+              style={{
+                borderRadius: "50%",
+                border: "2px solid #a78bfa",
+                background: "#2e1065",
+              }}
+            />
+            <div style={{ flex: 1 }}>
+              <Typography
+                variant="h6"
+                sx={{ color: "#fff", fontWeight: 600, mb: 0.5 }}
+              >
+                {enemy.name}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "#a78bfa", fontSize: "0.95rem" }}
+              >
+                XP: {enemy.xp} &nbsp;|&nbsp; Gold: {enemy.gold} &nbsp;|&nbsp;
+                Health: {enemy.health} &nbsp;|&nbsp; Attack: {enemy.attack}
+              </Typography>
+            </div>
+          </div>
+        ))}
+      </div>
+      <Button
+        variant="contained"
+        color="error"
+        onClick={handleDeleteEnemies}
+        sx={{
+          mt: 4,
+          fontWeight: 700,
+          background: "linear-gradient(90deg,#a78bfa,#7c3aed)",
+          color: "#fff",
+          boxShadow: "0 2px 8px rgba(124,58,237,0.25)",
+          borderRadius: "0.75rem",
+        }}
+      >
+        Delete All Enemies
+      </Button>
+    </div>
   );
 }
 

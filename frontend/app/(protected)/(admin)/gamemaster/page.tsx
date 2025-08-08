@@ -50,12 +50,12 @@ export default async function GameMasterPage() {
         </Typography>
         <div className="flex justify-center gap-10">
           <Link href="/gamemaster/cosmic">
-            <Button color="primary" variant="contained" startIcon={<Star />}>
+            <Button color="success" variant="contained" startIcon={<Star />}>
               Cosmic
             </Button>
           </Link>
-          <Link href="/gamemaster/users">
-            <Button color="primary" variant="contained" startIcon={<Bolt />}>
+          <Link href="/gamemaster/powers">
+            <Button color="success" variant="contained" startIcon={<Bolt />}>
               GM powers
             </Button>
           </Link>
@@ -64,9 +64,9 @@ export default async function GameMasterPage() {
           Edit
         </Typography>
         <div className="flex justify-center gap-10">
-          <Link href="/gamemaster/manage">
+          <Link href="/gamemaster/users">
             <Button color="secondary" variant="contained" startIcon={<Edit />}>
-              Manage users
+              Users
             </Button>
           </Link>
           <Link href="/gamemaster/guilds">
@@ -103,7 +103,7 @@ export default async function GameMasterPage() {
           </Link>
         </div>
         <Typography variant="h3" align="center" className="mt-10">
-          Analytics
+          System
         </Typography>
         <div className="flex justify-center gap-10">
           <Link href="/gamemaster/log">

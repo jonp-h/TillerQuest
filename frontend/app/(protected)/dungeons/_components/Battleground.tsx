@@ -110,25 +110,37 @@ function Battleground({
         }}
         className="m-auto flex justify-evenly"
       >
-        {enemies ? (
-          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
-            <p>Enemies attack in </p>
-            <div className="text-red-500">
-              <TimeLeft
-                endTime={
-                  new Date(
-                    new Date().setHours(15, 0, 0, 0) +
-                      (new Date() > new Date(new Date().setHours(15, 0, 0, 0))
-                        ? 24 * 60 * 60 * 1000
-                        : 0),
-                  )
-                }
-              />
+        {enemies && enemies.length > 0 ? (
+          enemies.every((enemy) => enemy.health <= 0) ? (
+            <div className="absolute z-10 flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
+              <p>
+                All enemies are slain. The dungeons are safe for now, but who
+                knows about tomorrow?
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
+              <p>Enemies attack in </p>
+              <div className="text-red-500">
+                <TimeLeft
+                  endTime={
+                    new Date(
+                      new Date().setHours(15, 0, 0, 0) +
+                        (new Date() > new Date(new Date().setHours(15, 0, 0, 0))
+                          ? 24 * 60 * 60 * 1000
+                          : 0),
+                    )
+                  }
+                />
+              </div>
+            </div>
+          )
         ) : (
-          <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
-            <p>Congratulations! All enemies have been slain!</p>
+          <div className="absolute z-10 flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
+            <p>
+              You see faint shadows moving in the dark. Ask your guild leader to
+              venture further.
+            </p>
           </div>
         )}
         {enemies &&

@@ -136,12 +136,11 @@ export const adminGetDungeonInfo = async () => {
           select: {
             id: true,
             health: true,
-            enemy: {
-              select: {
-                name: true,
-                icon: true,
-              },
-            },
+            name: true,
+            icon: true,
+            attack: true,
+            xp: true,
+            gold: true,
           },
         },
       },
@@ -181,22 +180,28 @@ export const adminGetDungeonInfo = async () => {
   }
 };
 
-export const getAllEnemyTypes = async () => {
+export const adminDeleteGuildEnemies = async (guildName: string) => {
   try {
     await validateAdminAuth();
 
-    const enemyTypes = await db.enemy.findMany();
+    await db.guildEnemy.deleteMany({
+      where: {
+        guild: {
+          name: guildName,
+        },
+      },
+    });
 
-    return enemyTypes;
+    return "Successfully deleted all enemies from guild: " + guildName;
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      logger.warn("Unauthorized admin access attempt to get enemy types");
+      logger.warn("Unauthorized admin access attempt to get dungeon info");
       throw error;
     }
 
-    logger.error("Error fetching enemy types:", error);
+    logger.error("Error fetching dungeon info:", error);
     throw new Error(
-      "Failed to fetch enemy types. Error timestamp: " +
+      "Failed to fetch dungeon info. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

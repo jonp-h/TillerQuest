@@ -1,8 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import {
-  adminGetDungeonInfo,
-  getAllEnemyTypes,
-} from "@/data/admin/adminUserInteractions";
+import { adminGetDungeonInfo } from "@/data/admin/adminUserInteractions";
 import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
 import DungeonsForm from "./_components/DungeonsForm";
@@ -11,7 +8,6 @@ import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 async function Dungeons() {
   await redirectIfNotAdmin();
   const dungeonInfo = await adminGetDungeonInfo();
-  const enemyTypes = await getAllEnemyTypes();
 
   const style = {
     p: 0,
@@ -35,7 +31,7 @@ async function Dungeons() {
         <List sx={style}>
           {dungeonInfo?.map((dungeonInfo) => (
             <ListItem key={dungeonInfo.name} sx={{ padding: 2 }}>
-              <DungeonsForm dungeonInfo={dungeonInfo} enemyTypes={enemyTypes} />
+              <DungeonsForm dungeonInfo={dungeonInfo} />
             </ListItem>
           ))}
         </List>

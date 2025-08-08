@@ -1,20 +1,71 @@
 import MainContainer from "@/components/MainContainer";
-import { Paper } from "@mui/material";
+import {
+  adminGetUserInfo,
+  getSpecialStatuses,
+} from "@/data/admin/adminUserInteractions";
+import { List, ListItem, Typography } from "@mui/material";
 import React from "react";
-
-import { getAllActiveUsers } from "@/data/admin/adminUserInteractions";
-import ListControls from "./_components/ListControls";
+import ManageUserForm from "./_components/ManageUserForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
+import { $Enums } from "@prisma/client";
 
-export default async function UsersPage() {
+async function Users() {
   await redirectIfNotAdmin();
-  const users = await getAllActiveUsers();
+  const userInfo = await adminGetUserInfo();
+  const specialStatues = await getSpecialStatuses();
+
+  const style = {
+    p: 0,
+    width: "90%",
+    maxWidth: 1650,
+    borderRadius: 2,
+    border: "1px solid",
+    borderColor: "divider",
+    backgroundColor: "background.paper",
+  };
 
   return (
     <MainContainer>
-      <Paper elevation={2} className="w-5/6 m-auto">
-        <ListControls users={users} />
-      </Paper>
+      <Typography variant="h4" align="center">
+        Manage Users
+      </Typography>
+      <Typography variant="h6" align="center">
+        Write special statuses separated by space
+      </Typography>
+      <Typography
+        variant="body1"
+        align="center"
+        color="text.secondary"
+        gutterBottom
+      >
+        OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
+      </Typography>
+      <Typography variant="h6" align="center">
+        Write player access separated by space
+      </Typography>
+      <Typography variant="body1" align="center" color="text.secondary">
+        {Object.values($Enums.Access).join(", ")}
+      </Typography>
+      <div className="flex justify-center mt-2">
+        <List sx={style}>
+          {userInfo?.map((user) => (
+            <ListItem key={user.username} sx={{ padding: 2 }}>
+              <ManageUserForm
+                name={user.name}
+                id={user.id}
+                role={user.role}
+                special={user.special}
+                access={user.access}
+                schoolClass={user.schoolClass}
+                username={user.username}
+                lastname={user.lastname}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </div>
     </MainContainer>
   );
 }
+
+export default Users;

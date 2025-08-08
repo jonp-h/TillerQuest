@@ -1,7 +1,14 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
 import { adminUpdateApplicationSettings } from "@/data/admin/gameSettings";
-import { TextField, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -19,6 +26,7 @@ function GameSettingsForm({
   };
 }) {
   const [value, setValue] = useState<string>(setting.value);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -47,13 +55,27 @@ function GameSettingsForm({
   return (
     <div className="flex gap-5 items-center w-full">
       <Typography variant="h6">{setting.key}:</Typography>
-      <TextField
-        variant="standard"
-        label="Value"
-        value={value}
-        fullWidth
-        onChange={(e) => setValue(e.target.value)}
-      />
+      <FormControl sx={{ m: 1, width: "40ch" }} variant="outlined">
+        <OutlinedInput
+          type={showPassword ? "text" : "password"}
+          value={value}
+          fullWidth
+          onChange={(e) => setValue(e.target.value)}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label={
+                  showPassword ? "hide the password" : "display the password"
+                }
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </FormControl>
       <DialogButton
         buttonText="Update"
         dialogTitle={"Update setting: " + setting.key}
