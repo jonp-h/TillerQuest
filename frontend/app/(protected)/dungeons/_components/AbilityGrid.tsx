@@ -23,6 +23,7 @@ function AbilityGrid({ abilities, onAbilityRoll, disabled }: AbilityGridProps) {
                       alt={ability.name}
                       width={50}
                       height={50}
+                      className="rounded-full"
                     />
                   }
                 >

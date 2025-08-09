@@ -242,7 +242,7 @@ model Ability {
   cosmicEvent  String[] // m-n relation to cosmic events. An ability can be connected to many cosmic events
 
   parentAbility String? // m-n relation to parent abilities. An ability can have many parent abilities
-  parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  parent        Ability?  @relation("AbilityHierarchy", fields: [parentAbility], references: [name], onDelete: Cascade, onUpdate: Cascade)
   children      Ability[] @relation("AbilityHierarchy")
 
   users        UserAbility[] // m-n relation to users. An ability can be owned by many users 

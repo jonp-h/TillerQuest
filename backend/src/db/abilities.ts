@@ -164,7 +164,7 @@ const mana: Ability[] = [
     target: "Self",
     description: "You gain 1 extra daily mana.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Arcane-Connection.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -368,7 +368,7 @@ const wizard: Ability[] = [
     target: "Self",
     description: "Gain 1 extra daily mana.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Inner-Power.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
@@ -420,7 +420,7 @@ const wizard: Ability[] = [
     target: "SingleTarget",
     description: "You channel your powers, giving a guildmember 2d6+2 mana.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Cosmic-Gift.png",
     gemstoneCost: 4,
     manaCost: 6,
     healthCost: null,
@@ -456,7 +456,7 @@ const wizard: Ability[] = [
     target: "Others",
     description: "You grant all your guildmembers 4 mana.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Essence-Offering.png",
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
@@ -481,21 +481,21 @@ const wizard: Ability[] = [
     diceNotation: "1d10",
     value: null,
     isDungeon: true,
-    parentAbility: "Arcane-Gift",
+    parentAbility: "Greater-Essence-Transfer",
   },
 ];
 
 const druid: Ability[] = [
   {
     id: 69,
-    name: "Blessing-of-the-Earth",
+    name: "Blessings-of-the-Earth",
     category: "Druid",
     type: "IncreaseMana",
     target: "Self",
     description:
       "You prepare for the unforeseen, increasing your maximum mana by 5.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Blessings-of-the-Earth.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -519,7 +519,7 @@ const druid: Ability[] = [
     xpGiven: 25,
     diceNotation: "1d4", // efficiency +0.5
     value: null,
-    parentAbility: "Blessing-of-the-Earth",
+    parentAbility: "Blessings-of-the-Earth",
   },
   {
     id: 24,
@@ -582,7 +582,7 @@ const druid: Ability[] = [
     description:
       "Restores 2d4 health to all members of the guild. Yourself included.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Healing-Grace.png",
     gemstoneCost: 4,
     manaCost: 7,
     healthCost: null,
@@ -633,17 +633,17 @@ const druid: Ability[] = [
     type: "Damage",
     target: "SingleTarget",
     description:
-      "You attack an enemy with vines covered by thorns, dealing 3d4 damage.",
+      "You attack an enemy with vines covered by thorns, dealing 1d10 damage.",
     duration: null,
     icon: "Thorns.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
     xpGiven: null,
-    diceNotation: "3d4",
+    diceNotation: "1d10", // avg. 5.5
     value: null,
     isDungeon: true,
-    parentAbility: "Heal",
+    parentAbility: "Greater-Heal",
   },
 ];
 
@@ -728,7 +728,7 @@ const barbarian: Ability[] = [
     description:
       "You shield the next attack on a guildmember from 2d6 damage for the next 8 hours.",
     duration: 480, // 8 hours
-    icon: "Test.jpg",
+    icon: "Get-Behind-Me.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: 5,
@@ -746,7 +746,7 @@ const barbarian: Ability[] = [
     description:
       "You shield your guildmembers from 1d6 damage for the next 4 hours.",
     duration: 240, // 4 hours
-    icon: "Test.jpg",
+    icon: "Protector-of-the-People.png",
     gemstoneCost: 4,
     manaCost: 6,
     healthCost: null,
@@ -796,17 +796,17 @@ const barbarian: Ability[] = [
     type: "Damage",
     target: "SingleTarget",
     description:
-      "You attack an enemy with a raging attack, dealing 2d8 damage.",
+      "You attack an enemy with a raging attack, dealing 1d10 damage.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Raging-Attack.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
     xpGiven: null,
-    diceNotation: "2d8",
+    diceNotation: "1d10",
     value: null,
     isDungeon: true,
-    parentAbility: "Toughness",
+    parentAbility: "Superior-Toughness",
   },
 ];
 
@@ -820,7 +820,7 @@ const bloodMage: Ability[] = [
     description:
       "You transform your mana into a bloodshield that absorbs 1 damage for every 3 damage you take.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Bloodshield.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -926,7 +926,7 @@ const bloodMage: Ability[] = [
     description:
       "You curse the gold earned from the arena, increasing it by 1d10 % for 1 day.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Blood-Money.png",
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
@@ -944,7 +944,7 @@ const bloodMage: Ability[] = [
     description:
       "You curse the gold earned from the arena for all guild members, increasing it by 3d10 % for 1 day.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Cursed-Gold.png",
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
@@ -969,7 +969,7 @@ const bloodMage: Ability[] = [
     diceNotation: "1d10",
     isDungeon: true,
     value: null,
-    parentAbility: "Secrets-of-the-Crimson",
+    parentAbility: "Crimson-Shift",
   },
 ];
 
@@ -983,7 +983,7 @@ const bard: Ability[] = [
     description:
       "Your trained bard eyes allows you to find 1 extra gold every time you gain 10 gold.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "An-Eye-for-Gold.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -1019,7 +1019,7 @@ const bard: Ability[] = [
     description:
       "You display your many talents to the crowd, gaining 10d10 gold for yourself.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Streets-of-Gold.png",
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
@@ -1037,7 +1037,7 @@ const bard: Ability[] = [
     description:
       "You inspire your guildmembers with words of wisdom, giving the entire guild 5 extra max mana for 5 days.",
     duration: 7200, // 5 days
-    icon: "Inspire.png",
+    icon: "Inspiration.png",
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
@@ -1055,7 +1055,7 @@ const bard: Ability[] = [
     description:
       "You inspire your guildmembers with great philosophy, giving the entire guild 5 extra max mana for 5 days.",
     duration: 7200, // 5 days
-    icon: "Test.jpg",
+    icon: "Greater-Inspiration.png",
     gemstoneCost: 4,
     manaCost: 3,
     healthCost: null,
@@ -1109,7 +1109,7 @@ const bard: Ability[] = [
     description:
       "You and your guildmembers perform an incredible dance, increasing experience gained for all guildmembers for the day by 2d10 %.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Tavern-Dance.png",
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
@@ -1127,7 +1127,7 @@ const bard: Ability[] = [
     description:
       "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Song-of-Inspiration.png",
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
@@ -1165,7 +1165,7 @@ const arena: Ability[] = [
     target: "Self",
     description: "Gain another daily arena token, bringing your total to 2.",
     duration: null,
-    icon: "Arena.png",
+    icon: "Token.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
@@ -1182,7 +1182,7 @@ const arena: Ability[] = [
     target: "Self",
     description: "Gain another daily arena token, bringing your total to 3.",
     duration: null,
-    icon: "Arena.png",
+    icon: "Token.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1199,7 +1199,7 @@ const arena: Ability[] = [
     target: "Self",
     description: "Gain access to the TypeQuest arena. Type as fast as you can!",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Game.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -1217,7 +1217,7 @@ const arena: Ability[] = [
     description:
       "Gain access to the WordQuest arena. A difficult game of finding the words!",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Game.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -1235,7 +1235,7 @@ const arena: Ability[] = [
     description:
       "Gain access to BinaryJack. Stake your gold in a high risk binary version of Blackjack.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Game.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
@@ -1255,7 +1255,7 @@ const dungeon: Ability[] = [
     target: "Self",
     description: "You muster up the courage to fight the guild's enemies!",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Courage.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -1274,7 +1274,7 @@ const dungeon: Ability[] = [
     description:
       "You regain extra stamina to fight your enemies longer! You gain 1 extra turn.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Second-Wind.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
@@ -1293,7 +1293,7 @@ const dungeon: Ability[] = [
     description:
       "You push yourself beyond the normal limits, to fight your enemies for longer! You gain 1 extra turn.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Action-Surge.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1311,12 +1311,12 @@ const dungeon: Ability[] = [
     target: "SingleTarget",
     description: "You attack a target for 1d6 damage.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Weak-Attack.png",
     gemstoneCost: 0,
     manaCost: null,
     healthCost: null,
     xpGiven: null,
-    diceNotation: "1d6",
+    diceNotation: "1d4", // avg. 2.5
     isDungeon: true,
     value: null,
     parentAbility: "Courage",
@@ -1329,12 +1329,12 @@ const dungeon: Ability[] = [
     target: "SingleTarget",
     description: "You use a great attack against an enemy dealing 1d8 damage.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Great-Attack.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
     xpGiven: null,
-    diceNotation: "1d8",
+    diceNotation: "1d6", // avg. 3.5
     isDungeon: true,
     value: null,
     parentAbility: "Weak-Attack",
@@ -1348,12 +1348,12 @@ const dungeon: Ability[] = [
     description:
       "You use a fencing attack against an enemy dealing 2d6 damage.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Fencing.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
     xpGiven: null,
-    diceNotation: "2d6",
+    diceNotation: "1d8", // avg. 4.5
     isDungeon: true,
     value: null,
     parentAbility: "Great-Attack",
