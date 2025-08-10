@@ -125,8 +125,8 @@ function Battleground({
                 <TimeLeft
                   endTime={
                     new Date(
-                      new Date().setHours(15, 0, 0, 0) +
-                        (new Date() > new Date(new Date().setHours(15, 0, 0, 0))
+                      new Date().setHours(16, 0, 0, 0) +
+                        (new Date() > new Date(new Date().setHours(16, 0, 0, 0))
                           ? 24 * 60 * 60 * 1000
                           : 0),
                     )

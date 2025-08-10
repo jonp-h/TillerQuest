@@ -1,5 +1,405 @@
-import { damageValidator } from "data/validators.js";
+import {
+  damageValidator,
+  experienceAndLevelValidator,
+  healingValidator,
+  manaValidator,
+} from "data/validators.js";
 import { PrismaTransaction } from "./types/prismaTransaction.js";
+
+export const removePassivesWithIncreasedValues = async (
+  db: PrismaTransaction,
+  now: Date,
+) => {
+  const usersWithIncreasedHealth = await db.userPassive.findMany({
+    where: {
+      effectType: "IncreaseHealth",
+      endTime: { lte: now },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  for (const passive of usersWithIncreasedHealth) {
+    const newHp = Math.min(
+      passive.user.hp,
+      passive.user.hpMax - (passive.value ?? 0),
+    );
+    await db.user.update({
+      where: { id: passive.userId },
+      data: { hp: newHp, hpMax: { decrement: passive.value || 0 } },
+    });
+  }
+
+  const usersWithIncreasedMana = await db.userPassive.findMany({
+    where: {
+      effectType: "IncreaseMana",
+      endTime: { lte: now },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  for (const passive of usersWithIncreasedMana) {
+    const newMana = Math.min(
+      passive.user.mana,
+      passive.user.manaMax - (passive.value ?? 0),
+    );
+    await db.user.update({
+      where: { id: passive.userId },
+      data: { mana: newMana, manaMax: { decrement: passive.value || 0 } },
+    });
+  }
+};
+
+export const removePassivesWithDecreasedValues = async (
+  db: PrismaTransaction,
+  now: Date,
+) => {
+  const usersWithDecreasedHealth = await db.userPassive.findMany({
+    where: {
+      effectType: "DecreaseHealth",
+      endTime: { lte: now },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  for (const passive of usersWithDecreasedHealth) {
+    const newHp = Math.min(
+      passive.user.hp,
+      passive.user.hpMax + (passive.value ?? 0),
+    );
+    await db.user.update({
+      where: { id: passive.userId },
+      data: { hp: newHp, hpMax: { increment: passive.value || 0 } },
+    });
+  }
+
+  const usersWithDecreasedMana = await db.userPassive.findMany({
+    where: {
+      effectType: "DecreaseMana",
+      endTime: { lte: now },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  for (const passive of usersWithDecreasedMana) {
+    const newMana = Math.min(
+      passive.user.mana,
+      passive.user.manaMax + (passive.value ?? 0),
+    );
+    await db.user.update({
+      where: { id: passive.userId },
+      data: { mana: newMana, manaMax: { increment: passive.value || 0 } },
+    });
+  }
+};
+
+export const removeExpiredPassives = async (
+  db: PrismaTransaction,
+  now: Date,
+) => {
+  const passives = await db.userPassive.findMany({
+    where: { endTime: { lte: now } },
+    select: { userId: true, abilityName: true },
+  });
+
+  await db.userPassive.deleteMany({ where: { endTime: { lte: now } } });
+
+  if (passives.length > 0) {
+    await db.log.createMany({
+      data: passives.map((passive) => ({
+        userId: passive.userId,
+        message: `Passive ${passive.abilityName} expired`,
+        global: false,
+      })),
+    });
+  }
+};
+
+export const activateCosmicEvent = async (db: PrismaTransaction) => {
+  const cosmic = await db.cosmicEvent.findFirst({
+    where: {
+      selected: true,
+    },
+    select: {
+      triggerAtNoon: true,
+      ability: {
+        select: {
+          name: true,
+          type: true,
+          value: true,
+        },
+      },
+    },
+  });
+
+  // if cosmic should not activate
+  if (!cosmic?.triggerAtNoon) {
+    return;
+  }
+
+  const usersWithCosmicPassive = await db.userPassive.findMany({
+    where: {
+      effectType: "Cosmic",
+      abilityName: cosmic.ability?.name,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  // either hp, damage, mana or xp
+  const fieldToUpdate = cosmic.ability?.type.toString().toLowerCase() || "";
+
+  await Promise.all(
+    usersWithCosmicPassive.map(async (user) => {
+      // validate value and passives
+      switch (fieldToUpdate) {
+        case "hp": {
+          const targetUserHp = await healingValidator(
+            db,
+            user.userId,
+            cosmic.ability?.value ?? 0,
+          );
+          // check if user is dead and return error message
+          if (typeof targetUserHp === "string") {
+            return targetUserHp;
+          }
+          await db.user.update({
+            where: { id: user.userId },
+            data: {
+              hp: { increment: targetUserHp },
+            },
+            select: {
+              username: true,
+            },
+          });
+          break;
+        }
+        case "mana": {
+          const targetUserMana = await manaValidator(
+            db,
+            user.userId,
+            cosmic.ability?.value ?? 0,
+          );
+          // return error message if user cannot receive mana
+          if (targetUserMana === 0) {
+            return "Target is already at full mana";
+          } else if (typeof targetUserMana === "string") {
+            return targetUserMana;
+          }
+          await db.user.update({
+            where: { id: user.userId },
+            data: {
+              mana: { increment: targetUserMana },
+            },
+            select: {
+              username: true,
+            },
+          });
+          break;
+        }
+        case "xp": {
+          await experienceAndLevelValidator(
+            db,
+            user.userId,
+            cosmic.ability?.value ?? 0,
+          );
+          break;
+        }
+        case "damage": {
+          const damageToTake = await damageValidator(
+            db,
+            user.userId,
+            cosmic.ability?.value ?? 0,
+          );
+
+          await db.user.update({
+            where: { id: user.userId },
+            data: {
+              hp: { decrement: damageToTake },
+            },
+          });
+          break;
+        }
+        default:
+          break;
+      }
+
+      // TODO: improve this with fieldToUpdate logic
+      // const targetedUser = await db.user.update({
+      //   where: { id: user.userId },
+      //   data: {
+      //     [fieldToUpdate]: { increment: value },
+      //   },
+      //   select: {
+      //     username: true,
+      //   },
+      // });
+
+      const targetedUser = await db.user.findUnique({
+        where: { id: user.userId },
+        select: {
+          username: true,
+        },
+      });
+
+      await db.log.create({
+        data: {
+          userId: user.userId,
+          message: `${targetedUser?.username} was affected by ${cosmic.ability?.name.replace(/-/g, " ")}`,
+        },
+      });
+    }),
+  );
+};
+
+export const removeCosmicPassivesAndAbilities = async (
+  db: PrismaTransaction,
+) => {
+  await db.userPassive.deleteMany({
+    where: {
+      effectType: "Cosmic",
+    },
+  });
+
+  await db.userAbility.deleteMany({
+    where: {
+      fromCosmic: true,
+    },
+  });
+};
+
+export const removeOldLogs = async (db: PrismaTransaction) => {
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+  await db.log.deleteMany({
+    where: {
+      createdAt: { lte: twoWeeksAgo },
+    },
+  });
+};
+
+export const resetGameHighscores = async (db: PrismaTransaction) => {
+  // Only for TypeQuest at the moment
+  const topScores = await db.game.findMany({
+    where: {
+      status: "FINISHED",
+      user: { publicHighscore: true },
+    },
+    orderBy: { score: "desc" },
+    distinct: ["userId"],
+    take: 3,
+    select: { userId: true },
+  });
+
+  for (const { userId } of topScores) {
+    await experienceAndLevelValidator(db, userId, 300);
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: { username: true },
+    });
+
+    await db.log.create({
+      data: {
+        userId,
+        message: `${user?.username} received 300 XP for being at the top of the weekly leaderboard in TypeQuest`,
+      },
+    });
+  }
+
+  await db.game.deleteMany();
+};
+
+export const sessionCleanup = async (db: PrismaTransaction) => {
+  await db.session.deleteMany({
+    where: {
+      OR: [
+        { expiresAt: { lt: new Date() } }, // Expired sessions
+        {
+          updatedAt: {
+            lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Sessions not used in 30 days
+          },
+        },
+      ],
+    },
+  });
+};
+
+export const resetUserTurns = async (db: PrismaTransaction) => {
+  const usersWithTurnFinished = await db.user.findMany({
+    where: {
+      turns: 0,
+    },
+    select: {
+      id: true,
+      username: true,
+      turns: true,
+    },
+  });
+  for (const user of usersWithTurnFinished) {
+    // Check if user has a TurnPassive and get its value
+    const turnPassive = await db.userPassive.findMany({
+      where: {
+        userId: user.id,
+        effectType: "TurnPassive",
+      },
+      select: {
+        value: true,
+      },
+    });
+
+    let turnsToSet = 0;
+    for (const turn of turnPassive) {
+      if (turn.value) turnsToSet += turn.value;
+    }
+
+    await db.user.update({
+      where: { id: user.id },
+      data: { turns: turnsToSet },
+    });
+
+    await db.log.create({
+      data: {
+        global: false,
+        userId: user.id,
+        message: `You have regained your strength and are now ready to enter the dungeon once again!`,
+      },
+    });
+  }
+};
+
+export const resetGuildEnemies = async (db: PrismaTransaction) => {
+  const deadEnemies = await db.guildEnemy.findMany({
+    where: {
+      health: {
+        lte: 0,
+      },
+    },
+  });
+
+  for (const enemy of deadEnemies) {
+    await db.guild.update({
+      where: { name: enemy.guildName },
+      data: {
+        level: {
+          increment: 1, // Increment guild level by 1
+        },
+      },
+    });
+
+    await db.guildEnemy.delete({
+      where: { id: enemy.id },
+    });
+  }
+};
 
 export const randomCosmic = async (db: PrismaTransaction) => {
   try {
