@@ -55,5 +55,12 @@ const wishes: Wish[] = [
       "Gain advanced skills in resin printing and learn how to use the resin printers available in the Makerspace. Requires introduction to 3D printing first.",
     image: "/wishes/resinprinting.png",
   },
+  {
+    id: 8,
+    name: "Game Server",
+    description:
+      "We set up and host a game server for IM. Please let the game masters know your suggestions for suitable games.",
+    image: "/wishes/gamingserver.png",
+  },
 ];
 export default wishes;
