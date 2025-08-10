@@ -8,7 +8,7 @@ interface Ability {
     | "Trickery"
     | "Wizard"
     | "Druid"
-    | "BloodMage"
+    | "Warlock"
     | "Barbarian"
     | "Bard"
     | "Arena"
@@ -810,17 +810,17 @@ const barbarian: Ability[] = [
   },
 ];
 
-const bloodMage: Ability[] = [
+const warlock: Ability[] = [
   {
     id: 70,
-    name: "Bloodshield",
-    category: "BloodMage",
+    name: "Crimson-Shield",
+    category: "Warlock",
     type: "ManaShield",
     target: "Self",
     description:
-      "You transform your mana into a bloodshield that absorbs 1 damage for every 3 damage you take.",
+      "You transform your mana into a crimson shield that absorbs 1 damage for every 3 damage you take.",
     duration: null,
-    icon: "Bloodshield.png",
+    icon: "Crimson-Shield.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -832,7 +832,7 @@ const bloodMage: Ability[] = [
   {
     id: 38,
     name: "Secrets-of-the-Crimson",
-    category: "BloodMage",
+    category: "Warlock",
     type: "Health",
     target: "Self",
     description: "Every time you are healed, you gain 1 extra health.",
@@ -844,47 +844,47 @@ const bloodMage: Ability[] = [
     xpGiven: null,
     diceNotation: null,
     value: 1,
-    parentAbility: "Bloodshield",
+    parentAbility: "Crimson-Shield",
   },
   {
     id: 39,
-    name: "Blood-Bond",
-    category: "BloodMage",
+    name: "Crimson-Bond",
+    category: "Warlock",
     type: "Transfer",
     target: "SingleTarget",
     description: "You may give 3 of your hp to another player.",
     duration: null,
-    icon: "Blood-Bond.png",
+    icon: "Crimson-Bond.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: 3,
     xpGiven: 25,
     diceNotation: null,
     value: 3,
-    parentAbility: "Bloodshield",
+    parentAbility: "Crimson-Shield",
   },
   {
     id: 40,
-    name: "Bloodgift",
-    category: "BloodMage",
+    name: "Crimson-Gift",
+    category: "Warlock",
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
       "Lose 5 of your maximum health to grant 2 mana to a guild member. This ability can only be used once per day.",
     duration: 960, // 16 hours
-    icon: "Bloodgift.png",
+    icon: "Crimson-Gift.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: 5,
     xpGiven: 50,
     diceNotation: null,
     value: 2,
-    parentAbility: "Bloodshield",
+    parentAbility: "Crimson-Shield",
   },
   {
     id: 41,
     name: "Crimson-Shift",
-    category: "BloodMage",
+    category: "Warlock",
     type: "Swap",
     target: "SingleTarget",
     description:
@@ -897,12 +897,12 @@ const bloodMage: Ability[] = [
     xpGiven: 50,
     diceNotation: null,
     value: null,
-    parentAbility: "Blood-Bond",
+    parentAbility: "Crimson-Bond",
   },
   {
     id: 42,
     name: "Gift-of-Life",
-    category: "BloodMage",
+    category: "Warlock",
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
@@ -915,18 +915,18 @@ const bloodMage: Ability[] = [
     xpGiven: 100,
     diceNotation: null,
     value: 5,
-    parentAbility: "Bloodgift",
+    parentAbility: "Crimson-Gift",
   },
   {
     id: 43,
-    name: "Blood-Money",
-    category: "BloodMage",
+    name: "Crimson-Coin",
+    category: "Warlock",
     type: "GoldPassive",
     target: "Self",
     description:
       "You curse the gold earned from the arena, increasing it by 1d10 % for 1 day.",
     duration: 960, // 16 hours
-    icon: "Blood-Money.png",
+    icon: "Crimson-Coin.png",
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
@@ -938,7 +938,7 @@ const bloodMage: Ability[] = [
   {
     id: 44,
     name: "Cursed-Gold",
-    category: "BloodMage",
+    category: "Warlock",
     type: "GoldPassive",
     target: "All",
     description:
@@ -951,17 +951,18 @@ const bloodMage: Ability[] = [
     xpGiven: 200,
     diceNotation: "3d10",
     value: null,
-    parentAbility: "Blood-Money",
+    parentAbility: "Crimson-Coin",
   },
   {
     id: 66,
-    name: "Blood-Blades",
-    category: "BloodMage",
+    name: "Crimson-Blades",
+    category: "Warlock",
     type: "Damage",
     target: "SingleTarget",
-    description: "You attack an enemy with blood blades, dealing 1d10 damage.",
+    description:
+      "You attack an enemy with crimson blades, dealing 1d10 damage.",
     duration: null,
-    icon: "Blood-Blades.png",
+    icon: "Crimson-Blades.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1468,7 +1469,7 @@ const abilities = [
   ...wizard,
   ...druid,
   ...barbarian,
-  ...bloodMage,
+  ...warlock,
   ...bard,
   ...dungeon,
   ...arena,

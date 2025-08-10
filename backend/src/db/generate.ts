@@ -5,17 +5,17 @@ import {
   PrismaClient,
   SchoolClass,
 } from "@prisma/client";
-import guilds from "./guilds.ts";
-import users from "./users.ts";
-import abilities from "./abilities.ts";
-import cosmics from "./cosmic.ts";
-import shopItems from "./shopItems.ts";
+import guilds from "./guilds.js";
+import users from "./users.js";
+import abilities from "./abilities.js";
+import cosmics from "./cosmic.js";
+import shopItems from "./shopItems.js";
 import readline from "readline";
-import typeQuestTexts from "./typeQuestTexts.ts";
-import enemies from "./enemies.ts";
-import gameSettings from "./gameSettings.ts";
-import wordQuestWords from "./wordQuestWords.ts";
-import wishes from "./wishes.ts";
+import typeQuestTexts from "./typeQuestTexts.js";
+import enemies from "./enemies.js";
+import gameSettings from "./gameSettings.js";
+import wordQuestWords from "./wordQuestWords.js";
+import wishes from "./wishes.js";
 
 // Initialize Prisma Client
 const db = new PrismaClient();

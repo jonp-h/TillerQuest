@@ -10,25 +10,25 @@ const classes = [
     name: "Wizard1",
     src: "/classes/Wizard1.png",
     description:
-      "Wizards use their abilities to gain more mana, and master the art of the arcane.",
+      "Wizards are masters of the arcane, using their abilities to grant more mana to their allies.",
   },
   {
     name: "Wizard2",
     src: "/classes/Wizard2.png",
     description:
-      "Wizards use their abilities to gain more mana, and master the art of the arcane.",
+      "Wizards are masters of the arcane, using their abilities to grant more mana to their allies.",
   },
   {
     name: "Wizard3",
     src: "/classes/Wizard3.png",
     description:
-      "Wizards use their abilities to gain more mana, and master the art of the arcane.",
+      "Wizards are masters of the arcane, using their abilities to grant more mana to their allies.",
   },
   {
     name: "Wizard4",
     src: "/classes/Wizard4.png",
     description:
-      "Wizards use their abilities to gain more mana, and master the art of the arcane.",
+      "Wizards are masters of the arcane, using their abilities to grant more mana to their allies.",
   },
   {
     name: "Barbarian1",
@@ -79,48 +79,52 @@ const classes = [
       "Druids has a strong connection to nature, using their abilities to heal their allies.",
   },
   {
-    name: "BloodMage1",
-    src: "/classes/BloodMage1.png",
+    name: "Warlock1",
+    src: "/classes/Warlock1.png",
     description:
-      "Bloodmages master the art of blood magic. Using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
   },
   {
-    name: "BloodMage2",
-    src: "/classes/BloodMage2.png",
+    name: "Warlock2",
+    src: "/classes/Warlock2.png",
     description:
-      "Bloodmages master the art of blood magic. Using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
   },
   {
-    name: "BloodMage3",
-    src: "/classes/BloodMage3.png",
+    name: "Warlock3",
+    src: "/classes/Warlock3.png",
     description:
-      "Bloodmages master the art of blood magic. Using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
   },
   {
-    name: "BloodMage4",
-    src: "/classes/BloodMage4.png",
+    name: "Warlock4",
+    src: "/classes/Warlock4.png",
     description:
-      "Bloodmages master the art of blood magic. Using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
   },
   {
     name: "Bard1",
     src: "/classes/Bard1.png",
-    description: "Bards use their cunning to inspire and buff their allies.",
+    description:
+      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
   },
   {
     name: "Bard2",
     src: "/classes/Bard2.png",
-    description: "Bards use their cunning to inspire and buff their allies.",
+    description:
+      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
   },
   {
     name: "Bard3",
     src: "/classes/Bard3.png",
-    description: "Bards use their cunning to inspire and buff their allies.",
+    description:
+      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
   },
   {
     name: "Bard4",
     src: "/classes/Bard4.png",
-    description: "Bards use their cunning to inspire and buff their allies.",
+    description:
+      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
   },
 ];
 

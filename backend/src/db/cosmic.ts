@@ -471,7 +471,7 @@ const cosmic: CosmicEvent[] = [
   {
     id: 30,
     name: "Crimson-ritual",
-    description: "All Bloodmages gain 150 XP",
+    description: "All warlocks gain 150 XP",
     // icon: ".png"
     // presetDate: "",
     frequency: 10,

@@ -29,7 +29,7 @@ enum Class {
   Druid
   Wizard
   Barbarian
-  BloodMage
+  Warlock
   Bard
 }
 
@@ -55,7 +55,7 @@ enum AbilityCategory {
   Druid
   Wizard
   Barbarian
-  BloodMage
+  Warlock
   Bard
 }
 

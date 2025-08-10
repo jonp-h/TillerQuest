@@ -12,7 +12,7 @@ interface User {
   level: number; // user level
   guildName: string; // name of the guild the user belongs to
   role: "NEW" | "USER" | "ADMIN" | "ARCHIVED";
-  class?: "Druid" | "Barbarian" | "BloodMage" | "Wizard";
+  class?: "Druid" | "Barbarian" | "Warlock" | "Wizard";
   schoolClass?:
     | "Class_1IM1"
     | "Class_1IM2"
@@ -63,7 +63,7 @@ const users: User[] = [
     name: "Karld",
     lastname: "Kai",
     email: "kai@example.com",
-    image: "BloodMage1",
+    image: "Warlock1",
     hp: 10,
     hpMax: 100,
     mana: 20,
@@ -71,7 +71,7 @@ const users: User[] = [
     level: 8,
     guildName: "Game Masters",
     role: "USER",
-    class: "BloodMage",
+    class: "Warlock",
   },
   {
     id: "99994",
@@ -163,7 +163,7 @@ const users: User[] = [
     name: "Finn",
     lastname: "Lake",
     email: "finn@example.com",
-    image: "BloodMage2",
+    image: "Warlock2",
     hp: 25,
     hpMax: 100,
     mana: 35,
@@ -172,7 +172,7 @@ const users: User[] = [
     guildName: "Game Masters",
     schoolClass: "Class_1IM4",
     role: "USER",
-    class: "BloodMage",
+    class: "Warlock",
   },
   {
     id: "100000",
@@ -282,7 +282,7 @@ const users: User[] = [
     name: "Max",
     lastname: "Hill",
     email: "max2it1@example.com",
-    image: "BloodMage3",
+    image: "Warlock3",
     hp: 30,
     hpMax: 100,
     mana: 38,
@@ -291,7 +291,7 @@ const users: User[] = [
     guildName: "Game Masters",
     schoolClass: "Class_2IT1",
     role: "USER",
-    class: "BloodMage",
+    class: "Warlock",
   },
   {
     id: "100007",
@@ -350,7 +350,7 @@ const users: User[] = [
     name: "Ben",
     lastname: "Lake",
     email: "ben2it1@example.com",
-    image: "BloodMage4",
+    image: "Warlock4",
     hp: 28,
     hpMax: 100,
     mana: 36,
@@ -359,7 +359,7 @@ const users: User[] = [
     guildName: "Game Masters",
     schoolClass: "Class_2IT1",
     role: "USER",
-    class: "BloodMage",
+    class: "Warlock",
   },
 ];
 

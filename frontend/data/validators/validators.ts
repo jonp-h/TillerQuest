@@ -152,8 +152,8 @@ export const damageValidator = async (
     // reduce the damage by the passive effects
     let newDamage = await protectionValidator(db, targetUserId, damage);
 
-    // check class specific damage reduction (currently only for BloodMage)
-    if (targetUserClass === "BloodMage") {
+    // check class specific damage reduction (currently only for Warlocks)
+    if (targetUserClass === "Warlock") {
       newDamage = await manaShieldValidator(db, targetUserId, newDamage);
     }
 
@@ -227,14 +227,14 @@ const manaShieldValidator = async (
   targetUserId: string,
   damage: number,
 ) => {
-  const bloodShield = await getUserPassiveEffect(
+  const crimsonShield = await getUserPassiveEffect(
     db,
     targetUserId,
     "ManaShield",
   );
 
-  if (bloodShield > 0 && damage > 0) {
-    const reduction = Math.floor(damage / bloodShield);
+  if (crimsonShield > 0 && damage > 0) {
+    const reduction = Math.floor(damage / crimsonShield);
     const damageToReduce = await manaValidator(db, targetUserId, -reduction);
 
     // the returned value from manaValidator is negative

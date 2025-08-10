@@ -81,7 +81,7 @@ This should generally be considered to be a bit on the "evil side", to encourage
 - **Bandage**: 2 mana, 2 gems → 1d4 healing to others
 - **Performance**: 2 mana, 2 gems → 1d6% XP boost for ALL guild (1 hour)
 - **Inspiration**: 2 mana, 2 gems → +5 max mana for ALL guild (5 days)
-- **Blood-Bond**: 3 HP, 2 gems → Transfer 3 HP to others
+- **Crimson-Bond**: 3 HP, 2 gems → Transfer 3 HP to others
 
 ## 🎯 **Key Success Metrics**
 
