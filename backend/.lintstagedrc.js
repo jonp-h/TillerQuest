@@ -1,3 +1,3 @@
 export default {
-  "**/!(dist)/**/*.{js,ts}": ["eslint --cache --fix", "prettier --write"],
+  "**/*.{js,ts}": ["eslint --cache --fix", "prettier --write"],
 };

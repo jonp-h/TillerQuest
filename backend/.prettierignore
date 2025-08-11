@@ -1,7 +1,9 @@
 # Ignore artifacts:
 build
+dist/
 coverage
 *.log
 prisma/migrations/
 node_modules/
-.next
+db/docker/backups/
+db/docker/data
