@@ -1,9 +1,4 @@
-import {
-  DataGrid,
-  GridColDef,
-  GridRowSelectionModel,
-  GridToolbar,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { User } from "@prisma/client";
 import { useState } from "react";
@@ -70,7 +65,30 @@ export default function NewUserList({
   setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }) {
   const [rowSelectionModel, setRowSelectionModel] =
-    useState<GridRowSelectionModel>([]);
+    useState<GridRowSelectionModel>({
+      type: "include",
+      ids: new Set([]),
+    });
+
+  const handleSelectionChange = (
+    newRowSelectionModel: GridRowSelectionModel,
+  ) => {
+    console.log(newRowSelectionModel);
+    setRowSelectionModel(newRowSelectionModel);
+    let selectedUsers: User[] = [];
+
+    // Update the selected users based on the selection model
+    if (newRowSelectionModel.type === "include") {
+      selectedUsers = users.filter((user) =>
+        newRowSelectionModel.ids.has(user.id),
+      );
+    } else {
+      selectedUsers = users.filter(
+        (user) => !newRowSelectionModel.ids.has(user.id),
+      );
+    }
+    setSelectedUsers(selectedUsers);
+  };
 
   return (
     <Paper sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -81,23 +99,10 @@ export default function NewUserList({
         pageSizeOptions={[30, 45, 60, 120]}
         checkboxSelection
         classes={{ cell: " cursor-pointer" }}
-        onRowSelectionModelChange={(newSelection) => {
-          const selectedUsernames = newSelection.map(
-            (id) => users.find((user) => user.id === id)?.username,
-          );
-          setSelectedUsers(
-            users.filter((user) => selectedUsernames.includes(user.username)),
-          );
-          setRowSelectionModel(newSelection);
-        }}
+        onRowSelectionModelChange={handleSelectionChange}
         rowSelectionModel={rowSelectionModel}
         sx={{ border: 0 }}
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
+        showToolbar
       />
     </Paper>
   );

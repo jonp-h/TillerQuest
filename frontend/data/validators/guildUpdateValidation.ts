@@ -3,6 +3,7 @@
 import { escapeHtml, updateGuildnameSchema } from "@/lib/validationUtils";
 import { db } from "@/lib/db";
 import { validateUserIdAndActiveUserAuth } from "@/lib/authUtils";
+import { prettifyError } from "zod";
 
 export const validateGuildNameUpdate = async (id: string, name: string) => {
   await validateUserIdAndActiveUserAuth(id);
@@ -10,7 +11,7 @@ export const validateGuildNameUpdate = async (id: string, name: string) => {
   const validatedData = updateGuildnameSchema.safeParse({ name });
 
   if (!validatedData.success) {
-    return validatedData.error.errors.map((e) => e.message).join(", ");
+    return prettifyError(validatedData.error);
   }
 
   const guildNameTaken = await db.guild.findFirst({

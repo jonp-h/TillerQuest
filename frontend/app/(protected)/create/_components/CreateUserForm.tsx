@@ -236,7 +236,11 @@ export default function CreateUserForm({
           </AccordionDetails>
         </Accordion>
         {errorMessage && (
-          <Typography variant="body1" color="error">
+          <Typography
+            variant="body1"
+            color="error"
+            sx={{ whiteSpace: "pre-line" }}
+          >
             {errorMessage}
           </Typography>
         )}

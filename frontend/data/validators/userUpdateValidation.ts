@@ -11,6 +11,7 @@ import {
   validateUserIdAndActiveUserAuth,
   validateUserIdAndNewUserAuth,
 } from "@/lib/authUtils";
+import { prettifyError } from "zod";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateUserCreation = async (id: string, data: any) => {
@@ -19,7 +20,9 @@ export const validateUserCreation = async (id: string, data: any) => {
   const validatedData = newUserSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return validatedData.error.errors.map((e) => e.message).join(", ");
+    console.log(prettifyError(validatedData.error));
+
+    return prettifyError(validatedData.error);
   }
 
   //TODO: consider if guild and schoolclass restrictions are necessary
@@ -119,7 +122,7 @@ export const validateUserUpdate = async (id: string, data: any) => {
   const validatedData = updateUserSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return validatedData.error.errors.map((e) => e.message).join(", ");
+    return prettifyError(validatedData.error);
   }
 
   const userNameTaken = await db.user.findFirst({

@@ -41,9 +41,7 @@ export const newUserSchema = z.object({
     .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
   playerClass: z.string(),
   guild: z.string(),
-  schoolClass: z.nativeEnum($Enums.SchoolClass, {
-    errorMap: () => ({ message: "Invalid school class" }),
-  }),
+  schoolClass: z.enum($Enums.SchoolClass, "Invalid school class"),
   publicHighscore: z.boolean(),
 });
 

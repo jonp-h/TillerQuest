@@ -155,7 +155,7 @@ function ProfileSettingsForm({
           >
             Only generic information about username, XP, level, class and
             achievements will be displayed. The information will only be
-            available to validated students and game masters.
+            available to validated users and game masters.
           </Typography>
         </Paper>
         <DialogButton
@@ -171,7 +171,7 @@ function ProfileSettingsForm({
       </Paper>
       <Typography variant="caption" color="warning" className="text-center">
         Account deletion is possible at any time. By default all accounts and
-        data is deleted when a user is no longer a student. <br /> If you want
+        data are deleted when a user is no longer a student. <br /> If you want
         to delete your account before this time, please contact a game master.
         Please note that this action is irreversible and all your data will be
         permanently deleted.
