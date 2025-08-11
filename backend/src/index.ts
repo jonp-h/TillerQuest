@@ -287,8 +287,8 @@ cron.schedule(
 
 // print out scheduled tasks
 console.log("Started cron jobs:");
-cron.getTasks().forEach((task, name) => {
-  console.log(` - ${name}`);
+cron.getTasks().forEach((task) => {
+  console.log(` - ${task.name}`);
 });
 
 app.listen(8080, () => {
