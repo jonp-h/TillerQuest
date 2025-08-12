@@ -68,17 +68,17 @@ $ npm i
 #### Setup test env
 
 - First complete the above instructions
-- Setup a local PostegreSQL instance with Docker in the backend [here](/backend/db/docker/).
+- Setup a local PostegreSQL instance with Docker in the backend [here](/backend/src/db/docker/).
 
 - Create .env inside the frontend folder
   - Create the following variables and replace the "..."
 
 ```
 BETTER_AUTH_SECRET=...
-# This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+# This is a random string used for encryption. Should be securely generated, using eg. openssl
 
 BETTER_AUTH_URL=...
-# Base URL of the backend. For development this can be [localhost:8080](http://localhost:8080)
+# Base URL of the backend. For development this can be [localhost:3000](http://localhost:3000)
 
 AUTH_GITHUB_ID=...
 # In GitHub, create an app (https://github.com/settings/apps) and write the ID here (https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
@@ -106,7 +106,7 @@ NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
 ```
 
 BETTER_AUTH_SECRET=...
-# This is a random string, you can use Auth.js CLI: "npx auth secret" (https://authjs.dev/reference/core/errors#missingsecret)
+# This is a random string used for encryption. Should be securely generated, using eg. openssl
 
 BETTER_AUTH_URL=...
 # Base URL of the backend. For development this can be [localhost:8080](http://localhost:8080)

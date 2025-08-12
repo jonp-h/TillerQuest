@@ -11,6 +11,7 @@ export const auth = betterAuth({
   // should be automatically set to true in production
   advanced: {
     useSecureCookies: true,
+    cookiePrefix: "tillerquest",
   },
   user: {
     additionalFields: {
