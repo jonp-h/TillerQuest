@@ -28,6 +28,7 @@ async function main() {
 
   const options = `
   Please choose an option:
+  - ADD:
   1. Add All
   2. Add all without users
   3. Add Guilds
@@ -40,7 +41,9 @@ async function main() {
   10. Add Game Settings
   11. Add WordQuest Words
   12. Add Wishes
-  13. Update player title rarities
+
+  - UPDATE:
+  100. Update player title rarities
   `;
 
   rl.question(options, async (answer) => {
@@ -81,7 +84,7 @@ async function main() {
       case "12":
         await addWishes();
         break;
-      case "13":
+      case "100":
         await updatePlayerTitleRarities();
         break;
       default:

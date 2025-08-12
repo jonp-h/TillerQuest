@@ -20,6 +20,7 @@ export const getGuildmembersByGuildname = async (guildName: string) => {
         hpMax: true,
         mana: true,
         manaMax: true,
+        class: true,
         guild: {
           select: {
             guildLeader: true,

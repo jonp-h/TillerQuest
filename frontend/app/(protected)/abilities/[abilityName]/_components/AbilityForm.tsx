@@ -2,7 +2,7 @@
 import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
 import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
-import { Ability, User } from "@prisma/client";
+import { $Enums, Ability, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
@@ -15,6 +15,7 @@ type guildMembers =
       id: string;
       image: string | null;
       username: string | null;
+      class: $Enums.Class | null;
       hp: number;
       hpMax: number;
       mana: number;

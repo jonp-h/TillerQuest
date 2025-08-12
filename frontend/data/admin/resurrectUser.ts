@@ -130,6 +130,7 @@ const resurrectUser = async (
           member.id,
           member.hp,
           guildmemberResurrectionDamage,
+          member.class,
           minResurrectionHP,
         );
 

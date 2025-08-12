@@ -111,9 +111,7 @@ async function resetUsers() {
       // Remove and recreate guilds
       await db.guild.deleteMany({
         where: {
-          NOT: {
-            archived: true,
-          },
+          archived: false,
         },
       });
       await db.guild.createMany({
