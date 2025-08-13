@@ -94,6 +94,11 @@ async function resetUsers() {
           abilities: {
             select: {
               id: true,
+              ability: {
+                select: {
+                  gemstoneCost: true,
+                },
+              },
             },
           },
         },
@@ -137,12 +142,17 @@ async function normalResetUserHandler(
     id: string;
     mana: number;
     abilities: {
+      ability: {
+        gemstoneCost: number;
+      };
       id: string;
     }[];
   },
 ) {
-  const abilitiesRemoved = user.abilities.length;
-  const gemstonesToAdd = abilitiesRemoved * 2;
+  let totalGemstoneCost = 0;
+  for (const ability of user.abilities) {
+    totalGemstoneCost += ability.ability.gemstoneCost;
+  }
 
   await db.user.update({
     where: { id: user.id },
@@ -153,7 +163,7 @@ async function normalResetUserHandler(
       mana: Math.min(user.mana, 40),
       manaMax: 40,
       gemstones: {
-        increment: gemstonesToAdd,
+        increment: totalGemstoneCost,
       },
       class: null,
       guildName: null,
@@ -165,7 +175,7 @@ async function normalResetUserHandler(
       logs: {
         create: {
           global: false,
-          message: `RESET: Your account has been reset. You have been refunded ${gemstonesToAdd} gemstones.`,
+          message: `RESET: Your account has been reset. You have been refunded ${totalGemstoneCost} gemstones.`,
         },
       },
       title: "Newborn",
@@ -203,6 +213,11 @@ async function resetUsersAndShopItems() {
           abilities: {
             select: {
               id: true,
+              ability: {
+                select: {
+                  gemstoneCost: true,
+                },
+              },
             },
           },
           inventory: {
@@ -237,11 +252,16 @@ async function softResetUserHandler(
     }[];
     abilities: {
       id: string;
+      ability: {
+        gemstoneCost: number;
+      };
     }[];
   },
 ) {
-  const abilitiesRemoved = user.abilities.length;
-  const gemstonesToAdd = abilitiesRemoved * 2;
+  let totalGemstoneCost = 0;
+  for (const ability of user.abilities) {
+    totalGemstoneCost += ability.ability.gemstoneCost;
+  }
 
   let goldFromShopItems = 0;
   for (const shopItem of user.inventory) {
@@ -257,7 +277,7 @@ async function softResetUserHandler(
       mana: Math.min(user.mana, 40),
       manaMax: 40,
       gemstones: {
-        increment: gemstonesToAdd,
+        increment: totalGemstoneCost,
       },
       gold: {
         increment: goldFromShopItems,
@@ -288,7 +308,7 @@ async function softResetUserHandler(
       logs: {
         create: {
           global: false,
-          message: `RESET: Your shopitems and abilities have been reset. You have been refunded ${gemstonesToAdd} gemstones and ${goldFromShopItems} gold.`,
+          message: `RESET: Your shopitems and abilities have been reset. You have been refunded ${totalGemstoneCost} gemstones and ${goldFromShopItems} gold.`,
         },
       },
     },
@@ -305,6 +325,11 @@ async function resetSingleUser(username: string) {
         abilities: {
           select: {
             id: true,
+            ability: {
+              select: {
+                gemstoneCost: true,
+              },
+            },
           },
         },
       },
