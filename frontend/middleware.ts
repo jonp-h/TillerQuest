@@ -9,7 +9,9 @@ import { getSessionCookie } from "better-auth/cookies";
 // runs on the edge, so no database queries can be made
 // running more extensive checks here is not recommended, as the middleware runs on every request
 export async function middleware(req: NextRequest) {
-  const sessionCookie = getSessionCookie(req);
+  const sessionCookie = getSessionCookie(req, {
+    cookiePrefix: "tillerquest",
+  });
 
   const isApiRoute = req.nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(req.nextUrl.pathname);

@@ -6,6 +6,7 @@ import {
   apiKeyRateLimit,
   securityHeaders,
 } from "../lib/middleware.js";
+import { logger } from "lib/logger.js";
 // import { fromNodeHeaders } from "better-auth/node";
 // import { auth } from "../auth.js";
 // import {
@@ -64,7 +65,7 @@ router.get("/leaderboard/vg1", async (req, res) => {
 
     res.json({ users });
   } catch (error) {
-    console.error("Error getting leaderboard vg1:", error);
+    logger.error("Error getting leaderboard vg1:", error);
     res.status(500).json({
       error: "Internal server error",
       timestamp: new Date().toISOString(),
@@ -110,7 +111,7 @@ router.get("/leaderboard/vg2", async (req, res) => {
 
     res.json({ users });
   } catch (error) {
-    console.error("Error getting leaderboard vg2:", error);
+    logger.error("Error getting leaderboard vg2:", error);
     res.status(500).json({
       error: "Internal server error",
       timestamp: new Date().toISOString(),

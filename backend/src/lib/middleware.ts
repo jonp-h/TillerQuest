@@ -86,6 +86,9 @@ export const validateRequestSignature = (
   const nonce = req.headers["x-nonce"] as string;
 
   if (!apiKey || !signature || !timestamp || !nonce) {
+    logger.warn(
+      `Invalid request received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     res.status(401).json({
       error: "Missing required authentication headers",
       required: ["x-api-key", "x-signature", "x-timestamp", "x-nonce"],
@@ -93,16 +96,15 @@ export const validateRequestSignature = (
     return;
   }
 
-  logger.info(
-    `Request received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
-  );
-
   // Validate timestamp (prevent replay attacks)
   const requestTime = parseInt(timestamp);
   const currentTime = Date.now();
   const timeDiff = Math.abs(currentTime - requestTime);
 
   if (timeDiff > 5 * 60 * 1000) {
+    logger.warn(
+      `Invalid timestamp request received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     // 5 minutes tolerance
     res.status(401).json({ error: "Request timestamp too old or invalid" });
     return;
@@ -112,11 +114,17 @@ export const validateRequestSignature = (
   const apiSecret = process.env.API_SECRET;
 
   if (!validApiKey || apiKey !== validApiKey) {
+    logger.warn(
+      `Invalid api key request received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     res.status(401).json({ error: "Invalid API key" });
     return;
   }
 
   if (!apiSecret) {
+    logger.warn(
+      `Invalid api key secret received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     res
       .status(500)
       .json({ error: "API secret is not configured on the server" });
@@ -140,18 +148,20 @@ export const validateRequestSignature = (
 
   // Validate nonce to prevent replay attacks
   if (!validateNonce(nonce)) {
+    logger.warn(
+      `Invalid nonce received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     res.status(401).json({ error: "Nonce already used or invalid format" });
     return;
   }
 
   if (signature !== expectedSignature) {
+    logger.warn(
+      `Invalid request signature received: API Key: ${apiKey}, Timestamp: ${timestamp}, Nonce: ${nonce}`,
+    );
     res.status(401).json({ error: "Invalid request signature" });
     return;
   }
-
-  logger.info(
-    `Successful request to api: ${apiKey}, Timestamp: ${requestTime}, Nonce: ${nonce}`,
-  );
 
   next();
 };
