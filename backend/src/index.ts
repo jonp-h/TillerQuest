@@ -26,6 +26,8 @@ import { logger } from "lib/logger.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // ------ Uncomment the following line to enable Better Auth authentication ------
 // app.use("/auth", authRoutes);
 
