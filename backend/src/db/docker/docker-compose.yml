@@ -11,6 +11,19 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - tillerquest-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: unless-stopped
+    networks:
+      - tillerquest-network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -22,6 +35,8 @@ services:
       - "${PGADMIN_PORT}:80"
     depends_on:
       - postgres
+    networks:
+      - tillerquest-network
 
   pgbackups:
     image: prodrigestivill/postgres-backup-local
@@ -48,3 +63,9 @@ services:
       - BACKUP_KEEP_MONTHS=6
       - HEALTHCHECK_PORT=8080
       - TZ=Europe/Oslo
+    networks:
+      - tillerquest-network
+
+networks:
+  tillerquest-network:
+    driver: bridge
