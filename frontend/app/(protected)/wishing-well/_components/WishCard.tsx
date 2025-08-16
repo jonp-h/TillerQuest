@@ -119,7 +119,7 @@ function WishCard({
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="flex flex-col gap-4 p-4">
           <Image
-            src="/wish.png"
+            src="/wishes/wish.png"
             alt="Wishing Well"
             width={250}
             height={250}
