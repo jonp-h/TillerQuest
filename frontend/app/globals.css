@@ -103,22 +103,18 @@ h1 {
 
 @keyframes shine {
   0% {
-    background-position: 100%;
-    background-size: 100;
+    background-position: 100% 0;
   }
 
-  50% {
-    background-position: -100%;
-    background-size: 100;
+  80% {
+    background-position: -100% 0;
   }
 
   90% {
-    background-position: -100%;
-    background-size: 0;
+    background-position: -100% 0;
   }
   100% {
-    background-position: -100%;
-    background-size: 0;
+    background-position: -100% 0;
   }
 }
 
@@ -137,18 +133,16 @@ h1 {
   }
 
   .rarity {
-    /* color: rgba(255, 128, 0, 0.7); */
-    /* Adjust this color to change intensity/style  */
     background: linear-gradient(
       120deg,
-      rgba(255, 255, 255, 0) 40%,
-      rgba(255, 255, 255, 1) 50%,
-      rgba(255, 255, 255, 0) 60%
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 1) 45%,
+      rgba(255, 255, 255, 0) 50%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     display: inline-block;
-    animation: shine 5s linear infinite;
+    animation: shine 7s ease-in-out infinite;
   }
 }

@@ -79,7 +79,10 @@ async function Leaderboard({ users, title }: LeaderboardProps) {
                 <TableCell sx={{ fontSize: "125%" }} align="center">
                   <Link key={user.username} href={"/profile/" + user.username}>
                     <div className="flex flex-col text-purple-400 text-center text-lg items-center ">
-                      <RarityText rarity={user.titleRarity || "Common"}>
+                      <RarityText
+                        rarity={user.titleRarity || "Common"}
+                        width="full"
+                      >
                         {user.title}
                       </RarityText>
                       <Typography>{user.name}</Typography>

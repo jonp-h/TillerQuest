@@ -130,6 +130,7 @@ export default async function ProfilePage({
             <RarityText
               className="text-2xl"
               rarity={user.titleRarity || "Common"}
+              width="full"
             >
               {user.title}
             </RarityText>

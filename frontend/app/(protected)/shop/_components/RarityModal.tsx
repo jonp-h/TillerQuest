@@ -58,34 +58,33 @@ export default function CustomizedDialogs() {
         </IconButton>
         <DialogContent dividers>
           <Typography gutterBottom>
-            The popularity of an item is determined by its{" "}
-            <RarityText rarity="legendary">rarity tier</RarityText>. Bought
+            The popularity of an item is determined by its rarity tier. Bought
             titles and badges are displayed with the rarity tier of the item.
             From least to most sought after, the tiers are:{" "}
           </Typography>
           <div className="mt-5">
-            <RarityText className="text-2xl" rarity="common">
+            <RarityText width="full" className="text-2xl" rarity="common">
               Common
             </RarityText>
             <Divider />
             <Typography gutterBottom sx={{ mb: 3 }}>
               Common items are the easiest to obtain.
             </Typography>
-            <RarityText className="text-2xl" rarity="uncommon">
+            <RarityText width="full" className="text-2xl" rarity="uncommon">
               Uncommon
             </RarityText>
             <Divider />
             <Typography gutterBottom sx={{ mb: 3 }}>
               Uncommon items are more difficult to obtain than common items.
             </Typography>
-            <RarityText className="text-2xl" rarity="rare">
+            <RarityText width="full" className="text-2xl" rarity="rare">
               Rare
             </RarityText>
             <Divider />
             <Typography gutterBottom sx={{ mb: 3 }}>
               Uncommon items are more difficult to obtain than uncommon items.
             </Typography>
-            <RarityText className="text-2xl" rarity="epic">
+            <RarityText width="full" className="text-2xl" rarity="epic">
               Epic
             </RarityText>
             <Divider />
@@ -93,14 +92,14 @@ export default function CustomizedDialogs() {
               Epic items are considered prestigious and require a lot of
               dedication to obtain.
             </Typography>
-            <RarityText className="text-2xl" rarity="legendary">
+            <RarityText width="full" className="text-2xl" rarity="legendary">
               Legendary
             </RarityText>
             <Divider />
             <Typography gutterBottom sx={{ mb: 3 }}>
               The most dedicated players can strive to obtain legendary items.
             </Typography>
-            <RarityText className="text-2xl" rarity="mythic">
+            <RarityText width="full" className="text-2xl" rarity="mythic">
               Mythic
             </RarityText>
             <Divider />

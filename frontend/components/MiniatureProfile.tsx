@@ -48,8 +48,12 @@ export default function MiniatureProfile({ member }: MiniatureProfileProps) {
             </div>
           )}
         </div>
-        <div className="flex flex-col gap-1 text-center">
-          <RarityText className="-mb-1.5" rarity={member.titleRarity ?? ""}>
+        <div className="flex flex-col gap-1 text-center items-center">
+          <RarityText
+            width="1/2"
+            className="-mb-1.5"
+            rarity={member.titleRarity ?? ""}
+          >
             {member.title}
           </RarityText>
           <Typography variant="body1" flexWrap="wrap">

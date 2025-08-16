@@ -24,7 +24,11 @@ function ProfileBadge({
           alt={badgeTitle}
           draggable={false}
         />
-        <RarityText rarity={badgeRarity} className="text-lg mt-2">
+        <RarityText
+          rarity={badgeRarity}
+          width="full"
+          className="text-lg mt-2 text-nowrap"
+        >
           {badgeTitle.replace("-", " ").toUpperCase()}
         </RarityText>
       </div>

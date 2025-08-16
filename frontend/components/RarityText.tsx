@@ -12,10 +12,12 @@ const RARITY_CLASSES = {
 
 function RarityText({
   rarity,
+  width,
   className,
   children,
 }: {
   rarity: string | $Enums.Rarity;
+  width: "full" | "1/2";
   className?: string;
   children: React.ReactNode;
 }) {
@@ -25,7 +27,7 @@ function RarityText({
 
   return (
     <h2
-      className={`${className} font-extrabold drop-shadow-[2px_2px_rgba(0,0,0,0.8)] ${rarityClass}`}
+      className={`${className} font-extrabold text-center w-${width} drop-shadow-[2px_2px_rgba(0,0,0,0.8)] ${rarityClass}`}
     >
       {children}
     </h2>

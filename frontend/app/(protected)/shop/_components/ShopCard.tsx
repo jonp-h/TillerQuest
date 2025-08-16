@@ -82,7 +82,7 @@ function ShopCard({
         />
       )}
       <div className="flex flex-col items-center gap-2">
-        <RarityText className="text-3xl" rarity={item.rarity}>
+        <RarityText width="1/2" className="text-3xl" rarity={item.rarity}>
           {item.name}
         </RarityText>
         {item.specialReq && (
