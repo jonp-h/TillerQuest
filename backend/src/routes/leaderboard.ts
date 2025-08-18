@@ -42,7 +42,7 @@ router.get("/leaderboard/vg1", async (req, res) => {
 
     const users = await db.user.findMany({
       where: {
-        role: { not: "ARCHIVED" },
+        role: "USER",
         publicHighscore: true,
         schoolClass: {
           in: ["Class_1IM1", "Class_1IM2", "Class_1IM3", "Class_1IM4"],
@@ -88,7 +88,7 @@ router.get("/leaderboard/vg2", async (req, res) => {
 
     const users = await db.user.findMany({
       where: {
-        role: { not: "ARCHIVED" },
+        role: "USER",
         publicHighscore: true,
         schoolClass: {
           in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],

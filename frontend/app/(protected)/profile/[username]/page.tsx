@@ -137,7 +137,11 @@ export default async function ProfilePage({
             <Typography variant="h6" color="aquamarine">
               {user.class}
             </Typography>
-            <Typography variant="h6" color="aquamarine">
+            <Typography
+              variant="h6"
+              color="aquamarine"
+              className=" text-nowrap"
+            >
               Level: {user.level}
             </Typography>
           </div>
