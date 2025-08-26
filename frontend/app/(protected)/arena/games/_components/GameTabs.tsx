@@ -211,7 +211,7 @@ function GameTabs({
               <strong>any</strong> direction.
             </Typography>
             <Typography variant="body1">
-              | You earn 100 points for each word found, but lose 60 points for
+              You earn 65 points for each word found, but lose 30 points for
               each hint used. Find all words to maximize your score!
             </Typography>
           </div>

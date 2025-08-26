@@ -28,6 +28,7 @@ function BinaryJack({
   userGold: number;
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
+  const [currentlyRolling, setCurrentlyRolling] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedDie, setSelectedDie] = useState<string>("d6");
   const [targetNumber, setTargetNumber] = useState<number>(0);
@@ -138,9 +139,15 @@ function BinaryJack({
     const result = await rollBinaryJackDice(gameId, selectedDie);
 
     if (result.diceRoll && diceBox) {
-      diceBox.roll(`${selectedDie}@${result.diceRoll}`).then(() => {
-        setRolledValue(result.rolledValue);
-      });
+      setCurrentlyRolling(true);
+      diceBox
+        .roll(`${selectedDie}@${result.diceRoll}`)
+        .then(() => {
+          setRolledValue(result.rolledValue);
+        })
+        .finally(() => {
+          setCurrentlyRolling(false);
+        });
     }
   };
 
@@ -435,7 +442,7 @@ function BinaryJack({
                   variant="contained"
                   color="secondary"
                   onClick={handleRollDice}
-                  disabled={!gameEnabled || !diceBox}
+                  disabled={!gameEnabled || currentlyRolling || !diceBox}
                   className="w-full"
                 >
                   🎲 Roll {selectedDie.toUpperCase()}

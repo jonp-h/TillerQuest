@@ -4,8 +4,78 @@ import {
   updateGame,
 } from "@/data/games/game";
 import { Button } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+
+// Canvas component to render letters non-searchably
+const CanvasLetter = ({
+  letter,
+  isSelected,
+  isFoundWord,
+  isHinted,
+  orderIndex,
+  className,
+  ...props
+}: {
+  letter: string;
+  isSelected: boolean;
+  isFoundWord: boolean;
+  isHinted: boolean;
+  orderIndex: number;
+  className: string;
+  //   eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Set canvas size for proper pixel density
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Set font and style
+    ctx.font = "bold 16px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = isFoundWord
+      ? "white"
+      : isHinted
+        ? "black"
+        : isSelected
+          ? "white"
+          : "white";
+
+    // Draw the letter
+    ctx.fillText(letter, rect.width / 2, rect.height / 2);
+  }, [letter, isSelected, isFoundWord, isHinted]);
+
+  return (
+    <div className={className} {...props}>
+      <canvas
+        ref={canvasRef}
+        style={{ width: "100%", height: "100%" }}
+        className="pointer-events-none absolute inset-0"
+      />
+      {orderIndex >= 0 && (
+        <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center z-10">
+          {orderIndex + 1}
+        </span>
+      )}
+    </div>
+  );
+};
 
 function WordQuest({
   gameEnabled,
@@ -522,8 +592,19 @@ function WordQuest({
               const dragOrderIndex = dragSelectionOrder.indexOf(index);
 
               return (
-                <div
+                <CanvasLetter
                   key={`${letter}-${index}`}
+                  letter={letter}
+                  isSelected={isDragSelected || isManualSelected}
+                  isFoundWord={isFoundWord}
+                  isHinted={isHinted}
+                  orderIndex={
+                    isManualSelected
+                      ? manualOrderIndex
+                      : isDragSelected
+                        ? dragOrderIndex
+                        : -1
+                  }
                   className={[
                     "p-2 rounded-xl min-w-10 min-h-10 cursor-pointer font-mono font-bold select-none transition-colors relative",
                     isFoundWord
@@ -536,21 +617,7 @@ function WordQuest({
                   ].join(" ")}
                   onMouseDown={() => handleMouseDown(index)}
                   onMouseEnter={() => handleMouseEnter(index)}
-                >
-                  {letter}
-                  {isManualSelected && manualOrderIndex >= 0 && (
-                    <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                      {manualOrderIndex + 1}
-                    </span>
-                  )}
-                  {isDragSelected &&
-                    !isManualSelected &&
-                    dragOrderIndex >= 0 && (
-                      <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                        {dragOrderIndex + 1}
-                      </span>
-                    )}
-                </div>
+                />
               );
             })}
       </div>

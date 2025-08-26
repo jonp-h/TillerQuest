@@ -301,6 +301,7 @@ export const getGameLeaderboard = async (gameName: string) => {
             name: true,
             username: true,
             lastname: true,
+            titleRarity: true,
           },
         },
       },
@@ -651,8 +652,8 @@ const updateWordQuestGame = async (
     }
   }
 
-  // Calculate total score: 100 points per found word minus hint penalties
-  score = foundWords.length * 100 - hintPenalties;
+  // Calculate total score: 65 points per found word minus hint penalties
+  score = foundWords.length * 65 - hintPenalties;
 
   // Return the updated metadata with all existing data preserved
   metadata = { ...metadataObj, foundWords, hintPenalties };
@@ -693,9 +694,9 @@ export const getWordQuestHint = async (gameId: string, word: string) => {
       throw new ErrorMessage("Word not found in the current game");
     }
 
-    // Add 60 to hint penalties and recalculate score
-    const newHintPenalties = currentHintPenalties + 60;
-    const newScore = foundWords.length * 100 - newHintPenalties;
+    // Add 30 to hint penalties and recalculate score
+    const newHintPenalties = currentHintPenalties + 30;
+    const newScore = foundWords.length * 65 - newHintPenalties;
 
     // Update game with new metadata and score
     await prisma.game.update({

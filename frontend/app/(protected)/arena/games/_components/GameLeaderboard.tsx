@@ -13,6 +13,8 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import { JsonValue } from "@prisma/client/runtime/library";
+import RarityText from "@/components/RarityText";
+import { $Enums } from "@prisma/client";
 
 interface GameLeaderboardProps {
   user: {
@@ -20,6 +22,7 @@ interface GameLeaderboardProps {
     lastname: string | null;
     username: string | null;
     title: string | null;
+    titleRarity: $Enums.Rarity | null;
     image: string | null;
   };
   score: number;
@@ -82,9 +85,12 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
                     href={"/profile/" + user.user.username}
                   >
                     <div className="flex flex-col text-purple-400 text-center text-lg items-center ">
-                      <Typography variant="overline" color="primary">
+                      <RarityText
+                        rarity={user.user.titleRarity || "Common"}
+                        width="full"
+                      >
                         {user.user.title}
-                      </Typography>
+                      </RarityText>
                       <Typography>{user.user.name}</Typography>
                       <Typography variant="h6" color="Highlight">
                         &quot;{user.user.username}&quot;
