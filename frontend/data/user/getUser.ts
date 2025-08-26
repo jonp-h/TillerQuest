@@ -135,6 +135,12 @@ export const getUserProfileByUsername = async (username: string) => {
         lastMana: true,
         publicHighscore: true,
         archiveConsent: true,
+        guild: {
+          select: {
+            guildLeader: true,
+            icon: true,
+          },
+        },
         inventory: {
           where: {
             type: "Badge",

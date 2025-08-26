@@ -2,6 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
 import { getUserProfileByUsername } from "@/data/user/getUser";
 import {
+  Avatar,
   Button,
   Chip,
   LinearProgress,
@@ -60,6 +61,22 @@ export default async function ProfilePage({
             elevation={6}
             className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
           >
+            <Avatar
+              variant="rounded"
+              sx={{
+                width: 100,
+                height: 100,
+                marginTop: "1rem",
+                marginX: "auto",
+                backgroundColor: "purple.800",
+                fontSize: "3rem",
+                fontWeight: "bold",
+              }}
+              src={"/guilds/" + user.guild?.icon + ".png"}
+              draggable={false}
+            >
+              {user.guildName.charAt(0)}
+            </Avatar>
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.guildName}
             </Typography>
@@ -70,14 +87,17 @@ export default async function ProfilePage({
                 ) : null,
               )}
             </div>
-            <Button
-              variant="text"
-              color="inherit"
-              fullWidth
-              className="mt-auto"
-            >
-              <Link href={`/guild`}>View Guild</Link>
-            </Button>
+
+            {session?.user.username === user.username && (
+              <Button
+                variant="text"
+                color="inherit"
+                fullWidth
+                className="mt-auto"
+              >
+                <Link href={`/guild`}>View Guild</Link>
+              </Button>
+            )}
           </Paper>
         )}
         <Paper
@@ -107,7 +127,7 @@ export default async function ProfilePage({
               height={250}
               draggable={false}
             />
-            {guildMembers[0].guild?.guildLeader === user.id && (
+            {user.guild?.guildLeader === user.id && (
               <div className="absolute top-5 right-5">
                 <Tooltip title="This week's guild leader" arrow placement="top">
                   <LocalPolice sx={{ color: "silver", fontSize: 50 }} />

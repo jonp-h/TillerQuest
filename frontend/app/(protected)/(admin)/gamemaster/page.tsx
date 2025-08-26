@@ -7,7 +7,7 @@ import {
   Bolt,
   Castle,
   Edit,
-  Group,
+  Groups,
   Info,
   Message,
   Settings,
@@ -70,7 +70,11 @@ export default async function GameMasterPage() {
             </Button>
           </Link>
           <Link href="/gamemaster/guilds">
-            <Button color="secondary" variant="contained" startIcon={<Group />}>
+            <Button
+              color="secondary"
+              variant="contained"
+              startIcon={<Groups />}
+            >
               Guilds
             </Button>
           </Link>

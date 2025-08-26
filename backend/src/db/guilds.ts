@@ -2,12 +2,14 @@ interface Guild {
   name: string;
   schoolClass?: string; // optional, used for guilds with specific classes
   archived?: boolean; // optional, used for guilds that are archived
+  icon?: string; // optional, used for guild icons
 }
 
 const guilds: Guild[] = [
   {
     name: "Game Masters",
     archived: true,
+    icon: "GM",
   },
   {
     name: "No-name-1IM1-1",

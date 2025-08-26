@@ -2,6 +2,7 @@
 
 import {
   AuthorizationError,
+  validateActiveUserAuth,
   validateAdminAuth,
   validateUserIdAuth,
 } from "@/lib/authUtils";
@@ -66,6 +67,7 @@ export const getGuildByUserId = async (userId: string) => {
         guildLeader: true,
         nextGuildLeader: true,
         level: true,
+        icon: true,
         enemies: {
           select: {
             name: true,
@@ -251,6 +253,51 @@ export const getGuildClasses = async (userId: string, guildName: string) => {
     logger.error("Error fetching guild taken classes: " + error);
     throw new Error(
       "Something went wrong while fetching guild taken classes. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getGuildLeaderboard = async () => {
+  try {
+    await validateActiveUserAuth();
+
+    const guild = await db.guild.findMany({
+      where: {
+        archived: false,
+        members: {
+          some: {
+            id: {
+              not: "",
+            },
+          },
+        },
+      },
+      select: {
+        name: true,
+        schoolClass: true,
+        level: true,
+        icon: true,
+        members: {
+          select: {
+            id: true,
+            username: true,
+            xp: true,
+          },
+        },
+      },
+      orderBy: [{ level: "desc" }, { name: "asc" }],
+    });
+
+    return guild;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to get guild by user ID");
+      throw error;
+    }
+    logger.error("Error fetching guild by user ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching guild by user ID. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }

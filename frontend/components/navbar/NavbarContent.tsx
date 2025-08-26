@@ -13,7 +13,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { IconButton } from "@mui/material";
-import { AutoAwesome, Castle } from "@mui/icons-material";
+import { AutoAwesome, Castle, Groups } from "@mui/icons-material";
 import { signIn, signOut, useSession } from "@/lib/auth-client";
 
 export default function NavbarContent() {
@@ -48,6 +48,11 @@ export default function NavbarContent() {
       name: "Arena",
       href: "/arena",
       icon: <StadiumIcon />,
+    },
+    {
+      name: "Guild",
+      href: "/guild",
+      icon: <Groups />,
     },
     {
       name: "Dungeons",

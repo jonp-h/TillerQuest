@@ -113,14 +113,12 @@ function ProfileSettingsForm({
         elevation={2}
         className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
       >
-        <Paper variant="outlined" className="flex flex-col gap-3 p-5 w-full">
-          <Typography variant="h2" align="center">
-            {guild.name}
-          </Typography>
-          <Typography variant="h3" className="text-center" color="success">
-            Level {guild.level}
-          </Typography>
-        </Paper>
+        <Typography variant="h2" align="center">
+          {guild.name}
+        </Typography>
+        <Typography variant="h3" className="text-center" color="success">
+          Level {guild.level}
+        </Typography>
         <div className="flex gap-3">
           <TextField
             label="Guild Name"
@@ -165,7 +163,7 @@ function ProfileSettingsForm({
           <Typography variant="body1" className="text-center" color="warning">
             {fighting
               ? "Your guild is currently in a battle. Enter the dungeons to help your guild win!"
-              : "Your guild is not currently in a battle."}
+              : "Your guild is not currently in a battle. Level up the guild by winning battles!"}
           </Typography>
         </div>
         <Typography variant="h6" className="text-center" color="text.secondary">
