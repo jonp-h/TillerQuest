@@ -336,7 +336,7 @@ function BinaryJack({
             <div className="flex flex-col gap-3 bg-black/30 p-4 rounded-lg">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Enter target in binary (5 bits, 0-30):
+                  Enter target in binary (5 bits, 1-30):
                 </label>
                 <Input
                   type="text"

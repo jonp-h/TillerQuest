@@ -460,7 +460,7 @@ const wizard: Ability[] = [
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
-    xpGiven: 250,
+    xpGiven: 200,
     diceNotation: null,
     value: 4, // guild benefit
     parentAbility: "Greater-Essence-Transfer",
