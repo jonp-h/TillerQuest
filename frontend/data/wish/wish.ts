@@ -7,7 +7,7 @@ import {
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
-import { logger } from "better-auth";
+import { logger } from "@/lib/logger";
 
 export const getWishes = async () => {
   try {

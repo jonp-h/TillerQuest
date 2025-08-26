@@ -16,7 +16,7 @@ export default function ErrorPage({
       elevation={1}
     >
       <Image
-        src="/error.png"
+        src="/Error.png"
         alt="Error"
         width={300}
         height={300}
