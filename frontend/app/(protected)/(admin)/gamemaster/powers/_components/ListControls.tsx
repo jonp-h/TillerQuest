@@ -206,15 +206,21 @@ export default function ListControls({ users }: { users: User[] }) {
         <div className="flex justify-center py-3 gap-5">
           <Button
             variant="contained"
+            onClick={() => handleAdminAction("xp", 50)}
+          >
+            Coin (50)
+          </Button>
+          <Button
+            variant="contained"
             onClick={() => handleAdminAction("xp", 100)}
           >
             Coin (100)
           </Button>
           <Button
             variant="contained"
-            onClick={() => handleAdminAction("xp", 250)}
+            onClick={() => handleAdminAction("xp", 200)}
           >
-            Task (250)
+            Task (200)
           </Button>
           <Button
             variant="contained"

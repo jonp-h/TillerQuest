@@ -17,7 +17,7 @@ interface Ability {
   type: string;
   target: "Self" | "SingleTarget" | "All" | "Others";
   description: string;
-  duration: 60 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
+  duration: 60 | 180 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
   icon: string;
   gemstoneCost: 0 | 1 | 2 | 4;
   manaCost: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
@@ -907,7 +907,7 @@ const warlock: Ability[] = [
     target: "SingleTarget",
     description:
       "Lose 10 of your maximum health to grant 5 mana to a guild member. This ability can only be used once per day.",
-    duration: 960, // 16 hours
+    duration: 180, // 3 hours
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: null,

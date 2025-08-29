@@ -1,7 +1,6 @@
 "use client";
 import { Typography, Paper, Box, Avatar, Chip } from "@mui/material";
 import { $Enums } from "@prisma/client";
-import Image from "next/image";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
 
