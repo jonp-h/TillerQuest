@@ -334,17 +334,13 @@ export const sessionCleanup = async (db: PrismaTransaction) => {
 };
 
 export const resetUserTurns = async (db: PrismaTransaction) => {
-  const usersWithTurnFinished = await db.user.findMany({
-    where: {
-      turns: 0,
-    },
+  const users = await db.user.findMany({
     select: {
       id: true,
-      username: true,
       turns: true,
     },
   });
-  for (const user of usersWithTurnFinished) {
+  for (const user of users) {
     // Check if user has a TurnPassive and get its value
     const turnPassive = await db.userPassive.findMany({
       where: {
@@ -361,18 +357,21 @@ export const resetUserTurns = async (db: PrismaTransaction) => {
       if (turn.value) turnsToSet += turn.value;
     }
 
-    await db.user.update({
-      where: { id: user.id },
-      data: { turns: turnsToSet },
-    });
+    // if user has used any turns, recharge turns
+    if (user.turns < turnsToSet) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { turns: turnsToSet },
+      });
 
-    await db.log.create({
-      data: {
-        global: false,
-        userId: user.id,
-        message: `You have regained your strength and are now ready to enter the dungeon once again!`,
-      },
-    });
+      await db.log.create({
+        data: {
+          global: false,
+          userId: user.id,
+          message: `You have regained your strength and are now ready to enter the dungeon once again!`,
+        },
+      });
+    }
   }
 };
 
