@@ -196,3 +196,125 @@ export const updateGuildmembers = async (
     );
   }
 };
+
+export const adminUpdateGuildLeader = async (
+  guildName: string,
+  newLeaderId: string | null,
+) => {
+  try {
+    await validateAdminAuth();
+
+    // If a new leader is specified, verify they are a member of the guild
+    if (newLeaderId) {
+      const guild = await db.guild.findUnique({
+        where: { name: guildName },
+        select: {
+          members: {
+            select: { id: true },
+          },
+        },
+      });
+
+      if (!guild) {
+        throw new ErrorMessage("Guild not found.");
+      }
+
+      const isMember = guild.members.some(
+        (member) => member.id === newLeaderId,
+      );
+      if (!isMember) {
+        throw new ErrorMessage(
+          "The selected user is not a member of this guild.",
+        );
+      }
+    }
+
+    const updatedGuild = await db.guild.update({
+      where: {
+        name: guildName,
+      },
+      data: {
+        guildLeader: newLeaderId,
+      },
+    });
+
+    return updatedGuild;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to update guild leader");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error updating guild leader: " + error);
+    throw new Error(
+      "Something went wrong while updating the guild leader. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const adminUpdateNextGuildLeader = async (
+  guildName: string,
+  newNextLeaderId: string | null,
+) => {
+  try {
+    await validateAdminAuth();
+
+    // If a new next leader is specified, verify they are a member of the guild
+    if (newNextLeaderId) {
+      const guild = await db.guild.findUnique({
+        where: { name: guildName },
+        select: {
+          members: {
+            select: { id: true },
+          },
+        },
+      });
+
+      if (!guild) {
+        throw new ErrorMessage("Guild not found.");
+      }
+
+      const isMember = guild.members.some(
+        (member) => member.id === newNextLeaderId,
+      );
+      if (!isMember) {
+        throw new ErrorMessage(
+          "The selected user is not a member of this guild.",
+        );
+      }
+    }
+
+    const updatedGuild = await db.guild.update({
+      where: {
+        name: guildName,
+      },
+      data: {
+        nextGuildLeader: newNextLeaderId,
+      },
+    });
+
+    return updatedGuild;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized admin access attempt to update next guild leader",
+      );
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error updating next guild leader: " + error);
+    throw new Error(
+      "Something went wrong while updating the next guild leader. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};

@@ -23,6 +23,8 @@ export const getGuilds = async (archived: boolean) => {
         name: true,
         schoolClass: true,
         archived: true,
+        guildLeader: true,
+        nextGuildLeader: true,
         members: {
           select: {
             id: true,

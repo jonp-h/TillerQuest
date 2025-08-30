@@ -31,6 +31,8 @@ async function Guilds() {
           </Typography>
           <GuildForm
             guildName={guild.name}
+            guildLeader={guild.guildLeader}
+            nextGuildLeader={guild.nextGuildLeader}
             guildMembers={guild.members}
             archived={guild.archived}
             users={users}
@@ -47,6 +49,8 @@ async function Guilds() {
           </Typography>
           <GuildForm
             guildName={guild.name}
+            guildLeader={guild.guildLeader}
+            nextGuildLeader={guild.nextGuildLeader}
             guildMembers={guild.members}
             archived={guild.archived}
             users={users}
