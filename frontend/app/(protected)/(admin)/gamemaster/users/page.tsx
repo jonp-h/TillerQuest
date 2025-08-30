@@ -29,23 +29,6 @@ async function Users() {
       <Typography variant="h4" align="center">
         Manage Users
       </Typography>
-      <Typography variant="h6" align="center">
-        Write special statuses separated by space
-      </Typography>
-      <Typography
-        variant="body1"
-        align="center"
-        color="text.secondary"
-        gutterBottom
-      >
-        OPTIONS: {specialStatues?.map((status) => status.specialReq).join(", ")}
-      </Typography>
-      <Typography variant="h6" align="center">
-        Write player access separated by space
-      </Typography>
-      <Typography variant="body1" align="center" color="text.secondary">
-        {Object.values($Enums.Access).join(", ")}
-      </Typography>
       <div className="flex justify-center mt-2">
         <List sx={style}>
           {userInfo?.map((user) => (
@@ -59,6 +42,7 @@ async function Users() {
                 schoolClass={user.schoolClass}
                 username={user.username}
                 lastname={user.lastname}
+                specialStatuses={specialStatues}
               />
             </ListItem>
           ))}

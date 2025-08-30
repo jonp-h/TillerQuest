@@ -132,7 +132,6 @@ export const voteForWish = async (
     }
 
     if (error instanceof ErrorMessage) {
-      logger.warn("Error voting for wish: " + error.message);
       throw error;
     }
 

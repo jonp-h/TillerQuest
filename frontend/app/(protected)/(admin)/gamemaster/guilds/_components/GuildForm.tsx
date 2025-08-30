@@ -291,11 +291,11 @@ function GuildForm({
       />
       <div className="min-w-20 items-center text-center">
         <Switch
-          checked={guildArchived}
+          checked={!guildArchived}
           onChange={() => setGuildArchived(!guildArchived)}
         />
         <Typography variant="body2">
-          {guildArchived ? "Archived" : "Active"}
+          {!guildArchived ? "Active" : "Archived"}
         </Typography>
       </div>
       <DialogButton

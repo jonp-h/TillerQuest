@@ -12,8 +12,9 @@ import {
   MenuItem,
   Select,
   Typography,
+  Autocomplete,
 } from "@mui/material";
-import { UserRole } from "@prisma/client";
+import { UserRole, $Enums } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -28,6 +29,7 @@ function ManageUserForm(user: {
   lastname: string | null;
   schoolClass?: string | null;
   role: UserRole;
+  specialStatuses?: { specialReq: string | null }[];
 }) {
   const [special, setSpecial] = useState<string[]>(user.special);
   const [access, setAccess] = useState<string[]>(user.access);
@@ -37,6 +39,15 @@ function ManageUserForm(user: {
   const [lastname, setLastname] = useState<string | null>(user.lastname);
 
   const router = useRouter();
+
+  // Special options from the getSpecialStatuses query (shop items with specialReq)
+  const specialOptions =
+    user.specialStatuses
+      ?.map((status) => status.specialReq)
+      .filter((req): req is string => req !== null) || [];
+
+  // Access enum values from Prisma schema
+  const accessOptions = Object.values($Enums.Access);
 
   const handleChange = async () => {
     // Check if any of the values have changed
@@ -115,21 +126,56 @@ function ManageUserForm(user: {
         value={lastname}
         onChange={(e) => setLastname(e.target.value)}
       />
-      <TextField
-        variant="outlined"
-        label="Special"
-        sx={{ marginLeft: 2 }}
-        value={special.join(" ")}
-        onChange={(e) => setSpecial(e.target.value.split(" "))}
+      <Autocomplete
+        multiple
+        options={specialOptions}
+        value={special}
+        onChange={(event, newValue) => setSpecial(newValue)}
+        freeSolo
+        isOptionEqualToValue={(option, value) => option === value}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props;
+          return (
+            <li key={key} {...optionProps}>
+              {option}
+            </li>
+          );
+        }}
+        style={{ marginLeft: 16, minWidth: 200 }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Special"
+            placeholder="Select special statuses"
+          />
+        )}
       />
-      <TextField
-        variant="outlined"
-        label="Access"
-        sx={{ marginLeft: 2 }}
-        value={access.join(" ")}
-        onChange={(e) => setAccess(e.target.value.split(" "))}
+      <Autocomplete
+        multiple
+        options={accessOptions}
+        value={access}
+        onChange={(event, newValue) => setAccess(newValue)}
+        isOptionEqualToValue={(option, value) => option === value}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props;
+          return (
+            <li key={key} {...optionProps}>
+              {option}
+            </li>
+          );
+        }}
+        style={{ marginLeft: 16, minWidth: 200 }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Access"
+            placeholder="Select access permissions"
+          />
+        )}
       />
-      <FormControl sx={{ marginX: 1, minWidth: 80 }}>
+      <FormControl sx={{ marginLeft: 4, marginRight: 8, minWidth: 80 }}>
         <InputLabel>Role</InputLabel>
         <Select
           id="role"
