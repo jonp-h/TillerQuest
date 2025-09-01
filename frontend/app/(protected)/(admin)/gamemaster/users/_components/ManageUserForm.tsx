@@ -1,6 +1,7 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
 import {
+  adminResetSingleUser,
   adminUpdateUser,
   updateRole,
 } from "@/data/admin/adminUserInteractions";
@@ -101,6 +102,21 @@ function ManageUserForm(user: {
 
     router.refresh();
   };
+  const handleResetUser = async () => {
+    await toast.promise(adminResetSingleUser(user.id), {
+      pending: "Resetting user...",
+      success: "User " + user.name + " " + user.lastname + " reset",
+      error: {
+        render({ data }) {
+          return data instanceof Error
+            ? `${data.message}`
+            : "An error occurred while resetting the user.";
+        },
+      },
+    });
+
+    router.refresh();
+  };
 
   return (
     <>
@@ -186,30 +202,49 @@ function ManageUserForm(user: {
           sx={{ width: 130 }}
           label="Role"
         >
-          <MenuItem value={"NEW"}>NEW</MenuItem>
+          {/* Users should be reset instead of manually being set to NEW */}
+          <MenuItem value={"NEW"} disabled>
+            NEW
+          </MenuItem>
           <MenuItem value={"USER"}>USER</MenuItem>
           <MenuItem value={"ARCHIVED"}>ARCHIVED</MenuItem>
           <MenuItem value={"ADMIN"}>ADMIN</MenuItem>
         </Select>
       </FormControl>
-      <DialogButton
-        buttonText="Update"
-        dialogTitle={"Update user: " + user.name + " " + user.lastname}
-        dialogContent={"Are you sure you want to update this user?"}
-        agreeText="Update"
-        disagreeText="Cancel"
-        buttonVariant="contained"
-        dialogFunction={handleChange}
-      />
-      <Link
-        href={`/profile/${user.username}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Button variant="outlined" color="experience" sx={{ mx: 1 }}>
-          Profilepage
-        </Button>
-      </Link>
+      <div className="flex gap-2">
+        <DialogButton
+          buttonText="Update"
+          dialogTitle={"Update user: " + user.name + " " + user.lastname}
+          dialogContent={"Are you sure you want to update this user?"}
+          agreeText="Update"
+          disagreeText="Cancel"
+          buttonVariant="contained"
+          dialogFunction={handleChange}
+        />
+        <DialogButton
+          color="error"
+          buttonText="Reset"
+          dialogTitle={
+            "(DANGERZONE) Reset user: " + user.name + " " + user.lastname
+          }
+          dialogContent={
+            "(DANGERZONE) Are you sure you want to reset this user? This will force the user to re-enter their information and choose class/school class again. The user will also require a secret key and lose all their abilities/passives. Gemstones are refunded. Gold, shopitems, badges, and arenatokens are kept as is."
+          }
+          agreeText="(DANGER) Reset user to NEW"
+          disagreeText="Cancel"
+          buttonVariant="contained"
+          dialogFunction={handleResetUser}
+        />
+        <Link
+          href={`/profile/${user.username}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="outlined" color="experience">
+            Profilepage
+          </Button>
+        </Link>
+      </div>
     </>
   );
 }

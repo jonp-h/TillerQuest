@@ -320,3 +320,103 @@ export const updateRole = async (userId: string, role: UserRole) => {
     );
   }
 };
+
+export const adminResetSingleUser = async (userId: string) => {
+  try {
+    await validateAdminAuth();
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        mana: true,
+        abilities: {
+          select: {
+            id: true,
+            ability: {
+              select: {
+                gemstoneCost: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new ErrorMessage(`User not found.`);
+    }
+
+    // ------- The following can be made into a function ------
+
+    let totalGemstoneCost = 0;
+    for (const ability of user.abilities) {
+      totalGemstoneCost += ability.ability.gemstoneCost;
+    }
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        role: "NEW",
+        hp: 40,
+        hpMax: 40,
+        mana: Math.min(user.mana, 40),
+        manaMax: 40,
+        gemstones: {
+          increment: totalGemstoneCost,
+        },
+        class: null,
+        guildName: null,
+        games: {
+          deleteMany: {
+            userId: user.id,
+          },
+        },
+        logs: {
+          create: {
+            global: false,
+            message: `RESET: Your account has been reset. You have been refunded ${totalGemstoneCost} gemstones.`,
+          },
+        },
+        title: "Newborn",
+        titleRarity: "Common",
+        sessions: {
+          deleteMany: {
+            userId: user.id,
+          },
+        },
+        passives: {
+          deleteMany: {
+            userId: user.id,
+          },
+        },
+        access: {
+          set: [],
+        },
+        abilities: {
+          deleteMany: {
+            userId: user.id,
+          },
+        },
+      },
+    });
+
+    // ------------------------------
+
+    return "User successfully reset";
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized admin access attempt to reset single user");
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+    logger.error("Error in admin action for resetting single user:", error);
+    throw new Error(
+      "Failed to reset single user. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};

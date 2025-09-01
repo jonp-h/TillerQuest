@@ -71,7 +71,8 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else if (!correctLocation) {
       toast.error(
-        "But you feel no magic around you. You must be in the wrong place. Make sure location services are enabled.",
+        "But you feel no magic around you. You must be in the wrong place. Make sure location services are enabled and your browser REALLY knows where you are.",
+        { autoClose: false },
       );
       setLoading(false);
       return;
