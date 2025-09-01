@@ -387,7 +387,7 @@ export const getManaEfficiencyStats = async () => {
   }
 };
 
-export const getManaEfficiencyStatsMultiple = async () => {
+export const getAbilityEfficiencyStatsMultiple = async () => {
   try {
     await validateAdminAuth();
 
@@ -398,18 +398,19 @@ export const getManaEfficiencyStatsMultiple = async () => {
     const fourteenDaysAgo = new Date(today);
     fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-    // Get all mana efficiency data for the last 14 days
+    // Get all ability efficiency data for the last 14 days (both mana and health costs)
     const allStats = await db.analytics.findMany({
       where: {
         triggerType: "ability_use",
-        manaCost: { gt: 0 },
         xpChange: { gt: 0 },
         createdAt: { gte: fourteenDaysAgo },
+        OR: [{ manaCost: { gt: 0 } }, { healthCost: { gt: 0 } }],
       },
       select: {
         abilityId: true,
         createdAt: true,
         manaCost: true,
+        healthCost: true,
         xpChange: true,
         userClass: true,
         guildName: true,
@@ -440,6 +441,7 @@ export const getManaEfficiencyStatsMultiple = async () => {
         number,
         {
           totalMana: number;
+          totalHealth: number;
           totalXp: number;
           count: number;
           ability: { name: string; category: string };
@@ -447,27 +449,45 @@ export const getManaEfficiencyStatsMultiple = async () => {
       >();
       const byCategory = new Map<
         string,
-        { totalMana: number; totalXp: number; count: number }
+        {
+          totalMana: number;
+          totalHealth: number;
+          totalXp: number;
+          count: number;
+        }
       >();
       const byClass = new Map<
         string,
-        { totalMana: number; totalXp: number; count: number }
+        {
+          totalMana: number;
+          totalHealth: number;
+          totalXp: number;
+          count: number;
+        }
       >();
       const byGuild = new Map<
         string,
-        { totalMana: number; totalXp: number; count: number }
+        {
+          totalMana: number;
+          totalHealth: number;
+          totalXp: number;
+          count: number;
+        }
       >();
 
       let overallTotalMana = 0;
+      let overallTotalHealth = 0;
       let overallTotalXp = 0;
       let overallCount = 0;
 
       filteredStats.forEach((stat) => {
         const manaCost = stat.manaCost || 0;
+        const healthCost = stat.healthCost || 0;
         const xpChange = stat.xpChange || 0;
 
         // Overall totals
         overallTotalMana += manaCost;
+        overallTotalHealth += healthCost;
         overallTotalXp += xpChange;
         overallCount += 1;
 
@@ -476,6 +496,7 @@ export const getManaEfficiencyStatsMultiple = async () => {
         if (!byAbility.has(abilityId)) {
           byAbility.set(abilityId, {
             totalMana: 0,
+            totalHealth: 0,
             totalXp: 0,
             count: 0,
             ability: stat.ability ?? { name: "Unknown", category: "Unknown" },
@@ -483,81 +504,109 @@ export const getManaEfficiencyStatsMultiple = async () => {
         }
         const abilityStats = byAbility.get(abilityId)!;
         abilityStats.totalMana += manaCost;
+        abilityStats.totalHealth += healthCost;
         abilityStats.totalXp += xpChange;
         abilityStats.count += 1;
 
         // Group by category
         const category = stat.ability?.category || "Unknown";
         if (!byCategory.has(category)) {
-          byCategory.set(category, { totalMana: 0, totalXp: 0, count: 0 });
+          byCategory.set(category, {
+            totalMana: 0,
+            totalHealth: 0,
+            totalXp: 0,
+            count: 0,
+          });
         }
         const categoryStats = byCategory.get(category)!;
         categoryStats.totalMana += manaCost;
+        categoryStats.totalHealth += healthCost;
         categoryStats.totalXp += xpChange;
         categoryStats.count += 1;
 
         // Group by class
         const userClass = stat.userClass || stat.user?.class || "Unknown";
         if (!byClass.has(userClass)) {
-          byClass.set(userClass, { totalMana: 0, totalXp: 0, count: 0 });
+          byClass.set(userClass, {
+            totalMana: 0,
+            totalHealth: 0,
+            totalXp: 0,
+            count: 0,
+          });
         }
         const classStats = byClass.get(userClass)!;
         classStats.totalMana += manaCost;
+        classStats.totalHealth += healthCost;
         classStats.totalXp += xpChange;
         classStats.count += 1;
 
         // Group by guild
         const guildName = stat.guildName || stat.user?.guildName || "No Guild";
         if (!byGuild.has(guildName)) {
-          byGuild.set(guildName, { totalMana: 0, totalXp: 0, count: 0 });
+          byGuild.set(guildName, {
+            totalMana: 0,
+            totalHealth: 0,
+            totalXp: 0,
+            count: 0,
+          });
         }
         const guildStats = byGuild.get(guildName)!;
         guildStats.totalMana += manaCost;
+        guildStats.totalHealth += healthCost;
         guildStats.totalXp += xpChange;
         guildStats.count += 1;
       });
 
+      // Helper function to calculate efficiency metrics
+      const calculateEfficiency = (stats: {
+        totalMana: number;
+        totalHealth: number;
+        totalXp: number;
+        count: number;
+      }) => {
+        const totalResourceCost = stats.totalMana + stats.totalHealth;
+        return {
+          xpPerResource:
+            totalResourceCost > 0 ? stats.totalXp / totalResourceCost : 0,
+          xpPerMana: stats.totalMana > 0 ? stats.totalXp / stats.totalMana : 0,
+          xpPerHealth:
+            stats.totalHealth > 0 ? stats.totalXp / stats.totalHealth : 0,
+          avgResourceCost:
+            stats.count > 0 ? totalResourceCost / stats.count : 0,
+          avgManaCost: stats.count > 0 ? stats.totalMana / stats.count : 0,
+          avgHealthCost: stats.count > 0 ? stats.totalHealth / stats.count : 0,
+          avgXpGain: stats.count > 0 ? stats.totalXp / stats.count : 0,
+          usageCount: stats.count,
+        };
+      };
+
       return {
-        overall: {
-          xpPerMana: overallCount > 0 ? overallTotalXp / overallTotalMana : 0,
-          avgManaCost: overallCount > 0 ? overallTotalMana / overallCount : 0,
-          avgXpGain: overallCount > 0 ? overallTotalXp / overallCount : 0,
-          usageCount: overallCount,
-        },
+        overall: calculateEfficiency({
+          totalMana: overallTotalMana,
+          totalHealth: overallTotalHealth,
+          totalXp: overallTotalXp,
+          count: overallCount,
+        }),
         byAbility: Array.from(byAbility.entries()).map(
           ([abilityId, stats]) => ({
             abilityId,
             ability: stats.ability,
-            xpPerMana:
-              stats.totalMana > 0 ? stats.totalXp / stats.totalMana : 0,
-            avgManaCost: stats.count > 0 ? stats.totalMana / stats.count : 0,
-            avgXpGain: stats.count > 0 ? stats.totalXp / stats.count : 0,
-            usageCount: stats.count,
+            ...calculateEfficiency(stats),
           }),
         ),
         byCategory: Array.from(byCategory.entries()).map(
           ([category, stats]) => ({
             category,
-            xpPerMana:
-              stats.totalMana > 0 ? stats.totalXp / stats.totalMana : 0,
-            avgManaCost: stats.count > 0 ? stats.totalMana / stats.count : 0,
-            avgXpGain: stats.count > 0 ? stats.totalXp / stats.count : 0,
-            usageCount: stats.count,
+            ...calculateEfficiency(stats),
           }),
         ),
         byClass: Array.from(byClass.entries()).map(([className, stats]) => ({
           class: className,
-          xpPerMana: stats.totalMana > 0 ? stats.totalXp / stats.totalMana : 0,
-          avgManaCost: stats.count > 0 ? stats.totalMana / stats.count : 0,
-          avgXpGain: stats.count > 0 ? stats.totalXp / stats.count : 0,
-          usageCount: stats.count,
+          ...calculateEfficiency(stats),
         })),
         byGuild: Array.from(byGuild.entries()).map(([guildName, stats]) => ({
           guildName,
-          xpPerMana: stats.totalMana > 0 ? stats.totalXp / stats.totalMana : 0,
-          avgManaCost: stats.count > 0 ? stats.totalMana / stats.count : 0,
-          avgXpGain: stats.count > 0 ? stats.totalXp / stats.count : 0,
-          usageCount: stats.count,
+          ...calculateEfficiency(stats),
         })),
       };
     };
@@ -570,12 +619,14 @@ export const getManaEfficiencyStatsMultiple = async () => {
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
-        "Unauthorized access attempt to get mana efficiency stats multiple",
+        "Unauthorized access attempt to get ability efficiency stats multiple",
       );
       throw error;
     }
-    logger.error("Failed to get mana efficiency stats multiple:", error);
-    throw new Error("Failed to retrieve multiple mana efficiency statistics");
+    logger.error("Failed to get ability efficiency stats multiple:", error);
+    throw new Error(
+      "Failed to retrieve multiple ability efficiency statistics",
+    );
   }
 };
 

@@ -12,125 +12,192 @@ import {
 import { BarChart } from "@mui/x-charts/BarChart";
 
 type TimePeriod = "today" | "week" | "twoWeeks";
-type MetricType = "xpPerMana" | "avgManaCost" | "avgXpGain";
+type MetricType =
+  | "xpPerResource"
+  | "xpPerMana"
+  | "xpPerHealth"
+  | "avgResourceCost"
+  | "avgManaCost"
+  | "avgHealthCost"
+  | "avgXpGain";
 type GroupType = "overall" | "byAbility" | "byCategory" | "byClass" | "byGuild";
 
-interface ManaEfficiencyData {
+interface AbilityEfficiencyData {
   today: {
     overall: {
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     };
     byAbility: Array<{
       abilityId: number;
       ability: { name: string; category: string } | null;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byCategory: Array<{
       category: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byClass: Array<{
       class: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byGuild: Array<{
       guildName: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
   };
   week: {
     overall: {
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     };
     byAbility: Array<{
       abilityId: number;
       ability: { name: string; category: string } | null;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byCategory: Array<{
       category: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byClass: Array<{
       class: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byGuild: Array<{
       guildName: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
   };
   twoWeeks: {
     overall: {
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     };
     byAbility: Array<{
       abilityId: number;
       ability: { name: string; category: string } | null;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byCategory: Array<{
       category: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byClass: Array<{
       class: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
     byGuild: Array<{
       guildName: string;
+      xpPerResource: number;
       xpPerMana: number;
+      xpPerHealth: number;
+      avgResourceCost: number;
       avgManaCost: number;
+      avgHealthCost: number;
       avgXpGain: number;
       usageCount: number;
     }>;
   };
 }
 
-interface ManaEfficiencySelectorProps {
-  data: ManaEfficiencyData;
+interface AbilityEfficiencySelectorProps {
+  data: AbilityEfficiencyData;
 }
 
 const timePeriodOptions = [
@@ -140,8 +207,20 @@ const timePeriodOptions = [
 ];
 
 const metricOptions = [
-  { value: "xpPerMana", label: "XP per Mana", color: "#8b5cf6" },
-  { value: "avgManaCost", label: "Average Mana Cost", color: "#3b82f6" },
+  {
+    value: "xpPerResource",
+    label: "XP per Resource (Mana + Health)",
+    color: "#8b5cf6",
+  },
+  { value: "xpPerMana", label: "XP per Mana", color: "#3b82f6" },
+  { value: "xpPerHealth", label: "XP per Health", color: "#dc2626" },
+  {
+    value: "avgResourceCost",
+    label: "Average Resource Cost",
+    color: "#f59e0b",
+  },
+  { value: "avgManaCost", label: "Average Mana Cost", color: "#06b6d4" },
+  { value: "avgHealthCost", label: "Average Health Cost", color: "#ef4444" },
   { value: "avgXpGain", label: "Average XP Gain", color: "#10b981" },
 ];
 
@@ -155,9 +234,10 @@ const groupOptions = [
 
 export default function ManaEfficiencySelector({
   data,
-}: ManaEfficiencySelectorProps) {
+}: AbilityEfficiencySelectorProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>("week");
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>("xpPerMana");
+  const [selectedMetric, setSelectedMetric] =
+    useState<MetricType>("xpPerResource");
   const [selectedGroup, setSelectedGroup] = useState<GroupType>("byClass");
 
   const handlePeriodChange = (event: SelectChangeEvent) => {
@@ -183,6 +263,7 @@ export default function ManaEfficiencySelector({
       };
     } else if (selectedGroup === "byAbility") {
       const abilities = periodData.byAbility
+        .filter((a) => a[selectedMetric] > 0) // Filter out zero values for cleaner display
         .sort((a, b) => b[selectedMetric] - a[selectedMetric])
         .slice(0, 15); // Top 15 abilities
       return {
@@ -192,9 +273,9 @@ export default function ManaEfficiencySelector({
         ),
       };
     } else if (selectedGroup === "byCategory") {
-      const categories = periodData.byCategory.sort(
-        (a, b) => b[selectedMetric] - a[selectedMetric],
-      );
+      const categories = periodData.byCategory
+        .filter((c) => c[selectedMetric] > 0)
+        .sort((a, b) => b[selectedMetric] - a[selectedMetric]);
       return {
         xAxisData: categories.map((c) => c.category),
         seriesData: categories.map(
@@ -202,9 +283,9 @@ export default function ManaEfficiencySelector({
         ),
       };
     } else if (selectedGroup === "byClass") {
-      const classes = periodData.byClass.sort(
-        (a, b) => b[selectedMetric] - a[selectedMetric],
-      );
+      const classes = periodData.byClass
+        .filter((c) => c[selectedMetric] > 0)
+        .sort((a, b) => b[selectedMetric] - a[selectedMetric]);
       return {
         xAxisData: classes.map((c) => c.class),
         seriesData: classes.map(
@@ -212,9 +293,9 @@ export default function ManaEfficiencySelector({
         ),
       };
     } else {
-      const guilds = periodData.byGuild.sort(
-        (a, b) => b[selectedMetric] - a[selectedMetric],
-      );
+      const guilds = periodData.byGuild
+        .filter((g) => g[selectedMetric] > 0)
+        .sort((a, b) => b[selectedMetric] - a[selectedMetric]);
       return {
         xAxisData: guilds.map((g) => g.guildName),
         seriesData: guilds.map(
@@ -241,7 +322,7 @@ export default function ManaEfficiencySelector({
   return (
     <div className="w-full">
       <Typography variant="h6" align="center" gutterBottom>
-        Mana Efficiency Analytics
+        Ability Efficiency Analytics
       </Typography>
 
       <div className="flex gap-4 mb-4 justify-center">
@@ -261,7 +342,7 @@ export default function ManaEfficiencySelector({
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 150 }}>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel id="metric-select-label">Metric</InputLabel>
           <Select
             labelId="metric-select-label"
@@ -297,7 +378,7 @@ export default function ManaEfficiencySelector({
       <BarChart
         xAxis={[
           {
-            id: "manaEfficiencyCategories",
+            id: "abilityEfficiencyCategories",
             data: chartData.xAxisData,
           },
         ]}
