@@ -13,6 +13,7 @@ function EnemyComponent({
     guildName: string;
     icon: string;
     enemyId: number;
+    attack: number;
     health: number;
     maxHealth: number;
   };
@@ -22,8 +23,10 @@ function EnemyComponent({
   return (
     <div
       className={
-        "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-" +
-        animateSpeed
+        enemy.health > 0
+          ? "flex flex-col items-center justify-center pt-60 text-center cursor-pointer animate-move-up-down-" +
+            animateSpeed
+          : "flex flex-col items-center justify-center pt-60 text-center cursor-pointer mt-40"
       }
     >
       <div
@@ -45,9 +48,16 @@ function EnemyComponent({
           variant="determinate"
           value={(enemy.health / enemy.maxHealth) * 100}
         />
+        <Typography
+          variant="subtitle2"
+          color="textSecondary"
+          sx={{ marginBottom: -1, marginTop: 0 }}
+        >
+          Attack: {enemy.attack}
+        </Typography>
       </div>
       <Image
-        src={enemy.health <= 0 ? "/classes/Grave.png" : enemy.icon}
+        src={enemy.health <= 0 ? "/dungeons/death.png" : enemy.icon}
         alt="Enemy"
         width={200}
         height={200}

@@ -25,6 +25,7 @@ function Battleground({
         guildName: string;
         icon: string;
         enemyId: number;
+        attack: number;
         health: number;
         maxHealth: number;
       }[]

@@ -135,6 +135,7 @@ export const getEnemies = async (userId: string) => {
         icon: true,
         maxHealth: true,
         enemyId: true,
+        attack: true,
         guildName: true,
         health: true,
         name: true,
