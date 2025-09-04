@@ -219,7 +219,7 @@ const trickery: Ability[] = [
     type: "Trickery",
     target: "Self",
     description:
-      "Roll a d20. On a natural 20, today's event is rerolled. On a natural 1 you die. If you roll between a 11 - 19 you get some nice bouns mana. But if you roll between 2 - 9 you lose a nice chunk of HP. You may only use this ability once per day.",
+      "Roll a d20. On a natural 20, today's event is rerolled. On a natural 1 you die. If you roll between a 11 - 19 you get some nice bouns mana and 50 xp. But if you roll between 2 - 9 you lose a nice 10 HP. You may only use this ability once per day.",
     duration: 960, // 16 hours
     icon: "Twist-of-Fate.png",
     gemstoneCost: 2,
