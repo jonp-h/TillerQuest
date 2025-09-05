@@ -1204,7 +1204,7 @@ const useTwistOfFateAbility = async (
     castingUser.xp + 50;
   } if (dice.total >= 2 && dice.total <= 9) {
     message = "Whomp Whomp " + dice.total + ", too bad for you buddy!!";
-    castingUser.hp - 5;
+    castingUser.hp - 10;
     castingUser.xp - 200;
   } if (dice.total === 1) {
     message = "You rolled " + dice.total + ", time to die!!!!"
