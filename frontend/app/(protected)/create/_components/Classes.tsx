@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import clsx from "clsx";
-import { Tooltip, Zoom } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getGuildClasses } from "@/data/guilds/getGuilds";
 
