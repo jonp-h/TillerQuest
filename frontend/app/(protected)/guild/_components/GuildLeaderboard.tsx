@@ -3,6 +3,8 @@ import { Typography, Paper, Box, Avatar, Chip } from "@mui/material";
 import { $Enums } from "@prisma/client";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
+import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
+import Link from "next/link";
 
 function GuildLeaderboard({
   guilds,
@@ -12,6 +14,12 @@ function GuildLeaderboard({
     schoolClass: $Enums.SchoolClass | null;
     level: number;
     icon: string | null;
+    guildLeader: string | null;
+    members: {
+      id: string;
+      username: string | null;
+      xp: number;
+    }[];
   }[];
 }) {
   // Sort guilds by level in descending order
@@ -89,7 +97,7 @@ function GuildLeaderboard({
                 borderRadius: 2,
               }}
             >
-              <Box className="flex items-center justify-between">
+              <Box className="flex items-start justify-between">
                 <Box className="flex items-center gap-4">
                   {/* Rank */}
                   <Box className="flex items-center justify-center min-w-[40px]">
@@ -145,8 +153,82 @@ function GuildLeaderboard({
                   </Box>
                 </Box>
 
+                {/* Guild Members - Center Section */}
+                {guild.members.length > 0 && (
+                  <Box className="flex-1 mx-6 min-w-0">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: "0.75rem",
+                        mb: 1,
+                        color: position <= 3 ? "purple.200" : "text.secondary",
+                      }}
+                    >
+                      Members ({guild.members.length})
+                    </Typography>
+                    <Box className="flex flex-wrap gap-2">
+                      {guild.members
+                        .sort((a, b) => {
+                          // Sort guild leader first, then by XP
+                          if (guild.guildLeader === a.id) return -1;
+                          if (guild.guildLeader === b.id) return 1;
+                          return b.xp - a.xp;
+                        })
+                        .map((member) => (
+                          <Link
+                            key={member.id}
+                            href={`/profile/${member.username}`}
+                            className="no-underline"
+                          >
+                            <Chip
+                              label={
+                                <Box className="flex items-center gap-1">
+                                  <span>{member.username}</span>
+                                  {guild.guildLeader === member.id && (
+                                    <LocalPoliceIcon sx={{ fontSize: 14 }} />
+                                  )}
+                                </Box>
+                              }
+                              size="small"
+                              variant={
+                                guild.guildLeader === member.id
+                                  ? "filled"
+                                  : "outlined"
+                              }
+                              sx={{
+                                fontSize: "0.75rem",
+                                height: 24,
+                                cursor: "pointer",
+                                transition: "all 0.2s ease-in-out",
+                                "&:hover": {
+                                  backgroundColor:
+                                    position <= 3 ? "purple.700" : "purple.900",
+                                  borderColor: "purple.400",
+                                  transform: "translateY(-1px)",
+                                },
+                                backgroundColor:
+                                  guild.guildLeader === member.id
+                                    ? position <= 3
+                                      ? "purple.600"
+                                      : "purple.800"
+                                    : "transparent",
+                                borderColor:
+                                  position <= 3 ? "purple.300" : "grey.600",
+                                color: position <= 3 ? "white" : "text.primary",
+                                "& .MuiChip-label": {
+                                  px: 1,
+                                },
+                              }}
+                            />
+                          </Link>
+                        ))}
+                    </Box>
+                  </Box>
+                )}
+
                 {/* Level Display */}
-                <Box className="text-right">
+                <Box className="text-right flex-shrink-0">
                   <Typography
                     variant="body2"
                     color="text.secondary"

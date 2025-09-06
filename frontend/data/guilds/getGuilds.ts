@@ -279,6 +279,7 @@ export const getGuildLeaderboard = async () => {
       select: {
         name: true,
         schoolClass: true,
+        guildLeader: true,
         level: true,
         icon: true,
         members: {

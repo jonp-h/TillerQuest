@@ -8,7 +8,6 @@ interface Guild {
 
 const guilds: Guild[] = [
   {
-    id: 1,
     name: "Game Masters",
     archived: true,
     icon: "GM.png",
