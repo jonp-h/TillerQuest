@@ -3,6 +3,7 @@ import { RadioGroup, FormControlLabel, Radio, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 interface Guild {
+  id: number;
   name: string;
   memberCount: number;
 }
@@ -10,11 +11,11 @@ interface Guild {
 function ClassGuilds({
   userId,
   schoolClass,
-  setGuild,
+  setGuildId,
 }: {
   userId: string;
   schoolClass: string;
-  setGuild: (guild: string) => void;
+  setGuildId: (guild: number) => void;
 }) {
   const [guilds, setGuilds] = useState<Guild[]>([]);
 
@@ -31,10 +32,10 @@ function ClassGuilds({
     };
 
     fetchGuildNames();
-  }, [setGuild, userId, schoolClass]);
+  }, [setGuildId, userId, schoolClass]);
 
-  const handleClick = (guildName: string) => {
-    setGuild(guildName);
+  const handleClick = (guildId: number) => {
+    setGuildId(guildId);
   };
 
   if (!schoolClass) {
@@ -64,7 +65,7 @@ function ClassGuilds({
               guildWithCount.memberCount +
               " members)"
             }
-            onClick={() => handleClick(guildWithCount.name)}
+            onClick={() => handleClick(guildWithCount.id)}
           />
         ))}
       </RadioGroup>

@@ -29,8 +29,8 @@ export const validateUserCreation = async (id: string, data: any) => {
   // validate if the user guild has the same schoolclass
   const guildSchoolClass = await db.guild.findFirst({
     where: {
-      name: {
-        equals: validatedData.data.guild,
+      id: {
+        equals: validatedData.data.guildId,
       },
     },
     select: {
@@ -43,7 +43,7 @@ export const validateUserCreation = async (id: string, data: any) => {
   }
 
   // validate if the user guild is full
-  const guildCount = await getGuildmemberCount(id, validatedData.data.guild);
+  const guildCount = await getGuildmemberCount(id, validatedData.data.guildId);
   if (guildCount >= 5) {
     return "Guild is full";
   }
@@ -67,8 +67,8 @@ export const validateUserCreation = async (id: string, data: any) => {
   // validate if the guild already has a member with the chosen class
   const guildClasses = await db.guild.findFirst({
     where: {
-      name: {
-        equals: validatedData.data.guild,
+      id: {
+        equals: validatedData.data.guildId,
       },
     },
     select: {
@@ -107,7 +107,7 @@ export const validateUserCreation = async (id: string, data: any) => {
     name: capitalizeFullName(escapeHtml(validatedData.data.name)),
     lastname: capitalizeFullName(escapeHtml(validatedData.data.lastname)),
     playerClass: escapeHtml(validatedData.data.playerClass),
-    guild: escapeHtml(validatedData.data.guild),
+    guildId: validatedData.data.guildId,
     schoolClass: escapeHtml(validatedData.data.schoolClass),
     publicHighscore: validatedData.data.publicHighscore,
   };

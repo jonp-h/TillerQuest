@@ -40,7 +40,7 @@ export const newUserSchema = z.object({
     .max(20, "Lastname must be below 20 characters")
     .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
   playerClass: z.string(),
-  guild: z.string(),
+  guildId: z.number(),
   schoolClass: z.enum($Enums.SchoolClass, "Invalid school class"),
   publicHighscore: z.boolean(),
 });

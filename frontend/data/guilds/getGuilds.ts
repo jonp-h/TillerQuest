@@ -122,7 +122,9 @@ export const getGuildsAndMemberCountBySchoolClass = async (
         },
         archived: false,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
         _count: {
           select: {
             members: true,
@@ -137,11 +139,12 @@ export const getGuildsAndMemberCountBySchoolClass = async (
         },
       },
       orderBy: {
-        name: "asc",
+        id: "asc",
       },
     });
 
     const guildsWithMemberCount = guilds.map((guild) => ({
+      id: guild.id,
       name: guild.name,
       memberCount: guild.members.length,
     }));
@@ -161,16 +164,13 @@ export const getGuildsAndMemberCountBySchoolClass = async (
 };
 
 // get guild member count, excluding the current user
-export const getGuildmemberCount = async (
-  userId: string,
-  guildName: string,
-) => {
+export const getGuildmemberCount = async (userId: string, guildId: number) => {
   try {
     await validateUserIdAuth(userId);
 
     const guild = await db.guild.findFirst({
       where: {
-        name: guildName,
+        id: guildId,
       },
       include: {
         _count: {
@@ -191,16 +191,16 @@ export const getGuildmemberCount = async (
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
-        "Unauthorized access attempt to get guild member count for " +
-          guildName,
+        "Unauthorized access attempt to get guild member count for guildId: " +
+          guildId,
       );
       throw error;
     }
 
     if (error instanceof ErrorMessage) {
       logger.warn(
-        "Unauthorized access attempt to get guild member count for " +
-          guildName,
+        "Unauthorized access attempt to get guild member count for guildId: " +
+          guildId,
       );
       throw error;
     }
@@ -213,13 +213,13 @@ export const getGuildmemberCount = async (
 };
 
 // get guild member count, excluding the current user
-export const getGuildClasses = async (userId: string, guildName: string) => {
+export const getGuildClasses = async (userId: string, guildId: number) => {
   try {
     await validateUserIdAuth(userId);
 
     const guild = await db.guild.findFirst({
       where: {
-        name: guildName,
+        id: guildId,
       },
       select: {
         members: {
@@ -239,16 +239,16 @@ export const getGuildClasses = async (userId: string, guildName: string) => {
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
-        "Unauthorized access attempt to get guild taken classes for " +
-          guildName,
+        "Unauthorized access attempt to get guild taken classes for guildId: " +
+          guildId,
       );
       throw error;
     }
 
     if (error instanceof ErrorMessage) {
       logger.warn(
-        "Unauthorized access attempt to get guild taken classes for " +
-          guildName,
+        "Unauthorized access attempt to get guild taken classes for guildId: " +
+          guildId,
       );
       throw error;
     }

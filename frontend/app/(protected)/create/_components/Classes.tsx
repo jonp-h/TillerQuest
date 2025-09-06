@@ -132,7 +132,7 @@ interface ClassesProps {
   playerClass: string;
   setPlayerClass: (playerClass: string) => void;
   userId: string;
-  guild: string;
+  guildId: number;
   refreshTrigger: number;
 }
 
@@ -140,20 +140,20 @@ export default function Classes({
   playerClass,
   setPlayerClass,
   userId,
-  guild,
+  guildId,
   refreshTrigger,
 }: ClassesProps) {
   const [takenClasses, setTakenClasses] = useState<string[]>([]);
 
   useEffect(() => {
     async function fetchClasses() {
-      if (guild) {
-        const takenClasses = await getGuildClasses(userId, guild);
+      if (guildId) {
+        const takenClasses = await getGuildClasses(userId, guildId);
         setTakenClasses(takenClasses.map((member) => member.class as string));
       }
     }
     fetchClasses();
-  }, [guild, refreshTrigger, userId]);
+  }, [guildId, refreshTrigger, userId]);
 
   return (
     <main className="grid grid-cols-4 gap-7">
@@ -165,8 +165,7 @@ export default function Classes({
         return (
           <Tooltip
             key={className}
-            TransitionComponent={Zoom}
-            TransitionProps={{ timeout: 600 }}
+            slotProps={{ transition: { timeout: 600 } }}
             title={
               (isTaken
                 ? "A different guildmember has chosen this class. "

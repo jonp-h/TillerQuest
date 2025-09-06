@@ -20,7 +20,7 @@ interface UpdateUserProps {
   lastname: string;
   class: $Enums.Class;
   image: string;
-  guildName: string;
+  guildId: number;
   schoolClass: $Enums.SchoolClass;
   publicHighscore: boolean;
 }
@@ -41,7 +41,7 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
       name: data.name,
       lastname: data.lastname,
       playerClass: data.class,
-      guild: data.guildName,
+      guildId: data.guildId,
       schoolClass: data.schoolClass,
       publicHighscore: data.publicHighscore,
     };
@@ -54,14 +54,28 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
     }
 
     await db.$transaction(async (db) => {
-      const guildMemberCount = await db.user.count({
-        where: { guildName: validatedData.guild },
+      const guild = await db.guild.findFirst({
+        where: { id: validatedData.guildId },
+        select: {
+          _count: {
+            select: { members: true },
+          },
+          name: true,
+        },
       });
+
+      if (!guild) {
+        throw new ErrorMessage(
+          "Guild not found. Please refresh the page, and try again.",
+        );
+      }
+
+      const guildMemberCount = guild?._count.members || 0;
 
       // if the guild has no members, set the user as the guild leader
       if (guildMemberCount === 0) {
         await db.guild.update({
-          where: { name: validatedData.guild },
+          where: { id: validatedData.guildId },
           data: {
             guildLeader: id,
           },
@@ -69,7 +83,7 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
         // if the guild has one member, set the user as the next guild leader
       } else if (guildMemberCount === 1) {
         await db.guild.update({
-          where: { name: validatedData.guild },
+          where: { id: validatedData.guildId },
           data: {
             nextGuildLeader: id,
           },
@@ -85,7 +99,7 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
           lastname: validatedData.lastname,
           class: validatedData.playerClass.slice(0, -1) as $Enums.Class,
           image: validatedData.playerClass,
-          guildName: validatedData.guild,
+          guildName: guild?.name,
           schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
           publicHighscore: validatedData.publicHighscore,
           lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
@@ -96,11 +110,11 @@ export const updateUser = async (id: string, data: UpdateUserProps) => {
     return true;
   } catch (error) {
     if (error instanceof ErrorMessage) {
-      console.warn("Error updating user: " + error.message);
+      logger.warn("Error updating user: " + error.message);
       throw error;
     }
 
-    console.error("Error updating user: " + error);
+    logger.error("Error updating user: " + error);
 
     return false;
   }

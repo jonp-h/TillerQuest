@@ -38,7 +38,7 @@ export default function CreateUserForm({
   const [name, setName] = useState(data?.name || "");
   const [lastname, setLastname] = useState(data?.lastname || "");
   const [playerClass, setPlayerClass] = useState<string>("");
-  const [guild, setGuild] = useState("");
+  const [guildId, setGuildId] = useState(0);
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -70,7 +70,7 @@ export default function CreateUserForm({
       name,
       lastname,
       playerClass,
-      guild,
+      guildId,
       schoolClass,
       publicHighscore,
     };
@@ -98,7 +98,7 @@ export default function CreateUserForm({
         lastname: validatedData.lastname,
         class: validatedData.playerClass as $Enums.Class,
         image: validatedData.playerClass,
-        guildName: validatedData.guild,
+        guildId: validatedData.guildId,
         schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
         publicHighscore: validatedData.publicHighscore,
       });
@@ -171,14 +171,14 @@ export default function CreateUserForm({
         <ClassGuilds
           userId={data?.id || ""}
           schoolClass={schoolClass}
-          setGuild={setGuild}
+          setGuildId={setGuildId}
         />
         <Typography variant="h5">Choose player class</Typography>
         <Classes
           playerClass={playerClass}
           setPlayerClass={setPlayerClass}
           userId={data?.id || ""}
-          guild={guild}
+          guildId={guildId}
           refreshTrigger={refreshTrigger}
         />
         <Typography variant="body1">
