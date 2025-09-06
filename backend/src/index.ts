@@ -7,7 +7,6 @@ import {
   randomCosmic,
   removeCosmicPassivesAndAbilities,
   removeExpiredPassives,
-  resetGuildEnemies,
   removeOldLogs,
   removePassivesWithDecreasedValues,
   removePassivesWithIncreasedValues,
@@ -250,23 +249,23 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every weekday at 00:04 AM, removes the guilds enemy if it's dead.
-cron.schedule(
-  "04 0 * * 1-5",
-  async () => {
-    try {
-      await db.$transaction(async (db) => {
-        await resetGuildEnemies(db);
-      });
-      console.log("Removed dead guild enemies and updated guild levels.");
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  {
-    name: "resetSlainEnemies",
-  },
-);
+// // Schedule a job to run every weekday at 00:04 AM, removes the guilds enemy if it's dead.
+// cron.schedule(
+//   "04 0 * * 1-5",
+//   async () => {
+//     try {
+//       await db.$transaction(async (db) => {
+//         await resetGuildEnemies(db);
+//       });
+//       console.log("Removed dead guild enemies and updated guild levels.");
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   },
+//   {
+//     name: "resetSlainEnemies",
+//   },
+// );
 
 // Schedule a job to run every day before midnight to remove 14 day old logs
 cron.schedule(

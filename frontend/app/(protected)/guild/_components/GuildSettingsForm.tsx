@@ -1,5 +1,5 @@
 "use client";
-import { TextField, Typography, Paper } from "@mui/material";
+import { TextField, Typography, Paper, Button, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -8,7 +8,10 @@ import { $Enums } from "@prisma/client";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { validateGuildNameUpdate } from "@/data/validators/guildUpdateValidation";
 import { updateGuildname } from "@/data/guilds/updateGuilds";
-import { startGuildBattle } from "@/data/dungeons/dungeon";
+import {
+  startGuildBattle,
+  voteToStartNextBattle,
+} from "@/data/dungeons/dungeon";
 
 function ProfileSettingsForm({
   userId,
@@ -21,6 +24,7 @@ function ProfileSettingsForm({
     level: number;
     guildLeader: string | null;
     nextGuildLeader: string | null;
+    nextBattleVotes: string[];
     enemies: {
       name: string;
       health: number;
@@ -43,6 +47,8 @@ function ProfileSettingsForm({
 
   const fighting = guild.enemies && guild.enemies.length > 0;
 
+  const allEnemiesAreDefeated =
+    guild.enemies && guild.enemies.every((enemy) => enemy.health <= 0);
   const router = useRouter();
 
   const handleUpdate = async () => {
@@ -103,6 +109,31 @@ function ProfileSettingsForm({
       });
   };
 
+  const vote = async () => {
+    setLoading(true);
+
+    await toast
+      .promise(voteToStartNextBattle(userId), {
+        pending: "Voting...",
+        success: {
+          render: ({ data }) => {
+            return data;
+          },
+        },
+        error: {
+          render: ({ data }) => {
+            return data instanceof Error
+              ? data.message
+              : "Something went wrong";
+          },
+        },
+      })
+      .finally(() => {
+        setLoading(false);
+        router.refresh();
+      });
+  };
+
   return (
     <Paper
       elevation={4}
@@ -137,7 +168,7 @@ function ProfileSettingsForm({
           agreeText="Update"
           disagreeText="Cancel"
         />
-        <div className="text-center items-center">
+        <div className="text-center items-center flex flex-col gap-2">
           <Typography
             variant="h6"
             className="text-center"
@@ -145,10 +176,21 @@ function ProfileSettingsForm({
           >
             Guild Battle
           </Typography>
+          {allEnemiesAreDefeated && (
+            <Tooltip
+              title={`${guild.members.length - 1} votes required to start the next battle. Only the guild leader can start a battle.`}
+              placement="top"
+            >
+              <Button variant="outlined" onClick={vote}>
+                Vote to enter the next battle ({guild.nextBattleVotes.length} /{" "}
+                {guild.members.length} votes)
+              </Button>
+            </Tooltip>
+          )}
           {!fighting && (
             <DialogButton
-              buttonText="Start Fighting"
-              dialogTitle="Start Fighting"
+              buttonText="Start battle"
+              dialogTitle="Start battle"
               dialogContent={
                 "Are you sure you want to enter a battle? When you start fighting, you cannot stop until you defeat the enemy."
               }
@@ -161,9 +203,11 @@ function ProfileSettingsForm({
             />
           )}
           <Typography variant="body1" className="text-center" color="warning">
-            {fighting
-              ? "Your guild is currently in a battle. Enter the dungeons to help your guild win!"
-              : "Your guild is not currently in a battle. Level up the guild by winning battles!"}
+            {allEnemiesAreDefeated
+              ? "All enemies are defeated! A new battle can be started early if enough guildmembers agree to take the risk."
+              : fighting
+                ? "Your guild is currently in a battle. Enter the dungeons to help your guild win!"
+                : "Your guild is not currently in a battle. Level up the guild by winning battles!"}
           </Typography>
         </div>
         <Typography variant="h6" className="text-center" color="text.secondary">

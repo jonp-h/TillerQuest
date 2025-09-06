@@ -70,6 +70,7 @@ export const getGuildByUserId = async (userId: string) => {
         nextGuildLeader: true,
         level: true,
         icon: true,
+        nextBattleVotes: true,
         enemies: {
           select: {
             name: true,

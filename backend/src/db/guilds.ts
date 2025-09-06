@@ -1,4 +1,5 @@
 interface Guild {
+  id?: number; // optional, primary key is auto-incremented
   name: string;
   schoolClass?: string; // optional, used for guilds with specific classes
   archived?: boolean; // optional, used for guilds that are archived
@@ -7,9 +8,10 @@ interface Guild {
 
 const guilds: Guild[] = [
   {
+    id: 1,
     name: "Game Masters",
     archived: true,
-    icon: "GM",
+    icon: "GM.png",
   },
   {
     name: "No-name-1IM1-1",

@@ -205,9 +205,10 @@ model User {
   @@index([username])
 }
 
+// TODO: consider changing PK to id, instead of name
 model Guild {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
+  name        String       @id @unique
+  id          Int          @unique @default(autoincrement())
   icon        String?
   schoolClass SchoolClass?
   archived    Boolean      @default(false)
@@ -215,14 +216,14 @@ model Guild {
   guildLeader     String? // The userId of the guild leader
   nextGuildLeader String? // The userId of the next guild leader
 
-  level     Int @default(1)
-  skipVotes Int @default(0)
+  level           Int      @default(1)
+  nextBattleVotes String[] // userIds of users who voted to enter the next battle
 
   enemies   GuildEnemy[]
   members   User[]
   analytics Analytics[] // m-n relation to analytics. A guild can have many analytics records
 
-  @@index([name])
+  @@index([id])
 }
 
 model Ability {

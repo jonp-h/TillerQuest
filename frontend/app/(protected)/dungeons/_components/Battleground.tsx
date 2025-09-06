@@ -10,6 +10,8 @@ import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import TimeLeft from "@/components/TimeLeft";
+import { Button } from "@mui/material";
+import Link from "next/link";
 
 function Battleground({
   abilities,
@@ -113,11 +115,11 @@ function Battleground({
       >
         {enemies && enemies.length > 0 ? (
           enemies.every((enemy) => enemy.health <= 0) ? (
-            <div className="absolute z-10 flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
-              <p>
-                All enemies are slain. The dungeons are safe for now, but who
-                knows about tomorrow?
-              </p>
+            <div className="absolute z-10 flex flex-col text-center gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
+              <p>All enemies are slain. The dungeons are safe for now.</p>
+              <Link href="/guild">
+                <Button variant="text">Vote to venture further</Button>
+              </Link>
             </div>
           ) : (
             <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
@@ -157,32 +159,38 @@ function Battleground({
       </div>
       <div className="flex flex-col justify-center p-2">
         <div className="text-center text-white">
-          {userTurns.turns ? (
-            "You have " + userTurns.turns + " turns left"
-          ) : (
-            <div className="flex text-center justify-center gap-1">
-              <p>You must rest for </p>
-
-              <div className="text-red-500 text-5xl">
-                <TimeLeft
-                  endTime={new Date(new Date().setHours(24, 0, 0, 0))}
+          {abilities.some((ability) => ability.isDungeon) ? (
+            userTurns.turns ? (
+              <div>
+                <p>You have {userTurns.turns} turns left</p>
+                <AbilityGrid
+                  abilities={abilities}
+                  onAbilityRoll={rollAbility}
+                  disabled={
+                    thrown || userTurns.turns <= 0 || !selectedEnemy || !enemies
+                    // TODO: add a check for if the target is dead
+                  }
                 />
               </div>
-              <p>
-                before you can muster your strength enough to fight in the
-                dungeons again
-              </p>
-            </div>
+            ) : (
+              <div className="flex text-center justify-center gap-1">
+                <p>You must rest for </p>
+
+                <div className="text-red-500 text-5xl">
+                  <TimeLeft
+                    endTime={new Date(new Date().setHours(24, 0, 0, 0))}
+                  />
+                </div>
+                <p>
+                  before you can muster your strength enough to fight in the
+                  dungeons again
+                </p>
+              </div>
+            )
+          ) : (
+            <p>Buy dungeon abilities to fight in the dungeons</p>
           )}
         </div>
-        <AbilityGrid
-          abilities={abilities}
-          onAbilityRoll={rollAbility}
-          disabled={
-            thrown || userTurns.turns <= 0 || !selectedEnemy || !enemies
-            // TODO: add a check for if the target is dead
-          }
-        />
       </div>
     </>
   );

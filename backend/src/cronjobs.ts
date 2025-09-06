@@ -375,31 +375,6 @@ export const resetUserTurns = async (db: PrismaTransaction) => {
   }
 };
 
-export const resetGuildEnemies = async (db: PrismaTransaction) => {
-  const deadEnemies = await db.guildEnemy.findMany({
-    where: {
-      health: {
-        lte: 0,
-      },
-    },
-  });
-
-  for (const enemy of deadEnemies) {
-    await db.guild.update({
-      where: { name: enemy.guildName },
-      data: {
-        level: {
-          increment: 1, // Increment guild level by 1
-        },
-      },
-    });
-
-    await db.guildEnemy.delete({
-      where: { id: enemy.id },
-    });
-  }
-};
-
 export const randomCosmic = async (db: PrismaTransaction) => {
   try {
     // const now = new Date();

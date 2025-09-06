@@ -22,7 +22,7 @@ export const startGuildBattle = async (userId: string) => {
   try {
     return await db.$transaction(async (db) => {
       const guild = await db.guild.findFirst({
-        where: { guildLeader: userId },
+        where: { guildLeader: userId, members: { some: { id: userId } } },
       });
 
       if (!guild) {
@@ -80,6 +80,11 @@ export const startGuildBattle = async (userId: string) => {
         });
       }
 
+      await db.guild.update({
+        where: { name: guild.name },
+        data: { nextBattleVotes: [] }, // reset next battle votes after a battle is started
+      });
+
       await addLog(
         db,
         userId,
@@ -103,6 +108,79 @@ export const startGuildBattle = async (userId: string) => {
     logger.error("Error starting guild battle: " + error);
     throw new Error(
       "Something went wrong while starting the guild battle. Please inform a game master of this timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const voteToStartNextBattle = async (userId: string) => {
+  await validateUserIdAndActiveUserAuth(userId);
+
+  try {
+    return await db.$transaction(async (db) => {
+      const guild = await db.guild.findFirst({
+        where: { members: { some: { id: userId } } },
+        include: {
+          members: { select: { id: true } },
+          enemies: { select: { id: true } },
+        },
+      });
+
+      if (!guild) {
+        throw new ErrorMessage("Only guild members can vote.");
+      }
+
+      if (guild.nextBattleVotes.includes(userId)) {
+        throw new ErrorMessage("You have already voted.");
+      }
+
+      await db.guild.update({
+        where: { id: guild.id },
+        data: {
+          nextBattleVotes: [...guild.nextBattleVotes, userId],
+        },
+      });
+
+      if (
+        guild.nextBattleVotes.length + 1 >= guild.members.length - 1 &&
+        guild.enemies.length > 0
+      ) {
+        // +1 because the current vote isn't in the array yet
+        // -1 because the guild leader doesn't vote
+
+        // enable the guild leader to start the battle by removing all enemies
+        await db.guild.update({
+          where: { name: guild.name },
+          data: {
+            level: {
+              increment: 1, // Increment guild level by 1
+            },
+          },
+        });
+
+        await db.guildEnemy.deleteMany({
+          where: { guildName: guild.name },
+        });
+      }
+
+      return `Vote registered to start next battle!`;
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized vote attempt to start next guild battle for user: " +
+          userId,
+      );
+      throw error;
+    }
+
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+
+    logger.error("Error voting to start next guild battle: " + error);
+    throw new Error(
+      "Something went wrong while voting to start the next guild battle. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
     );
   }
