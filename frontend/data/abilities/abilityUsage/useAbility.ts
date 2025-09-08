@@ -1329,16 +1329,10 @@ async function rewardUsers(
       "VictoryGold",
     );
 
-    console.log("Gold multipler: ", goldMultipler);
-
     const goldToGive = Math.floor(rewards.gold * (1 + goldMultipler / 100));
-
-    console.log("Gold to give: ", goldToGive);
 
     const bonusMana = await getUserPassiveEffect(db, user.id, "VictoryMana");
     const manaToGive = await manaValidator(db, user.id, bonusMana);
-
-    console.log("Mana to give: ", manaToGive);
 
     await db.user.update({
       where: { id: user.id },
