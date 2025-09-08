@@ -233,7 +233,7 @@ cron.schedule(
 
 // Schedule a job to run every weekday morning at 00:03 AM, resets all users turn.
 cron.schedule(
-  "* * * * *",
+  "03 0 * * 1-5",
   async () => {
     try {
       await db.$transaction(async (db) => {
