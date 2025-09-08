@@ -3,18 +3,13 @@
 import { db } from "@/lib/db";
 import { addLog } from "../log/addLog";
 import { logger } from "@/lib/logger";
-import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
-import {
-  experienceAndLevelValidator,
-  goldValidator,
-} from "../validators/validators";
-import { Ability } from "@prisma/client";
 import {
   AuthorizationError,
   validateActiveUserAuth,
   validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
+import { damageValidator } from "../validators/validators";
 
 export const startGuildBattle = async (userId: string) => {
   await validateUserIdAndActiveUserAuth(userId);
@@ -84,6 +79,75 @@ export const startGuildBattle = async (userId: string) => {
         where: { name: guild.name },
         data: { nextBattleVotes: [] }, // reset next battle votes after a battle is started
       });
+
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const guildEnemies = await db.guildEnemy.findMany({
+        where: { health: { gt: 0 } },
+        select: {
+          guildName: true,
+          name: true,
+          attack: true,
+        },
+      });
+
+      // Sum attack per guild for analytics
+      const guildAttackTotals = guildEnemies.reduce<Record<string, number>>(
+        (acc, enemy) => {
+          acc[enemy.guildName] = (acc[enemy.guildName] || 0) + enemy.attack;
+          return acc;
+        },
+        {},
+      );
+
+      // Add sum to analytics
+      await Promise.all(
+        Object.entries(guildAttackTotals).map(([guildName, totalAttack]) =>
+          db.analytics.create({
+            data: {
+              triggerType: "dungeon_damage",
+              guildName,
+              value: totalAttack,
+            },
+          }),
+        ),
+      );
+
+      // Damage each user in the guilds with active enemies. Only target users who have been active today.
+      for (const enemy of guildEnemies) {
+        const users = await db.user.findMany({
+          where: {
+            guildName: enemy.guildName,
+            // TODO: consider removing manafetching safeguard
+            lastMana: { gte: startOfToday },
+          },
+          select: { id: true, username: true, hp: true, class: true },
+        });
+
+        await Promise.all(
+          users.map(async (user) => {
+            const damageToTake = await damageValidator(
+              db,
+              user.id,
+              user.hp,
+              enemy.attack,
+              user.class,
+            );
+            await db.user.update({
+              where: { id: user.id },
+              data: { hp: { decrement: damageToTake } },
+            });
+            await db.log.create({
+              data: {
+                global: false,
+                userId: user.id,
+                message: `${user.username} took ${damageToTake} damage when fighting alongside their guildmates in the dungeon.`,
+              },
+            });
+          }),
+        );
+      }
 
       await addLog(
         db,
@@ -262,178 +326,269 @@ export async function getUserTurns(userId: string) {
   }
 }
 
-export async function selectDungeonAbility(
-  userId: string,
-  ability: Ability,
-  targetEnemyId: string | null,
-) {
-  try {
-    await validateUserIdAndActiveUserAuth(userId);
+// export async function selectDungeonAbility(
+//   userId: string,
+//   ability: Ability,
+//   targetEnemyId: string | null,
+// ) {
+//   try {
+//     await validateUserIdAndActiveUserAuth(userId);
 
-    return await db.$transaction(async (db) => {
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          username: true,
-          hp: true,
-          guildName: true,
-          turns: true,
-        },
-      });
+//     const abilityName = ability.name;
 
-      if (!user || !user?.guildName || targetEnemyId === null) {
-        logger.error("Error when attempting to use dungeon ability: " + userId);
-        return { message: "Error when attempting to use dungeon ability" };
-      }
+//     return await db.$transaction(async (db) => {
+//       const user = await db.user.findUnique({
+//         where: { id: userId },
+//         select: {
+//           id: true,
+//           username: true,
+//           hp: true,
+//           guildName: true,
+//           turns: true,
+//         },
+//       });
 
-      if (user.hp <= 0) {
-        return { message: "You are dead." };
-      }
+//       if (!user || !user?.guildName || targetEnemyId === null) {
+//         logger.error("Error when attempting to use dungeon ability: " + userId);
+//         return { message: "Error when attempting to use dungeon ability" };
+//       }
 
-      if (user?.turns <= 0) {
-        return { message: "You have no turns left!" };
-      }
+//       if (user.hp <= 0) {
+//         return { message: "You are dead." };
+//       }
 
-      const userOwnsAbility = await db.userAbility.findFirst({
-        where: { userId: user.id, abilityName: ability.name },
-      });
+//       if (user?.turns <= 0) {
+//         return { message: "You have no turns left!" };
+//       }
 
-      if (!userOwnsAbility || !ability.diceNotation) {
-        return { message: "User doesn't own the ability" };
-      }
+//       const userOwnsAbility = await db.userAbility.findFirst({
+//         where: { userId: user.id, abilityName },
+//       });
 
-      const enemy = await db.guildEnemy.findFirst({
-        where: { id: targetEnemyId },
-        select: {
-          health: true,
-        },
-      });
+//       if (!userOwnsAbility) {
+//         return { message: "User doesn't own the ability" };
+//       }
 
-      if (!enemy || enemy?.health <= 0) {
-        return { message: "The enemy is already dead!" };
-      }
+//       const ability = await db.ability.findFirst({
+//         where: { name: abilityName },
+//       });
 
-      const diceResult = rollDice(ability?.diceNotation);
+//       if (!ability) {
+//         return { message: "Ability not found" };
+//       }
 
-      await addLog(
-        db,
-        userId,
-        `DUNGEON: ${user.username} finished their turn and rolled ${diceResult.total} damage.`,
-      );
+//       const enemy = await db.guildEnemy.findFirst({
+//         where: { id: targetEnemyId },
+//         select: {
+//           health: true,
+//         },
+//       });
 
-      await damageEnemy(targetEnemyId, diceResult.total);
+//       if (!enemy || enemy?.health <= 0) {
+//         return { message: "The enemy is already dead!" };
+//       }
 
-      await db.user.update({
-        where: { id: userId },
-        data: { turns: { decrement: 1 } },
-      });
+//       // some dungeon abilities cost mana
+//       if (ability?.manaCost) {
+//         const manaCost = await manaValidator(db, userId, ability.manaCost);
+//         await db.user.update({
+//           where: { id: userId },
+//           data: { mana: { decrement: manaCost } },
+//         });
+//       }
 
-      // TODO: considering adding analytics to inspect ability usage and effectiveness
+//       if (user.hp <= (ability.healthCost || 0)) {
+//         return {
+//           message: "Insufficient health. The cost is " + ability.healthCost,
+//         };
+//       }
 
-      return {
-        message: "Rolled " + diceResult.total + "!",
-        diceRoll:
-          "output" in diceResult
-            ? diceResult.output.split("[")[1].split("]")[0]
-            : "",
-      };
-    });
-  } catch (error) {
-    if (error instanceof AuthorizationError) {
-      logger.warn(
-        "Unauthorized access attempt to use dungeon ability: " + userId,
-      );
-      throw error;
-    }
+//       if (abilityName === "Slice-And-Dice") {
+//         // special case for Slice-And-Dice, which deals half of the enemy's current health as damage
 
-    logger.error("Error finishing up turn: " + error);
-    return (
-      "Something went wrong. Please inform a game master of this timestamp: " +
-      Date.now().toLocaleString("no-NO")
-    );
-  }
-}
+//         const cooldown = await db.userPassive.findFirst({
+//           where: {
+//             userId: user.id,
+//             abilityName: "Slice-And-Dice",
+//           },
+//         });
 
-//TODO: should be moved to lib. Named Roll or rollDice, depending on project availability
-const rollDice = (diceNotation: string) => {
-  const roll = new DiceRoll(diceNotation);
-  // @ts-expect-error - the package's export function is not typed correctly
-  return roll.export(exportFormats.OBJECT) as {
-    averageTotal: number;
-    maxTotal: number;
-    minTotal: number;
-    notation: string;
-    output: string;
-    // rolls: any[];
-    total: number;
-    type: string;
-  };
-};
+//         if (cooldown) {
+//           return {
+//             message:
+//               "Slice-And-Dice is on cooldown. Please wait before using it again.",
+//           };
+//         }
 
-async function damageEnemy(targetEnemyId: string, diceResult: number) {
-  return await db.$transaction(async (db) => {
-    const enemy = await db.guildEnemy.update({
-      where: {
-        id: targetEnemyId,
-      },
-      data: { health: { decrement: diceResult } },
-      select: {
-        health: true,
-        guildName: true,
-      },
-    });
+//         const damage = Math.floor(enemy.health / 2);
+//         await damageEnemy(targetEnemyId, damage);
 
-    // rewards are only given when the enemy is killed
-    if (enemy.health <= 0) {
-      await rewardUsers(targetEnemyId, enemy.guildName);
-    }
-  });
-}
+//         await addLog(
+//           db,
+//           userId,
+//           `DUNGEON: ${user.username} used Slice-And-Dice, dealing ${damage} damage.`,
+//         );
 
-async function rewardUsers(enemyId: string, guild: string) {
-  return await db.$transaction(async (db) => {
-    const users = await db.user.findMany({
-      where: {
-        guildName: guild,
-      },
-    });
-    const rewards = await db.guildEnemy.findFirst({
-      where: { id: enemyId },
-      select: {
-        name: true,
-        xp: true,
-        gold: true,
-        guildName: true,
-      },
-    });
+//         await db.user.update({
+//           where: { id: userId },
+//           data: { turns: { decrement: 1 } },
+//         });
 
-    if (!rewards) {
-      logger.error("No rewards found for enemy: " + enemyId);
-      return;
-    }
+//         return {
+//           message: `You used Slice-And-Dice, dealing ${damage} damage!`,
+//         };
+//       }
 
-    for (const user of users) {
-      await experienceAndLevelValidator(db, user, rewards.xp);
-      const goldToGive = await goldValidator(db, user.id, rewards?.gold);
-      await db.user.update({
-        where: { id: user.id },
-        data: { gold: { increment: goldToGive } },
-      });
-      await addLog(
-        db,
-        user.id,
-        `DUNGEON: ${rewards.name} has been slain, ${user.username} gained ${rewards.xp} XP and ${rewards.gold} gold.`,
-      );
-    }
+//       const critPassive = await getUserPassiveEffect(db, userId, "Crit");
 
-    await db.analytics.create({
-      data: {
-        triggerType: "dungeon_reward",
-        xpChange: rewards.xp,
-        goldChange: rewards.gold,
-        guildName: rewards.guildName,
-      },
-    });
-  });
-}
+//       if (!ability.diceNotation) {
+//         return { message: "An error occured while rolling the dice" };
+//       }
+
+//       const diceResult = rollDice(ability?.diceNotation);
+
+//       let damageResult = diceResult.total;
+//       if (critPassive > 0) {
+//         damageResult = diceResult.total * 2;
+//       }
+
+//       await addLog(
+//         db,
+//         userId,
+//         `DUNGEON: ${user.username} finished their turn and rolled ${damageResult} damage.`,
+//       );
+
+//       await damageEnemy(targetEnemyId, damageResult);
+
+//       await db.user.update({
+//         where: { id: userId },
+//         data: { turns: { decrement: 1 } },
+//       });
+
+//       // TODO: considering adding analytics to inspect ability usage and effectiveness
+
+//       return {
+//         message:
+//           critPassive > 0
+//             ? "Rolled " +
+//               diceResult.total +
+//               "! But with crit it turned into " +
+//               damageResult
+//             : "Rolled " + diceResult.total + "!",
+//         diceRoll:
+//           "output" in diceResult
+//             ? diceResult.output.split("[")[1].split("]")[0]
+//             : "",
+//       };
+//     });
+//   } catch (error) {
+//     if (error instanceof AuthorizationError) {
+//       logger.warn(
+//         "Unauthorized access attempt to use dungeon ability: " + userId,
+//       );
+//       throw error;
+//     }
+
+//     logger.error("Error finishing up turn: " + error);
+//     return (
+//       "Something went wrong. Please inform a game master of this timestamp: " +
+//       Date.now().toLocaleString("no-NO")
+//     );
+//   }
+// }
+
+// //TODO: should be moved to lib. Named Roll or rollDice, depending on project availability
+// const rollDice = (diceNotation: string) => {
+//   const roll = new DiceRoll(diceNotation);
+//   // @ts-expect-error - the package's export function is not typed correctly
+//   return roll.export(exportFormats.OBJECT) as {
+//     averageTotal: number;
+//     maxTotal: number;
+//     minTotal: number;
+//     notation: string;
+//     output: string;
+//     // rolls: any[];
+//     total: number;
+//     type: string;
+//   };
+// };
+
+// async function damageEnemy(targetEnemyId: string, diceResult: number) {
+//   return await db.$transaction(async (db) => {
+//     const enemy = await db.guildEnemy.update({
+//       where: {
+//         id: targetEnemyId,
+//       },
+//       data: { health: { decrement: diceResult } },
+//       select: {
+//         health: true,
+//         guildName: true,
+//       },
+//     });
+
+//     // rewards are only given when the enemy is killed
+//     if (enemy.health <= 0) {
+//       await rewardUsers(targetEnemyId, enemy.guildName);
+//     }
+//   });
+// }
+
+// async function rewardUsers(enemyId: string, guild: string) {
+//   return await db.$transaction(async (db) => {
+//     const users = await db.user.findMany({
+//       where: {
+//         guildName: guild,
+//       },
+//     });
+//     const rewards = await db.guildEnemy.findFirst({
+//       where: { id: enemyId },
+//       select: {
+//         name: true,
+//         xp: true,
+//         gold: true,
+//         guildName: true,
+//       },
+//     });
+
+//     if (!rewards) {
+//       logger.error("No rewards found for enemy: " + enemyId);
+//       return;
+//     }
+
+//     for (const user of users) {
+//       await experienceAndLevelValidator(db, user, rewards.xp);
+//       const goldMultipler = await getUserPassiveEffect(
+//         db,
+//         user.id,
+//         "VictoryGold",
+//       );
+
+//       const goldToGive = Math.floor(rewards.gold * (1 + goldMultipler / 100));
+
+//       const manaToGive = await getUserPassiveEffect(db, user.id, "VictoryMana");
+
+//       await db.user.update({
+//         where: { id: user.id },
+//         data: {
+//           gold: { increment: goldToGive },
+//           mana: { increment: manaToGive },
+//         },
+//       });
+
+//       await addLog(
+//         db,
+//         user.id,
+//         `DUNGEON: ${rewards.name} has been slain, ${user.username} gained ${rewards.xp} XP and ${rewards.gold} gold.`,
+//       );
+//     }
+
+//     await db.analytics.create({
+//       data: {
+//         triggerType: "dungeon_reward",
+//         xpChange: rewards.xp,
+//         goldChange: rewards.gold,
+//         guildName: rewards.guildName,
+//       },
+//     });
+//   });
+// }

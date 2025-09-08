@@ -31,6 +31,7 @@ enum Class {
   Barbarian
   Warlock
   Bard
+  Fighter
 }
 
 // Categories used for ability tabs and tree-grouping
@@ -57,6 +58,7 @@ enum AbilityCategory {
   Barbarian
   Warlock
   Bard
+  Fighter
 }
 
 // The ability-logic to be used
@@ -77,6 +79,8 @@ enum AbilityType {
   // Dungeons
   TurnPassive
   DungeonAttack
+  VictoryGold
+  VictoryMana
 
   // Passives
   Access
@@ -100,6 +104,7 @@ enum AbilityType {
   Adventurer
   Arena
   Turns
+  Crit
   GoldPassive
   IncreaseHealth
   DecreaseHealth

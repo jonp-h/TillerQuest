@@ -91,3 +91,87 @@ This should generally be considered to be a bit on the "evil side", to encourage
 ✅ **Cooperation Incentives**: Team abilities more cost-effective than selfish ones  
 ✅ **Extended Engagement**: 42 gemstones remaining for additional common trees  
 ✅ **Clean Tier Systems**: Easy-to-understand progression (1-2-4 gems, 25-50-100-200-400-600 XP)
+
+# TillerQuest Ability Efficiency Guidelines
+
+## 🎯 Core Efficiency Formula
+
+**Base Efficiency = XP Gained / Resource Cost**
+
+## ⚖️ Efficiency Modifiers
+
+### Duration Bonuses
+
+Abilities with duration get efficiency bonuses to account for extended value:
+
+- 60: 0.10, // 1 hour cooldown: -10% efficiency
+- 180: 0.15, // 3 hours: -15%
+- 240: 0.20, // 4 hours: -20%
+- 480: 0.25, // 8 hours: -25% (only used for postpone)
+- 960: 0.35, // 16 hours (daily): -35%
+- 1440: 0.40, // 24 hours: -40%
+- 2880: 0.50, // 48 hours: -50%
+- 7200: 0.60 // 5 days: -60%
+
+### Spam Penalties
+
+Abilities that can be used multiple times per day get penalties:
+
+- **No Restrictions**: -0% (baseline)
+- **Implied Daily Limit**: -20% efficiency
+- **Explicit Once Per Day**: -40% efficiency
+- **Multiple Day Cooldown**: -60% efficiency
+
+### Dice Notation Efficiency
+
+For abilities with dice rolls, use expected value:
+
+```typescript
+const diceEfficiency = {
+  "1d4": 2.5, // +0.5 efficiency bonus
+  "1d6": 3.5, // +1.0 efficiency bonus
+  "1d6+1": 4.5, // +1.5 efficiency bonus
+  "1d8": 4.5, // +1.5 efficiency bonus
+  "1d8+1": 5.5, // +2.0 efficiency bonus
+  "2d4": 5.0, // +2.0 efficiency bonus
+  "2d6": 7.0, // +3.0 efficiency bonus
+  "2d6+2": 9.0, // +4.0 efficiency bonus
+  "1d10": 5.5, // +2.5 efficiency bonus
+};
+```
+
+## 🎯 Target Efficiency Ranges
+
+### By Gemstone Cost
+
+- **1 Gemstone**: 8-15 efficiency
+- **2 Gemstone**: 12-20 efficiency
+- **4 Gemstone**: 18-30 efficiency
+
+### By Ability Type
+
+- **Basic Actions** (Heal, Mana, Damage): 10-18 efficiency
+- **Support Abilities** (Guild benefits): 15-25 efficiency
+- **Ultimate Abilities** (High cost, high impact): 20-35 efficiency
+- **Passive Abilities**: 25-40 efficiency (higher due to permanent benefit)
+
+## ⚠️ Balance Guidelines
+
+### Red Flags (Overpowered)
+
+- Efficiency > 35 for any ability
+- Efficiency > 25 for spammable abilities
+- Efficiency > 20 for 1-gemstone abilities
+
+### Yellow Flags (Review Needed)
+
+- Efficiency variance > 15 within same gemstone tier
+- Guild abilities with efficiency < 15
+- Ultimate abilities (4 gems) with efficiency < 20
+
+### Implementation Notes
+
+- Passive abilities should have null XP but high calculated efficiency
+- Cosmic abilities ignore efficiency rules (event-driven)
+- Dungeon abilities use different efficiency calculations (combat-focused)
+- Duration abilities with short cooldowns need careful balance review

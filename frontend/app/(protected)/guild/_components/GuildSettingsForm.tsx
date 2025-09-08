@@ -192,7 +192,7 @@ function ProfileSettingsForm({
               buttonText="Start battle"
               dialogTitle="Start battle"
               dialogContent={
-                "Are you sure you want to enter a battle? When you start fighting, you cannot stop until you defeat the enemy."
+                "Are you sure you want to enter a battle? All guildmembers will be attacked when starting a battle, and once every following day until the enemy has been defeated. When you start fighting, you cannot stop until you defeat the enemy."
               }
               dialogFunction={handleStartBattle}
               buttonVariant="contained"
@@ -204,10 +204,10 @@ function ProfileSettingsForm({
           )}
           <Typography variant="body1" className="text-center" color="warning">
             {allEnemiesAreDefeated
-              ? "All enemies are defeated! A new battle can be started early if enough guildmembers agree to take the risk."
+              ? "All enemies are defeated! A new battle can be started if enough guildmembers agree to take the risk. All guildmembers will be attacked when starting a battle, and once every following day until the enemy has been defeated. When you start fighting, you cannot stop until you defeat the enemy."
               : fighting
                 ? "Your guild is currently in a battle. Enter the dungeons to help your guild win!"
-                : "Your guild is not currently in a battle. Level up the guild by winning battles!"}
+                : "Your guild is not currently in a battle. Level up the guild by winning battles! All guildmembers will be attacked when starting a battle, and once every following day until the enemy has been defeated."}
           </Typography>
         </div>
         <Typography variant="h6" className="text-center" color="text.secondary">

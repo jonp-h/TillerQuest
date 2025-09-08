@@ -1,6 +1,6 @@
 "use server";
 
-import { $Enums, Ability, User } from "@prisma/client";
+import { $Enums, Ability, GuildEnemy, User } from "@prisma/client";
 import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
@@ -23,8 +23,8 @@ import { addAnalytics } from "@/data/analytics/analytics";
  * Selects and uses an ability for a user on a target user.
  *
  * @param user - The user who is using the ability.
- * @param targetUserId - The ID of the target user on whom the ability is being used.
- * @param ability - The ability being used.
+ * @param targetIds - The ID of the targets on whom the ability is being used.
+ * @param abilityName - The name of the ability being used.
  * @returns A promise that resolves to a string message indicating the result of the ability usage.
  *
  * @remarks
@@ -34,7 +34,7 @@ import { addAnalytics } from "@/data/analytics/analytics";
  */
 export const selectAbility = async (
   userId: string,
-  targetUsersIds: string[],
+  targetIds: string[],
   abilityName: string,
 ) => {
   try {
@@ -111,68 +111,33 @@ export const selectAbility = async (
         // ---------------------------- Passive abilities ----------------------------
         // TODO: make passives default in switch case
         case "IncreaseHealth":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "IncreaseMana":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "DecreaseHealth":
           return await useDecreaseHealthAbility(
             db,
             castingUser,
-            targetUsersIds[0],
+            targetIds[0],
             ability,
           );
 
         case "DailyMana": // gives daily mana to the target
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "ManaPassive": // gives extra mana to the target on every mana granting ability
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "Health":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "Experience":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "ArenaToken":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "Trickery":
           if (ability.name === "Evade") {
@@ -180,42 +145,17 @@ export const selectAbility = async (
           } else if (ability.name === "Twist-of-Fate") {
             return await useTwistOfFateAbility(db, castingUser, ability);
           }
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "Postpone":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         case "Experience":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
         case "ManaShield":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
         case "GoldPassive":
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
         case "TurnPassive":
           // TODO: considering moving this. Required to give immediate turns to the user
           await db.user.update({
@@ -228,89 +168,63 @@ export const selectAbility = async (
               },
             },
           });
-          return await activatePassive(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await activatePassive(db, castingUser, targetIds, ability);
         case "Access":
-          return await useAccessAbility(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await useAccessAbility(db, castingUser, targetIds, ability);
+        case "Crit":
+          return await useCritAbility(db, castingUser, targetIds, ability);
+        case "VictoryGold":
+          return await activatePassive(db, castingUser, targetIds, ability);
+        case "VictoryMana":
+          return await activatePassive(db, castingUser, targetIds, ability);
 
         // ---------------------------- Active abilities ----------------------------
 
         case "Heal": // heal the target
-          return await useHealAbility(db, castingUser, targetUsersIds, ability);
+          return await useHealAbility(db, castingUser, targetIds, ability);
 
         case "Revive": // revive a dead target without negative consequences
-          return await useReviveAbility(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await useReviveAbility(db, castingUser, targetIds, ability);
 
         case "Mana": // give mana to the target
-          return await useManaAbility(db, castingUser, targetUsersIds, ability);
+          return await useManaAbility(db, castingUser, targetIds, ability);
 
         case "Gold":
-          return await useGoldAbility(db, castingUser, targetUsersIds, ability);
+          return await useGoldAbility(db, castingUser, targetIds, ability);
 
         case "Transfer": // transfer a resource from one player to another player
-          return await useTransferAbility(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await useTransferAbility(db, castingUser, targetIds, ability);
 
         case "Swap": // swap a resource between two players
-          return await useSwapAbility(
-            db,
-            castingUser,
-            targetUsersIds[0],
-            ability,
-          );
+          return await useSwapAbility(db, castingUser, targetIds[0], ability);
 
         // TODO: validate to only target self?
         case "Trade": // converts a resource from one type to another
-          return await useTradeAbility(
-            db,
-            castingUser,
-            targetUsersIds[0],
-            ability,
-          );
+          return await useTradeAbility(db, castingUser, targetIds[0], ability);
 
         case "Protection": // shields a target from damage
           return await useProtectionAbility(
             db,
             castingUser,
-            targetUsersIds,
+            targetIds,
             ability,
           );
 
         case "Arena":
-          return await useArenaAbility(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await useArenaAbility(db, castingUser, targetIds, ability);
         case "Turns":
-          return await useTurnsAbility(
-            db,
-            castingUser,
-            targetUsersIds,
-            ability,
-          );
+          return await useTurnsAbility(db, castingUser, targetIds, ability);
 
         case "XP":
           return await useXPAbility(db, castingUser, ability);
+
+        case "DungeonAttack":
+          return await useDungeonAttackAbility(
+            db,
+            castingUser,
+            targetIds,
+            ability,
+          );
 
         default:
           throw new ErrorMessage("Unknown ability");
@@ -333,7 +247,7 @@ export const selectAbility = async (
         " by user " +
         userId +
         " on targets " +
-        targetUsersIds +
+        targetIds +
         ": " +
         error,
     );
@@ -1214,3 +1128,241 @@ const useTwistOfFateAbility = async (
     diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
   };
 };
+
+const useCritAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetUserIds: string[],
+  ability: Ability,
+) => {
+  const dice = getAbilityValue(ability);
+
+  let message = "";
+  if (dice.total === 20) {
+    message =
+      "You rolled a 20! All attacks in the dungeon will roll for double damage for the next hour!";
+    await activatePassive(db, castingUser, targetUserIds, ability);
+  } else {
+    message = "You rolled a " + dice.total + ". Better luck next time!";
+    await finalizeAbilityUsage(db, castingUser, ability);
+  }
+
+  await addLog(
+    db,
+    castingUser.id,
+    `${castingUser.username} used Critical Role, and rolled a ${dice.total}`,
+  );
+  return {
+    message,
+    diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+  };
+};
+
+// ----------------------------- DUNGEON ABILITIES -----------------------------
+
+const useDungeonAttackAbility = async (
+  db: PrismaTransaction,
+  castingUser: User,
+  targetIds: string[],
+  ability: Ability,
+) => {
+  if (castingUser?.turns <= 0) {
+    throw new ErrorMessage("You don't have any turns left!");
+  }
+
+  const enemies = await db.guildEnemy.findMany({
+    where: {
+      id: { in: targetIds },
+      guildName: castingUser.guildName || "",
+    },
+  });
+
+  if (
+    !enemies ||
+    (enemies.length == 1 &&
+      ability.target == "SingleTarget" &&
+      enemies[0].health <= 0)
+  ) {
+    throw new ErrorMessage("The enemy is already dead!");
+  }
+
+  await db.user.update({
+    where: { id: castingUser.id },
+    data: { turns: { decrement: 1 } },
+  });
+
+  let message = "";
+
+  // ---------- Special case for Slice-And-Dice, which deals half of the enemy's current health as damage --------
+  if (ability.name === "Slice-And-Dice") {
+    const cooldown = await db.userPassive.findFirst({
+      where: {
+        userId: castingUser.id,
+        abilityName: "Slice-And-Dice",
+      },
+    });
+
+    if (cooldown) {
+      throw new ErrorMessage(
+        "Slice-And-Dice is on cooldown. Please wait before using it again.",
+      );
+    }
+
+    const damage = Math.floor(enemies[0].health / 2);
+    await damageEnemies(db, [enemies[0]], damage);
+
+    await addLog(
+      db,
+      castingUser.id,
+      `DUNGEON: ${castingUser.username} used Slice-And-Dice, dealing ${damage} damage.`,
+    );
+
+    await addAnalytics(db, castingUser.id, "dungeon_attack", {
+      abilityId: ability.id,
+      hpChange: damage,
+      userClass: castingUser.class || "",
+      targetCount: targetIds.length,
+    });
+
+    await finalizeAbilityUsage(db, castingUser, ability);
+
+    return {
+      message: `You used Slice-And-Dice, dealing ${damage} damage!`,
+      DiceRoll: "",
+    };
+  }
+  // --------- normal case for other abilities --------
+  const value = getAbilityValue(ability);
+
+  const critPassive = await getUserPassiveEffect(db, castingUser.id, "Crit");
+
+  let damageResult = value.total;
+  if (critPassive > 0) {
+    damageResult = value.total * 2;
+  }
+
+  await damageEnemies(db, enemies, damageResult);
+
+  message =
+    critPassive > 0
+      ? "Rolled " +
+        value.total +
+        "! But with crit it turned into " +
+        damageResult
+      : "Rolled " + value.total + "!";
+
+  await addAnalytics(db, castingUser.id, "dungeon_attack", {
+    abilityId: ability.id,
+    hpChange: damageResult,
+    userClass: castingUser.class || "",
+    targetCount: targetIds.length,
+  });
+
+  await addLog(
+    db,
+    castingUser.id,
+    `DUNGEON: ${castingUser.username} finished their turn and rolled ${damageResult} damage.`,
+  );
+
+  await finalizeAbilityUsage(db, castingUser, ability);
+
+  return {
+    message,
+    diceRoll: "output" in value ? value.output.split("[")[1].split("]")[0] : "",
+  };
+};
+
+async function damageEnemies(
+  db: PrismaTransaction,
+  targetEnemies: GuildEnemy[],
+  diceResult: number,
+) {
+  for (const targetEnemy of targetEnemies) {
+    if (targetEnemy.health <= 0) {
+      // Enemy is already dead, skip damage and reward
+      continue;
+    }
+
+    const enemyAfter = await db.guildEnemy.update({
+      where: { id: targetEnemy.id },
+      data: { health: { decrement: diceResult } },
+      select: { health: true, guildName: true },
+    });
+
+    // Only reward users if the enemy was alive before and is now dead
+    if (targetEnemy.health > 0 && enemyAfter.health <= 0) {
+      await rewardUsers(db, targetEnemy.id, enemyAfter.guildName);
+    }
+  }
+}
+
+async function rewardUsers(
+  db: PrismaTransaction,
+  enemyId: string,
+  guild: string,
+) {
+  const users = await db.user.findMany({
+    where: {
+      guildName: guild,
+    },
+  });
+  const rewards = await db.guildEnemy.findFirst({
+    where: { id: enemyId },
+    select: {
+      name: true,
+      xp: true,
+      gold: true,
+      guildName: true,
+    },
+  });
+
+  if (!rewards) {
+    logger.error("No rewards found for enemy: " + enemyId);
+    return;
+  }
+
+  for (const user of users) {
+    await experienceAndLevelValidator(db, user, rewards.xp);
+    const goldMultipler = await getUserPassiveEffect(
+      db,
+      user.id,
+      "VictoryGold",
+    );
+
+    console.log("Gold multipler: ", goldMultipler);
+
+    const goldToGive = Math.floor(rewards.gold * (1 + goldMultipler / 100));
+
+    console.log("Gold to give: ", goldToGive);
+
+    const bonusMana = await getUserPassiveEffect(db, user.id, "VictoryMana");
+    const manaToGive = await manaValidator(db, user.id, bonusMana);
+
+    console.log("Mana to give: ", manaToGive);
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        gold: { increment: goldToGive },
+        mana: { increment: manaToGive },
+      },
+    });
+
+    await addLog(
+      db,
+      user.id,
+      bonusMana
+        ? `DUNGEON: ${rewards.name} has been slain. ${user.username} looted ${goldToGive} gold and gained ${manaToGive} mana.`
+        : `DUNGEON: ${rewards.name} has been slain. ${user.username} looted ${goldToGive} gold.`,
+    );
+  }
+
+  await db.analytics.create({
+    data: {
+      triggerType: "dungeon_reward",
+      xpChange: rewards.xp,
+      goldChange: rewards.gold,
+      guildName: rewards.guildName,
+    },
+  });
+}
