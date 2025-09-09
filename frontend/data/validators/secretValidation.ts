@@ -9,7 +9,7 @@ export const checkNewUserSecret = async (id: string, secret: string) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
+  // FIXME: edge function restriction fixed? logger might be usable?
   if (!session) {
     console.warn(
       "Unauthorized access attempt to check new user secret without session",

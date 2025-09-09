@@ -24,19 +24,14 @@ function DungeonsForm({ dungeonInfo }: DungeonsFormProps) {
   const router = useRouter();
 
   const handleDeleteEnemies = async () => {
-    await toast
-      .promise(adminDeleteGuildEnemies(dungeonInfo.name), {
-        pending: "Deleting enemies...",
-        success: {
-          render({ data }) {
-            return data;
-          },
-        },
-        error: "Failed to delete enemies.",
-      })
-      .finally(() => {
-        router.refresh();
-      });
+    const result = await adminDeleteGuildEnemies(dungeonInfo.name);
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
+    router.refresh();
   };
 
   return (

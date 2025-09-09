@@ -3,6 +3,7 @@
 import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
+import { ServerActionResult } from "@/types/serverActionResult";
 import { logger } from "better-auth";
 
 export const adminGetSystemMessages = async () => {
@@ -29,7 +30,7 @@ export const adminUpdateSystemMessage = async (
   id: number,
   title: string,
   content: string,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -50,29 +51,37 @@ export const adminUpdateSystemMessage = async (
       },
     });
 
-    return "System message updated successfully!";
+    return { success: true, data: "System message updated successfully!" };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to get system messages");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating system message:", error);
-    throw new Error(
-      "Failed to update system message. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to update system message. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
 export const adminCreateSystemMessage = async (
   title: string,
   content: string,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -83,28 +92,38 @@ export const adminCreateSystemMessage = async (
       },
     });
 
-    return "System message created successfully!";
+    return { success: true, data: "System message created successfully!" };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
         "Unauthorized admin access attempt to create system messages",
       );
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error creating system message:", error);
-    throw new Error(
-      "Failed to create system message. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to create system message. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const adminDeleteSystemMessage = async (id: number) => {
+export const adminDeleteSystemMessage = async (
+  id: number,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -112,24 +131,32 @@ export const adminDeleteSystemMessage = async (id: number) => {
       where: { id },
     });
 
-    return "System message deleted successfully!";
+    return { success: true, data: "System message deleted successfully!" };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
         "Unauthorized admin access attempt to delete system messages",
       );
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error deleting system message:", error);
-    throw new Error(
-      "Failed to delete system message. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to delete system message. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 

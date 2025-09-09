@@ -12,6 +12,7 @@ import { PrismaTransaction } from "@/types/prismaTransaction";
 import { addLog } from "../log/addLog";
 import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
@@ -20,7 +21,7 @@ export const resurrectUsers = async ({
 }: {
   userId: string;
   effect: string;
-}) => {
+}): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -82,22 +83,33 @@ export const resurrectUsers = async ({
           break;
       }
     });
-    return "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.";
+    return {
+      success: true,
+      data: "The resurrection was successful, but it took it's toll on the guild. All members of the guild have been damaged.",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized resurrection attempt by user: " + userId);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error resurrecting user" + error);
-    throw new Error(
-      "Something went wrong during resurrection. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong during resurrection. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 

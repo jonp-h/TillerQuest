@@ -55,83 +55,56 @@ function ProfileSettingsForm({
     setLoading(true);
     const validatedData = await validateGuildNameUpdate(userId, name);
 
-    // if the data is a string, it is an error message
-    if (typeof validatedData == "string") {
-      toast.error(validatedData);
+    if (!validatedData.success) {
+      toast.error(validatedData.error);
       setLoading(false);
       return;
     }
 
-    await toast
-      .promise(updateGuildname(userId, guild.name, validatedData.name), {
-        pending: "Updating guildname...",
-        success: {
-          render: ({ data }) => {
-            return data;
-          },
-        },
-        error: {
-          render: ({ data }) => {
-            return data instanceof Error
-              ? data.message
-              : "Something went wrong";
-          },
-        },
-      })
-      .finally(() => {
-        setLoading(false);
-        router.refresh();
-      });
+    const result = await updateGuildname(
+      userId,
+      guild.name,
+      validatedData.data,
+    );
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
+    setLoading(false);
+    router.refresh();
   };
 
   const handleStartBattle = async () => {
     setLoading(true);
 
-    await toast
-      .promise(startGuildBattle(userId), {
-        pending: "Starting battle...",
-        success: {
-          render: ({ data }) => {
-            return data;
-          },
-        },
-        error: {
-          render: ({ data }) => {
-            return data instanceof Error
-              ? data.message
-              : "Something went wrong";
-          },
-        },
-      })
-      .finally(() => {
-        setLoading(false);
-        router.refresh();
-      });
+    const result = await startGuildBattle(userId);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
+    setLoading(false);
+    router.refresh();
   };
 
   const vote = async () => {
     setLoading(true);
 
-    await toast
-      .promise(voteToStartNextBattle(userId), {
-        pending: "Voting...",
-        success: {
-          render: ({ data }) => {
-            return data;
-          },
-        },
-        error: {
-          render: ({ data }) => {
-            return data instanceof Error
-              ? data.message
-              : "Something went wrong";
-          },
-        },
-      })
-      .finally(() => {
-        setLoading(false);
-        router.refresh();
-      });
+    const result = await voteToStartNextBattle(userId);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
+    setLoading(false);
+    router.refresh();
   };
 
   return (

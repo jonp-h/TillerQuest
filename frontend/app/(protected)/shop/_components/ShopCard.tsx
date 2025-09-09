@@ -27,42 +27,26 @@ function ShopCard({
   const router = useRouter();
 
   const handlePurchase = async (itemId: number) => {
-    await toast.promise(purchaseItem(user.id, itemId), {
-      pending: "Processing purchase...",
-      success: {
-        render({ data }) {
-          return data.toString() as string;
-        },
-      },
-      error: {
-        render({ data }) {
-          if (data instanceof Error) {
-            return data.message;
-          }
-          return "An error occurred while purchasing the item.";
-        },
-      },
-    });
+    const result = await purchaseItem(user.id, itemId);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
 
   const handleEquip = async (itemId: number) => {
-    await toast.promise(equipItem(user.id, itemId), {
-      pending: "Equipping item...",
-      success: {
-        render({ data }) {
-          return data.toString() as string;
-        },
-      },
-      error: {
-        render({ data }) {
-          if (data instanceof Error) {
-            return data.message;
-          }
-          return "An error occurred while equipping the item.";
-        },
-      },
-    });
+    const result = await equipItem(user.id, itemId);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
 

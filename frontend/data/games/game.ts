@@ -15,8 +15,22 @@ import { $Enums, Game } from "@prisma/client";
 import { addAnalytics } from "../analytics/analytics";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
+import { ServerActionResult } from "@/types/serverActionResult";
 
-export const initializeGame = async (userId: string, gameName: string) => {
+export const initializeGame = async (
+  userId: string,
+  gameName: string,
+): Promise<
+  | {
+      success: true;
+      id: string;
+      gameName: string;
+    }
+  | {
+      success: false;
+      error: string;
+    }
+> => {
   try {
     await validateUserIdAndActiveUserAuth(userId);
 
@@ -55,23 +69,25 @@ export const initializeGame = async (userId: string, gameName: string) => {
         },
       });
 
-      return { id: game.id, gameName };
+      return { success: true, id: game.id, gameName };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to initialize game");
-      throw error;
+      return { success: false, error: error.message };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return { success: false, error: error.message };
     }
 
     logger.error("Error initializing game: " + error);
-    throw new Error(
-      "Error initializing game. Please inform a game master of this timestamp: " +
+    return {
+      success: false,
+      error:
+        "Error initializing game. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -183,7 +199,9 @@ export const updateGame = async (
   }
 };
 
-export const finishGame = async (gameId: string) => {
+export const finishGame = async (
+  gameId: string,
+): Promise<ServerActionResult<{ gold: number; message: string }>> => {
   try {
     const session = await validateActiveUserAuth();
 
@@ -261,23 +279,25 @@ export const finishGame = async (gameId: string) => {
         goldChange: gold,
       });
 
-      return { message, gold };
+      return { success: true, data: { message, gold } };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to finish game");
-      throw error;
+      return { success: false, error: error.message };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return { success: false, error: error.message };
     }
 
     logger.error("Error finishing up game: " + error);
-    throw new Error(
-      "Something went wrong. Please inform a game master of this timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 

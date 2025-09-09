@@ -28,45 +28,25 @@ function SystemMessageForm(message: {
       return;
     }
 
-    await toast.promise(adminUpdateSystemMessage(message.id, title, content), {
-      pending: "Updating message...",
-      success: {
-        render({ data }) {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while updating the message.";
-        },
-      },
-    });
+    const result = await adminUpdateSystemMessage(message.id, title, content);
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
 
   const handleDelete = async () => {
-    if (!title || !content) {
-      toast.error("Title and content cannot be empty.");
-      return;
+    const result = await adminDeleteSystemMessage(message.id);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
     }
 
-    await toast.promise(adminDeleteSystemMessage(message.id), {
-      pending: "Updating message...",
-      success: {
-        render({ data }) {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while updating the message.";
-        },
-      },
-    });
     router.refresh();
   };
 

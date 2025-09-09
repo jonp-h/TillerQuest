@@ -78,21 +78,13 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else {
       try {
-        await toast.promise(getDailyMana(user.id), {
-          pending: "Attuning to the surrounding magic...",
-          success: {
-            render({ data }) {
-              return data;
-            },
-          },
-          error: {
-            render({ data }) {
-              return data instanceof Error
-                ? data.message
-                : "Something went wrong while attuning to the magic.";
-            },
-          },
-        });
+        const result = await getDailyMana(user.id);
+
+        if (result.success) {
+          toast.success(result.data);
+        } else {
+          toast.error(result.error);
+        }
 
         setLoading(false);
         router.refresh();

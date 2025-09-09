@@ -59,61 +59,49 @@ function ManageUserForm(user: {
       lastname !== user.lastname ||
       access.join(" ") !== user.access.join(" ")
     ) {
-      await toast.promise(
-        adminUpdateUser(user.id, special, access, name, username, lastname),
-        {
-          pending: "Updating user...",
-          success: "User information updated",
-          error: {
-            render({ data }) {
-              return data instanceof Error
-                ? `${data.message}`
-                : "An error occurred while updating the user.";
-            },
-          },
-        },
+      const result = await adminUpdateUser(
+        user.id,
+        special,
+        access,
+        name,
+        username,
+        lastname,
       );
+
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     } else {
-      await toast.promise(adminUpdateUser(user.id, special), {
-        pending: "Updating user...",
-        success: "User special tags updated",
-        error: {
-          render({ data }) {
-            return data instanceof Error
-              ? `${data.message}`
-              : "An error occurred while updating the user.";
-          },
-        },
-      });
+      const result = await adminUpdateUser(user.id, special);
+
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     }
     if (role !== user.role) {
-      await toast.promise(updateRole(user.id, role), {
-        pending: "Updating user role...",
-        success: "User role updated",
-        error: {
-          render({ data }) {
-            return data instanceof Error
-              ? `${data.message}`
-              : "An error occurred while updating the user role.";
-          },
-        },
-      });
+      const result = await updateRole(user.id, role);
+
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     }
 
     router.refresh();
   };
   const handleResetUser = async () => {
-    await toast.promise(adminResetSingleUser(user.id), {
-      pending: "Resetting user...",
-      success: "User " + user.name + " " + user.lastname + " reset",
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while resetting the user.";
-        },
-      },
-    });
+    const result = await adminResetSingleUser(user.id);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
 
     router.refresh();
   };

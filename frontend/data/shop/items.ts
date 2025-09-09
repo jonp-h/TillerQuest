@@ -8,6 +8,7 @@ import {
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 export const getShopTitles = async () => {
   try {
@@ -75,7 +76,10 @@ export const getShopObjects = async () => {
   }
 };
 
-export const purchaseItem = async (userId: string, itemId: number) => {
+export const purchaseItem = async (
+  userId: string,
+  itemId: number,
+): Promise<ServerActionResult> => {
   try {
     await validateUserIdAndActiveUserAuth(userId);
 
@@ -130,26 +134,34 @@ export const purchaseItem = async (userId: string, itemId: number) => {
       },
     });
 
-    return "Sucessfully bought " + item.name;
+    return { success: true, data: "Sucessfully bought " + item.name };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access to purchase item: " + error);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return { success: false, error: error.message };
     }
 
     logger.error("Error purchasing item: " + error);
-    throw new Error(
-      "Something went wrong. Please inform a game master of the following timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Please inform a game master of the following timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const equipItem = async (userId: string, itemId: number) => {
+export const equipItem = async (
+  userId: string,
+  itemId: number,
+): Promise<ServerActionResult> => {
   try {
     validateUserIdAndActiveUserAuth(userId);
 
@@ -179,21 +191,29 @@ export const equipItem = async (userId: string, itemId: number) => {
         titleRarity: item.rarity,
       },
     });
-    return "Sucessfully equipped " + item.name;
+    return { success: true, data: "Sucessfully equipped " + item.name };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access to equip item: " + error);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error equipping item: " + error);
-    throw new Error(
-      "Something went wrong while equipping item. Please inform a game master of the following timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while equipping item. Please inform a game master of the following timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

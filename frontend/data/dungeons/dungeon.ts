@@ -10,8 +10,11 @@ import {
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 import { damageValidator } from "../validators/validators";
+import { ServerActionResult } from "@/types/serverActionResult";
 
-export const startGuildBattle = async (userId: string) => {
+export const startGuildBattle = async (
+  userId: string,
+): Promise<ServerActionResult> => {
   await validateUserIdAndActiveUserAuth(userId);
 
   try {
@@ -155,29 +158,42 @@ export const startGuildBattle = async (userId: string) => {
         `DUNGEON: ${guild.name} has started a guild battle against ${enemy.name}.`,
       );
 
-      return `Battle started against ${enemy.name}!`;
+      return {
+        success: true,
+        data: `Battle started against ${enemy.name}!`,
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
         "Unauthorized access attempt to start guild battle for user: " + userId,
       );
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error starting guild battle: " + error);
-    throw new Error(
-      "Something went wrong while starting the guild battle. Please inform a game master of this timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while starting the guild battle. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const voteToStartNextBattle = async (userId: string) => {
+export const voteToStartNextBattle = async (
+  userId: string,
+): Promise<ServerActionResult> => {
   await validateUserIdAndActiveUserAuth(userId);
 
   try {
@@ -227,7 +243,10 @@ export const voteToStartNextBattle = async (userId: string) => {
         });
       }
 
-      return `Vote registered to start next battle!`;
+      return {
+        success: true,
+        data: `Vote registered to start next battle!`,
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
@@ -235,18 +254,26 @@ export const voteToStartNextBattle = async (userId: string) => {
         "Unauthorized vote attempt to start next guild battle for user: " +
           userId,
       );
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error voting to start next guild battle: " + error);
-    throw new Error(
-      "Something went wrong while voting to start the next guild battle. Please inform a game master of this timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while voting to start the next guild battle. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 

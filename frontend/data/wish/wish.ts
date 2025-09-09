@@ -8,6 +8,7 @@ import {
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 export const getWishes = async () => {
   try {
@@ -50,7 +51,7 @@ export const voteForWish = async (
   userId: string,
   amount: number,
   anonymous: boolean = false,
-) => {
+): Promise<ServerActionResult> => {
   try {
     const {
       user: { username },
@@ -124,21 +125,37 @@ export const voteForWish = async (
       },
     });
 
-    return "You successfully threw " + amount + " gold into the well!";
+    return {
+      success: true,
+      data:
+        "You threw " +
+        amount +
+        " gold into the well! Hoping that " +
+        wish.name +
+        " might come true one day..",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to vote for wish: " + error);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error voting for wish: " + error);
-    throw new Error(
-      "Something went wrong while voting for the wish. Please inform a game master of the following timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while voting for the wish. Please inform a game master of the following timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

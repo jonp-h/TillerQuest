@@ -134,6 +134,7 @@ export default function CreateUserForm({
           onChange={(e) => setUsername(e.target.value)}
           size="small"
           required
+          helperText="This will be your public username. Must be unique."
         />
         <Typography variant="body1">Enter Name</Typography>
         <TextField
@@ -143,7 +144,13 @@ export default function CreateUserForm({
           defaultValue={name}
           size="small"
           required
-          helperText="Enter your given name"
+          helperText={
+            <p>
+              Enter your given name so that the
+              <br />
+              game masters can identify who you are
+            </p>
+          }
         />
         <Typography variant="body1">Enter Lastname</Typography>
         <TextField

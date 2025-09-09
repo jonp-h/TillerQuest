@@ -6,6 +6,7 @@ import {
   validateUserIdAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { ServerActionResult } from "@/types/serverActionResult";
 import { logger } from "better-auth";
 
 export const adminGetApplicationSettings = async (userId: string) => {
@@ -35,7 +36,7 @@ export const adminGetApplicationSettings = async (userId: string) => {
 export const adminUpdateApplicationSettings = async (
   userId: string,
   setting: { key: string; value: string },
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
     await validateUserIdAuth(userId);
@@ -49,19 +50,27 @@ export const adminUpdateApplicationSettings = async (
       },
     });
 
-    return "Successfully updated application setting: " + setting.key;
+    return {
+      success: true,
+      data: "Successfully updated application setting: " + setting.key,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
         "Unauthorized admin access attempt to update application settings info",
       );
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating application settings info", error);
-    throw new Error(
-      "Failed to fetch application settings info. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to fetch application settings info. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

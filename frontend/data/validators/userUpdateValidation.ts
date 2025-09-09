@@ -20,8 +20,6 @@ export const validateUserCreation = async (id: string, data: any) => {
   const validatedData = newUserSchema.safeParse(data);
 
   if (!validatedData.success) {
-    console.log(prettifyError(validatedData.error));
-
     return prettifyError(validatedData.error);
   }
 
@@ -44,7 +42,7 @@ export const validateUserCreation = async (id: string, data: any) => {
 
   // validate if the user guild is full
   const guildCount = await getGuildmemberCount(id, validatedData.data.guildId);
-  if (guildCount >= 5) {
+  if (guildCount >= 6) {
     return "Guild is full";
   }
 

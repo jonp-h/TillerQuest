@@ -18,6 +18,7 @@ import {
   validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { addAnalytics } from "@/data/analytics/analytics";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -36,7 +37,7 @@ export const selectAbility = async (
   userId: string,
   targetIds: string[],
   abilityName: string,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   try {
     await validateUserIdAndActiveUserAuth(userId);
 
@@ -234,12 +235,18 @@ export const selectAbility = async (
     // if the error is an instance of AuthError, it means the user does not have the required permissions
     if (error instanceof AuthorizationError) {
       logger.warn(`Auth violation: ${error.message}`);
-      return error.userMessage || "Access denied";
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     // if the error is an instance of ErrorMessage, the message can be returned directly
     if (error instanceof ErrorMessage) {
-      return error.message;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
     logger.error(
       "Error using " +
@@ -251,12 +258,14 @@ export const selectAbility = async (
         ": " +
         error,
     );
-    return (
-      "Something went wrong using " +
-      abilityName +
-      ". Please notify a game master of this timestamp: " +
-      new Date().toLocaleString("no-NO")
-    );
+    return {
+      success: false,
+      error:
+        "Something went wrong using " +
+        abilityName +
+        ". Please notify a game master of this timestamp: " +
+        new Date().toLocaleString("no-NO"),
+    };
   }
 };
 
@@ -312,7 +321,7 @@ const activatePassive = async (
   castingUser: User,
   targetUsersIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(
@@ -411,17 +420,20 @@ const activatePassive = async (
   );
   await finalizeAbilityUsage(db, castingUser, ability);
   return {
-    message: ability.diceNotation
-      ? "You rolled " +
-        abilityValue.total +
-        ". " +
-        ability.name.replace(/-/g, " ") +
-        " activated!"
-      : "Activated " + ability.name.replace(/-/g, " ") + "!",
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: ability.diceNotation
+        ? "You rolled " +
+          abilityValue.total +
+          ". " +
+          ability.name.replace(/-/g, " ") +
+          " activated!"
+        : "Activated " + ability.name.replace(/-/g, " ") + "!",
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -474,7 +486,7 @@ const useAccessAbility = async (
   castingUser: User,
   targetUsersIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       // validate access
@@ -509,8 +521,11 @@ const useAccessAbility = async (
 
   await activatePassive(db, castingUser, targetUsersIds, ability);
   return {
-    message: "Granted access to " + ability.name.replace(/-/g, " ") + "!",
-    diceRoll: "",
+    success: true,
+    data: {
+      message: "Granted access to " + ability.name.replace(/-/g, " ") + "!",
+      diceRoll: "",
+    },
   };
 };
 
@@ -520,7 +535,7 @@ const useHealAbility = async (
   castingUser: User,
   targetUsersIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(
@@ -572,11 +587,14 @@ const useHealAbility = async (
   );
 
   return {
-    message: "Healed " + abilityValue.total + " successfully",
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: "Healed " + abilityValue.total + " successfully",
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -585,7 +603,7 @@ const useReviveAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const targetUser = await db.user.findUnique({
     where: {
       id: targetUserIds[0],
@@ -619,8 +637,11 @@ const useReviveAbility = async (
   );
   await finalizeAbilityUsage(db, castingUser, ability);
   return {
-    message: "Successfully revived the target without negative consequences",
-    diceRoll: "",
+    success: true,
+    data: {
+      message: "Successfully revived the target without negative consequences",
+      diceRoll: "",
+    },
   };
 };
 
@@ -629,7 +650,7 @@ const useManaAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(
@@ -670,11 +691,14 @@ const useManaAbility = async (
 
   await finalizeAbilityUsage(db, castingUser, ability);
   return {
-    message: "Gave " + abilityValue.total + " mana",
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: "Gave " + abilityValue.total + " mana",
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -683,7 +707,7 @@ const useTransferAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
   // if the ability costs health, the ability trades health. Otherwise, it trades mana
   const fieldToUpdate = ability.healthCost ? "hp" : "mana";
@@ -736,11 +760,14 @@ const useTransferAbility = async (
   );
 
   return {
-    message: "Target given " + abilityValue.total + " " + fieldToUpdate,
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: "Target given " + abilityValue.total + " " + fieldToUpdate,
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -749,7 +776,7 @@ const useSwapAbility = async (
   castingUser: User,
   targetUserId: string,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const targetUser = await db.user.findUnique({
     where: {
       id: targetUserId,
@@ -805,7 +832,13 @@ const useSwapAbility = async (
     `User ${castingUser.username} used ability ${ability.name} on user ${targetUserId} and gained ${ability.xpGiven} XP`,
   );
 
-  return { message: "You swapped health with the target", diceRoll: "" };
+  return {
+    success: true,
+    data: {
+      message: "You swapped health with the target",
+      diceRoll: "",
+    },
+  };
 };
 
 const useTradeAbility = async (
@@ -813,7 +846,7 @@ const useTradeAbility = async (
   castingUser: User,
   targetUserId: string,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   // TODO: At the moment the trade ability is only used to trade health to mana
   const manaValue = await manaValidator(db, targetUserId, ability.value!);
 
@@ -838,13 +871,16 @@ const useTradeAbility = async (
   );
 
   return {
-    message:
-      "You traded " +
-      ability.healthCost +
-      " , and the target recieved " +
-      manaValue +
-      " mana",
-    diceRoll: "",
+    success: true,
+    data: {
+      message:
+        "You traded " +
+        ability.healthCost +
+        " , and the target recieved " +
+        manaValue +
+        " mana",
+      diceRoll: "",
+    },
   };
 };
 
@@ -853,7 +889,7 @@ const useDecreaseHealthAbility = async (
   castingUser: User,
   targetUserId: string,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   // TODO: At the moment the ability only decreases maxhealth to mana
   const manaValue = await manaValidator(db, targetUserId, ability.value!);
 
@@ -889,13 +925,16 @@ const useDecreaseHealthAbility = async (
   );
 
   return {
-    message:
-      "Your max health was decreased by " +
-      ability.healthCost +
-      " , and the target recieved " +
-      manaValue +
-      " mana",
-    diceRoll: "",
+    success: true,
+    data: {
+      message:
+        "Your max health was decreased by " +
+        ability.healthCost +
+        " , and the target recieved " +
+        manaValue +
+        " mana",
+      diceRoll: "",
+    },
   };
 };
 
@@ -904,7 +943,7 @@ const useProtectionAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(
@@ -949,11 +988,14 @@ const useProtectionAbility = async (
   );
 
   return {
-    message: "Target recieved " + abilityValue.total + " shield",
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: "Target recieved " + abilityValue.total + " shield",
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -961,13 +1003,19 @@ const useXPAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   logger.info(
     `User ${castingUser.id} used ability ${ability.name} on themselves and gained ${ability.xpGiven} XP`,
   );
 
   await finalizeAbilityUsage(db, castingUser, ability);
-  return { message: "You gained " + ability.xpGiven + " XP", diceRoll: "" };
+  return {
+    success: true,
+    data: {
+      message: "You gained " + ability.xpGiven + " XP",
+      diceRoll: "",
+    },
+  };
 };
 
 const useArenaAbility = async (
@@ -975,7 +1023,7 @@ const useArenaAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   await Promise.all(
     targetUserIds.map(async (targetUserId) => {
       await db.user.update({
@@ -997,8 +1045,11 @@ const useArenaAbility = async (
   );
 
   return {
-    message: "Guild recieved " + ability.value + " arena tokens",
-    diceRoll: "",
+    success: true,
+    data: {
+      message: "Guild recieved " + ability.value + " arena tokens",
+      diceRoll: "",
+    },
   };
 };
 
@@ -1007,7 +1058,7 @@ const useTurnsAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   await Promise.all(
     targetUserIds.map(async (targetUserId) => {
       await db.user.update({
@@ -1029,8 +1080,11 @@ const useTurnsAbility = async (
   );
 
   return {
-    message: "The Guild gets another " + ability.value + " Turn",
-    diceRoll: "",
+    success: true,
+    data: {
+      message: "The Guild gets another " + ability.value + " Turn",
+      diceRoll: "",
+    },
   };
 };
 
@@ -1039,7 +1093,7 @@ const useGoldAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(
@@ -1063,11 +1117,14 @@ const useGoldAbility = async (
   );
 
   return {
-    message: "You recieved " + abilityValue.total + " gold!",
-    diceRoll:
-      "output" in abilityValue
-        ? abilityValue.output.split("[")[1].split("]")[0]
-        : "",
+    success: true,
+    data: {
+      message: "You recieved " + abilityValue.total + " gold!",
+      diceRoll:
+        "output" in abilityValue
+          ? abilityValue.output.split("[")[1].split("]")[0]
+          : "",
+    },
   };
 };
 
@@ -1077,7 +1134,7 @@ const useEvadeAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   // checks if user has passive, decrements cost and gives xp
   await activatePassive(db, castingUser, [castingUser.id], ability);
 
@@ -1099,14 +1156,17 @@ const useEvadeAbility = async (
     `User ${castingUser.username} evaded daily cosmic event and gained ${ability.xpGiven} XP`,
   );
 
-  return { message: "Cosmic event evaded!", diceRoll: "" };
+  return {
+    success: true,
+    data: { message: "Cosmic event evaded!", diceRoll: "" },
+  };
 };
 
 const useTwistOfFateAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const dice = getAbilityValue(ability);
 
   let message = "";
@@ -1124,8 +1184,11 @@ const useTwistOfFateAbility = async (
   );
   await activatePassive(db, castingUser, [castingUser.id], ability);
   return {
-    message,
-    diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+    success: true,
+    data: {
+      message,
+      diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+    },
   };
 };
 
@@ -1134,7 +1197,7 @@ const useCritAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const dice = getAbilityValue(ability);
 
   let message = "";
@@ -1153,8 +1216,11 @@ const useCritAbility = async (
     `${castingUser.username} used Critical Role, and rolled a ${dice.total}`,
   );
   return {
-    message,
-    diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+    success: true,
+    data: {
+      message,
+      diceRoll: "output" in dice ? dice.output.split("[")[1].split("]")[0] : "",
+    },
   };
 };
 
@@ -1165,7 +1231,7 @@ const useDungeonAttackAbility = async (
   castingUser: User,
   targetIds: string[],
   ability: Ability,
-) => {
+): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   if (castingUser?.turns <= 0) {
     throw new ErrorMessage("You don't have any turns left!");
   }
@@ -1227,8 +1293,11 @@ const useDungeonAttackAbility = async (
     await finalizeAbilityUsage(db, castingUser, ability);
 
     return {
-      message: `You used Slice-And-Dice, dealing ${damage} damage!`,
-      DiceRoll: "",
+      success: true,
+      data: {
+        message: `You used Slice-And-Dice, dealing ${damage} damage!`,
+        diceRoll: "",
+      },
     };
   }
   // --------- normal case for other abilities --------
@@ -1267,8 +1336,12 @@ const useDungeonAttackAbility = async (
   await finalizeAbilityUsage(db, castingUser, ability);
 
   return {
-    message,
-    diceRoll: "output" in value ? value.output.split("[")[1].split("]")[0] : "",
+    success: true,
+    data: {
+      message,
+      diceRoll:
+        "output" in value ? value.output.split("[")[1].split("]")[0] : "",
+    },
   };
 };
 
