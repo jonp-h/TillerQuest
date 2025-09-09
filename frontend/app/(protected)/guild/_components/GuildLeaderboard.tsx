@@ -112,7 +112,7 @@ function GuildLeaderboard({
                       fontSize: "1.5rem",
                       fontWeight: "bold",
                     }}
-                    src={guild.icon ? `/guilds/${guild.icon}.png` : undefined}
+                    src={guild.icon ? `/guilds/${guild.icon}` : undefined}
                   >
                     {guild.name.charAt(0).toUpperCase()}
                   </Avatar>
