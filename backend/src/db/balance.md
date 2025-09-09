@@ -140,21 +140,6 @@ const diceEfficiency = {
 };
 ```
 
-## 🎯 Target Efficiency Ranges
-
-### By Gemstone Cost
-
-- **1 Gemstone**: 8-15 efficiency
-- **2 Gemstone**: 12-20 efficiency
-- **4 Gemstone**: 18-30 efficiency
-
-### By Ability Type
-
-- **Basic Actions** (Heal, Mana, Damage): 10-18 efficiency
-- **Support Abilities** (Guild benefits): 15-25 efficiency
-- **Ultimate Abilities** (High cost, high impact): 20-35 efficiency
-- **Passive Abilities**: 25-40 efficiency (higher due to permanent benefit)
-
 ## ⚠️ Balance Guidelines
 
 ### Red Flags (Overpowered)
