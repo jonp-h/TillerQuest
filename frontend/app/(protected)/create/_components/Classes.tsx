@@ -34,25 +34,25 @@ const classes = [
     name: "Barbarian1",
     src: "/classes/Barbarian1.png",
     description:
-      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies.",
+      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies and gain increased access to the arena games.",
   },
   {
     name: "Barbarian2",
     src: "/classes/Barbarian2.png",
     description:
-      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies.",
+      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies and gain increased access to the arena games.",
   },
   {
     name: "Barbarian3",
     src: "/classes/Barbarian3.png",
     description:
-      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies.",
+      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies and gain increased access to the arena games.",
   },
   {
     name: "Barbarian4",
     src: "/classes/Barbarian4.png",
     description:
-      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies.",
+      "Barbarians are stronger and tougher than other classes, using their abilities to protect their allies and gain increased access to the arena games.",
   },
   {
     name: "Druid1",
@@ -82,49 +82,73 @@ const classes = [
     name: "Warlock1",
     src: "/classes/Warlock1.png",
     description:
-      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health and increase gold earnings.",
   },
   {
     name: "Warlock2",
     src: "/classes/Warlock2.png",
     description:
-      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health and increase gold earnings.",
   },
   {
     name: "Warlock3",
     src: "/classes/Warlock3.png",
     description:
-      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health and increase gold earnings.",
   },
   {
     name: "Warlock4",
     src: "/classes/Warlock4.png",
     description:
-      "Warlocks master the art of crimson magic, using their abilities to manipulate health.",
+      "Warlocks master the art of crimson magic, using their abilities to manipulate health and increase gold earnings.",
   },
   {
     name: "Bard1",
     src: "/classes/Bard1.png",
     description:
-      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
+      "Bards use their cunning to inspire and buff their allies. Bards are also able to increase experience gain.",
   },
   {
     name: "Bard2",
     src: "/classes/Bard2.png",
     description:
-      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
+      "Bards use their cunning to inspire and buff their allies. Bards are also able to increase experience gain.",
   },
   {
     name: "Bard3",
     src: "/classes/Bard3.png",
     description:
-      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
+      "Bards use their cunning to inspire and buff their allies. Bards are also able to increase experience gain.",
   },
   {
     name: "Bard4",
     src: "/classes/Bard4.png",
     description:
-      "Bards use their cunning to inspire and buff their allies. They also know how to find more gold.",
+      "Bards use their cunning to inspire and buff their allies. Bards are also able to increase experience gain.",
+  },
+  {
+    name: "Fighter1",
+    src: "/classes/Fighter1.png",
+    description:
+      "Fighters use their abilities in the dungeons, using their abilities to fight enemies and gain greater rewards from the spoils of battle.",
+  },
+  {
+    name: "Fighter2",
+    src: "/classes/Fighter2.png",
+    description:
+      "Fighters use their abilities in the dungeons, using their abilities to fight enemies and gain greater rewards from the spoils of battle.",
+  },
+  {
+    name: "Fighter3",
+    src: "/classes/Fighter3.png",
+    description:
+      "Fighters use their abilities in the dungeons, using their abilities to fight enemies and gain greater rewards from the spoils of battle.",
+  },
+  {
+    name: "Fighter4",
+    src: "/classes/Fighter4.png",
+    description:
+      "Fighters use their abilities in the dungeons, using their abilities to fight enemies and gain greater rewards from the spoils of battle.",
   },
 ];
 

@@ -4,7 +4,6 @@ import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
-import { selectDungeonAbility } from "@/data/dungeons/dungeon";
 import { AbilityGridProps } from "./interfaces";
 import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
@@ -12,6 +11,7 @@ import { useRouter } from "next/navigation";
 import TimeLeft from "@/components/TimeLeft";
 import { Button } from "@mui/material";
 import Link from "next/link";
+import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 
 function Battleground({
   abilities,
@@ -35,8 +35,10 @@ function Battleground({
   userTurns: { turns: number };
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
-  const [selectedEnemy, setSelectedEnemy] = useState<string | null>(null);
+  const [selectedEnemies, setSelectedEnemies] = useState<string[]>([]);
   const [thrown, setThrown] = useState<boolean>(false);
+
+  const enemyIds = enemies?.map((enemy) => enemy.id) || [];
 
   const router = useRouter();
 
@@ -61,6 +63,7 @@ function Battleground({
 
   const rollAbility = async (ability: Ability) => {
     setThrown(true);
+
     if (!diceBox) {
       setThrown(false);
       initializeDiceBox();
@@ -71,11 +74,14 @@ function Battleground({
     } else if (diceBox) {
       diceBox.clearDice();
     }
-    const result = await selectDungeonAbility(
-      userId,
-      ability,
-      selectedEnemy || "",
-    );
+    let result;
+    if (ability.target === "All") {
+      // update the UI to show the selected enemies visually
+      setSelectedEnemies(enemyIds);
+      result = await selectAbility(userId, enemyIds, ability.name);
+    } else {
+      result = await selectAbility(userId, selectedEnemies, ability.name);
+    }
 
     // if result is only a string, it's an error message
     if (typeof result === "string") {
@@ -148,9 +154,9 @@ function Battleground({
         )}
         {enemies &&
           enemies.map((enemy, index: number) => (
-            <div onClick={() => setSelectedEnemy(enemy.id)} key={enemy.id}>
+            <div onClick={() => setSelectedEnemies([enemy.id])} key={enemy.id}>
               <EnemyComponent
-                selected={selectedEnemy === enemy.id}
+                selected={selectedEnemies.includes(enemy.id)}
                 animateSpeed={index % 4} // get a number between 0 and 3 to animate the enemies
                 enemy={enemy}
               />
@@ -167,7 +173,10 @@ function Battleground({
                   abilities={abilities}
                   onAbilityRoll={rollAbility}
                   disabled={
-                    thrown || userTurns.turns <= 0 || !selectedEnemy || !enemies
+                    thrown ||
+                    userTurns.turns <= 0 ||
+                    !selectedEnemies.length ||
+                    !enemies
                     // TODO: add a check for if the target is dead
                   }
                 />
