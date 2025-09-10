@@ -1198,18 +1198,15 @@ const useTwistOfFateAbility = async (
   let message = "";
   if (dice.total === 20) {
     message = "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
-  } if (dice.total >= 11 && dice.total <= 19) {
-    message = "Wooo Wiiii you rolled " + dice.total + " hope you are happey";
-    castingUser.mana + 12;
-    castingUser.xp + 50;
-  } if (dice.total >= 2 && dice.total <= 9) {
-    message = "Whomp Whomp " + dice.total + ", too bad for you buddy!!";
+  } if (dice.total === 15) {
+    message = "Wooo Wiiii you rolled " + dice.total + " hope you are happey with your 5 hp";
+    castingUser.hp + 5;
+  } if (dice.total === 5) {
+    message = "Whomp Whomp " + dice.total + ", too bad for you buddy. You get damage!!";
     castingUser.hp - 10;
-    castingUser.xp - 200;
   } if (dice.total === 1) {
     message = "You rolled " + dice.total + ", time to die!!!!"
     castingUser.hp === 0;
-    castingUser.xp - 350;
   } else {
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
