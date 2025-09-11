@@ -544,7 +544,7 @@ const wizard: Ability[] = [
     id: 63,
     name: "Fireball",
     category: "Wizard",
-    type: "Damage",
+    type: "DungeonAttack",
     target: "SingleTarget",
     description: "You attack an enemy with a fireball, dealing 1d10 damage.",
     duration: null,
@@ -723,7 +723,7 @@ const druid: Ability[] = [
     id: 64,
     name: "Thorns",
     category: "Druid",
-    type: "Damage",
+    type: "DungeonAttack",
     target: "SingleTarget",
     description:
       "You attack an enemy with vines covered by thorns, dealing 1d10 damage.",
@@ -900,7 +900,7 @@ const barbarian: Ability[] = [
     id: 65,
     name: "Raging-Attack",
     category: "Barbarian",
-    type: "Damage",
+    type: "DungeonAttack",
     target: "SingleTarget",
     description:
       "You attack an enemy with a raging attack, dealing 1d10 damage.",
@@ -1082,7 +1082,7 @@ const warlock: Ability[] = [
     id: 66,
     name: "Crimson-Blades",
     category: "Warlock",
-    type: "Damage",
+    type: "DungeonAttack",
     target: "SingleTarget",
     description:
       "You attack an enemy with crimson blades, dealing 1d10 damage.",
@@ -1286,6 +1286,25 @@ const bard: Ability[] = [
   // Base: 100 XP / 5 Mana = 20.0
   // No duration penalty
   // Final: 20.0 efficiency
+  {
+    id: 92,
+    name: "Vicious-Mockery",
+    category: "Bard",
+    type: "DungeonAttack",
+    target: "SingleTarget",
+    description:
+      "You viciously mock your enemy, dealing 1d10 damage to their pride.",
+    duration: null,
+    icon: "Test.jpg",
+    gemstoneCost: 4,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: "1d10",
+    isDungeon: true,
+    value: null,
+    parentAbility: "Inspiration",
+  },
 ];
 
 const fighter: Ability[] = [
