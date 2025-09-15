@@ -66,6 +66,24 @@ export const selectAbility = async (
       throw new ErrorMessage("Ability not found");
     }
 
+    switch (ability.target) {
+      case "SingleTarget":
+        if (targetIds.length !== 1) {
+          throw new ErrorMessage(
+            "Single target abilities require exactly one target",
+          );
+        }
+        if (targetIds.includes(userId)) {
+          throw new ErrorMessage(
+            "You cannot target yourself with this ability",
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+
     const cosmic = await prisma.cosmicEvent.findFirst({
       where: {
         selected: true,
@@ -338,6 +356,54 @@ const activatePassive = async (
             },
           },
         });
+
+        // TODO: improve codequality
+        // if the ability increases health or mana, remove the previous effect
+        if (ability.type === "IncreaseHealth") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              hpMax: {
+                decrement: ability.value ?? 0,
+              },
+            },
+          });
+        } else if (ability.type === "IncreaseMana") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              manaMax: {
+                decrement: ability.value ?? 0,
+              },
+            },
+          });
+        } else if (ability.type === "DecreaseHealth") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              hpMax: {
+                increment: ability.healthCost ?? 0,
+              },
+            },
+          });
+        } else if (ability.type === "DecreaseMana") {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              manaMax: {
+                increment: ability.manaCost ?? 0,
+              },
+            },
+          });
+        }
       }
 
       // if the ability decreases health or mana, the value should be set to the cost

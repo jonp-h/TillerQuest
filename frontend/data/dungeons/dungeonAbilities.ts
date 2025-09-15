@@ -8,6 +8,7 @@ export const getDungeonAbilities = async (userId: string) => {
     await validateActiveUserAuth();
     const abilities = await prisma.ability.findMany({
       where: { users: { some: { userId } }, isDungeon: true },
+      orderBy: { name: "asc", gemstoneCost: "asc" },
     });
     return abilities;
   } catch (error) {

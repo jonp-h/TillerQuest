@@ -9,7 +9,6 @@ import {
   validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
-import { damageValidator } from "../validators/validators";
 
 export const startGuildBattle = async (userId: string) => {
   await validateUserIdAndActiveUserAuth(userId);
