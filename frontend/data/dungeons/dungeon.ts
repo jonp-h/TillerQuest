@@ -9,7 +9,6 @@ import {
   validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
-import { damageValidator } from "../validators/validators";
 import { ServerActionResult } from "@/types/serverActionResult";
 
 export const startGuildBattle = async (
@@ -83,74 +82,7 @@ export const startGuildBattle = async (
         data: { nextBattleVotes: [] }, // reset next battle votes after a battle is started
       });
 
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
-
-      const guildEnemies = await db.guildEnemy.findMany({
-        where: { health: { gt: 0 } },
-        select: {
-          guildName: true,
-          name: true,
-          attack: true,
-        },
-      });
-
-      // Sum attack per guild for analytics
-      const guildAttackTotals = guildEnemies.reduce<Record<string, number>>(
-        (acc, enemy) => {
-          acc[enemy.guildName] = (acc[enemy.guildName] || 0) + enemy.attack;
-          return acc;
-        },
-        {},
-      );
-
-      // Add sum to analytics
-      await Promise.all(
-        Object.entries(guildAttackTotals).map(([guildName, totalAttack]) =>
-          db.analytics.create({
-            data: {
-              triggerType: "dungeon_damage",
-              guildName,
-              value: totalAttack,
-            },
-          }),
-        ),
-      );
-
-      // Damage each user in the guilds with active enemies. Only target users who have been active today.
-      for (const enemy of guildEnemies) {
-        const users = await db.user.findMany({
-          where: {
-            guildName: enemy.guildName,
-            // TODO: consider removing manafetching safeguard
-            lastMana: { gte: startOfToday },
-          },
-          select: { id: true, username: true, hp: true, class: true },
-        });
-
-        await Promise.all(
-          users.map(async (user) => {
-            const damageToTake = await damageValidator(
-              db,
-              user.id,
-              user.hp,
-              enemy.attack,
-              user.class,
-            );
-            await db.user.update({
-              where: { id: user.id },
-              data: { hp: { decrement: damageToTake } },
-            });
-            await db.log.create({
-              data: {
-                global: false,
-                userId: user.id,
-                message: `${user.username} took ${damageToTake} damage when fighting alongside their guildmates in the dungeon.`,
-              },
-            });
-          }),
-        );
-      }
+      // TODO: Consider re-adding guild enemy attack when starting battles
 
       await addLog(
         db,

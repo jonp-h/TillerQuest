@@ -463,7 +463,7 @@ const shopItems: ShopItems[] = [
     id: 38,
     name: "Lab Assistant",
     description: "Gain an access card to the computer lab",
-    price: 75000,
+    price: 100000,
     type: "Badge",
     levelReq: 25,
     classReq: null,
@@ -618,7 +618,18 @@ const shopItems: ShopItems[] = [
     specialReq: "champion",
     rarity: "Mythic",
   },
-  // 53
+  {
+    id: 53,
+    name: "Square Eyed",
+    description: "Gain a better monitor for use in the computer lab.",
+    price: 75000,
+    type: "Object",
+    levelReq: 40,
+    classReq: null,
+    icon: "screen",
+    specialReq: "screen",
+    rarity: "Epic",
+  },
   {
     id: 54,
     name: "Debugging Duck",
@@ -629,7 +640,7 @@ const shopItems: ShopItems[] = [
     levelReq: null,
     classReq: null,
     icon: "rubberduck",
-    specialReq: null,
+    specialReq: "rubberduck",
     rarity: "Mythic",
   },
   {

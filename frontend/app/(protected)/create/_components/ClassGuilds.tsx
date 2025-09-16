@@ -58,7 +58,7 @@ function ClassGuilds({
             value={guildWithCount.name}
             key={guildWithCount.name}
             control={<Radio />}
-            disabled={guildWithCount.memberCount > 4}
+            disabled={guildWithCount.memberCount > 5}
             label={
               guildWithCount.name +
               " (" +

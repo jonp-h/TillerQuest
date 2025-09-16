@@ -92,7 +92,7 @@ function GameTabs({
 
       if (result.success) {
         toast.success(result.data.message, {
-          autoClose: false,
+          autoClose: 10000,
         });
         setScore(result.data.gold);
       } else {
@@ -232,7 +232,8 @@ function GameTabs({
           <div className="my-5">
             <Typography variant="body1">
               Write a binary number up to 5 bits long. Next use binary
-              operations and your trusty dice to get to that number.
+              operations and your trusty dice to get to that number. (Abilities
+              that grant bonus gold do not apply in this game.)
             </Typography>
           </div>
 

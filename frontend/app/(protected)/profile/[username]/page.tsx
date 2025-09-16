@@ -72,7 +72,7 @@ export default async function ProfilePage({
                 fontSize: "3rem",
                 fontWeight: "bold",
               }}
-              src={"/guilds/" + user.guild?.icon + ".png"}
+              src={"/guilds/" + user.guild?.icon}
               draggable={false}
             >
               {user.guildName.charAt(0)}
