@@ -48,7 +48,7 @@ export default function RerollCosmic({
     const result = await randomCosmic();
 
     if (result.success) {
-      toast.success(result.data);
+      toast.success("Rerolled cosmic!");
       setRecommendedCosmicEvent(result.data);
     } else {
       toast.error(result.error);

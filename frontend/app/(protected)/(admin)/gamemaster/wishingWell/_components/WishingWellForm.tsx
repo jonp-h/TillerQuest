@@ -36,39 +36,25 @@ function WishingWellForm({
       return;
     }
 
-    await toast.promise(adminActivateWish(wish.id, scheduledDate), {
-      pending: "Activating wish...",
-      success: {
-        render: ({ data }) => {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while activating the wish.";
-        },
-      },
-    });
+    const result = await adminActivateWish(wish.id, scheduledDate);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
   const handleReset = async () => {
-    await toast.promise(adminResetWish(wish.id), {
-      pending: "Resetting wish...",
-      success: {
-        render: ({ data }) => {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while resetting the wish.";
-        },
-      },
-    });
+    const result = await adminResetWish(wish.id);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
 
