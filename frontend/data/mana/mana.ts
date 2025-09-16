@@ -10,8 +10,11 @@ import {
   validateUserIdAndActiveUserAuth,
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
+import { ServerActionResult } from "@/types/serverActionResult";
 
-export const getDailyMana = async (userId: string) => {
+export const getDailyMana = async (
+  userId: string,
+): Promise<ServerActionResult> => {
   try {
     const session = await validateUserIdAndActiveUserAuth(userId);
 
@@ -90,21 +93,29 @@ export const getDailyMana = async (userId: string) => {
       userId,
       `${targetUser.username} recieved ${manaValue} dailyMana`,
     );
-    return (
-      "And as you focus, you feel your mana restoring with " +
-      manaValue +
-      ". You also find " +
-      totalArenaTokensToGive +
-      " arena tokens in your pocket."
-    );
+    return {
+      success: true,
+      data:
+        "And as you focus, you feel your mana restoring with " +
+        manaValue +
+        ". You also find " +
+        totalArenaTokensToGive +
+        " arena tokens in your pocket.",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized access attempt to get daily mana");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error getting daily mana: ", error);

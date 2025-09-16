@@ -4,14 +4,18 @@ import { escapeHtml, updateGuildnameSchema } from "@/lib/validationUtils";
 import { db } from "@/lib/db";
 import { validateUserIdAndActiveUserAuth } from "@/lib/authUtils";
 import { prettifyError } from "zod";
+import { ServerActionResult } from "@/types/serverActionResult";
 
-export const validateGuildNameUpdate = async (id: string, name: string) => {
+export const validateGuildNameUpdate = async (
+  id: string,
+  name: string,
+): Promise<ServerActionResult> => {
   await validateUserIdAndActiveUserAuth(id);
 
   const validatedData = updateGuildnameSchema.safeParse({ name });
 
   if (!validatedData.success) {
-    return prettifyError(validatedData.error);
+    return { success: false, error: prettifyError(validatedData.error) };
   }
 
   const guildNameTaken = await db.guild.findFirst({
@@ -24,7 +28,7 @@ export const validateGuildNameUpdate = async (id: string, name: string) => {
   });
 
   if (guildNameTaken) {
-    return "Try a different guild name";
+    return { success: false, error: "Try a different guild name" };
   }
 
   // Sanitize inputs
@@ -32,5 +36,5 @@ export const validateGuildNameUpdate = async (id: string, name: string) => {
     name: escapeHtml(validatedData.data.name),
   };
 
-  return sanitizedData;
+  return { success: true, data: sanitizedData.name };
 };

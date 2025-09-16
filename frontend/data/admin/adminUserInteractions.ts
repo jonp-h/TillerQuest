@@ -4,6 +4,7 @@ import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
+import { ServerActionResult } from "@/types/serverActionResult";
 import { $Enums, UserRole } from "@prisma/client";
 
 export const getAllActiveUsers = async () => {
@@ -180,7 +181,9 @@ export const adminGetDungeonInfo = async () => {
   }
 };
 
-export const adminDeleteGuildEnemies = async (guildName: string) => {
+export const adminDeleteGuildEnemies = async (
+  guildName: string,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -192,18 +195,26 @@ export const adminDeleteGuildEnemies = async (guildName: string) => {
       },
     });
 
-    return "Successfully deleted all enemies from guild: " + guildName;
+    return {
+      success: true,
+      data: "Successfully deleted all enemies from guild: " + guildName,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to get dungeon info");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error fetching dungeon info:", error);
-    throw new Error(
-      "Failed to fetch dungeon info. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to fetch dungeon info. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -243,7 +254,7 @@ export const adminUpdateUser = async (
   name?: string | null,
   username?: string | null,
   lastname?: string | null,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -264,7 +275,7 @@ export const adminUpdateUser = async (
       access = [];
     }
 
-    const user = await db.user.update({
+    await db.user.update({
       where: {
         id: userId,
       },
@@ -276,7 +287,10 @@ export const adminUpdateUser = async (
         access: access as $Enums.Access[],
       },
     });
-    return user;
+    return {
+      success: true,
+      data: "User information updated successfully.",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update user");
@@ -294,11 +308,14 @@ export const adminUpdateUser = async (
   }
 };
 
-export const updateRole = async (userId: string, role: UserRole) => {
+export const updateRole = async (
+  userId: string,
+  role: UserRole,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
-    const user = await db.user.update({
+    await db.user.update({
       where: {
         id: userId,
       },
@@ -306,22 +323,32 @@ export const updateRole = async (userId: string, role: UserRole) => {
         role,
       },
     });
-    return user;
+    return {
+      success: true,
+      data: "User role updated successfully.",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update user role");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error in admin action for updating user role:", error);
-    throw new Error(
-      "Failed to update user role. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to update user role. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const adminResetSingleUser = async (userId: string) => {
+export const adminResetSingleUser = async (
+  userId: string,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -403,20 +430,31 @@ export const adminResetSingleUser = async (userId: string) => {
 
     // ------------------------------
 
-    return "User successfully reset";
+    return {
+      success: true,
+      data: "User successfully reset",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to reset single user");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
     logger.error("Error in admin action for resetting single user:", error);
-    throw new Error(
-      "Failed to reset single user. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to reset single user. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

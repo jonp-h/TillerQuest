@@ -45,41 +45,25 @@ export default function RerollCosmic({
   }, [cosmicEvents]);
 
   const handleReroll = async () => {
-    const cosmicPromise = randomCosmic();
-    await toast.promise(
-      cosmicPromise,
-      {
-        pending: "Rerolling cosmic event...",
-        success: "Successfully rerolled cosmic event!",
-        error: {
-          autoClose: 5000,
-          render({ data }) {
-            return data instanceof Error
-              ? `${data.message}`
-              : "An error occurred while rerolling the cosmic event.";
-          },
-        },
-      },
-      {
-        autoClose: 1000,
-      },
-    );
-    const cosmic = await cosmicPromise;
-    setRecommendedCosmicEvent(cosmic);
+    const result = await randomCosmic();
+
+    if (result.success) {
+      toast.success(result.data);
+      setRecommendedCosmicEvent(result.data);
+    } else {
+      toast.error(result.error);
+    }
   };
 
   const handleSetSelectedCosmic = async (name: string) => {
-    await toast.promise(setSelectedCosmic(name), {
-      pending: `Setting ${name} as daily cosmic...`,
-      success: `Successfully set ${name} as daily cosmic!`,
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while setting the daily cosmic.";
-        },
-      },
-    });
+    const result = await setSelectedCosmic(name);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     router.refresh();
   };
 

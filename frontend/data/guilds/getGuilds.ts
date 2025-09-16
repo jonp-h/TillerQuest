@@ -7,7 +7,6 @@ import {
   validateUserIdAuth,
 } from "@/lib/authUtils";
 import { db } from "@/lib/db";
-import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 import { SchoolClass } from "@prisma/client";
 
@@ -198,13 +197,6 @@ export const getGuildmemberCount = async (userId: string, guildId: number) => {
       throw error;
     }
 
-    if (error instanceof ErrorMessage) {
-      logger.warn(
-        "Unauthorized access attempt to get guild member count for guildId: " +
-          guildId,
-      );
-      throw error;
-    }
     logger.error("Error fetching guild member count: " + error);
     throw new Error(
       "Something went wrong while fetching guild member count. Please inform a game master of this timestamp: " +
@@ -246,13 +238,6 @@ export const getGuildClasses = async (userId: string, guildId: number) => {
       throw error;
     }
 
-    if (error instanceof ErrorMessage) {
-      logger.warn(
-        "Unauthorized access attempt to get guild taken classes for guildId: " +
-          guildId,
-      );
-      throw error;
-    }
     logger.error("Error fetching guild taken classes: " + error);
     throw new Error(
       "Something went wrong while fetching guild taken classes. Please inform a game master of this timestamp: " +

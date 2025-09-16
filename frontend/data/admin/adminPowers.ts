@@ -13,12 +13,13 @@ import { sendDiscordMessage } from "@/lib/discord";
 import { addLog } from "../log/addLog";
 import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 export const healUsers = async (
   users: { id: string }[],
   value: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -74,23 +75,37 @@ export const healUsers = async (
           "Game Master",
           `User(s) ${healedUsers.map((user) => user).join(", ")} has been healed for ${value} HP.`,
         );
-      return "Healing successful. The dead are not healed";
+      return {
+        success: true,
+        data:
+          "Successfully healed " +
+          users.length +
+          " users. The dead are not healed",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("A game master failed to heal users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -98,7 +113,7 @@ export const damageUsers = async (
   users: { id: string }[],
   value: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -159,23 +174,34 @@ export const damageUsers = async (
           "Game Master",
           `User ${damagedUsers.map((user) => user).join(", ")} has been damaged for ${value} HP.`,
         );
-      return "Damage successful";
+      return {
+        success: true,
+        data: "Successfully damaged " + users.length + " users.",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
-    logger.error("A game master failed to heal users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    logger.error("A game master failed to damage users: " + error);
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -190,7 +216,7 @@ export const giveXpToUsers = async (
   users: User[],
   xp: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -205,19 +231,27 @@ export const giveXpToUsers = async (
           "Game Master",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${xp} XP.`,
         );
-      return "Successfully gave XP to users";
+      return {
+        success: true,
+        data: "XP given successfully to " + users.length + " users.",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("A game master failed to give XP to users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -226,7 +260,7 @@ export const giveManaToUsers = async (
   users: User[],
   mana: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -235,11 +269,6 @@ export const giveManaToUsers = async (
         users.map(async (user) => {
           // Validate the mana amount to give
           const manaToGive = await manaValidator(db, user.id, mana);
-
-          // If the validator returns a string, return the error message
-          if (typeof manaToGive === "string" || manaToGive === 0) {
-            return manaToGive;
-          }
 
           await db.user.update({
             where: {
@@ -262,19 +291,27 @@ export const giveManaToUsers = async (
           "Game Master",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${mana} mana.`,
         );
-      return "Mana given successfully";
+      return {
+        success: true,
+        data: "Mana given successfully to " + users.length + " users.",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("A game master failed to give mana to users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -283,7 +320,7 @@ export const giveArenatokenToUsers = async (
   users: User[],
   arenatoken: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -311,19 +348,27 @@ export const giveArenatokenToUsers = async (
           "Game Master",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${arenatoken} arenatokens.`,
         );
-      return "Arenatoken given successfully";
+      return {
+        success: true,
+        data: "Arenatokens given successfully to " + users.length + " users.",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
-    logger.error("A game master failed to give arenatoken to users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    logger.error("A game master failed to give arenatokens to users: " + error);
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -332,7 +377,7 @@ export const giveGoldToUsers = async (
   users: User[],
   gold: number,
   notify: boolean,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -356,18 +401,26 @@ export const giveGoldToUsers = async (
           "Game Master",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${gold} gold.`,
         );
-      return "Gold given successfully";
+      return {
+        success: true,
+        data: "Gold given successfully to " + users.length + " users.",
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin action attempt: " + error.message);
-      return "Unauthorized action";
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("A game master failed to give gold to users: " + error);
-    throw new Error(
-      "Something went wrong. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

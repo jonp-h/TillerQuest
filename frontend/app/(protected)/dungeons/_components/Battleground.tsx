@@ -83,24 +83,17 @@ function Battleground({
       result = await selectAbility(userId, selectedEnemies, ability.name);
     }
 
-    // if result is only a string, it's an error message
-    if (typeof result === "string") {
-      toast.error(result);
-      setThrown(false);
-      router.refresh();
-      return;
-    } else if (!result.diceRoll) {
-      setThrown(false);
-      toast.error(result.message);
-      router.refresh();
-      return;
+    if (result.success) {
+      diceBox
+        .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
+        .finally(() => {
+          toast.success(result.data.message);
+        });
+    } else {
+      toast.error(result.error);
     }
-
-    diceBox.roll(`${ability.diceNotation}@${result.diceRoll}`).finally(() => {
-      setThrown(false);
-      toast.success(result.message);
-      router.refresh();
-    });
+    setThrown(false);
+    router.refresh();
   };
 
   return (

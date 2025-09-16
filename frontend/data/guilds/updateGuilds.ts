@@ -10,12 +10,13 @@ import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 import { SchoolClass } from "@prisma/client";
 import { validateGuildNameUpdate } from "../validators/guildUpdateValidation";
+import { ServerActionResult } from "@/types/serverActionResult";
 
 export const updateGuildname = async (
   userId: string,
   oldName: string,
   newName: string,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateUserIdAndActiveUserAuth(userId);
 
@@ -46,14 +47,14 @@ export const updateGuildname = async (
     // backend validation
     const validatedData = await validateGuildNameUpdate(userId, newName);
 
-    if (typeof validatedData == "string") {
-      throw new ErrorMessage(validatedData);
+    if (!validatedData.success) {
+      throw new ErrorMessage(validatedData.error);
     }
 
     return await db.$transaction(async (db) => {
       const guildExists = await db.guild.findUnique({
         where: {
-          name: validatedData.name,
+          name: validatedData.data,
         },
       });
 
@@ -90,34 +91,45 @@ export const updateGuildname = async (
           name: oldName,
         },
         data: {
-          name: validatedData.name,
+          name: validatedData.data,
         },
       });
 
-      return "Successfully updated guild name to " + guilds.name;
+      return {
+        success: true,
+        data: "Successfully updated guild name to " + guilds.name,
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update guild name");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating guild name: " + error);
-    throw new Error(
-      "Something went wrong while updating the guild name. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while updating the guild name. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
 export const adminUpdateGuildname = async (
   oldName: string,
   newName: string,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -140,22 +152,33 @@ export const adminUpdateGuildname = async (
       },
     });
 
-    return guilds;
+    return {
+      success: true,
+      data: "Successfully updated guild name to " + guilds.name,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update guild name");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating guild name: " + error);
-    throw new Error(
-      "Something went wrong while updating the guild name. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while updating the guild name. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
@@ -167,7 +190,7 @@ export const updateGuildmembers = async (
     lastname: string | null;
     schoolClass: SchoolClass | null;
   }[],
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -182,25 +205,33 @@ export const updateGuildmembers = async (
       },
     });
 
-    return guilds;
+    return {
+      success: true,
+      data: "Successfully updated guild members for " + guilds.name,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update guild members");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating guild members: " + error);
-    throw new Error(
-      "Something went wrong while updating the guild members. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Something went wrong while updating the guild members. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
 export const adminUpdateGuildLeader = async (
   guildName: string,
   newLeaderId: string | null,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -229,7 +260,7 @@ export const adminUpdateGuildLeader = async (
       }
     }
 
-    const updatedGuild = await db.guild.update({
+    await db.guild.update({
       where: {
         name: guildName,
       },
@@ -238,29 +269,40 @@ export const adminUpdateGuildLeader = async (
       },
     });
 
-    return updatedGuild;
+    return {
+      success: true,
+      data: `Successfully updated guild leader for ${guildName}`,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      logger.warn("Unauthorized admin access attempt to update guild leader");
-      throw error;
+      logger.warn("Unauthorized admin access attempt to update guild name");
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
-    logger.error("Error updating guild leader: " + error);
-    throw new Error(
-      "Something went wrong while updating the guild leader. Error timestamp: " +
+    logger.error("Error updating guild name: " + error);
+    return {
+      success: false,
+      error:
+        "Something went wrong while updating the guild name. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
 export const adminUpdateNextGuildLeader = async (
   guildName: string,
   newNextLeaderId: string | null,
-) => {
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -298,23 +340,32 @@ export const adminUpdateNextGuildLeader = async (
       },
     });
 
-    return updatedGuild;
+    return {
+      success: true,
+      data: `Successfully updated next guild leader for ${updatedGuild.name}`,
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      logger.warn(
-        "Unauthorized admin access attempt to update next guild leader",
-      );
-      throw error;
+      logger.warn("Unauthorized admin access attempt to update guild name");
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
-    logger.error("Error updating next guild leader: " + error);
-    throw new Error(
-      "Something went wrong while updating the next guild leader. Error timestamp: " +
+    logger.error("Error updating guild name: " + error);
+    return {
+      success: false,
+      error:
+        "Something went wrong while updating the guild name. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

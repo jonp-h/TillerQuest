@@ -160,30 +160,21 @@ export default function AbilityForm({
     }
 
     const result = await selectAbility(user.id, targetUsers, ability.name);
-    // if result is only a string, it's an error message
-    if (typeof result === "string") {
-      toast.error(result);
-      setIsLoading(false);
-      router.refresh();
-      return;
-    }
 
-    // if result has a diceRoll, roll the dice
-    if (result?.diceRoll && diceBox) {
-      diceBox
-        .roll(`${ability.diceNotation}@${result.diceRoll}`)
-        .then(() => {
-          toast.success(result.message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          router.refresh();
-        });
-      // if result has no diceRoll, just show the message
+    if (result.success) {
+      if (diceBox) {
+        diceBox
+          .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
+          .finally(() => {
+            toast.success(result.data.message);
+          });
+      } else {
+        toast.error(
+          "Dice box not initialized, please try again or tell a dungeon master.",
+        );
+      }
     } else {
-      toast.success(result?.message);
-      setIsLoading(false);
-      router.refresh();
+      toast.error(result.error);
     }
   };
 
@@ -215,24 +206,13 @@ export default function AbilityForm({
     // when buying an abillity, check passive. if passive immediately activate
     // if passive, disable use button
 
-    await toast.promise(buyAbility(user.id, ability.name), {
-      pending: "Buying ability...",
-      success: {
-        render: ({ data }) => {
-          // router.refresh();
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while buying the ability.";
-        },
-      },
-    });
+    const result = await buyAbility(user.id, ability.name);
 
-    console.log("Buying ability", ability.name);
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
 
     setIsLoading(false);
     router.refresh();

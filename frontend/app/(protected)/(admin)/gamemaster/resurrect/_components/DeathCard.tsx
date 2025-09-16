@@ -23,28 +23,16 @@ export default function DeathCard({ user }: { user: User }) {
   const router = useRouter();
 
   const handleRessurect = async (effect: string) => {
-    await toast.promise(
-      resurrectUsers({
-        userId: user.id,
-        effect: effect,
-      }),
-      {
-        pending: "Resurrecting user...",
-        success: {
-          autoClose: 10000,
-          render({ data }) {
-            return data;
-          },
-        },
-        error: {
-          render({ data }) {
-            return data instanceof Error
-              ? data.message
-              : "An error occurred during resurrection";
-          },
-        },
-      },
-    );
+    const result = await resurrectUsers({
+      userId: user.id,
+      effect: effect,
+    });
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
     router.refresh();
   };
 

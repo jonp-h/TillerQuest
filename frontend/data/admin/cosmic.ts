@@ -5,8 +5,12 @@ import { getAllActiveUsers } from "./adminUserInteractions";
 import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { logger } from "@/lib/logger";
 import { ErrorMessage } from "@/lib/error";
+import { ServerActionResult } from "@/types/serverActionResult";
+import { CosmicEvent } from "@prisma/client";
 
-export const randomCosmic = async () => {
+export const randomCosmic = async (): Promise<
+  ServerActionResult<CosmicEvent>
+> => {
   try {
     await validateAdminAuth();
     // const now = new Date();
@@ -80,23 +84,33 @@ export const randomCosmic = async () => {
         },
       });
 
-      return cosmic;
+      return {
+        success: true,
+        data: cosmic,
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to get random cosmic");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Unable to get random cosmic: ", error);
-    throw new Error(
-      "Unable to get random cosmic. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Unable to get random cosmic. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const setSelectedCosmic = async (cosmicName: string) => {
+export const setSelectedCosmic = async (
+  cosmicName: string,
+): Promise<ServerActionResult> => {
   try {
     const session = await validateAdminAuth();
 
@@ -225,23 +239,34 @@ export const setSelectedCosmic = async (cosmicName: string) => {
           message: `GM ${session.user.username} has selected the cosmic event "${cosmic.name.replace(/-/g, " ")}"`,
         },
       });
-      return cosmic;
+      return {
+        success: true,
+        data: `Successfully set ${cosmic.name.replace(/-/g, " ")} as daily cosmic!`,
+      };
     });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to select cosmic");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     if (error instanceof ErrorMessage) {
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Unable to select cosmic: ", error);
-    throw new Error(
-      "Unable to select cosmic. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Unable to select cosmic. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 

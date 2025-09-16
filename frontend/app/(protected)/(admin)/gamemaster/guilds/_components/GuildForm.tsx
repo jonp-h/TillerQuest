@@ -106,71 +106,50 @@ function GuildForm({
   }, [selectedUsers, selectedGuildLeader, selectedNextGuildLeader]);
 
   const handleChange = async () => {
-    await toast.promise(updateGuildmembers(guildName, selectedUsers), {
-      pending: `Updating guild ${guildName}...`,
-      success: `Successfully updated guild members for ${guildName}`,
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? data.message
-            : "Something went wrong while updating the guild members.";
-        },
-      },
-    });
+    const result = await updateGuildmembers(guildName, selectedUsers);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
 
     if (newGuildName !== guildName) {
-      await toast.promise(adminUpdateGuildname(guildName, newGuildName), {
-        pending: `Updating guild ${guildName}...`,
-        success: `Successfully updated guild name to ${newGuildName}`,
-        error: {
-          render({ data }) {
-            return data instanceof Error
-              ? data.message
-              : "Something went wrong while updating the guild name.";
-          },
-        },
-      });
+      const result = await adminUpdateGuildname(guildName, newGuildName);
+
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     }
 
     // Update guild leader if it has changed
     const currentLeaderId = selectedGuildLeader?.id || null;
     if (currentLeaderId !== guildLeader) {
-      await toast.promise(
-        adminUpdateGuildLeader(newGuildName || guildName, currentLeaderId),
-        {
-          pending: `Updating guild leader for ${newGuildName || guildName}...`,
-          success: `Successfully updated guild leader`,
-          error: {
-            render({ data }) {
-              return data instanceof Error
-                ? data.message
-                : "Something went wrong while updating the guild leader.";
-            },
-          },
-        },
+      const result = await adminUpdateGuildLeader(
+        newGuildName || guildName,
+        currentLeaderId,
       );
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     }
 
     // Update next guild leader if it has changed
     const currentNextLeaderId = selectedNextGuildLeader?.id || null;
     if (currentNextLeaderId !== nextGuildLeader) {
-      await toast.promise(
-        adminUpdateNextGuildLeader(
-          newGuildName || guildName,
-          currentNextLeaderId,
-        ),
-        {
-          pending: `Updating next guild leader for ${newGuildName || guildName}...`,
-          success: `Successfully updated next guild leader`,
-          error: {
-            render({ data }) {
-              return data instanceof Error
-                ? data.message
-                : "Something went wrong while updating the next guild leader.";
-            },
-          },
-        },
+      const result = await adminUpdateNextGuildLeader(
+        newGuildName || guildName,
+        currentNextLeaderId,
       );
+      if (result.success) {
+        toast.success(result.data);
+      } else {
+        toast.error(result.error);
+      }
     }
 
     // ensure the page is reloaded to reflect the changes

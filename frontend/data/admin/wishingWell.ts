@@ -2,6 +2,7 @@
 
 import { validateAdminAuth, AuthorizationError } from "@/lib/authUtils";
 import { db } from "@/lib/db";
+import { ServerActionResult } from "@/types/serverActionResult";
 import { logger } from "better-auth";
 
 export const adminGetWishes = async () => {
@@ -45,7 +46,10 @@ export const adminGetWishes = async () => {
   }
 };
 
-export const adminActivateWish = async (wishId: number, scheduleDate: Date) => {
+export const adminActivateWish = async (
+  wishId: number,
+  scheduleDate: Date,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -58,22 +62,29 @@ export const adminActivateWish = async (wishId: number, scheduleDate: Date) => {
       },
     });
 
-    return "Successfully activated wish.";
+    return { success: true, data: "Successfully activated wish." };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to update wish");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error updating wish", error);
-    throw new Error(
-      "Failed to fetch wish. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to fetch wish. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };
 
-export const adminResetWish = async (wishId: number) => {
+export const adminResetWish = async (
+  wishId: number,
+): Promise<ServerActionResult> => {
   try {
     await validateAdminAuth();
 
@@ -90,17 +101,22 @@ export const adminResetWish = async (wishId: number) => {
       },
     });
 
-    return "Successfully reset wish.";
+    return { success: true, data: "Successfully reset wish." };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn("Unauthorized admin access attempt to reset wish");
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
     logger.error("Error resetting wish", error);
-    throw new Error(
-      "Failed to fetch wish. Error timestamp: " +
+    return {
+      success: false,
+      error:
+        "Failed to fetch wish. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),
-    );
+    };
   }
 };

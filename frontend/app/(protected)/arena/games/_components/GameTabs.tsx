@@ -74,31 +74,29 @@ function GameTabs({
   const ownsGame = user.access.includes(tab as $Enums.Access);
 
   const handleInitializeGame = async (gameName: string) => {
-    const game = await initializeGame(user.id, gameName);
-    if (typeof game === "string") {
-      toast.error(game);
-      return;
-    }
-    if (game) {
+    const result = await initializeGame(user.id, gameName);
+
+    if (result.success) {
       setGameEnabled(true);
       setScore(0);
-      setGameId(game.id);
+      setGameId(result.id);
     } else {
-      toast.error("Not enough tokens");
+      toast.error(result.error);
+      return;
     }
   };
 
   const handleFinishGame = async () => {
     if (gameEnabled === true && gameId) {
-      const game = await finishGame(gameId || "");
-      // if game is a string, it's an error message
-      if (typeof game === "string") {
-        toast.error(game);
-      } else {
-        toast.success(game.message, {
+      const result = await finishGame(gameId || "");
+
+      if (result.success) {
+        toast.success(result.data.message, {
           autoClose: 10000,
         });
-        setScore(game.gold);
+        setScore(result.data.gold);
+      } else {
+        toast.error(result.error);
       }
       setGameId(null);
     }

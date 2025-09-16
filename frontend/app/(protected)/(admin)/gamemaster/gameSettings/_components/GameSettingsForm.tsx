@@ -31,24 +31,18 @@ function GameSettingsForm({
   const router = useRouter();
 
   const handleChange = async () => {
-    await toast.promise(
-      adminUpdateApplicationSettings(userId, { key: setting.key, value }),
-      {
-        pending: "Updating setting...",
-        success: {
-          render: ({ data }) => {
-            return data;
-          },
-        },
-        error: {
-          render({ data }) {
-            return data instanceof Error
-              ? `${data.message}`
-              : "An error occurred while updating the setting.";
-          },
-        },
-      },
-    );
+    const result = await adminUpdateApplicationSettings(userId, {
+      key: setting.key,
+      value,
+    });
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+      return;
+    }
+
     router.refresh();
   };
 

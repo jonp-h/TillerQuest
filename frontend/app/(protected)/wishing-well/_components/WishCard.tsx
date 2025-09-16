@@ -46,21 +46,14 @@ function WishCard({
   const router = useRouter();
 
   const handleWish = async (amount: number) => {
-    await toast.promise(voteForWish(wish.id, userId, amount, anonymous), {
-      pending: "Processing...",
-      success: {
-        render({ data }) {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while setting the daily cosmic.";
-        },
-      },
-    });
+    const result = await voteForWish(wish.id, userId, amount, anonymous);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
     setOpen(false);
     router.refresh();
   };
