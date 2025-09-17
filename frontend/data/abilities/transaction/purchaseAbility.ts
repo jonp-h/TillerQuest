@@ -78,7 +78,8 @@ export const buyAbility = async (
           ability.target === "Self" && ability.duration === null;
 
         if (useAbilityImmediately) {
-          await selectAbility(user.id, [user.id], ability.name);
+          // FIXME: Not awaited because of timeout errors
+          selectAbility(user.id, [user.id], ability.name);
         }
 
         logger.info(`User ${user.username} bought ability ${ability.name}`);
