@@ -1239,6 +1239,9 @@ const useTwistOfFateAbility = async (
   if (dice.total === 20) {
     message =
       "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
+  } if (dice.total === 1){
+    message = "You rolled a 1, now you die!!!!"
+    castingUser.hp === 0;
   } else {
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
