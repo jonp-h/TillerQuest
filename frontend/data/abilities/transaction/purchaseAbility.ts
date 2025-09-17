@@ -52,7 +52,7 @@ export const buyAbility = async (
       throw new Error("Something went wrong. Please notify a game master.");
     }
 
-    return db.$transaction(async (db) => {
+    return await db.$transaction(async (db) => {
       // decrement the cost from the user's gemstones
       await db.user.update({
         where: {
