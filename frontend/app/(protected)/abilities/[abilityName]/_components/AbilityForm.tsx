@@ -176,6 +176,9 @@ export default function AbilityForm({
     } else {
       toast.error(result.error);
     }
+
+    setIsLoading(false);
+    router.refresh();
   };
 
   // ---------------- Buy ability ----------------
