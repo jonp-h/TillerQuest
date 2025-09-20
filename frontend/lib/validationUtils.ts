@@ -65,3 +65,7 @@ export const updateGuildnameSchema = z.object({
     .max(25, "Guild name must be below 25 characters")
     .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
 });
+
+export const adminReasonSchema = z.object({
+  reason: z.string().max(40, "Reason must be below 40 characters"),
+});

@@ -53,6 +53,7 @@ function ProfileSettingsForm({
 
   const handleUpdate = async () => {
     setLoading(true);
+    // FIXME: remove frontend validation to remove server action
     const validatedData = await validateGuildNameUpdate(userId, name);
 
     if (!validatedData.success) {
