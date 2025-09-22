@@ -257,7 +257,7 @@ export const experienceAndLevelValidator = async (
   db: PrismaTransaction,
   user: User,
   xp: number,
-  reason?: string,
+  reason: string = "",
 ) => {
   try {
     await validateActiveUserAuth();
