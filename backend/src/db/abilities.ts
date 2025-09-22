@@ -67,7 +67,7 @@ interface Ability {
   gemstoneCost: 0 | 1 | 2 | 4;
   manaCost: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
   healthCost: 2 | 3 | 5 | 6 | 10 | 12 | null;
-  xpGiven: 25 | 50 | 100 | 150 | 200 | 250 | 300 | 400 | 600 | null;
+  xpGiven: 25 | 50 | 100 | 150 | 200 | 250 | 300 | 350 | 400 | 600 | null;
   diceNotation: string | null;
   value: number | null;
   parentAbility: string | null;
@@ -279,13 +279,13 @@ const trickery: Ability[] = [
     type: "Trickery",
     target: "Self",
     description:
-      "Roll a d20. On a natural 20, today's event is rerolled. You may only use this ability once per day.",
+      "Roll a d20. On a natural 20, today's event is rerolled. If you roll a 1 you die. You may only use this ability once per day.",
     duration: 960, // 16 hours
     icon: "Twist-of-Fate.png",
     gemstoneCost: 2,
     manaCost: 8,
     healthCost: null,
-    xpGiven: 250,
+    xpGiven: 350,
     diceNotation: "1d20",
     value: null,
     parentAbility: "Devilish-Deal",
