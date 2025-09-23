@@ -477,26 +477,6 @@ const wizard: Ability[] = [
     value: 1,
     parentAbility: "Arcane-Guidance",
   },
-
-
-  // removed
-  // {
-  //   id: 18,
-  //   name: "Channeling",
-  //   category: "Wizard",
-  //   type: "DailyMana",
-  //   target: "Self",
-  //   description: "Every time you gain mana, you gain 2 extra mana.",
-  //   duration: null,
-  //   icon: "Test.jpg",
-  //   gemstoneCost: 4,
-  //   manaCost: null,
-  //   healthCost: null,
-  //   xpGiven: null,
-  //   diceNotation: null,
-  //   value: 2,
-  //   parentAbility: "Inner-Power",
-  // },
   {
     id: 19,
     name: "Greater-Essence-Transfer",
@@ -1866,7 +1846,7 @@ const cosmic: Ability[] = [
     type: "XP",
     target: "Self",
     description:
-      "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 0 XP.",
+      "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 80 XP.",
     duration: null,
     icon: "Cosmic.png",
     gemstoneCost: 0,
