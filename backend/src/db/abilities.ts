@@ -459,7 +459,7 @@ const wizard: Ability[] = [
     value: 1,
     parentAbility: "Inner-Power",
   },
-  { 
+  {
     id: 18,
     name: "Arcane-Reservoir",
     category: "Wizard",
@@ -468,7 +468,7 @@ const wizard: Ability[] = [
     description:
       "You show your team even more secrets of the arcane. All members of the guild gain 1 additional mana per day.",
     duration: null,
-    icon: "test.png",
+    icon: "Test.jpg",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1532,7 +1532,7 @@ const fighter: Ability[] = [
     value: null,
     parentAbility: "Critical-Role",
   },
-  // Base: 120 XP / 5 Mana = 24 
+  // Base: 120 XP / 5 Mana = 24
   // Duration penalty: -10% = 21.6
   // Final: 21.6 efficiency
   // {
