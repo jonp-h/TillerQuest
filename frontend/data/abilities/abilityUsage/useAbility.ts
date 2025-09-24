@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import {
   damageValidator,
+  damageValidator,
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
