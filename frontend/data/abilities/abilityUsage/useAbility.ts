@@ -5,6 +5,7 @@ import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import {
+  damageValidator,
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
@@ -19,6 +20,8 @@ import {
 } from "@/lib/authUtils";
 import { addAnalytics } from "@/data/analytics/analytics";
 import { ServerActionResult } from "@/types/serverActionResult";
+import { damageUsers } from "@/data/admin/adminPowers";
+import { number } from "zod";
 
 /**
  * Selects and uses an ability for a user on a target user.
@@ -1241,7 +1244,18 @@ const useTwistOfFateAbility = async (
       "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
   } if (dice.total === 1){
     message = "You rolled a 1, now you die!!!!"
-    castingUser.hp === 0;
+    const User = await db.user.({
+        where: {
+          id: castingUser.hp,
+        },
+        select: { id: true, username: true, class: true },
+      });
+    const damage = 999999;
+    const damageToTake = await damageValidator(db, castingUser.id, castingUser.hp, damage, castingUser.class);
+    await db.user.update({
+      where: { id: castingUser.id },          
+      data: { hp: { decrement: damage } },
+    });
   } else {
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
