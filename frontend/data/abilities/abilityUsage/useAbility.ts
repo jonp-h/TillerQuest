@@ -1240,21 +1240,20 @@ const useTwistOfFateAbility = async (
 
   let message = "";
   if (dice.total === 20) {
-    message =
-      "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
+    message = "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
   } if (dice.total === 1){
     message = "You rolled a 1, now you die!!!!"
-    const User = await db.user.({
+    const User = await db.user.findFirst ({
         where: {
-          id: castingUser.hp,
+          id: castingUser.id,
         },
-        select: { id: true, username: true, class: true },
+        select: { id: true, username: true},
       });
     const damage = 999999;
     const damageToTake = await damageValidator(db, castingUser.id, castingUser.hp, damage, castingUser.class);
     await db.user.update({
       where: { id: castingUser.id },          
-      data: { hp: { decrement: damage } },
+      data: { hp: { decrement: damageToTake } },
     });
   } else {
     message = "You rolled a " + dice.total + ". Better luck next time!";
