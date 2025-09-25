@@ -1019,20 +1019,20 @@ const warlock: Ability[] = [
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
-      "Lose 10 of your maximum health to grant 5 mana to a guild member. This ability can only be used once per day.",
+      "Lose 10 of your maximum health to grant 5 mana to a guild member.",
     duration: 180, // 3 hours
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: 10,
-    xpGiven: 240,
+    xpGiven: 160,
     diceNotation: null,
     value: 5,
     parentAbility: "Crimson-Gift",
   },
-  // Base: 240 XP / 10 HP = 24
-  // Duration penalty: -10% = 21.6
-  // Final: 21.6 efficiency
+  // Base: 160 XP / 10 HP = 16
+  // Duration penalty: -10% = 14.4
+  // Final: 14.4 efficiency
   {
     id: 43,
     name: "Crimson-Coin",
