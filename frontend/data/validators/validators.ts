@@ -257,6 +257,7 @@ export const experienceAndLevelValidator = async (
   db: PrismaTransaction,
   user: User,
   xp: number,
+  reason: string = "",
 ) => {
   try {
     await validateActiveUserAuth();
@@ -329,7 +330,11 @@ export const experienceAndLevelValidator = async (
     });
 
     if (xpToGive > 0)
-      await addLog(db, user.id, `${user.username} gained ${xpToGive} XP`);
+      await addLog(
+        db,
+        user.id,
+        `${user.username} gained ${xpToGive} XP. ${reason}`,
+      );
 
     if (levelDifference > 0) {
       await addLog(

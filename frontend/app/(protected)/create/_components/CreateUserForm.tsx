@@ -76,6 +76,7 @@ export default function CreateUserForm({
     };
 
     try {
+      //FIXME: remove frontend validation, to remove server action
       // frontend validation
       const validatedData = await validateUserCreation(data.id, formValues);
 

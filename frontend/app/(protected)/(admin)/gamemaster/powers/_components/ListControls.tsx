@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { User } from "@prisma/client";
-import React from "react";
+import { useState, useTransition } from "react";
 import {
   damageUsers,
   giveArenatokenToUsers,
@@ -22,10 +22,11 @@ import Checkbox from "@mui/material/Checkbox";
 import { toast } from "react-toastify";
 
 export default function ListControls({ users }: { users: User[] }) {
-  const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
-  const [value, setValue] = React.useState<number>(4);
-  const [isPending, startTransition] = React.useTransition();
-  const [notify, setNotify] = React.useState<boolean>(false);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [value, setValue] = useState<number>(3);
+  const [isPending, startTransition] = useTransition();
+  const [notify, setNotify] = useState<boolean>(false);
+  const [reason, setReason] = useState<string>("");
 
   const router = useRouter();
 
@@ -35,6 +36,12 @@ export default function ListControls({ users }: { users: User[] }) {
       return;
     }
 
+    // prepend "Reason:" if reason is defined
+    let reasonString = reason;
+    if (reason) {
+      reasonString = "Reason: " + reason;
+    }
+
     startTransition(async () => {
       switch (action) {
         case "heal":
@@ -42,7 +49,12 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for healing");
             return;
           }
-          const healResult = await healUsers(selectedUsers, value, notify);
+          const healResult = await healUsers(
+            selectedUsers,
+            value,
+            notify,
+            reasonString,
+          );
 
           if (healResult.success) {
             toast.success(healResult.data);
@@ -56,7 +68,12 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for damage");
             return;
           }
-          const damageResult = await damageUsers(selectedUsers, value, notify);
+          const damageResult = await damageUsers(
+            selectedUsers,
+            value,
+            notify,
+            reasonString,
+          );
 
           if (damageResult.success) {
             toast.success(damageResult.data);
@@ -71,6 +88,7 @@ export default function ListControls({ users }: { users: User[] }) {
               selectedUsers,
               value,
               notify,
+              reasonString,
             );
 
             if (negativeXpResult.success) {
@@ -84,7 +102,12 @@ export default function ListControls({ users }: { users: User[] }) {
               { autoClose: false },
             );
           } else {
-            const xpResult = await giveXpToUsers(selectedUsers, value, notify);
+            const xpResult = await giveXpToUsers(
+              selectedUsers,
+              value,
+              notify,
+              reasonString,
+            );
 
             if (xpResult.success) {
               toast.success(xpResult.data);
@@ -98,6 +121,7 @@ export default function ListControls({ users }: { users: User[] }) {
             selectedUsers,
             value,
             notify,
+            reasonString,
           );
 
           if (manaResult.success) {
@@ -112,6 +136,7 @@ export default function ListControls({ users }: { users: User[] }) {
             selectedUsers,
             value,
             notify,
+            reasonString,
           );
 
           if (arenaResult.success) {
@@ -126,6 +151,7 @@ export default function ListControls({ users }: { users: User[] }) {
             selectedUsers,
             value,
             notify,
+            reasonString,
           );
 
           if (goldResult.success) {
@@ -149,7 +175,7 @@ export default function ListControls({ users }: { users: User[] }) {
       </div>
 
       <Paper elevation={5}>
-        <div className="flex justify-center py-3">
+        <div className="flex flex-col items-center justify-center py-3">
           <FormControlLabel
             sx={{ color: "lightgreen" }}
             control={
@@ -160,6 +186,15 @@ export default function ListControls({ users }: { users: User[] }) {
               />
             }
             label="Notify users on Discord"
+          />
+          <Typography variant="overline">
+            Reason(s) for action (optional)
+          </Typography>
+          <TextField
+            variant="outlined"
+            placeholder="Reason(s)"
+            type="text"
+            onChange={(e) => setReason(e.target.value)}
           />
         </div>
         <Typography className=" text-center" variant="h6">
@@ -252,6 +287,7 @@ export default function ListControls({ users }: { users: User[] }) {
             className="w-2/3"
             type="number"
             required
+            defaultValue={value}
             onChange={(e) => setValue(+e.target.value)}
             onFocus={(e) => e.target.select()}
           />
