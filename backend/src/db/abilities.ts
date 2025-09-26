@@ -761,8 +761,8 @@ const barbarian: Ability[] = [
     category: "Barbarian",
     type: "Protection",
     target: "Self",
-    description: "You shield yourself from 1d4 damage for the next 4 hours.",
-    duration: 240, // 4 hours
+    description: "You shield yourself from 1d4 damage for the next 8 hours.",
+    duration: 480, // 8 hours
     icon: "Shield.png",
     gemstoneCost: 2,
     manaCost: 2,
@@ -773,8 +773,8 @@ const barbarian: Ability[] = [
     parentAbility: "Toughness",
   },
   // Base: 40 XP / 2 Mana = 20
-  // Duration penalty: -25% = 15
-  // Final: 15 efficiency
+  // Duration penalty: -30% = 14
+  // Final: 14 efficiency
   {
     id: 32,
     name: "Battle-Ready",
@@ -803,8 +803,8 @@ const barbarian: Ability[] = [
     type: "Protection",
     target: "SingleTarget",
     description:
-      "You shield the next attack on a guildmember from 1d6+1 damage for the next 4 hours.",
-    duration: 240, // 4 hours
+      "You shield the next attack on a guildmember from 1d6+1 damage for the next 8 hours.",
+    duration: 480, // 8 hours
     icon: "Protector-of-the-Weak.png",
     gemstoneCost: 4,
     manaCost: 4,
@@ -815,8 +815,8 @@ const barbarian: Ability[] = [
     parentAbility: "Shield",
   },
   // Base: 120 XP / 4 Mana = 30
-  // Duration penalty: -25% = 22.5
-  // Final: 22.5 efficiency
+  // Duration penalty: -30% = 21
+  // Final: 21 efficiency
   {
     id: 34,
     name: "Get-Behind-Me",
@@ -845,8 +845,8 @@ const barbarian: Ability[] = [
     type: "Protection",
     target: "Others",
     description:
-      "You shield your guildmembers from 1d6 damage for the next 4 hours.",
-    duration: 240, // 4 hours
+      "You shield your guildmembers from 1d6 damage for the next 8 hours.",
+    duration: 480, // 8 hours
     icon: "Protector-of-the-People.png",
     gemstoneCost: 4,
     manaCost: 6,
@@ -857,8 +857,8 @@ const barbarian: Ability[] = [
     parentAbility: "Protector-of-the-Weak",
   },
   // Base: 160 XP / 6 Mana = 26.6
-  // Duration penalty: -25% = 19.95
-  // Final: 19.95 efficiency
+  // Duration penalty: -30% = 18.62
+  // Final: 18.62 efficiency
   {
     id: 36,
     name: "Enhanced-Toughness",
