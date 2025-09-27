@@ -521,7 +521,7 @@ const wizard: Ability[] = [
     id: 22,
     name: "Essence-Offering",
     category: "Wizard",
-    type: "Transfer",
+    type: "Mana",
     target: "Others",
     description: "You grant all your guildmembers 4 mana.",
     duration: null,

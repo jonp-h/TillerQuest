@@ -27,6 +27,9 @@ export const getGuildmembersByGuildname = async (guildName: string) => {
           },
         },
       },
+      orderBy: {
+        username: "desc",
+      },
     });
     return members;
   } catch (error) {
