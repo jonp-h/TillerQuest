@@ -761,20 +761,20 @@ const barbarian: Ability[] = [
     category: "Barbarian",
     type: "Protection",
     target: "Self",
-    description: "You shield yourself from 1d4 damage for the next 8 hours.",
+    description: "You shield yourself from 1d4 damage for the next 16 hours.",
     duration: 960, // 16 hours
     icon: "Shield.png",
     gemstoneCost: 2,
     manaCost: 2,
     healthCost: null,
-    xpGiven: 40,
+    xpGiven: 80,
     diceNotation: "1d4", // efficiency +0.5
     value: null,
     parentAbility: "Toughness",
   },
-  // Base: 40 XP / 2 Mana = 20
-  // Duration penalty: -35% = 13
-  // Final: 13 efficiency
+  // Base: 80 XP / 2 Mana = 40
+  // Duration penalty: -35% = 26
+  // Final: 26 efficiency
   {
     id: 32,
     name: "Battle-Ready",
