@@ -1356,7 +1356,8 @@ const useDungeonAttackAbility = async (
       targetCount: targetIds.length,
     });
 
-    await finalizeAbilityUsage(db, castingUser, ability);
+    // create passive cooldown
+    await activatePassive(db, castingUser, [castingUser.id], ability);
 
     return {
       success: true,
