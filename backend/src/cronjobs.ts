@@ -292,6 +292,7 @@ export const resetGameHighscores = async (db: PrismaTransaction) => {
   const topScores = await db.game.findMany({
     where: {
       status: "FINISHED",
+      game: "TypeQuest",
       user: { publicHighscore: true },
     },
     orderBy: { score: "desc" },
