@@ -165,7 +165,7 @@ export const setSelectedCosmic = async (
       const users = await getAllActiveUsers();
 
       for (const user of users) {
-        // user should recieve a passive with a ticking bomb, and it should enable itself at 11:40
+        // user should receive a passive with a ticking bomb, and it should enable itself at 11:40
         // evade shold remove passive at a great mana cost
 
         if (cosmic.abilityName) {

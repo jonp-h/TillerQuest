@@ -746,7 +746,7 @@ const useManaAbility = async (
       await addLog(
         db,
         targetUserId,
-        `${targetUser.username} recieved ${value} mana from ${castingUser.username}`,
+        `${targetUser.username} received ${value} mana from ${castingUser.username}`,
       );
     }),
   );
@@ -798,7 +798,7 @@ const useTransferAbility = async (
           targetUserId,
           abilityValue.total,
         );
-        // return error message if user cannot recieve mana
+        // return error message if user cannot receive mana
         if (targetUser === 0) {
           throw new ErrorMessage("Target is already at full mana");
         } else if (typeof targetUser === "string") {
@@ -942,7 +942,7 @@ const useTradeAbility = async (
       message:
         "You traded " +
         ability.healthCost +
-        " , and the target recieved " +
+        " , and the target received " +
         manaValue +
         " mana",
       diceRoll: "",
@@ -996,7 +996,7 @@ const useDecreaseHealthAbility = async (
       message:
         "Your max health was decreased by " +
         ability.healthCost +
-        " , and the target recieved " +
+        " , and the target received " +
         manaValue +
         " mana",
       diceRoll: "",
@@ -1056,7 +1056,7 @@ const useProtectionAbility = async (
   return {
     success: true,
     data: {
-      message: "Target recieved " + abilityValue.total + " shield",
+      message: "Target received " + abilityValue.total + " shield",
       diceRoll:
         "output" in abilityValue
           ? abilityValue.output.split("[")[1].split("]")[0]
@@ -1113,7 +1113,7 @@ const useArenaAbility = async (
   return {
     success: true,
     data: {
-      message: "Guild recieved " + ability.value + " arena tokens",
+      message: "Guild received " + ability.value + " arena tokens",
       diceRoll: "",
     },
   };
@@ -1185,7 +1185,7 @@ const useGoldAbility = async (
   return {
     success: true,
     data: {
-      message: "You recieved " + abilityValue.total + " gold!",
+      message: "You received " + abilityValue.total + " gold!",
       diceRoll:
         "output" in abilityValue
           ? abilityValue.output.split("[")[1].split("]")[0]

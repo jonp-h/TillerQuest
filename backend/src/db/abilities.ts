@@ -65,7 +65,7 @@ interface Ability {
   duration: 60 | 180 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
   icon: string;
   gemstoneCost: 0 | 1 | 2 | 4;
-  manaCost: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
+  manaCost: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
   healthCost: 2 | 3 | 5 | 6 | 10 | 12 | null;
   xpGiven: 20 | 40 | 80 | 120 | 160 | 200 | 240 | 320 | 480 | null;
   diceNotation: string | null;
@@ -960,7 +960,7 @@ const warlock: Ability[] = [
     duration: null,
     icon: "Crimson-Bond.png",
     gemstoneCost: 2,
-    manaCost: null,
+    manaCost: 1,
     healthCost: 3,
     xpGiven: 40,
     diceNotation: null,

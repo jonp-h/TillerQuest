@@ -343,7 +343,7 @@ export const experienceAndLevelValidator = async (
         `LEVEL UP: ${user.username} leveled up to level ${targetUser.level + levelDifference}. Granting ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );
       logger.info(
-        `LEVEL UP: User ${user.username} leveled up to level ${targetUser.level + levelDifference}. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+        `LEVEL UP: User ${user.username} leveled up to level ${targetUser.level + levelDifference}. User received ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );
     }
     return "Successfully gave XP to user";

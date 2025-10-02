@@ -31,7 +31,7 @@ export default async function InformationBox({
       {systemMessages?.map((message) => (
         <SystemMessage key={message.id} message={message} userId={user.id} />
       ))}
-      {/* User is eligible for mana if the user has not recieved mana today, and it is not weekend  */}
+      {/* User is eligible for mana if the user has not received mana today, and it is not weekend  */}
       {!sameDay && !isWeekend() && (
         <Paper
           elevation={6}

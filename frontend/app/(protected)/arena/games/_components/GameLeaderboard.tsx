@@ -119,7 +119,7 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
         </Table>
       </TableContainer>
       <Typography variant="body2" color="textSecondary" align="center">
-        The top three players will recieve 300xp at the end of the week.
+        The top three players will receive 300xp at the end of the week.
       </Typography>
     </div>
   );

@@ -170,7 +170,7 @@ model User {
   hpMax    Int      @default(40)
   mana     Int      @default(0)
   manaMax  Int      @default(40)
-  lastMana DateTime @default(now()) // Last time user recieved mana in ISO 8601 date-time format.
+  lastMana DateTime @default(now()) // Last time user received mana in ISO 8601 date-time format.
 
   gemstones   Int        @default(1) // TODO: consider setting to 2 for new users
   gold        Int        @default(0)

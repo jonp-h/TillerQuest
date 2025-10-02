@@ -204,7 +204,7 @@ export const experienceAndLevelValidator = async (
       console.info(
         `LEVEL UP: User ${user.id} leveled up to level ${
           user.level + levelDifference
-        }. User recieved ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${
+        }. User received ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${
           2 * levelDifference
         } gemstones.`,
       );
