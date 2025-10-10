@@ -362,7 +362,7 @@ const cosmic: CosmicEvent[] = [
   },
   {
     id: 23,
-    name: "Royal flush",
+    name: "Royal-flush",
     description:
       "All students sharing a name with a former king of Norway, gain 100 XP.",
     // icon: ".png"
@@ -637,7 +637,7 @@ const cosmic: CosmicEvent[] = [
   },
   {
     id: 41,
-    name: "The-gentlemen",
+    name: "The-Gentlemen",
     description:
       "No one is allowed to speak for one hour after the event is revealed. All communication must be through body language or text. Anyone caught speaking will lose 20HP.",
     // icon: ".png"
@@ -812,7 +812,7 @@ const cosmic: CosmicEvent[] = [
     id: 52,
     name: "Portrait-of-the-Game-Masters",
     description:
-      "The Game Masters want a portrait of them to really capture their incredible power: All flattering drawings are subject to a 300 XP reward and wil be put up in the office. Best drawing is subject to an additional 300 XP reward. ",
+      "The Game Masters want a portrait of them to really capture their incredible power: All flattering drawings are subject to a 300 XP reward and will be put up in the office. Best drawing is subject to an additional 300 XP reward. ",
     // icon: ".png"
     // presetDate: "",
     frequency: 20,

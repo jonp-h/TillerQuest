@@ -88,12 +88,13 @@ function Battleground({
         .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
         .finally(() => {
           toast.success(result.data.message);
+          router.refresh();
         });
     } else {
       toast.error(result.error);
+      router.refresh();
     }
     setThrown(false);
-    router.refresh();
   };
 
   return (
