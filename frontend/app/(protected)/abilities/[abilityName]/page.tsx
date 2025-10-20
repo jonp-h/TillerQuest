@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { notFound } from "next/navigation";
-import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
@@ -91,7 +90,7 @@ export default async function AbilityNamePage({
       />
       <div className="flex justify-center">
         <Paper
-          elevation={5}
+          elevation={3}
           className=" text-center items-center p-5 w-full md:w-2/3 xl:w-1/2"
         >
           {/* back button */}

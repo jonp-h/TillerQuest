@@ -4,7 +4,6 @@ import {
   getSpecialStatuses,
 } from "@/data/admin/adminUserInteractions";
 import { List, ListItem, Typography } from "@mui/material";
-import React from "react";
 import ManageUserForm from "./_components/ManageUserForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 

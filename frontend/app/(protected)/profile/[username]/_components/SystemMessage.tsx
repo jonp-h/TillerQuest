@@ -2,7 +2,6 @@
 import { discardSystemMessage } from "@/data/messages/systemMessages";
 import { Paper, Typography, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { toast } from "react-toastify";
 
 interface SystemMessageProps {

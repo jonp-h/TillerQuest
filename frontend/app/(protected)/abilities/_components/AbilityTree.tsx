@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import Tree, { RawNodeDatum } from "react-d3-tree";
 import { AbilityNodes } from "./AbilityNodes";
 import {

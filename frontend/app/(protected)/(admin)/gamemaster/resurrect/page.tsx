@@ -1,7 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { getDeadUsers } from "@/data/user/getUser";
 import { Typography } from "@mui/material";
-import React from "react";
 import DeathCard from "./_components/DeathCard";
 import Image from "next/image";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";

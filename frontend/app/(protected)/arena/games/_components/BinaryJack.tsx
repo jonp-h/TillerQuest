@@ -7,7 +7,7 @@ import {
 } from "@/data/games/game";
 import { diceSettings } from "@/lib/diceSettings";
 import DiceBox from "@3d-dice/dice-box-threejs";
-import { Button, Divider, Input } from "@mui/material";
+import { Button, Divider, Input, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -218,7 +218,8 @@ function BinaryJack({
 
       {/* How to Play Section */}
 
-      <div className="mb-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
+      {/* <div className="mb-4 p-4 bg-gray-800 rounded-lg border border-gray-600"> */}
+      <Paper variant="outlined" sx={{ marginBottom: 4, padding: 4 }}>
         <h3 className="text-lg font-bold mb-3 text-purple-400">
           How to Play BinaryJack
         </h3>
@@ -276,7 +277,7 @@ function BinaryJack({
             </p>
           </div>
         </div>
-      </div>
+      </Paper>
 
       <div className="font-mono p-4 border rounded-lg">
         {/* Game Status Panel */}

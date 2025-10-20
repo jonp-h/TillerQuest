@@ -1,9 +1,9 @@
 import { getCosmic } from "@/data/cosmic/getCosmic";
 import { getSystemMessages } from "@/data/messages/systemMessages";
 import { UserProfile } from "@/types/users";
-import { Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import React, { JSX } from "react";
+import { JSX } from "react";
 import SystemMessage from "./SystemMessage";
 
 export default async function InformationBox({
@@ -34,7 +34,7 @@ export default async function InformationBox({
       {/* User is eligible for mana if the user has not recieved mana today, and it is not weekend  */}
       {!sameDay && !isWeekend() && (
         <Paper
-          elevation={6}
+          elevation={4}
           className="m-3 p-5 flex flex-col gap-5 text-center justify-center animate-pulse"
           variant="outlined"
           sx={{
@@ -54,14 +54,18 @@ export default async function InformationBox({
       )}
       {cosmic && (
         <Paper
-          elevation={6}
+          elevation={4}
           className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
         >
           <Typography variant="h4" align="center">
             Daily Cosmic:{" "}
-            <strong className="text-green-400">
+            <Box
+              component={"span"}
+              color={"success.main"}
+              style={{ fontWeight: "bold" }}
+            >
               {cosmic.name.replace(/-/g, " ")}
-            </strong>
+            </Box>
           </Typography>
           <Typography variant="h6" align="center">
             {cosmic.description}

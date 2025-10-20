@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { List, ListItem, Typography } from "@mui/material";
-import React from "react";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { adminGetApplicationSettings } from "@/data/admin/gameSettings";
 import GameSettingsForm from "./_components/GameSettingsForm";

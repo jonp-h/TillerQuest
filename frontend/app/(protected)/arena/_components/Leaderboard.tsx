@@ -8,7 +8,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Class, SchoolClass } from "@prisma/client";
@@ -36,7 +35,9 @@ interface LeaderboardProps {
 async function Leaderboard({ users, title }: LeaderboardProps) {
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <h1 className="text-3xl">{title}</h1>
+      <Typography variant="h4" component={"h2"}>
+        {title}
+      </Typography>
       <TableContainer
         sx={{ maxWidth: "50vw" }}
         component={Paper}

@@ -1,5 +1,4 @@
 import { $Enums } from "@prisma/client";
-import React from "react";
 
 const RARITY_CLASSES = {
   common: "text-common/80",

@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { getValhallaUsers } from "@/data/user/getUser";
-import React from "react";
 import Leaderboard from "../_components/Leaderboard";
 import { Typography } from "@mui/material";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
@@ -12,9 +11,17 @@ async function ValhallaPage() {
   return (
     <MainContainer>
       <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="my-10 text-5xl text-red-400 text-center ">Valhalla</h1>
+        <Typography
+          variant="h2"
+          color="secondary"
+          fontWeight={"500"}
+          component={"h1"}
+          sx={{ marginY: 7 }}
+        >
+          Valhalla
+        </Typography>
         <div className="flex flex-col mt-10 max-w-2/3 gap-3 justify-center xl:flex-row">
-          <Leaderboard title={"Players of legend"} users={renownedPlayers} />
+          <Leaderboard title={"Players of Legend"} users={renownedPlayers} />
         </div>
         <div className="w-1/3">
           <Typography variant="body2" color="textSecondary" align="center">

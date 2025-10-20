@@ -33,7 +33,7 @@ export default function CustomizedDialogs() {
 
   return (
     <Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
         Show rarity tiers
       </Button>
       <BootstrapDialog

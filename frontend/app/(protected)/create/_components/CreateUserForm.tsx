@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import Classes from "./Classes";
 import { checkNewUserSecret } from "@/data/validators/secretValidation";
 import { $Enums, SchoolClass } from "@prisma/client";
@@ -120,6 +120,7 @@ export default function CreateUserForm({
         <Typography variant="body1">Enter Secret Code</Typography>
         <TextField
           variant="filled"
+          color="secondary"
           label="Secret Code"
           onChange={(e) => setSecret(e.target.value)}
           size="small"
@@ -130,6 +131,7 @@ export default function CreateUserForm({
         <Typography variant="body1">Enter Username</Typography>
         <TextField
           variant="outlined"
+          color="secondary"
           label="Username"
           defaultValue={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -140,22 +142,24 @@ export default function CreateUserForm({
         <Typography variant="body1">Enter Name</Typography>
         <TextField
           variant="outlined"
+          color="secondary"
           label="Name"
           onChange={(e) => setName(e.target.value)}
           defaultValue={name}
           size="small"
           required
           helperText={
-            <p>
+            <>
               Enter your given name so that the
               <br />
               game masters can identify who you are
-            </p>
+            </>
           }
         />
         <Typography variant="body1">Enter Lastname</Typography>
         <TextField
           variant="outlined"
+          color="secondary"
           label="Lastname"
           onChange={(e) => setLastname(e.target.value)}
           defaultValue={lastname}

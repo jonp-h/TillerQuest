@@ -6,6 +6,9 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
+  --color-tqblue: #000240;
+  --color-tqwhite: #e2e2e2;
+  --color-background: #0d1117;
 
   --color-common: #e5e7eb;
   --color-uncommon: #1eff00;

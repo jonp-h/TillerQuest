@@ -2,7 +2,6 @@ import MainContainer from "@/components/MainContainer";
 import { getBasicUserDetails } from "@/data/admin/adminUserInteractions";
 import { getGuilds } from "@/data/guilds/getGuilds";
 import { Typography } from "@mui/material";
-import React from "react";
 import GuildForm from "./_components/GuildForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 

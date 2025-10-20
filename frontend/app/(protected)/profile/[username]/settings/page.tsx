@@ -1,7 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { getUserSettingsByUsername } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
-import React from "react";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
 import { redirectIfWrongUsernameOrNotActiveUser } from "@/lib/redirectUtils";
 

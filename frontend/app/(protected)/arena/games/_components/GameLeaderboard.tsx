@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React from "react";
 import Image from "next/image";
 import { JsonValue } from "@prisma/client/runtime/library";
 import RarityText from "@/components/RarityText";
@@ -34,7 +33,9 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
 
   return (
     <div className="flex flex-col text-center">
-      <h1 className="text-3xl">Top 10 Weekly Leaderboard {gameName}</h1>
+      <Typography variant="h5" component={"h2"} className="text-3xl">
+        Weekly top 10: {gameName}
+      </Typography>
       <TableContainer
         sx={{ maxWidth: "50vw" }}
         component={Paper}

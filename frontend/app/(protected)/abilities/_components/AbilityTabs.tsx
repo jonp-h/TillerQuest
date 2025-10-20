@@ -1,9 +1,9 @@
 "use client";
 import { Paper, Tab, Tabs } from "@mui/material";
-import React from "react";
 import AbilityTree from "./AbilityTree";
 import { RootAbilities, UserAbilities } from "./interfaces";
 import { $Enums } from "@prisma/client";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -42,18 +42,18 @@ export default function AbilityTabs({
   rootAbilities: RootAbilities[] | null;
   userAbilities: UserAbilities[] | null;
 }) {
-  const [value, setValue] = React.useState(() => {
+  const [value, setValue] = useState(() => {
     const storedValue = sessionStorage.getItem("abilityTab");
     return storedValue !== null ? Number(storedValue) : 0;
   });
 
   // Save the value state to sessionStorage whenever it changes
-  React.useEffect(() => {
+  useEffect(() => {
     sessionStorage.setItem("abilityTab", String(value));
   }, [value]);
 
   // Handle tab change between ability types
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -62,6 +62,8 @@ export default function AbilityTabs({
       <Tabs
         centered
         value={value}
+        indicatorColor="primary"
+        textColor="inherit"
         onChange={handleChange}
         aria-label="Ability tabs"
       >
@@ -74,8 +76,8 @@ export default function AbilityTabs({
                 Object.values($Enums.Class).includes(
                   ability.category as $Enums.Class,
                 ) && userClass != (ability.category as $Enums.Class)
-                  ? "salmon"
-                  : "primary",
+                  ? "error.main"
+                  : "text.primary",
             }}
             style={{
               borderRadius: "10px",

@@ -1,8 +1,14 @@
 "use client";
 import { Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function TimeLeft({ endTime }: { endTime: Date }) {
+export default function TimeLeft({
+  endTime,
+  color = "textPrimary",
+}: {
+  endTime: Date;
+  color?: string;
+}) {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -22,7 +28,7 @@ export default function TimeLeft({ endTime }: { endTime: Date }) {
   }, [endTime]);
 
   return days + hours + minutes > 0 ? (
-    <Typography variant="body1">
+    <Typography color={color} variant="body1" align="center">
       {days !== 0 && days + "d"} {hours !== 0 && hours + "h"}{" "}
       {minutes !== 0 && minutes + "m"}
     </Typography>

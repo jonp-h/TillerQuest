@@ -1,9 +1,9 @@
 import MainContainer from "@/components/MainContainer";
-import React from "react";
 import Battleground from "./_components/Battleground";
 import { getDungeonAbilities } from "@/data/dungeons/dungeonAbilities";
 import { getEnemies, getUserTurns } from "@/data/dungeons/dungeon";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { Typography } from "@mui/material";
 
 async function DungeonPage() {
   const session = await redirectIfNotActiveUser();
@@ -18,7 +18,14 @@ async function DungeonPage() {
 
   return (
     <MainContainer>
-      <h1 className="text-5xl text-center mt-10">The Dungeons</h1> <br />
+      <Typography
+        variant="h3"
+        component={"h1"}
+        sx={{ marginY: 3 }}
+        className="text-5xl text-center mt-10"
+      >
+        The Dungeons
+      </Typography>{" "}
       {enemies ? (
         <Battleground
           abilities={dungeonAbilities ?? []}
@@ -27,9 +34,14 @@ async function DungeonPage() {
           userTurns={userTurns}
         />
       ) : (
-        <h1 className="text-3xl text-center mb-5 text-red-500">
+        <Typography
+          variant="h4"
+          component={"h2"}
+          color="error"
+          sx={{ marginBottom: 5 }}
+        >
           You search the dungeons, but find nothing...
-        </h1>
+        </Typography>
       )}
     </MainContainer>
   );

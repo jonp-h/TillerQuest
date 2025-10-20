@@ -1,14 +1,13 @@
 import Image from "next/image";
-import React from "react";
 
 export default function Loading() {
   return (
-    <div className="w-screen flex justify-center items-center mt-30">
+    <div className="w-screen h-screen flex justify-center items-center bg-background">
       <Image
-        src="/TQlogo.png"
+        src="TQCircle.svg"
         alt="TillerQuest"
-        width={300}
-        height={300}
+        width={100}
+        height={100}
         className=" animate-spin"
       />
     </div>

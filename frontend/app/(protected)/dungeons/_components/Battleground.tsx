@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
@@ -9,7 +9,7 @@ import AbilityGrid from "./AbilityGrid";
 import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import TimeLeft from "@/components/TimeLeft";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Link from "next/link";
 import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 
@@ -116,14 +116,16 @@ function Battleground({
         {enemies && enemies.length > 0 ? (
           enemies.every((enemy) => enemy.health <= 0) ? (
             <div className="absolute z-10 flex flex-col text-center gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
-              <p>All enemies are slain. The dungeons are safe for now.</p>
+              <Typography>
+                All enemies are slain. The dungeons are safe for now.
+              </Typography>
               <Link href="/guild">
                 <Button variant="text">Vote to venture further</Button>
               </Link>
             </div>
           ) : (
             <div className="absolute flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm animate-pulse">
-              <p>Enemies attack in </p>
+              <Typography>Enemies attack in </Typography>
               <div className="text-red-500">
                 <TimeLeft
                   endTime={
@@ -140,10 +142,10 @@ function Battleground({
           )
         ) : (
           <div className="absolute z-10 flex gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">
-            <p>
+            <Typography>
               You see faint shadows moving in the dark. Ask your guild leader to
               venture further.
-            </p>
+            </Typography>
           </div>
         )}
         {enemies &&
@@ -162,7 +164,7 @@ function Battleground({
           {abilities.some((ability) => ability.isDungeon) ? (
             userTurns.turns ? (
               <div>
-                <p>You have {userTurns.turns} turns left</p>
+                <Typography>You have {userTurns.turns} turns left</Typography>
                 <AbilityGrid
                   abilities={abilities}
                   onAbilityRoll={rollAbility}
@@ -177,21 +179,21 @@ function Battleground({
               </div>
             ) : (
               <div className="flex text-center justify-center gap-1">
-                <p>You must rest for </p>
-
-                <div className="text-red-500 text-5xl">
-                  <TimeLeft
-                    endTime={new Date(new Date().setHours(24, 0, 0, 0))}
-                  />
-                </div>
-                <p>
+                <Typography>You must rest for</Typography>
+                <TimeLeft
+                  color="error"
+                  endTime={new Date(new Date().setHours(24, 0, 0, 0))}
+                />
+                <Typography>
                   before you can muster your strength enough to fight in the
                   dungeons again
-                </p>
+                </Typography>
               </div>
             )
           ) : (
-            <p>Buy dungeon abilities to fight in the dungeons</p>
+            <Typography>
+              Buy dungeon abilities to fight in the dungeons
+            </Typography>
           )}
         </div>
       </div>

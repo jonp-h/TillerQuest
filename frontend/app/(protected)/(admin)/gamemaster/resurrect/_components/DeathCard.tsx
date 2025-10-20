@@ -8,7 +8,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
 import { resurrectUsers } from "@/data/admin/resurrectUser";
@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
 
 export default function DeathCard({ user }: { user: User }) {
-  const [number, setNumber] = React.useState<number | null>(0);
+  const [number, setNumber] = useState<number | null>(0);
   const router = useRouter();
 
   const handleRessurect = async (effect: string) => {

@@ -13,7 +13,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CosmicEvent } from "@prisma/client";
 import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
 import { useRouter } from "next/navigation";

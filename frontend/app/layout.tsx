@@ -5,12 +5,12 @@ import { TillerQuestTheme } from "@/lib/theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
-import { Inter, Julius_Sans_One } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
-  title: "TillerQuest",
-  description: "A gamified classrom experience",
+  title: "TillerQuest: A gamified classroom experience",
+  description: "A gamified classroom experience",
 };
 
 const inter = Inter({
@@ -19,19 +19,13 @@ const inter = Inter({
   display: "swap",
 });
 
-const julius_sans_one = Julius_Sans_One({
-  weight: "400",
-  variable: "--font-julius-sans-one",
-  subsets: ["latin"],
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${julius_sans_one.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
       <head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>

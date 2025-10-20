@@ -113,7 +113,9 @@ function ProfileSettingsForm({
       elevation={4}
       className="flex flex-col mt-10 p-10 gap-3 w-full mx-auto items-center lg:w-1/2"
     >
-      <h1 className="text-4xl">Guild Settings</h1>
+      <Typography variant="h3" component={"h1"}>
+        Guild Settings
+      </Typography>
       <Paper
         elevation={2}
         className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
@@ -127,6 +129,7 @@ function ProfileSettingsForm({
         <div className="flex gap-3">
           <TextField
             label="Guild Name"
+            color="secondary"
             defaultValue={guild.name}
             disabled={guild.guildLeader !== userId}
             onChange={(e) => setName(e.target.value)}
@@ -155,7 +158,7 @@ function ProfileSettingsForm({
               title={`${guild.members.length - 1} votes required to start the next battle. Only the guild leader can start a battle.`}
               placement="top"
             >
-              <Button variant="outlined" onClick={vote}>
+              <Button variant="outlined" color="success" onClick={vote}>
                 Vote to enter the next battle ({guild.nextBattleVotes.length} /{" "}
                 {guild.members.length - 1} votes)
               </Button>
@@ -170,7 +173,7 @@ function ProfileSettingsForm({
               }
               dialogFunction={handleStartBattle}
               buttonVariant="contained"
-              color="error"
+              color="warning"
               disabled={loading || fighting || guild.guildLeader !== userId}
               agreeText="Start Battle"
               disagreeText="Cancel"

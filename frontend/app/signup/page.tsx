@@ -1,28 +1,20 @@
 "use client";
 import MainContainer from "@/components/MainContainer";
-import { signIn, useSession } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 import { GitHub } from "@mui/icons-material";
-import { Button, Paper, Typography } from "@mui/material";
-import { redirect } from "next/navigation";
-
-import React from "react";
+import { Box, Button, Link, Paper, Typography } from "@mui/material";
 
 export default function SignUpPage() {
-  // If the user is already signed in, redirect them to the home page
-  const session = useSession();
-  if (session) {
-    redirect("/");
-  }
-
+  // TODO: consider redirecting if logged in
   return (
     <MainContainer>
       <div className="flex justify-center lg:pt-10">
         <Paper
-          elevation={6}
+          elevation={3}
           className="flex flex-col justify-center p-5 w-full h-screen lg:h-auto lg:w-1/2 xl:w-1/3"
         >
           <div className="flex flex-col gap-5">
-            <Typography variant="h3" align="center">
+            <Typography variant="h3" component={"h1"} align="center">
               Sign Up
             </Typography>
             <GitHub
@@ -36,29 +28,39 @@ export default function SignUpPage() {
             />
           </div>
           <div className="flex flex-col gap-5">
-            <Typography variant="h5" align="center">
+            <Typography variant="h5" component={"h2"} align="center">
               Use your GitHub account to sign up
             </Typography>
             <Typography variant="body1" color="textSecondary" align="center">
               TillerQuest uses OAuth to confirm your identity through other
               services. When you log in,
-              <strong>
+              <Box
+                component="span"
+                color="info.main"
+                fontWeight="fontWeightBold"
+              >
                 {" "}
                 you only ever give your credentials to that service - never to
                 TillerQuest
-              </strong>
+              </Box>
               . Then, the GitHub service tells the TillerQuest servers that
               you&apos;re really you.
               <br />
-              <br /> In general, this reveals no information about you beyond
-              what is already public. Here is an example from GitHub: {""}
-              <a
-                className="text-blue-500 hover:underline"
+              <br />
+              In general,{" "}
+              <Box component="span" color="error.main" fontWeight="800">
+                this reveals no information about you beyond what is already
+                public.
+              </Box>{" "}
+              Here is an example from GitHub: {""}
+              <Link
+                underline="hover"
+                color="info"
                 href="https://api.github.com/users/octocat"
                 target="_blank"
               >
                 api.github.com/users/octocat
-              </a>
+              </Link>
             </Typography>
 
             <Button

@@ -79,7 +79,12 @@ function DialogButton({
           <Button onClick={handleClose} color="error">
             {disagreeText}
           </Button>
-          <Button onClick={handleAgree} autoFocus>
+          <Button
+            onClick={handleAgree}
+            variant="contained"
+            color="success"
+            autoFocus
+          >
             {agreeText}
           </Button>
         </DialogActions>

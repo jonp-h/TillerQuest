@@ -1,6 +1,5 @@
 "use client";
 import { ArrowBack } from "@mui/icons-material";
-import React from "react";
 import { useRouter } from "next/navigation";
 
 function BackButton() {

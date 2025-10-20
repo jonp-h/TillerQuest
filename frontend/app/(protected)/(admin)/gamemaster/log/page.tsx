@@ -9,7 +9,7 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
-import React from "react";
+import { Fragment } from "react";
 
 async function LogPage() {
   await redirectIfNotAdmin();
@@ -39,7 +39,7 @@ async function LogPage() {
         <List sx={style}>
           {userLogs?.map((row) => {
             return (
-              <React.Fragment key={row.id}>
+              <Fragment key={row.id}>
                 <ListItem
                   secondaryAction={
                     <Typography color="textSecondary">
@@ -50,7 +50,7 @@ async function LogPage() {
                   <ListItemText primary={row.message} />
                 </ListItem>
                 <Divider component="li" />
-              </React.Fragment>
+              </Fragment>
             );
           })}
         </List>

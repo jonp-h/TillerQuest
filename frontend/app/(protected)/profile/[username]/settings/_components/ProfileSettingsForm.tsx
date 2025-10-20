@@ -82,7 +82,9 @@ function ProfileSettingsForm({
       elevation={4}
       className="flex flex-col mt-10 p-10 gap-3 w-full mx-auto items-center lg:w-1/2"
     >
-      <h1 className="text-4xl pb-6">Profile Settings</h1>
+      <Typography variant="h3" component={"h1"} sx={{ paddingBottom: 3 }}>
+        Profile Settings
+      </Typography>
       <div className="self-start absolute">
         <IconButton
           disableRipple
@@ -110,6 +112,7 @@ function ProfileSettingsForm({
         <div className="flex gap-3">
           <TextField
             label="Username"
+            color="secondary"
             defaultValue={user.username}
             onChange={(e) => setUsername(e.target.value)}
           />

@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { Paper } from "@mui/material";
-import React from "react";
 
 import { getAllActiveUsers } from "@/data/admin/adminUserInteractions";
 import ListControls from "./_components/ListControls";
