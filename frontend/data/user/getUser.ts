@@ -132,6 +132,7 @@ export const getUserProfileByUsername = async (username: string) => {
         level: true,
         image: true,
         guildName: true,
+        schoolClass: true,
         lastMana: true,
         publicHighscore: true,
         archiveConsent: true,

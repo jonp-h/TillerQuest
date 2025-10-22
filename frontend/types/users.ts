@@ -1,3 +1,5 @@
+import { $Enums } from "@prisma/client";
+
 export interface UserProfile {
   id: string;
   username: string | null;
@@ -13,6 +15,7 @@ export interface UserProfile {
   title: string | null;
   class: string | null;
   guildName: string | null;
+  schoolClass: $Enums.SchoolClass | null;
   gold: number;
   arenaTokens: number;
   gemstones: number;

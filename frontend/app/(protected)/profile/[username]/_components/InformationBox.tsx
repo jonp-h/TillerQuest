@@ -11,7 +11,7 @@ export default async function InformationBox({
 }: {
   user: UserProfile;
 }): Promise<JSX.Element> {
-  const cosmic = await getCosmic();
+  const cosmic = await getCosmic(user.schoolClass);
   const systemMessages = await getSystemMessages(user.id);
 
   // Server-side component: date-time check

@@ -123,9 +123,9 @@ export const removeExpiredPassives = async (
 };
 
 export const activateCosmicEvent = async (db: PrismaTransaction) => {
-  const cosmic = await db.cosmicEvent.findFirst({
+  const cosmics = await db.cosmicEvent.findMany({
     where: {
-      selected: true,
+      OR: [{ selectedForVg1: true }, { selectedForVg2: true }],
     },
     select: {
       triggerAtNoon: true,
@@ -139,125 +139,129 @@ export const activateCosmicEvent = async (db: PrismaTransaction) => {
     },
   });
 
-  // if cosmic should not activate
-  if (!cosmic?.triggerAtNoon) {
+  // if no cosmics should trigger at noon, return
+  const cosmicsToTrigger = cosmics.filter((c) => c.triggerAtNoon);
+  if (!cosmicsToTrigger.length) {
     return;
   }
 
-  const usersWithCosmicPassive = await db.userPassive.findMany({
-    where: {
-      effectType: "Cosmic",
-      abilityName: cosmic.ability?.name,
-    },
-    select: {
-      userId: true,
-    },
-  });
+  // trigger all cosmics that should trigger at noon
+  for (const cosmic of cosmicsToTrigger) {
+    const usersWithCosmicPassive = await db.userPassive.findMany({
+      where: {
+        effectType: "Cosmic",
+        abilityName: cosmic.ability?.name,
+      },
+      select: {
+        userId: true,
+      },
+    });
 
-  // either hp, damage, mana or xp
-  const fieldToUpdate = cosmic.ability?.type.toString().toLowerCase() || "";
+    // either hp, damage, mana or xp
+    const fieldToUpdate = cosmic.ability?.type.toString().toLowerCase() || "";
 
-  await Promise.all(
-    usersWithCosmicPassive.map(async (user) => {
-      // validate value and passives
-      switch (fieldToUpdate) {
-        case "hp": {
-          const targetUserHp = await healingValidator(
-            db,
-            user.userId,
-            cosmic.ability?.value ?? 0,
-          );
-          // check if user is dead and return error message
-          if (typeof targetUserHp === "string") {
-            return targetUserHp;
+    await Promise.all(
+      usersWithCosmicPassive.map(async (user) => {
+        // validate value and passives
+        switch (fieldToUpdate) {
+          case "hp": {
+            const targetUserHp = await healingValidator(
+              db,
+              user.userId,
+              cosmic.ability?.value ?? 0,
+            );
+            // check if user is dead and return error message
+            if (typeof targetUserHp === "string") {
+              break;
+            }
+            await db.user.update({
+              where: { id: user.userId },
+              data: {
+                hp: { increment: targetUserHp },
+              },
+              select: {
+                username: true,
+              },
+            });
+            break;
           }
-          await db.user.update({
-            where: { id: user.userId },
-            data: {
-              hp: { increment: targetUserHp },
-            },
-            select: {
-              username: true,
-            },
-          });
-          break;
-        }
-        case "mana": {
-          const targetUserMana = await manaValidator(
-            db,
-            user.userId,
-            cosmic.ability?.value ?? 0,
-          );
-          // return error message if user cannot receive mana
-          if (targetUserMana === 0) {
-            return "Target is already at full mana";
-          } else if (typeof targetUserMana === "string") {
-            return targetUserMana;
+          case "mana": {
+            const targetUserMana = await manaValidator(
+              db,
+              user.userId,
+              cosmic.ability?.value ?? 0,
+            );
+            // return error message if user cannot receive mana
+            if (targetUserMana === 0) {
+              return "Target is already at full mana";
+            } else if (typeof targetUserMana === "string") {
+              return targetUserMana;
+            }
+            await db.user.update({
+              where: { id: user.userId },
+              data: {
+                mana: { increment: targetUserMana },
+              },
+              select: {
+                username: true,
+              },
+            });
+            break;
           }
-          await db.user.update({
-            where: { id: user.userId },
-            data: {
-              mana: { increment: targetUserMana },
-            },
-            select: {
-              username: true,
-            },
-          });
-          break;
+          case "xp": {
+            await experienceAndLevelValidator(
+              db,
+              user.userId,
+              cosmic.ability?.value ?? 0,
+            );
+            break;
+          }
+          case "damage": {
+            const damageToTake = await damageValidator(
+              db,
+              user.userId,
+              cosmic.ability?.value ?? 0,
+            );
+
+            await db.user.update({
+              where: { id: user.userId },
+              data: {
+                hp: { decrement: damageToTake },
+              },
+            });
+            break;
+          }
+          default:
+            break;
         }
-        case "xp": {
-          await experienceAndLevelValidator(
-            db,
-            user.userId,
-            cosmic.ability?.value ?? 0,
-          );
-          break;
-        }
-        case "damage": {
-          const damageToTake = await damageValidator(
-            db,
-            user.userId,
-            cosmic.ability?.value ?? 0,
-          );
 
-          await db.user.update({
-            where: { id: user.userId },
-            data: {
-              hp: { decrement: damageToTake },
-            },
-          });
-          break;
-        }
-        default:
-          break;
-      }
+        // TODO: improve this with fieldToUpdate logic
+        // const targetedUser = await db.user.update({
+        //   where: { id: user.userId },
+        //   data: {
+        //     [fieldToUpdate]: { increment: value },
+        //   },
+        //   select: {
+        //     username: true,
+        //   },
+        // });
 
-      // TODO: improve this with fieldToUpdate logic
-      // const targetedUser = await db.user.update({
-      //   where: { id: user.userId },
-      //   data: {
-      //     [fieldToUpdate]: { increment: value },
-      //   },
-      //   select: {
-      //     username: true,
-      //   },
-      // });
+        const targetedUser = await db.user.findUnique({
+          where: { id: user.userId },
+          select: {
+            username: true,
+          },
+        });
 
-      const targetedUser = await db.user.findUnique({
-        where: { id: user.userId },
-        select: {
-          username: true,
-        },
-      });
-
-      await db.log.create({
-        data: {
-          userId: user.userId,
-          message: `${targetedUser?.username} was affected by ${cosmic.ability?.name.replace(/-/g, " ")}`,
-        },
-      });
-    }),
-  );
+        await db.log.create({
+          data: {
+            userId: user.userId,
+            message: `${targetedUser?.username} was affected by ${cosmic.ability?.name.replace(/-/g, " ")}`,
+          },
+        });
+      }),
+    );
+  }
 };
 
 export const removeCosmicPassivesAndAbilities = async (
@@ -376,83 +380,85 @@ export const resetUserTurns = async (db: PrismaTransaction) => {
 };
 
 export const randomCosmic = async (db: PrismaTransaction) => {
-  try {
-    // const now = new Date();
-    // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+  // const now = new Date();
+  // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
-    await db.cosmicEvent.updateMany({
-      where: {
-        OR: [{ recommended: true }, { selected: true }],
-      },
-      data: {
-        recommended: false,
-        selected: false,
-      },
-    });
+  await db.cosmicEvent.updateMany({
+    where: {
+      recommended: true,
+    },
+    data: {
+      recommended: false,
+    },
+  });
 
-    let cosmic;
-    //TODO: Implement preset events
-    // Check for events with date equal to the current date
-    // const presetEvents = await db.cosmicEvent.findFirst({
-    //   where: {
-    //     presetDate: today,
-    //   },
-    // });
+  let cosmic;
+  //TODO: Implement preset events
+  // Check for events with date equal to the current date
+  // const presetEvents = await db.cosmicEvent.findFirst({
+  //   where: {
+  //     presetDate: today,
+  //   },
+  // });
 
-    // if (presetEvents) {
-    //   return presetEvents;
-    // }
+  // if (presetEvents) {
+  //   return presetEvents;
+  // }
 
-    // Get all events
-    const events = await db.cosmicEvent.findMany();
+  // Get all events
+  const events = await db.cosmicEvent.findMany({
+    select: {
+      name: true,
+      frequency: true,
+      occurrencesVg1: true,
+      occurrencesVg2: true,
+    },
+  });
 
-    if (events.length === 0) {
-      throw new Error("No events available");
-    }
-
-    // Calculate weights based on frequency and occurrences
-    const weights = events.map((event) => {
-      const weight = event.frequency / 100 / (event.occurrences + 1);
-      return { event, weight };
-    });
-
-    // Normalize weights to sum up to 1
-    const totalWeight = weights.reduce((sum, { weight }) => sum + weight, 0);
-    const normalizedWeights = weights.map(({ event, weight }) => ({
-      event,
-      weight: weight / totalWeight,
-    }));
-
-    // Select an event based on normalized weights
-    let randomValue = Math.random();
-
-    for (const { event, weight } of normalizedWeights) {
-      if (randomValue < weight) {
-        cosmic = event;
-        break;
-      }
-      randomValue -= weight;
-    }
-
-    // Fallback in case no event is selected (should not happen)
-    if (!cosmic) {
-      cosmic = events[0];
-    }
-
-    await db.cosmicEvent.update({
-      where: {
-        name: cosmic.name,
-      },
-      data: {
-        recommended: true,
-      },
-    });
-
-    return cosmic;
-  } catch (error) {
-    console.error("Unable to get random cosmic:", error);
-    throw new Error("Unable to get random cosmic");
+  if (events.length === 0) {
+    throw new Error("No events available");
   }
+
+  // Calculate weights based on frequency and occurrences
+  const weights = events.map((event) => {
+    const weight =
+      event.frequency / 100 / (event.occurrencesVg1 + event.occurrencesVg2 + 1); //TODO: adjust for vg1/vg2
+    return { event, weight };
+  });
+
+  // Normalize weights to sum up to 1
+  const totalWeight = weights.reduce((sum, { weight }) => sum + weight, 0);
+  const normalizedWeights = weights.map(({ event, weight }) => ({
+    event,
+    weight: weight / totalWeight,
+  }));
+
+  // Select an event based on normalized weights
+  let randomValue = Math.random();
+
+  for (const { event, weight } of normalizedWeights) {
+    if (randomValue < weight) {
+      cosmic = event;
+      break;
+    }
+    randomValue -= weight;
+  }
+
+  // Fallback in case no event is selected (should not happen)
+  if (!cosmic) {
+    cosmic = events[0];
+  }
+
+  const chosenCosmic = await db.cosmicEvent.update({
+    where: {
+      name: cosmic.name,
+    },
+    data: {
+      recommended: true,
+    },
+  });
+
+  return chosenCosmic;
 };
 
 export const weeklyGuildReset = async (db: PrismaTransaction) => {

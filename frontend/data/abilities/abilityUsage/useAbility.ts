@@ -85,9 +85,17 @@ export const selectAbility = async (
         break;
     }
 
+    // if the school class includes IM, the school class is vg1, else vg2
+    let query: string;
+    if (castingUser.schoolClass?.toString().includes("IM")) {
+      query = "selectedForVg1";
+    } else {
+      query = "selectedForVg2";
+    }
+
     const cosmic = await prisma.cosmicEvent.findFirst({
       where: {
-        selected: true,
+        [query]: true,
       },
       select: {
         increaseCostType: true,
