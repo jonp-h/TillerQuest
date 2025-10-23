@@ -4,6 +4,9 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
+  FormControlLabel,
+  Input,
   Paper,
   Table,
   TableBody,
@@ -23,6 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 export default function RerollCosmic({
   cosmicEvents,
@@ -36,6 +40,8 @@ export default function RerollCosmic({
     vg2: CosmicEvent | null;
   };
 }) {
+  const [notify, setNotify] = useState(true);
+
   const router = useRouter();
 
   const handleReroll = async () => {
@@ -62,7 +68,7 @@ export default function RerollCosmic({
   };
 
   const handleSetSelectedCosmic = async (name: string, grade: string) => {
-    const result = await setSelectedCosmic(name, grade);
+    const result = await setSelectedCosmic(name, grade, notify);
 
     if (result.success) {
       toast.success(result.data);
@@ -221,6 +227,19 @@ export default function RerollCosmic({
                   Reroll
                 </Button>
               </div>
+              <Box className="flex items-center gap-2 mt-3">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="medium"
+                      checked={notify}
+                      color="secondary"
+                      onChange={() => setNotify(!notify)}
+                    />
+                  }
+                  label="Notify users on Discord"
+                />
+              </Box>
             </CardContent>
           </Card>
         )}

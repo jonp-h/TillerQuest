@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { ErrorMessage } from "@/lib/error";
 import { ServerActionResult } from "@/types/serverActionResult";
 import { CosmicEvent, SchoolClass } from "@prisma/client";
+import { sendDiscordMessage } from "@/lib/discord";
 
 export const randomCosmic = async (): Promise<
   ServerActionResult<CosmicEvent>
@@ -121,12 +122,13 @@ export const randomCosmic = async (): Promise<
 export const setSelectedCosmic = async (
   cosmicName: string,
   grade: string,
+  notify: boolean,
 ): Promise<ServerActionResult> => {
   try {
     const session = await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
-      await handleSetCosmic(cosmicName, grade);
+      await handleSetCosmic(cosmicName, grade, notify);
 
       await db.log.create({
         data: {
@@ -166,7 +168,11 @@ export const setSelectedCosmic = async (
   }
 };
 
-const handleSetCosmic = async (cosmicName: string, grade: string) => {
+const handleSetCosmic = async (
+  cosmicName: string,
+  grade: string,
+  notify: boolean,
+) => {
   let query: string;
   let classList: SchoolClass[] = [];
   let occurrences: string;
@@ -196,7 +202,6 @@ const handleSetCosmic = async (cosmicName: string, grade: string) => {
     throw new ErrorMessage("Cosmic event already selected");
   }
 
-  // Unselect all vg2 events
   await db.cosmicEvent.updateMany({
     where: {
       [query]: true,
@@ -299,6 +304,7 @@ const handleSetCosmic = async (cosmicName: string, grade: string) => {
         },
       });
     }
+
     await db.log.create({
       data: {
         userId: user.id,
@@ -309,6 +315,13 @@ const handleSetCosmic = async (cosmicName: string, grade: string) => {
 
   if (!cosmic) {
     throw new Error("Cosmic not found");
+  }
+
+  if (notify) {
+    await sendDiscordMessage(
+      "TillerQuest",
+      `Today's cosmic event for ${grade} is "**${cosmic.name.replace(/-/g, " ")}**"! \n ${cosmic.description}`,
+    );
   }
 };
 

@@ -81,7 +81,7 @@ export const healUsers = async (
 
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User(s) ${healedUsers.map((user) => user).join(", ")} has been healed for ${value} HP. ${reason}`,
         );
       return {
@@ -189,7 +189,7 @@ export const damageUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User ${damagedUsers.map((user) => user).join(", ")} has been damaged for ${value} HP. ${reason}`,
         );
       return {
@@ -254,7 +254,7 @@ export const giveXpToUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${xp} XP. ${reason}`,
         );
       return {
@@ -329,7 +329,7 @@ export const giveManaToUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${mana} mana. ${reason}`,
         );
       return {
@@ -401,7 +401,7 @@ export const giveArenatokenToUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${arenatoken} arenatokens. ${reason}`,
         );
       return {
@@ -477,7 +477,7 @@ export const giveGoldToUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "Game Master",
+          "TillerQuest",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${gold} gold. ${reason}`,
         );
       return {
