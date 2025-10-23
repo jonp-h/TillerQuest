@@ -115,10 +115,43 @@ export const getGuildsAndMemberCountBySchoolClass = async (
     // Should be open to new users / users with a valid session
     await validateUserIdAuth(userId);
 
+    const settings = await db.applicationSettings.findFirst({
+      where: {
+        key: "SCHOOL_CLASS_RESTRICTION",
+      },
+    });
+
+    const classGroups = await db.applicationSettings.findFirst({
+      where: {
+        key: "SCHOOL_CLASS_GROUPS",
+      },
+    });
+
+    let classesToQuery: string[] = [];
+    if (settings && settings.value === "CLASS_GROUPS" && classGroups) {
+      // Parse class groups: "1IM1,1IM2;1IM3,1IM4"
+      const groups = classGroups.value
+        .split(";")
+        .map((group) => group.split(","));
+
+      // Find which group the schoolClass belongs to
+      const matchingGroup = groups.find((group) =>
+        group.includes(schoolClass.replace("Class_", "")),
+      );
+
+      // If found, convert back to enum format and use all classes in that group
+      classesToQuery = matchingGroup
+        ? matchingGroup.map((cls) => `Class_${cls}`)
+        : [schoolClass];
+    } else {
+      // Default to only the user's school class
+      classesToQuery = [schoolClass];
+    }
+
     const guilds = await db.guild.findMany({
       where: {
         schoolClass: {
-          equals: schoolClass as SchoolClass,
+          in: classesToQuery as SchoolClass[],
         },
         archived: false,
       },
