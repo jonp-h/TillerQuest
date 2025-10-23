@@ -375,11 +375,11 @@ model Wish {
 }
 
 model WishVote {
-  id       String @id @default(cuid())
-  userId   String
-  username String
-  wishId   Int
-  amount   Int
+  id        String  @id @default(cuid())
+  userId    String
+  wishId    Int
+  amount    Int
+  anonymous Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

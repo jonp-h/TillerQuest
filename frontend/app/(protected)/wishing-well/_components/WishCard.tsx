@@ -25,18 +25,19 @@ function WishCard({
 }: {
   userId: string;
   wish: {
-    wishVotes: {
-      userId: string;
-      amount: number;
-      username: string;
-    }[];
-  } & {
-    image: string | null;
-    id: number;
     name: string;
-    value: number;
+    id: number;
+    image: string | null;
     description: string | null;
+    value: number;
     scheduled: Date | null;
+    wishVotes: {
+      user: {
+        username: string | null;
+      };
+      amount: number;
+      anonymous: boolean;
+    }[];
   };
 }) {
   const [open, setOpen] = useState(false);
@@ -185,14 +186,11 @@ function WishCard({
             }}
           >
             {wish.wishVotes.length > 0 ? (
-              wish.wishVotes.map((vote) => (
-                <ListItem
-                  key={vote.userId}
-                  className="flex flex-col items-center"
-                >
+              wish.wishVotes.map((vote, index) => (
+                <ListItem key={index} className="flex flex-col items-center">
                   <Typography align="center" variant="body1" color="gold">
-                    <strong className="text-white">{vote.username}</strong>:{" "}
-                    {vote.amount}{" "}
+                    <strong className="text-white">{vote.user.username}</strong>
+                    : {vote.amount}{" "}
                     <Circle fontSize="small" sx={{ color: "gold" }} />
                   </Typography>
                 </ListItem>
