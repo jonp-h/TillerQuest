@@ -886,6 +886,83 @@ const cosmic: CosmicEvent[] = [
   //   grantAbility: false,
   //   abilityName: null,
   // },
+  {
+    id: 57,
+    name: "Spooky-dress-up",
+    description:
+      "All students with a spooky costume gain 200 XP. The student with the best costume gains an additional 300 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 1,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    id: 58,
+    name: "Im-gonna-fix-the-Norwegian-game-industry",
+    description:
+      "All students with a serious hobby coding project gain 200 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 5,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    id: 59,
+    name: "Southern-warmth",
+    description: "All students who live south of Tiller gain 200 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 5,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    id: 60,
+    name: "The-north-remembers",
+    description: "All students who live north of Tiller gain 200 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 5,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
+  {
+    id: 61,
+    name: "I-cook-my-own-food",
+    description: "All students who live in a dormitory gain 200 XP.",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 5,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
 ];
 const cosmics = [...cosmic];
 export default cosmics;
