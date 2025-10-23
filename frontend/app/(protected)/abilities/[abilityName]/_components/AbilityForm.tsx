@@ -162,16 +162,18 @@ export default function AbilityForm({
     const result = await selectAbility(user.id, targetUsers, ability.name);
 
     if (result.success) {
-      if (diceBox) {
+      if (diceBox && result.data.diceRoll) {
         diceBox
           .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
           .finally(() => {
             toast.success(result.data.message);
           });
-      } else {
+      } else if (result.data.diceRoll && ability.diceNotation && !diceBox) {
         toast.error(
           "Dice box not initialized, please try again or tell a dungeon master.",
         );
+      } else {
+        toast.success(result.data.message);
       }
     } else {
       toast.error(result.error);
