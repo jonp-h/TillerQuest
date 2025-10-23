@@ -603,8 +603,31 @@ const shopItems: ShopItems[] = [
     specialReq: "artist",
     rarity: "Epic",
   },
-  // 50
-  // 51
+  {
+    id: 50,
+    name: "Cyberpunk",
+    description: "Participated in a CTF event outside of Tiller.",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    icon: "cyberpunk",
+    specialReq: "cyberpunk",
+    rarity: "Legendary",
+  },
+  {
+    id: 51,
+    name: "Heimdallsquester",
+    description:
+      "Was a player in the original game that TillerQuest originated from.",
+    price: 0,
+    type: "Badge",
+    levelReq: null,
+    classReq: null,
+    icon: "heimdallsquest",
+    specialReq: "heimdallsquest",
+    rarity: "Legendary",
+  },
   {
     id: 52,
     name: "Chosen Champion",
