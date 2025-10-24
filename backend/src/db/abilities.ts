@@ -67,7 +67,7 @@ interface Ability {
   gemstoneCost: 0 | 1 | 2 | 4;
   manaCost: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
   healthCost: 2 | 3 | 5 | 6 | 10 | 12 | null;
-  xpGiven: 25 | 50 | 100 | 150 | 200 | 250 | 300 | 400 | 600 | null;
+  xpGiven: 25 | 50 | 75 | 100 | 150 | 200 | 250 | 300 | 400 | 600 | null;
   diceNotation: string | null;
   value: number | null;
   parentAbility: string | null;
@@ -83,21 +83,20 @@ const health: Ability[] = [
     category: "Heal",
     type: "Heal",
     target: "SingleTarget",
-    description: "Restores 1 health to a target.",
+    description:
+      "A simple bandage to be used in an emergency by those without proper magical powers. Restores 1 health to a target.",
     duration: null,
     icon: "Heal.png",
     gemstoneCost: 1,
-    manaCost: 2,
+    manaCost: 3,
     healthCost: null,
     xpGiven: 25,
     diceNotation: null,
     value: 1,
     parentAbility: null,
   },
-  // Base efficiency = 25 XP / 2 Mana = 12.5
-  // Target multiplier = 1.2x = 15.0
-  // Dice bonus = +1.0 efficiency = 16.0
-  // Final Efficiency: 16.0
+  // Base efficiency = 25 XP / 3 Mana = 8.33
+  // Final Efficiency: 8.33
   {
     id: 1,
     name: "Vigor",
@@ -418,14 +417,14 @@ const wizard: Ability[] = [
     gemstoneCost: 2,
     manaCost: 2,
     healthCost: null,
-    xpGiven: 25,
+    xpGiven: 50,
     diceNotation: "1d6", // efficiency +1.5
     value: null,
     parentAbility: "Arcane-Gift",
   },
-  // Base: 25 XP / 2 Mana = 12.5
+  // Base: 50 XP / 2 Mana = 25.0
   // No duration penalty
-  // Final: 12.5 efficiency
+  // Final: 25.0 efficiency
   {
     id: 17,
     name: "Inner-Power",
@@ -467,20 +466,20 @@ const wizard: Ability[] = [
     category: "Wizard",
     type: "Mana",
     target: "SingleTarget",
-    description: "You channel your powers, giving a guildmember 1d8 mana.",
+    description: "You channel your powers, giving a guildmember 1d8+1 mana.",
     duration: null,
     icon: "Greater-Essence-Transfer.png",
     gemstoneCost: 4,
     manaCost: 3,
     healthCost: null,
-    xpGiven: 50,
+    xpGiven: 100,
     diceNotation: "1d8+1", // efficiency +2
     value: null,
     parentAbility: "Essence-Transfer",
   },
-  // Base: 50 XP / 3 Mana = 16.67
+  // Base: 100 XP / 3 Mana = 33.33
   // No duration penalty
-  // Final: 16.67 efficiency
+  // Final: 33.33 efficiency
   {
     id: 20,
     name: "Cosmic-Gift",
@@ -493,14 +492,14 @@ const wizard: Ability[] = [
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
-    xpGiven: 100,
+    xpGiven: 150,
     diceNotation: "2d6+2", // efficiency +3
     value: null,
     parentAbility: "Greater-Essence-Transfer",
   },
-  // Base: 100 XP / 5 Mana = 20.0
+  // Base: 150 XP / 5 Mana = 30.0
   // No duration penalty
-  // Final: 20.0 efficiency
+  // Final: 30.0 efficiency
   // removed
   // {
   //   id: 21,
@@ -591,14 +590,14 @@ const druid: Ability[] = [
     gemstoneCost: 2,
     manaCost: 2,
     healthCost: null,
-    xpGiven: 25,
+    xpGiven: 50,
     diceNotation: "1d4", // efficiency +0.5
     value: null,
     parentAbility: "Blessings-of-the-Earth",
   },
-  // Base: 25 XP / 2 Mana = 12.5
+  // Base: 50 XP / 2 Mana = 25
   // No duration penalty
-  // Final: 12.5 efficiency
+  // Final: 25 efficiency
   {
     id: 24,
     name: "Greater-Heal",
@@ -611,14 +610,14 @@ const druid: Ability[] = [
     gemstoneCost: 4,
     manaCost: 3,
     healthCost: null,
-    xpGiven: 50,
+    xpGiven: 75,
     diceNotation: "1d6+1", // efficiency +1.5
     value: null,
     parentAbility: "Heal",
   },
-  // Base: 50 XP / 3 Mana = 16.67
+  // Base: 75 XP / 3 Mana = 25.0
   // No duration penalty
-  // Final: 16.67 efficiency
+  // Final: 25.0 efficiency
   {
     id: 25,
     name: "Superior-Heal",
@@ -652,14 +651,14 @@ const druid: Ability[] = [
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
-    xpGiven: 150,
+    xpGiven: 200,
     diceNotation: "1d4",
     value: null,
     parentAbility: "Greater-Heal",
   },
-  // Base: 100 XP / 5 Mana = 20.0
+  // Base: 200 XP / 5 Mana = 40.0
   // No duration penalty
-  // Final: 20.0 efficiency
+  // Final: 40.0 efficiency
   {
     id: 27,
     name: "Healing-Grace",
@@ -790,15 +789,15 @@ const barbarian: Ability[] = [
     icon: "Battle-Ready.png",
     gemstoneCost: 2,
     manaCost: null,
-    healthCost: 6,
+    healthCost: 5,
     xpGiven: 100,
     diceNotation: null,
     value: 1,
     parentAbility: "Toughness",
   },
-  // Base: 100 XP / 6 HP = 16.67
+  // Base: 100 XP / 5 HP = 20.0
   // No duration penalty
-  // Final: 16.67 efficiency
+  // Final: 20.0 efficiency
   {
     id: 33,
     name: "Protector-of-the-Weak",
@@ -833,7 +832,7 @@ const barbarian: Ability[] = [
     gemstoneCost: 4,
     manaCost: null,
     healthCost: 5,
-    xpGiven: 150,
+    xpGiven: 200,
     diceNotation: "2d6", // efficiency +2
     value: null,
     parentAbility: "Protector-of-the-Weak",
@@ -854,14 +853,14 @@ const barbarian: Ability[] = [
     gemstoneCost: 4,
     manaCost: 6,
     healthCost: null,
-    xpGiven: 200,
+    xpGiven: 250,
     diceNotation: "1d6",
     value: null,
     parentAbility: "Protector-of-the-Weak",
   },
-  // Base: 200 XP / 6 Mana = 33.33
-  // Duration penalty: -25% = 25.0
-  // Final: 25.0 efficiency
+  // Base: 250 XP / 6 Mana = 41.67
+  // Duration penalty: -25% = 31.25
+  // Final: 31.25 efficiency
   {
     id: 36,
     name: "Enhanced-Toughness",
@@ -1022,20 +1021,20 @@ const warlock: Ability[] = [
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
-      "Lose 10 of your maximum health to grant 5 mana to a guild member. This ability can only be used once per day.",
+      "Lose 10 of your maximum health to grant 5 mana to a guild member.",
     duration: 180, // 3 hours
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: 10,
-    xpGiven: 300,
+    xpGiven: 250,
     diceNotation: null,
     value: 5,
     parentAbility: "Crimson-Gift",
   },
-  // Base: 300 XP / 10 HP = 30.0
-  // Duration penalty: -10% = 27.0
-  // Final: 27.0 efficiency
+  // Base: 250 XP / 10 HP = 25.0
+  // Duration penalty: -10% = 22.5
+  // Final: 22.5 efficiency
   {
     id: 43,
     name: "Crimson-Coin",
@@ -1049,14 +1048,14 @@ const warlock: Ability[] = [
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
-    xpGiven: 100,
+    xpGiven: 50,
     diceNotation: "1d10",
     value: null,
     parentAbility: "Secrets-of-the-Crimson",
   },
-  // Base: 100 XP / 3 Mana = 33.33
-  // Duration penalty: -35% = 21.67
-  // Final: 21.67 efficiency
+  // Base: 50 XP / 3 Mana = 16.67
+  // Duration penalty: -35% = 10.83
+  // Final: 10.83 efficiency
   {
     id: 44,
     name: "Cursed-Gold",
@@ -1131,14 +1130,14 @@ const bard: Ability[] = [
     gemstoneCost: 2,
     manaCost: 2,
     healthCost: null,
-    xpGiven: 25,
+    xpGiven: 50,
     diceNotation: "1d6", // efficiency +1
     value: null,
     parentAbility: "An-Eye-for-Gold",
   },
-  // Base: 25 XP / 2 Mana = 12.5
-  // Duration penalty: -10% = 11.25
-  // Final: 11.25 efficiency
+  // Base: 50 XP / 2 Mana = 25.0
+  // Duration penalty: -10% = 22.5
+  // Final: 22.5 efficiency
   {
     id: 46,
     name: "Streets-of-Gold",
@@ -1152,14 +1151,14 @@ const bard: Ability[] = [
     gemstoneCost: 2,
     manaCost: 3,
     healthCost: null,
-    xpGiven: 50,
+    xpGiven: 75,
     diceNotation: "10d10",
     value: null,
     parentAbility: "An-Eye-for-Gold",
   },
-  // Base: 50 XP / 3 Mana = 16.67
+  // Base: 75 XP / 3 Mana = 25.0
   // No duration penalty
-  // Final: 16.67 efficiency
+  // Final: 25.0 efficiency
   {
     id: 47,
     name: "Inspiration",
@@ -1234,16 +1233,16 @@ const bard: Ability[] = [
     duration: 960, // 16 hours
     icon: "Heartfelt-Performance.png",
     gemstoneCost: 4,
-    manaCost: 4,
+    manaCost: 3,
     healthCost: null,
     xpGiven: 100,
     diceNotation: "1d10", // efficiency +1.5
     value: null,
     parentAbility: "Performance",
   },
-  // Base: 100 XP / 4 Mana = 25.0
-  // Duration penalty: -35% = 16.25
-  // Final: 16.25 efficiency
+  // Base: 100 XP / 3 Mana = 33.33
+  // Duration penalty: -35% = 21.67
+  // Final: 21.67 efficiency
   {
     id: 51,
     name: "Tavern-Dance",
@@ -1507,16 +1506,16 @@ const fighter: Ability[] = [
     duration: 960, // 16 hours
     icon: "Test.jpg",
     gemstoneCost: 4,
-    manaCost: 5,
+    manaCost: 4,
     healthCost: null,
     xpGiven: 200,
     diceNotation: null,
     value: 1,
     parentAbility: "Surge-of-Power",
   },
-  // Base: 200 XP / 5 Mana = 40.0
-  // Duration penalty: -35% = 26.0
-  // Final: 26.0 efficiency
+  // Base: 200 XP / 4 Mana = 50.0
+  // Duration penalty: -35% = 32.5
+  // Final: 32.5 efficiency
   {
     id: 89,
     name: "Dungeon-Master",
@@ -1569,15 +1568,15 @@ const fighter: Ability[] = [
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
-    xpGiven: 100,
+    xpGiven: 150,
     diceNotation: "1d8",
     isDungeon: true,
     value: null,
     parentAbility: "Masterful-Strike",
   },
-  // 100 XP / 4 Mana = 25.0
+  // 150 XP / 4 Mana = 37.5
   // No duration penalty
-  // Final: 25.0 efficiency
+  // Final: 37.5 efficiency
 ];
 
 const arena: Ability[] = [
