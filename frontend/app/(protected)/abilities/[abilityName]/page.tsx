@@ -166,7 +166,11 @@ export default async function AbilityNamePage({
                     {ability.name.replace(/-/g, " ")}
                   </TableCell>
                   <TableCell align="right">{ability.category}</TableCell>
-                  <TableCell align="right">{ability.duration}</TableCell>
+                  <TableCell align="right">
+                    {ability.duration
+                      ? `${Math.floor(ability.duration / 60)}h ${ability.duration % 60}m`
+                      : ""}
+                  </TableCell>
                   <TableCell align="right">{ability.gemstoneCost}</TableCell>
                   <TableCell align="right">{ability.healthCost}</TableCell>
                   <TableCell align="right">{ability.manaCost}</TableCell>
