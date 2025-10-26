@@ -13,6 +13,36 @@ import { addLog } from "../log/addLog";
 import { AuthorizationError, validateAdminAuth } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 import { ServerActionResult } from "@/types/serverActionResult";
+import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
+
+export const rollDeathSave = async (): Promise<
+  ServerActionResult<{ roll: number; diceRoll: string }>
+> => {
+  await validateAdminAuth();
+
+  try {
+    const roll = new DiceRoll("1d6");
+    // @ts-expect-error - the package's export function is not typed correctly
+    const rollData = roll.export(exportFormats.OBJECT) as {
+      output: string;
+      total: number;
+    };
+
+    return {
+      success: true,
+      data: {
+        roll: rollData.total,
+        diceRoll: rollData.output.split("[")[1].split("]")[0],
+      },
+    };
+  } catch (error) {
+    logger.error("Error rolling death save: " + error);
+    return {
+      success: false,
+      error: "Failed to roll death save",
+    };
+  }
+};
 
 //FIXME: requires updates from oldData
 export const resurrectUsers = async ({
