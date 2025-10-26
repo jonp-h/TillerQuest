@@ -91,7 +91,7 @@ export const getDailyMana = async (
     await addLog(
       db,
       userId,
-      `${targetUser.username} recieved ${manaValue} dailyMana`,
+      `${targetUser.username} received ${manaValue} dailyMana`,
     );
     return {
       success: true,

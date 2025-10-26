@@ -21,6 +21,9 @@ export const getGuildmembersForAbilityTarget = async (guildName: string) => {
         mana: true,
         manaMax: true,
       },
+      orderBy: {
+        username: "desc",
+      },
     });
     return members;
   } catch (error) {
@@ -61,6 +64,9 @@ export const getGuildmembersByGuildname = async (guildName: string) => {
             guildLeader: true,
           },
         },
+      },
+      orderBy: {
+        username: "desc",
       },
     });
     return members;

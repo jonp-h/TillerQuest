@@ -323,7 +323,7 @@ export const giveManaToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} recieved ${manaToGive} mana. ${reason}`,
+            `${user.username} received ${manaToGive} mana. ${reason}`,
           );
         }),
       );
@@ -395,7 +395,7 @@ export const giveArenatokenToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} recieved ${arenatoken} arenatokens. ${reason}`,
+            `${user.username} received ${arenatoken} arenatokens. ${reason}`,
           );
         }),
       );
@@ -471,7 +471,7 @@ export const giveGoldToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} recieved ${gold} gold. ${reason}`,
+            `${user.username} received ${gold} gold. ${reason}`,
           );
         }),
       );

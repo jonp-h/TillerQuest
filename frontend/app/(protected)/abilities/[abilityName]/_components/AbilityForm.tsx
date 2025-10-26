@@ -42,9 +42,6 @@ export default function AbilityForm({
   const guildMembersWithoutUser =
     guildMembers?.filter((member) => member.id !== user.id) || [];
 
-  const lackingResource =
-    user.mana < (ability.manaCost || 0) || user.hp <= (ability.healthCost || 0);
-
   const isDead = user.hp === 0;
 
   const router = useRouter();
@@ -110,12 +107,6 @@ export default function AbilityForm({
       return "Activated";
     } else if (isDead) {
       return "You cannot use abilities while dead";
-    } else if (lackingResource) {
-      return (
-        "Not enough " +
-        (user.hp <= (ability.healthCost || 0) ? "health" : "mana") +
-        " to use this ability."
-      );
     } else if (!diceBox && ability.diceNotation) {
       return "Prepare dice!";
     }
@@ -156,6 +147,8 @@ export default function AbilityForm({
           .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
           .finally(() => {
             toast.success(result.data.message);
+            setIsLoading(false);
+            router.refresh();
           });
       } else if (result.data.diceRoll && ability.diceNotation && !diceBox) {
         toast.error(
@@ -163,13 +156,14 @@ export default function AbilityForm({
         );
       } else {
         toast.success(result.data.message);
+        setIsLoading(false);
+        router.refresh();
       }
     } else {
       toast.error(result.error);
+      setIsLoading(false);
+      router.refresh();
     }
-
-    setIsLoading(false);
-    router.refresh();
   };
 
   // ---------------- Buy ability ----------------
@@ -238,9 +232,7 @@ export default function AbilityForm({
             <Button
               variant="contained"
               onClick={handleUseAbility}
-              disabled={
-                lackingResource || targetHasPassive || isLoading || isDead
-              }
+              disabled={targetHasPassive || isLoading || isDead}
             >
               {getOwnedButtonText()}
             </Button>
