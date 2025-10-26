@@ -84,7 +84,7 @@ const health: Ability[] = [
     type: "Heal",
     target: "SingleTarget",
     description:
-      "A simple bandage to be used in an emergency by those without proper magical powers. Restores 1 health to a target.",
+      "A simple bandage to be used in an emergency by those without healing powers. Restores 1 health to a target.",
     duration: null,
     icon: "Heal.png",
     gemstoneCost: 1,
@@ -1294,7 +1294,7 @@ const bard: Ability[] = [
     description:
       "You viciously mock your enemy, dealing 1d10 damage to their pride.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Vicious-Mockery.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1316,7 +1316,7 @@ const fighter: Ability[] = [
     description:
       "You gain 1 extra turn in the dungeon each day. (Requires ability: Courage)",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Stamina.png",
     gemstoneCost: 1,
     manaCost: null,
     healthCost: null,
@@ -1351,7 +1351,7 @@ const fighter: Ability[] = [
     target: "Self",
     description: "You gain another extra turn in the dungeon each day.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Heart-of-a-Warrior.png",
     gemstoneCost: 2,
     manaCost: null,
     healthCost: null,
@@ -1386,7 +1386,7 @@ const fighter: Ability[] = [
     description:
       "How do you want to do this? Roll a d20. On a natural 20 your attacks critically hit for the next hour, doubling the damage done",
     duration: 60, // 1 hour
-    icon: "Test.jpg",
+    icon: "Critical-Role.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: 5,
@@ -1407,7 +1407,7 @@ const fighter: Ability[] = [
     description:
       "You strike with precision, dealing 1d10 damage to a single enemy.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Masterful-Strike.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1426,7 +1426,7 @@ const fighter: Ability[] = [
     description:
       "You have a keen eye for loot, gaining an extra 20% gold every time your guild wins a battle.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Loot-Goblin.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1444,7 +1444,7 @@ const fighter: Ability[] = [
     description:
       "When your guild wins a battle, a guildmember of your choice gains 2 mana. The guildmember must be chosen before the enemy is killed.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Surge-of-Power.png",
     gemstoneCost: 4,
     manaCost: 3,
     healthCost: null,
@@ -1465,7 +1465,7 @@ const fighter: Ability[] = [
     description:
       "You share your loot-hoarding expertise with your guildmates, granting all guildmembers an extra 30% of gold every time your guild wins a battle.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Did-Someone-Say-Loot.png",
     gemstoneCost: 4,
     manaCost: null,
     healthCost: null,
@@ -1483,7 +1483,7 @@ const fighter: Ability[] = [
     description:
       "You attack an enemy with a swift cut, slicing their health in half. Can only be done once per day.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Slice-And-Dice.png",
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
@@ -1504,7 +1504,7 @@ const fighter: Ability[] = [
     target: "All",
     description: "When your guild wins a battle all members gains 2 mana.",
     duration: 960, // 16 hours
-    icon: "Test.jpg",
+    icon: "Victorious-Reward.png",
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
@@ -1525,7 +1525,7 @@ const fighter: Ability[] = [
     description:
       "Roll a d20. On a natural 20 all guildmembers critically hit for the next hour, doubling the damage done. Does not stack with Critical Role.",
     duration: 60, // 1 hour
-    icon: "Test.jpg",
+    icon: "Dungeon-Master.png",
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
@@ -1564,7 +1564,7 @@ const fighter: Ability[] = [
     description:
       "You spin through the battlefield, dealing 1d8 damage to all enemies.",
     duration: null,
-    icon: "Test.jpg",
+    icon: "Spin-To-Win.png",
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
