@@ -1,8 +1,7 @@
-<h1 align="center">
-  <br>
+<div align="center">
   <!-- LOGO IMAGE -->
-  <img src="/frontend/public/TillerQuestLogoVertical.svg" width="250px" />
-</h1>
+  <img src="/frontend/public/TillerQuestLogoVertical.svg" width="350px" alt="TillerQuest"/>
+</div>
 
 <h4 align="center">A humble remake of the popular Heimdallsquest</h4>
 
@@ -44,8 +43,8 @@
 # Clone this repository
 $ git clone
 
-$ cd TillerQuest/
 # Go into the Project
+$ cd TillerQuest/
 
 # Install dependencies
 $ npm i
@@ -102,6 +101,7 @@ $ cd backend/
 # Add the database schema to the database
 $ npx prisma db push
 
+# Seed the database with dummy data
 $ npm run gen
 ```
 
