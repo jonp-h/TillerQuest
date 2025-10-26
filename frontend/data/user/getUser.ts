@@ -13,7 +13,7 @@ import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { headers } from "next/headers";
 
-export const getUserById = async (id: string) => {
+export const getBaseUser = async (id: string) => {
   // unstable_noStore();
 
   try {
@@ -21,6 +21,49 @@ export const getUserById = async (id: string) => {
 
     const user = await db.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        title: true,
+        titleRarity: true,
+        username: true,
+        image: true,
+        gemstones: true,
+        mana: true,
+        manaMax: true,
+        hp: true,
+        hpMax: true,
+        class: true,
+        guildName: true,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to user with ID. " + error);
+      throw error;
+    }
+
+    logger.error("Error fetching user by ID: " + error);
+    throw new Error(
+      "Something went wrong while fetching user by ID. Please inform a game master of the following timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getLastMana = async (id: string) => {
+  // unstable_noStore();
+
+  try {
+    await validateActiveUserAuth();
+
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        lastMana: true,
+      },
     });
 
     return user;

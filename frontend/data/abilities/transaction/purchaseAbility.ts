@@ -52,51 +52,42 @@ export const buyAbility = async (
       throw new Error("Something went wrong. Please notify a game master.");
     }
 
-    return await db.$transaction(
-      async (db) => {
-        // decrement the cost from the user's gemstones
-        await db.user.update({
-          where: {
-            id: user.id,
+    return await db.$transaction(async (db) => {
+      // decrement the cost from the user's gemstones
+      await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          gemstones: {
+            decrement: ability.gemstoneCost,
           },
-          data: {
-            gemstones: {
-              decrement: ability.gemstoneCost,
-            },
-          },
-        });
+        },
+      });
 
-        await db.userAbility.create({
-          data: {
-            userId: user.id,
-            abilityName: ability.name,
-          },
-        });
+      await db.userAbility.create({
+        data: {
+          userId: user.id,
+          abilityName: ability.name,
+        },
+      });
 
-        // ease of use for passive abilities with unlimited duration
-        const useAbilityImmediately =
-          ability.target === "Self" && ability.duration === null;
+      // TODO: disabled because of issues with transactions timouts and deadlocks
+      // // ease of use for passive abilities with unlimited duration
+      // const useAbilityImmediately =
+      //   ability.target === "Self" && ability.duration === null;
 
-        if (useAbilityImmediately) {
-          // FIXME: Not awaited because of timeout errors
-          selectAbility(user.id, [user.id], ability.name);
-        }
+      // if (useAbilityImmediately) {
+      //   // FIXME: Not awaited because of timeout errors
+      //   selectAbility(user.id, [user.id], ability.name);
+      // }
 
-        logger.info(`User ${user.username} bought ability ${ability.name}`);
-        return {
-          success: true,
-          data:
-            "Bought " +
-            ability.name +
-            " successfully!" +
-            (useAbilityImmediately ? " Ability activated." : ""),
-        };
-      },
-      {
-        // Increased timeout because of long and unoptimized query in selectAbility
-        timeout: 10000,
-      },
-    );
+      logger.info(`User ${user.username} bought ability ${ability.name}`);
+      return {
+        success: true,
+        data: "Bought " + ability.name + " successfully!",
+      };
+    });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(

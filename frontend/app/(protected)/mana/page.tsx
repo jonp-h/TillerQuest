@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getUserById } from "@/data/user/getUser";
+import { getLastMana, getUserById } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -13,7 +13,7 @@ export default async function ManaPage() {
     return null;
   }
 
-  const user = await getUserById(session.user.id);
+  const user = await getLastMana(session.user.id);
 
   if (!user) {
     notFound();

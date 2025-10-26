@@ -8,7 +8,10 @@ import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 interface ManaFormProps {
-  user: User;
+  user: {
+    id: string;
+    lastMana: Date;
+  };
   isWeekend: boolean;
   currentDate: Date;
 }

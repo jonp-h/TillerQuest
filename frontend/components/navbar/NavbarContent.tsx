@@ -24,7 +24,12 @@ export default function NavbarContent() {
       <div className="flex items-center justify-between w-full">
         <Link href="/">
           <div className="flex items-center gap-5">
-            <Image src="TQLogoHorizontal.svg" alt="TillerQuest" height={70} />
+            <Image
+              src="TillerQuestLogoHorizontal.svg"
+              alt="TillerQuest"
+              width={300}
+              height={150}
+            />
           </div>
         </Link>
       </div>
@@ -81,12 +86,22 @@ export default function NavbarContent() {
     <>
       <Link href="/">
         <div className="flex px-2 items-center">
-          <Image
-            src="/TillerQuestLogoHorizontal.svg"
-            alt="TillerQuest"
-            width={300}
-            height={150}
-          />
+          <div className="hidden md:flex">
+            <Image
+              src="/TillerQuestLogoHorizontal.svg"
+              alt="TillerQuest"
+              width={300}
+              height={150}
+            />
+          </div>
+          <div className="flex md:hidden">
+            <Image
+              src="/TQCircle.svg"
+              alt="TillerQuest"
+              width={70}
+              height={70}
+            />
+          </div>
         </div>
       </Link>
       {/* On smaller screens only show icons */}

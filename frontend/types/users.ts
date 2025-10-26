@@ -28,3 +28,18 @@ export interface UserProfile {
   }[];
   lastMana: Date;
 }
+
+export interface BaseUser {
+  id: string;
+  username: string | null;
+  title: string | null;
+  titleRarity: $Enums.Rarity | null;
+  class: $Enums.Class | null;
+  image: string | null;
+  hp: number;
+  hpMax: number;
+  mana: number;
+  manaMax: number;
+  gemstones: number;
+  guildName: string | null;
+}

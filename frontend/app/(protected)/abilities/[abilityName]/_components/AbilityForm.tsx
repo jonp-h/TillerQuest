@@ -2,26 +2,26 @@
 import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
 import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
-import { $Enums, Ability, User } from "@prisma/client";
+import { Ability } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { diceSettings } from "@/lib/diceSettings";
+import { GuildMember } from "./interfaces";
+import { BaseUser } from "@/types/users";
 
-type guildMembers =
-  | {
-      id: string;
-      image: string | null;
-      username: string | null;
-      class: $Enums.Class | null;
-      hp: number;
-      hpMax: number;
-      mana: number;
-      manaMax: number;
-    }[]
-  | null;
+interface AbilityFormProps {
+  ability: Ability;
+  user: BaseUser;
+  isPurchaseable: boolean;
+  userOwnsAbility: boolean;
+  userIsCorrectClass: boolean;
+  missingParentAbility: boolean;
+  guildMembers: GuildMember[];
+  targetHasPassive: boolean;
+}
 
 export default function AbilityForm({
   ability,
@@ -32,19 +32,10 @@ export default function AbilityForm({
   missingParentAbility,
   guildMembers,
   targetHasPassive,
-}: {
-  ability: Ability;
-  user: User;
-  isPurchaseable: boolean;
-  userOwnsAbility: boolean;
-  userIsCorrectClass: boolean;
-  missingParentAbility: boolean;
-  guildMembers: guildMembers;
-  targetHasPassive: boolean;
-}) {
-  const [selectedUser, setSelectedUser] = useState<string>(
-    guildMembers?.[0].id || "",
-  );
+}: AbilityFormProps) {
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([
+    guildMembers[0]?.id,
+  ]);
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,6 +64,23 @@ export default function AbilityForm({
   // Delay of 500ms to prevent the dice box from rendering before the component is mounted
   useEffect(() => {
     const timer = setTimeout(() => {
+      switch (ability.target) {
+        case "Self":
+          setSelectedUsers([user.id]);
+          break;
+        case "All":
+          setSelectedUsers(
+            guildMembers ? guildMembers.map((member) => member.id) : [],
+          );
+          break;
+        case "Others":
+          setSelectedUsers(guildMembersWithoutUser.map((member) => member.id));
+          break;
+        case "SingleTarget":
+          setSelectedUsers([guildMembersWithoutUser[0]?.id || ""]);
+          break;
+      }
+
       initializeDiceBox();
     }, 500);
 
@@ -122,8 +130,6 @@ export default function AbilityForm({
     event.preventDefault();
     setIsLoading(true);
 
-    let targetUsers = [selectedUser];
-
     // if diceBox is required and not initialized, initialize it first
     /*if (ability.isDungeon) {
       router.push("/dungeon");
@@ -142,24 +148,7 @@ export default function AbilityForm({
       // });
     }
 
-    switch (ability.target) {
-      case "Self":
-        targetUsers = [user.id];
-        break;
-      case "All":
-        targetUsers = guildMembers
-          ? guildMembers.map((member) => member.id)
-          : [];
-        break;
-      case "Others":
-        targetUsers = guildMembersWithoutUser.map((member) => member.id);
-        break;
-      case "SingleTarget":
-        targetUsers = [selectedUser];
-        break;
-    }
-
-    const result = await selectAbility(user.id, targetUsers, ability.name);
+    const result = await selectAbility(user.id, selectedUsers, ability.name);
 
     if (result.success) {
       if (diceBox && result.data.diceRoll) {
@@ -208,9 +197,6 @@ export default function AbilityForm({
       return;
     }
 
-    // when buying an abillity, check passive. if passive immediately activate
-    // if passive, disable use button
-
     const result = await buyAbility(user.id, ability.name);
 
     if (result.success) {
@@ -232,10 +218,12 @@ export default function AbilityForm({
         <>
           {!ability.isDungeon ? (
             <AbilityUserSelect
+              user={user}
               target={ability.target}
-              selectedUser={selectedUser}
-              setSelectedUser={setSelectedUser}
-              guildMembers={guildMembersWithoutUser}
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              guildMembers={guildMembers}
+              guildMembersWithoutUser={guildMembersWithoutUser}
             />
           ) : null}
           {ability.isDungeon ? (
