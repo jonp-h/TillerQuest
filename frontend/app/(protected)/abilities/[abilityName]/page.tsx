@@ -88,10 +88,7 @@ export default async function AbilityNamePage({
         className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
       />
       <div className="flex justify-center">
-        <Paper
-          elevation={3}
-          className=" text-center items-center p-5 w-full md:w-2/3 xl:w-1/2"
-        >
+        <Paper elevation={3} className=" text-center items-center p-5 w-fit">
           {/* back button */}
           <div className="flex justify-between w-full">
             <div className="flex flex-col">

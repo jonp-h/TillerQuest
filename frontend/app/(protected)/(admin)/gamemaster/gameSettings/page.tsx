@@ -12,7 +12,7 @@ async function GameSettings() {
 
   const style = {
     p: 0,
-    width: "40%",
+    width: "70%",
     maxWidth: 1600,
     borderRadius: 2,
     border: "1px solid",

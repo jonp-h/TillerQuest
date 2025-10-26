@@ -30,7 +30,7 @@ async function main() {
   Please choose an option:
   - ADD:
   1. Add All
-  2. Add all without users
+  2. Add all without users and guilds
   3. Add Guilds
   4. Add Abilities
   5. Add Cosmic Events
@@ -52,7 +52,7 @@ async function main() {
         await addAll();
         break;
       case "2":
-        await addAllWithoutUsers();
+        await addAllWithoutUsersAndGuilds();
         break;
       case "3":
         await addGuilds();
@@ -291,8 +291,7 @@ async function addAll() {
   await addWishes();
 }
 
-async function addAllWithoutUsers() {
-  await addGuilds();
+async function addAllWithoutUsersAndGuilds() {
   await addAbilities();
   await addCosmicEvents();
   await addShopItems();

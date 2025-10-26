@@ -23,6 +23,7 @@ function GameSettingsForm({
     updatedAt: Date;
     value: string;
     key: string;
+    description: string | null;
   };
 }) {
   const [value, setValue] = useState<string>(setting.value);
@@ -47,38 +48,45 @@ function GameSettingsForm({
   };
 
   return (
-    <div className="flex gap-5 items-center w-full">
-      <Typography variant="h6">{setting.key}:</Typography>
-      <FormControl sx={{ m: 1, width: "40ch" }} variant="outlined">
-        <OutlinedInput
-          type={showPassword ? "text" : "password"}
-          value={value}
-          fullWidth
-          onChange={(e) => setValue(e.target.value)}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label={
-                  showPassword ? "hide the password" : "display the password"
-                }
-                onClick={() => setShowPassword(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex justify-between gap-5 items-center w-full">
+        <Typography variant="h6">{setting.key}:</Typography>
+        <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
+          <OutlinedInput
+            type={showPassword ? "text" : "password"}
+            value={value}
+            fullWidth
+            onChange={(e) => setValue(e.target.value)}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showPassword ? "hide the password" : "display the password"
+                  }
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <DialogButton
+          buttonText="Update"
+          dialogTitle={"Update setting: " + setting.key}
+          dialogContent={"Are you sure you want to update this setting?"}
+          agreeText="Update"
+          disagreeText="Cancel"
+          buttonVariant="contained"
+          dialogFunction={handleChange}
         />
-      </FormControl>
-      <DialogButton
-        buttonText="Update"
-        dialogTitle={"Update setting: " + setting.key}
-        dialogContent={"Are you sure you want to update this setting?"}
-        agreeText="Update"
-        disagreeText="Cancel"
-        buttonVariant="contained"
-        dialogFunction={handleChange}
-      />
+      </div>
+      {setting.description && (
+        <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+          {setting.description}
+        </Typography>
+      )}
     </div>
   );
 }
