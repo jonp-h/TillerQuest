@@ -3,8 +3,8 @@ import {
   checkIfUserOwnsAbility,
   getAbilityByName,
 } from "@/data/abilities/getters/getAbilities";
-import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
-import { getUserById } from "@/data/user/getUser";
+import { getGuildmembersForAbilityTarget } from "@/data/user/getGuildmembers";
+import { getBaseUser } from "@/data/user/getUser";
 import {
   Paper,
   Table,
@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { notFound } from "next/navigation";
-import React from "react";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { $Enums } from "@prisma/client";
@@ -35,13 +34,10 @@ export default async function AbilityNamePage({
   const ability = await getAbilityByName(abilityName);
 
   if (!ability || !session?.user.id) {
-    console.error(
-      "Ability " + abilityName + " not found or user not logged in.",
-    );
     notFound();
   }
 
-  const user = await getUserById(session?.user.id);
+  const user = await getBaseUser(session?.user.id);
   if (!user) {
     notFound();
   }
@@ -66,7 +62,9 @@ export default async function AbilityNamePage({
     ));
   }
 
-  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
+  const guildMembers = await getGuildmembersForAbilityTarget(
+    user.guildName || "",
+  );
 
   // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
   let targetHasPassive = false;
@@ -90,10 +88,7 @@ export default async function AbilityNamePage({
         className="fixed mt-24 z-10 inset-0 w-full h-11/12 pointer-events-none"
       />
       <div className="flex justify-center">
-        <Paper
-          elevation={5}
-          className=" text-center items-center p-5 w-full md:w-2/3 xl:w-1/2"
-        >
+        <Paper elevation={3} className=" text-center items-center p-5 w-fit">
           {/* back button */}
           <div className="flex justify-between w-full">
             <div className="flex flex-col">
@@ -145,18 +140,26 @@ export default async function AbilityNamePage({
             {ability.description}
           </Typography>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 650 }} aria-label="Ability stats table">
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell align="right">Category</TableCell>
-                  <TableCell align="right">Duration</TableCell>
+                  {ability.duration && (
+                    <TableCell align="right">Duration</TableCell>
+                  )}
                   <TableCell align="right">Gemstone cost</TableCell>
-                  <TableCell align="right">Health cost</TableCell>
-                  <TableCell align="right">Mana cost</TableCell>
-                  <TableCell align="right">Value</TableCell>
-                  <TableCell align="right">Dice</TableCell>
-                  <TableCell align="right">XP</TableCell>
+                  {ability.healthCost && (
+                    <TableCell align="right">Health cost</TableCell>
+                  )}
+                  {ability.manaCost && (
+                    <TableCell align="right">Mana cost</TableCell>
+                  )}
+                  {ability.value && <TableCell align="right">Value</TableCell>}
+                  {ability.diceNotation && (
+                    <TableCell align="right">Dice</TableCell>
+                  )}
+                  {ability.xpGiven && <TableCell align="right">XP</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -167,13 +170,27 @@ export default async function AbilityNamePage({
                     {ability.name.replace(/-/g, " ")}
                   </TableCell>
                   <TableCell align="right">{ability.category}</TableCell>
-                  <TableCell align="right">{ability.duration}</TableCell>
+                  {ability.duration && (
+                    <TableCell align="right">
+                      {`${Math.floor(ability.duration / 60)}h ${ability.duration % 60}m`}
+                    </TableCell>
+                  )}
                   <TableCell align="right">{ability.gemstoneCost}</TableCell>
-                  <TableCell align="right">{ability.healthCost}</TableCell>
-                  <TableCell align="right">{ability.manaCost}</TableCell>
-                  <TableCell align="right">{ability.value}</TableCell>
-                  <TableCell align="right">{ability.diceNotation}</TableCell>
-                  <TableCell align="right">{ability.xpGiven}</TableCell>
+                  {ability.healthCost && (
+                    <TableCell align="right">{ability.healthCost}</TableCell>
+                  )}
+                  {ability.manaCost && (
+                    <TableCell align="right">{ability.manaCost}</TableCell>
+                  )}
+                  {ability.value && (
+                    <TableCell align="right">{ability.value}</TableCell>
+                  )}
+                  {ability.diceNotation && (
+                    <TableCell align="right">{ability.diceNotation}</TableCell>
+                  )}
+                  {ability.xpGiven && (
+                    <TableCell align="right">{ability.xpGiven}</TableCell>
+                  )}
                 </TableRow>
               </TableBody>
             </Table>

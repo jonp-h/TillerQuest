@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { ErrorMessage } from "@/lib/error";
 import { logger } from "@/lib/logger";
 import { ServerActionResult } from "@/types/serverActionResult";
-import { $Enums, UserRole } from "@prisma/client";
+import { $Enums, SchoolClass, UserRole } from "@prisma/client";
 
 export const getAllActiveUsers = async () => {
   try {
@@ -37,6 +37,61 @@ export const getAllActiveUsers = async () => {
     }
 
     logger.error("Error fetching all users:", error);
+    throw new Error(
+      "Failed to fetch users. Error timestamp: " +
+        Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const getActiveUsersBySchoolGrade = async (schoolGrade: string) => {
+  try {
+    await validateAdminAuth();
+
+    let schoolClasses: SchoolClass[] = [];
+    switch (schoolGrade) {
+      case "vg1":
+        schoolClasses = [
+          "Class_1IM1",
+          "Class_1IM2",
+          "Class_1IM3",
+          "Class_1IM4",
+        ];
+        break;
+      case "vg2":
+        schoolClasses = [
+          "Class_2IT1",
+          "Class_2IT2",
+          "Class_2IT3",
+          "Class_2MP1",
+        ];
+        break;
+      default:
+        throw new Error("Invalid school grade");
+    }
+
+    const users = await db.user.findMany({
+      where: {
+        schoolClass: { in: schoolClasses },
+        role: {
+          notIn: ["NEW", "ARCHIVED"],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return users;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn(
+        "Unauthorized admin access attempt to get all users by schoolclass",
+      );
+      throw error;
+    }
+
+    logger.error("Error fetching all users by schoolclass:", error);
     throw new Error(
       "Failed to fetch users. Error timestamp: " +
         Date.now().toLocaleString("no-NO"),

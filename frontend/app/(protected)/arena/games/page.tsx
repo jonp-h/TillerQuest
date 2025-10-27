@@ -1,5 +1,4 @@
 import MainContainer from "@/components/MainContainer";
-import React from "react";
 import { notFound } from "next/navigation";
 import { getGameUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";

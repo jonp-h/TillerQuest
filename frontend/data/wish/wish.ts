@@ -17,18 +17,43 @@ export const getWishes = async () => {
       orderBy: {
         value: "desc",
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        image: true,
+        value: true,
+        scheduled: true,
         wishVotes: {
           orderBy: {
             amount: "desc",
           },
           select: {
-            userId: true,
-            username: true,
+            anonymous: true,
             amount: true,
+            user: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },
+    });
+
+    // Map the wishes to hide the user's display name if the vote is anonymous
+    wishes.forEach((wish) => {
+      wish.wishVotes = wish.wishVotes.map((vote) => {
+        if (vote.anonymous) {
+          return {
+            ...vote,
+            user: {
+              username: "Anonymous",
+            },
+          };
+        }
+        return vote;
+      });
     });
 
     return wishes;
@@ -53,9 +78,8 @@ export const voteForWish = async (
   anonymous: boolean = false,
 ): Promise<ServerActionResult> => {
   try {
-    const {
-      user: { username },
-    } = await validateUserIdAndActiveUserAuth(userId);
+    await validateUserIdAndActiveUserAuth(userId);
+
     const wish = await db.wish.findUnique({
       where: { id: wishId },
     });
@@ -91,8 +115,6 @@ export const voteForWish = async (
       },
     });
 
-    const displayName = anonymous ? "Anonymous" : username;
-
     // Upsert the user's vote for the wish
     await db.wishVote.upsert({
       where: {
@@ -104,14 +126,14 @@ export const voteForWish = async (
       create: {
         userId,
         wishId,
-        username: displayName,
+        anonymous,
         amount,
       },
       update: {
         amount: {
           increment: amount,
         },
-        username: displayName,
+        anonymous,
       },
     });
 

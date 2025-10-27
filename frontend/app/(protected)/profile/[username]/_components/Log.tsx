@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React from "react";
+import { Fragment } from "react";
 
 async function Log(userID: { userId: string }) {
   const userLogs = await getLogsByUserId(userID.userId);
@@ -26,8 +26,8 @@ async function Log(userID: { userId: string }) {
 
   return (
     <Paper
-      elevation={5}
-      className="m-3 pb-3 text-center flex flex-col items-center"
+      elevation={3}
+      className="mt-3 mx-3 pb-3 text-center flex flex-col items-center"
     >
       <Typography variant="h4" className="p-2">
         Log
@@ -35,7 +35,7 @@ async function Log(userID: { userId: string }) {
       <List sx={style}>
         {userLogs?.map((row) => {
           return (
-            <React.Fragment key={row.id}>
+            <Fragment key={row.id}>
               <ListItem
                 secondaryAction={
                   <Typography color="textSecondary">
@@ -46,7 +46,7 @@ async function Log(userID: { userId: string }) {
                 <ListItemText primary={row.message} />
               </ListItem>
               <Divider component="li" />
-            </React.Fragment>
+            </Fragment>
           );
         })}
       </List>

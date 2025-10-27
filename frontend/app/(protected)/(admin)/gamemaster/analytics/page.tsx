@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
-import React from "react";
 
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import {
@@ -10,6 +9,8 @@ import {
   getAbilityEfficiencyStatsMultiple,
   getGameGoldStatsMultiple,
   getDungeonStatsMultiple,
+  getAbilityBalanceReport,
+  getClassPowerComparison,
 } from "@/data/analytics/analytics";
 import ResourceAverageSelector from "./_components/ResourceAverageSelector";
 import AbilityUsageSelector from "./_components/AbilityUsageSelector";
@@ -17,6 +18,8 @@ import ResourceGainSelector from "./_components/ResourceGainSelector";
 import ManaEfficiencySelector from "./_components/ManaEfficiencySelector";
 import GameGoldSelector from "./_components/GameGoldSelector";
 import DungeonSelector from "./_components/DungeonSelector";
+import AbilityBalanceReport from "./_components/AbilityBalanceReport";
+import ClassPowerComparison from "./_components/ClassPowerComparison";
 
 async function Manage() {
   await redirectIfNotAdmin();
@@ -30,6 +33,8 @@ async function Manage() {
     abilityEfficiencyStats,
     gameGoldStats,
     dungeonStats,
+    abilityBalanceReport,
+    classPowerComparison,
   ] = await Promise.all([
     getAbilityUsageStats(14),
     getAbilityUsageStats(7),
@@ -39,6 +44,8 @@ async function Manage() {
     getAbilityEfficiencyStatsMultiple(),
     getGameGoldStatsMultiple(),
     getDungeonStatsMultiple(),
+    getAbilityBalanceReport(14),
+    getClassPowerComparison(14),
   ]);
 
   return (
@@ -63,6 +70,10 @@ async function Manage() {
         <DungeonSelector data={dungeonStats} />
 
         <ResourceAverageSelector data={resourceAverages} />
+
+        <AbilityBalanceReport data={abilityBalanceReport} />
+
+        <ClassPowerComparison data={classPowerComparison} />
       </div>
     </MainContainer>
   );

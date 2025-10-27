@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
-import React from "react";
 import {
   getAbilityHierarchy,
   getUserAbilities,

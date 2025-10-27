@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@mui/material/Button";
@@ -25,8 +24,12 @@ export default function NavbarContent() {
       <div className="flex items-center justify-between w-full">
         <Link href="/">
           <div className="flex items-center gap-5">
-            <Image src="/TQlogo.png" alt="TillerQuest" width={70} height={70} />
-            <h1 className={"hidden md:block text-2xl"}>TillerQuest</h1>
+            <Image
+              src="TillerQuestLogoHorizontal.svg"
+              alt="TillerQuest"
+              width={300}
+              height={150}
+            />
           </div>
         </Link>
       </div>
@@ -82,9 +85,23 @@ export default function NavbarContent() {
   return (
     <>
       <Link href="/">
-        <div className="flex items-center gap-5">
-          <Image src="/TQlogo.png" alt="TillerQuest" width={70} height={70} />
-          <h1 className={"hidden md:block text-2xl"}>TillerQuest</h1>
+        <div className="flex px-2 items-center">
+          <div className="hidden md:flex">
+            <Image
+              src="/TillerQuestLogoHorizontal.svg"
+              alt="TillerQuest"
+              width={300}
+              height={150}
+            />
+          </div>
+          <div className="flex md:hidden">
+            <Image
+              src="/TQCircle.svg"
+              alt="TillerQuest"
+              width={70}
+              height={70}
+            />
+          </div>
         </div>
       </Link>
       {/* On smaller screens only show icons */}
@@ -94,15 +111,18 @@ export default function NavbarContent() {
               <Link href={link.href} key={link.name}>
                 <Button
                   variant={pathname === link.href ? "outlined" : "text"}
-                  color={pathname === link.href ? "primary" : "inherit"}
+                  color={pathname === link.href ? "secondary" : "tqwhite"}
                   startIcon={link.icon}
-                  sx={{ display: { xs: "none", md: "none", lg: "flex" } }}
+                  sx={{
+                    display: { xs: "none", md: "none", lg: "flex" },
+                    textWrap: "nowrap",
+                  }}
                 >
                   {link.name}
                 </Button>
                 <IconButton
                   sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-                  color={pathname === link.href ? "primary" : "default"}
+                  color={pathname === link.href ? "secondary" : "tqwhite"}
                   size="large"
                 >
                   {link.icon}
@@ -115,7 +135,7 @@ export default function NavbarContent() {
             <Button
               className="whitespace-nowrap"
               variant="outlined"
-              color="secondary"
+              color="tqwhite"
               startIcon={<LogoutIcon />}
               sx={{ display: { xs: "none", md: "none", lg: "flex" } }}
               onClick={() => signOut()}
@@ -124,7 +144,7 @@ export default function NavbarContent() {
             </Button>
             <IconButton
               sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-              color="secondary"
+              color="tqwhite"
               size="large"
               onClick={() => signOut()}
             >
@@ -134,11 +154,12 @@ export default function NavbarContent() {
         ) : (
           <>
             <Button
-              className="whitespace-nowrap"
               variant="contained"
               color="primary"
               startIcon={<LoginIcon />}
-              sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+              sx={{
+                display: { xs: "none", md: "none", lg: "flex" },
+              }}
               onClick={() =>
                 signIn.social({ provider: "github", callbackURL: "/" })
               }
@@ -146,8 +167,10 @@ export default function NavbarContent() {
               Sign in
             </Button>
             <IconButton
-              sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-              color="secondary"
+              sx={{
+                display: { xs: "flex", md: "flex", lg: "none" },
+              }}
+              color="primary"
               size="large"
               onClick={() =>
                 signIn.social({ provider: "github", callbackURL: "/" })
@@ -157,17 +180,18 @@ export default function NavbarContent() {
             </IconButton>
             <Link href={"/signup"}>
               <Button
-                className="whitespace-nowrap"
                 variant="contained"
                 color="primary"
                 startIcon={<PersonAddIcon />}
-                sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+                sx={{
+                  display: { xs: "none", md: "none", lg: "flex" },
+                }}
               >
                 Sign up
               </Button>
               <IconButton
-                sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-                color="secondary"
+                sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}
+                color="primary"
                 size="large"
               >
                 <PersonAddIcon />

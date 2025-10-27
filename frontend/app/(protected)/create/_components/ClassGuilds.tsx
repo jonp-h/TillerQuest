@@ -1,6 +1,6 @@
 import { getGuildsAndMemberCountBySchoolClass } from "@/data/guilds/getGuilds";
 import { RadioGroup, FormControlLabel, Radio, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Guild {
   id: number;

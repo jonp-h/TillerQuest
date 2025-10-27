@@ -1,11 +1,7 @@
-<h1 align="center">
-  <br>
+<div align="center">
   <!-- LOGO IMAGE -->
-  <img src="/frontend/public/TQlogo.png" width="250px" />
-  <br>
-  TillerQuest
-  <br>
-</h1>
+  <img src="/frontend/public/TillerQuestLogoVertical.svg" width="350px" alt="TillerQuest"/>
+</div>
 
 <h4 align="center">A humble remake of the popular Heimdallsquest</h4>
 
@@ -39,14 +35,16 @@
 - [Zod](https://zod.dev/) for validation.
 - [D3](https://d3js.org/) for data visualization.
 
-## How To Use
+## Setup instructions
 
-```ps
+#### Installation
+
+```bash
 # Clone this repository
 $ git clone
 
-$ cd TillerQuest/
 # Go into the Project
+$ cd TillerQuest/
 
 # Install dependencies
 $ npm i
@@ -65,15 +63,54 @@ $ npm i
 
 ```
 
-#### Setup test env
+#### Setup database
 
 - First complete the above instructions
 - Setup a local PostegreSQL instance with Docker in the backend [here](/backend/src/db/docker/).
+- In the docker folder:
+
+- Create an .env with the following:
+
+```bash
+# For the Postgres Database
+POSTGRES_USER=...
+POSTGRES_PASSWORD=...
+POSTGRES_PORT=...
+
+# Extra to use PGAdmin
+PGADMIN_DEFAULT_EMAIL=...
+PGADMIN_DEFAULT_PASSWORD=...
+PGADMIN_PORT=...
+POSTGRES_HOST=... # the default gateway for the docker postgres_container
+```
+
+- Then start a postegresql instance with docker:
+
+```bash
+$ docker-compose up -d
+```
+
+#### Seed database / Dummy data
+
+- You can fill the database with seed-data (dummy data) by entering the following commands in the backend/ folder
+
+```bash
+# go to the backend folder
+$ cd backend/
+
+# Add the database schema to the database
+$ npx prisma db push
+
+# Seed the database with dummy data
+$ npm run gen
+```
+
+#### Setup frontend env
 
 - Create .env inside the frontend folder
   - Create the following variables and replace the "..."
 
-```
+```bash
 BETTER_AUTH_SECRET=...
 # This is a random string used for encryption. Should be securely generated, using eg. openssl
 
@@ -96,14 +133,17 @@ WEBHOOK_URL=...
 
 NEXT_PUBLIC_MAGICAL_AREA_LATITUDE=...
 # Latitude coordinates of where users are allowed to gain mana from.".
+
 NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE=...
 # Longitude coordinates of where users are allowed to gain mana from.".
 ```
 
+#### Setup backend env
+
 - Create a new .env file in backend folder
   - Create the following variables and replace the "..."
 
-```
+```bash
 
 BETTER_AUTH_SECRET=...
 # This is a random string used for encryption. Should be securely generated, using eg. openssl
@@ -127,32 +167,31 @@ API_KEY=...
 
 API_SECRET=...
 # The internal API secret other services need to connect to the backend API
-
-
 ```
 
-```ps
+### Start application
+
+- Open a terminal
+
+```bash
 $ cd backend/
 
-$ npx prisma db push
-
-$ npm run generate
-# To mock an example database
-
-$ npm run start
 # To start backend
+$ npm run start
 ```
 
-### Open a new Terminal
+- Open a new Terminal
 
-```ps
+```bash
 $ cd frontend/
 
+# To start frontend
 $ npm run dev
-# To open dev
 ```
 
-- You can inspect the database with "npx prisma studio"
+- Open [localhost:3000](localhost:3000)
+
+- You can inspect the database with `npx prisma studio`
   - If the mocking was successful the database should have example data
 - Create your own user by signing in with GitHub OAuth and creating a user. Example creation secret can be found in the db/seed files
 - Happy testing!
@@ -176,147 +215,70 @@ $ npm run dev
 ```
 └── 📁TillerQuest
     └── 📁.github
-        └── 📁ISSUE_TEMPLATE
-            └── bug_report.md
-            └── feature_request.md
-            └── scrum-story.md
-            └── scrum-task.md
-        └── pull_request_template.md
     └── 📁.husky
-        └── 📁_
-        └── commit-msg
-        └── pre-commit
+    └── 📁.vscode
     └── 📁backend
-        └── .env
-        └── .eslintcache
-        └── .gitignore
-        └── .lintstagedrc.js
-        └── 📁db
-            └── .gitignore
-            └── 📁docker
-                └── .env
-                └── 📁backups
-                └── 📁data
-                └── docker-compose.yml
-                └── README.md
-            └── abilities.js
-            └── cosmic.js
-            └── enemies.js
-            └── generate.js
-            └── guilds.js
-            └── reset.js
-            └── shopItems.js
-            └── typeQuestTexts.js
-            └── users.js
-        └── eslint.config.js
-        └── nodemon.json
-        └── package-lock.json
-        └── package.json
         └── 📁prisma
-            └── 📁migrations
-            └── schema.prisma
         └── 📁src
-            └── 📁data
-            └── 📁lib
-            └── 📁middleware
-            └── 📁types
+        ├── .eslintcache
+        ├── .gitignore
+        ├── .lintstagedrc.js
+        ├── .prettierignore
+        ├── .prettierrc
+        ├── combined.log
+        ├── error.log
+        ├── eslint.config.js
+        ├── exceptions.log
+        ├── nodemon.json
+        ├── package-lock.json
+        ├── package.json
         └── tsconfig.json
     └── 📁frontend
-        └── .env
-        └── .gitignore
-        └── .lintstagedrc.mjs
-        └── .prettierignore
-        └── .prettierrc
         └── 📁app
             └── 📁(protected)
-                └── 📁(admin)
-                    └── 📁gamemaster
-                        └── 📁cosmic
-                            └── 📁_components
-                        └── 📁guilds
-                            └── 📁_components
-                        └── 📁log
-                        └── 📁manage
-                            └── 📁_components
-                        └── 📁resurrect
-                            └── 📁_components
-                        └── 📁users
-                            └── 📁_components
-                └── 📁abilities
-                    └── 📁_components
-                    └── 📁[abilityName]
-                        └── 📁_components
-                └── 📁arena
-                    └── 📁_components
-                    └── 📁games
-                        └── 📁_components
-                └── 📁create
-                    └── 📁_components
-                └── 📁dungeons
-                    └── 📁_components
-                └── 📁mana
-                    └── 📁_components
-                └── 📁profile
-                    └── 📁[username]
-                        └── 📁_components
-                        └── 📁settings
-                            └── 📁_components
-                └── 📁shop
-                    └── 📁_components
             └── 📁api
-                └── 📁auth
-                    └── 📁[...nextauth]
             └── 📁signup
-        └── auth.config.ts
-        └── auth.ts
-        └── combined.log
+            ├── android-chrome-192x192.png
+            ├── android-chrome-512x512.png
+            ├── apple-touch-icon.png
+            ├── favicon-16x16.png
+            ├── favicon-32x32.png
+            ├── favicon.ico
+            ├── globals.css
+            ├── layout.tsx
+            ├── loading.tsx
+            ├── manifest.webmanifest
+            ├── page.tsx
+            └── robots.txt
         └── 📁components
-            └── 📁navbar
         └── 📁data
-            └── 📁abilities
-                └── 📁abilityUsage
-                └── 📁getters
-                └── 📁transaction
-            └── 📁admin
-            └── 📁cosmic
-            └── 📁dungeons
-            └── 📁games
-            └── 📁guilds
-            └── 📁log
-            └── 📁mana
-            └── 📁passives
-            └── 📁shop
-            └── 📁user
-            └── 📁validators
-        └── eslint.config.mjs
         └── 📁lib
-        └── middleware.ts
-        └── next.config.mjs
-        └── package-lock.json
-        └── package.json
-        └── postcss.config.mjs
         └── 📁prisma
-            └── 📁migrations
-            └── schema.prisma
         └── 📁public
-            └── 📁abilities
-            └── 📁assets
-                └── 📁ammo
-                └── 📁textures
-                └── 📁themes
-                    └── 📁default
-            └── 📁badges
-            └── 📁classes
-            └── 📁dungeons
-            └── 📁ragnarok
-        └── routes.ts
-        └── tsconfig.json
         └── 📁types
-    └── .gitignore
-    └── commitlint.config.mjs
-    └── CONTRIBUTING.md
-    └── package-lock.json
-    └── package.json
+        ├── .env
+        ├── .eslintcache
+        ├── .gitignore
+        ├── .lintstagedrc.mjs
+        ├── .prettierignore
+        ├── .prettierrc
+        ├── auth.ts
+        ├── combined.log
+        ├── error.log
+        ├── eslint.config.mjs
+        ├── exceptions.log
+        ├── middleware.ts
+        ├── next.config.mjs
+        ├── package-lock.json
+        ├── package.json
+        ├── postcss.config.mjs
+        ├── routes.ts
+        └── tsconfig.json
+    ├── .gitignore
+    ├── commitlint.config.mjs
+    ├── CONTRIBUTING.md
+    ├── package-lock.json
+    ├── package.json
     └── README.md
 ```
 
@@ -332,35 +294,31 @@ $ npm run dev
 
   - Try to keep client side rendering inside "client based components" where possible
     - Eg. the needed client side code should be moved inside its own component
-    - This is to take advatage of SSR (Server Side Rendering)
+    - This is to take advantage of SSR (Server Side Rendering)
 
 - Server Side Rendering:
 
   - SSR is preferred when possible
-  - All page.tsx should be kept SSR
+  - All pages (page.tsx) should be kept SSR
 
 - Authentication of users:
   - Client side pages use useSession()
-  - Server side pages use auth()
+  - Server side pages use getSession()
 
-# Design manual:
+# Color Scheme:
 
-### Main color Scheme:
+TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and probably never will be)**.
 
-TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and never will be)**.
-
-<!--
-- **Main color:**
-  - slate-900 #0f172a
-  - slate-700 #334155
-- **Primary:**
-  - primary: purple-900 #581c87
-  - variant:
-  - hover: purple-800 #6b21a8
-  - text: purple-500 #a855f7
-- **Text:**
-  - white
-  -->
+\*_NOTE: Contrast ratio pairings have sufficient contrast for use with normal text, large text and graphics._
+| Color | Hex | Contrast color | Contrast ratio | Accessibility |
+| ----------------- | -------------------------------------------------------------- | ----------- | ----------- | ------------- |
+| Primary | ![#6E40C9](https://placehold.co/15x15/6E40C9/6E40C9) #6E40C9 | #e2e2e2 |5:1 | WCAG AA |
+| Secondary | ![#C06EFF](https://placehold.co/15x15/C06EFF/C06EFF) #C06EFF | #0d1117 | 6.23:1 | WCAG AA |
+| Background | ![#0d1117](https://placehold.co/15x15/0d1117/0d1117) #0d1117 | #e2e2e2 | 14.61:1 | WCAG AAA |
+| Error | ![#FF3B43](https://placehold.co/15x15/FF3B43/FF3B43) #FF3B43 | #0d1117 | 5.37:1 | WCAG AA |
+| Success | ![#6EC348](https://placehold.co/15x15/6EC348/6EC348) #6EC348 | #0d1117 | 8.62:1 | WCAG AAA |
+| Info | ![#3DBCEA](https://placehold.co/15x15/3DBCEA/3DBCEA) #3DBCEA | #0d1117 | 8.63:1 | WCAG AAA |
+| Warning | ![#FFA726](https://placehold.co/15x15/FFA726/FFA726) #FFA726 | #0d1117 | 9.74:1 | WCAG AAA |
 
 ## Credits
 

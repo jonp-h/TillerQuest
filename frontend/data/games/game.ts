@@ -755,7 +755,6 @@ const BINARY_JACK_MAX_TURNS = 6; // Change this value to adjust maximum rounds/t
 
 export const initializeBinaryJackGame = async (
   gameId: string,
-  targetNumber: number,
   stake: number,
 ) => {
   try {
@@ -771,10 +770,8 @@ export const initializeBinaryJackGame = async (
         throw new ErrorMessage("Game not found or not in correct state");
       }
 
-      // Validate target number (1-30 for 5-bit binary)
-      if (targetNumber < 1 || targetNumber > 30) {
-        throw new ErrorMessage("Target number must be between 1 and 30");
-      }
+      // Generate random target number (1-30 for 5-bit binary)
+      const targetNumber = Math.floor(Math.random() * 30) + 1;
 
       // Validate stake
       if (stake < 1) {

@@ -13,7 +13,7 @@ import shopItems from "./shopItems.js";
 import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
 import enemies from "./enemies.js";
-import gameSettings from "./gameSettings.js";
+import applicationSettings from "./applicationSettings.js";
 import wordQuestWords from "./wordQuestWords.js";
 import wishes from "./wishes.js";
 
@@ -30,7 +30,7 @@ async function main() {
   Please choose an option:
   - ADD:
   1. Add All
-  2. Add all without users
+  2. Add all without users and guilds
   3. Add Guilds
   4. Add Abilities
   5. Add Cosmic Events
@@ -52,7 +52,7 @@ async function main() {
         await addAll();
         break;
       case "2":
-        await addAllWithoutUsers();
+        await addAllWithoutUsersAndGuilds();
         break;
       case "3":
         await addGuilds();
@@ -76,7 +76,7 @@ async function main() {
         await addEnemies();
         break;
       case "10":
-        await addGameSettings();
+        await addApplicationSettings();
         break;
       case "11":
         await addWordQuestWords();
@@ -213,8 +213,8 @@ async function addEnemies() {
   console.info("Enemies has been added to the database.");
 }
 
-async function addGameSettings() {
-  for (const setting of gameSettings) {
+async function addApplicationSettings() {
+  for (const setting of applicationSettings) {
     try {
       await db.applicationSettings.createMany({
         data: setting,
@@ -286,19 +286,18 @@ async function addAll() {
   await addTypeQuestTexts();
   await addUsers();
   await addEnemies();
-  await addGameSettings();
+  await addApplicationSettings();
   await addWordQuestWords();
   await addWishes();
 }
 
-async function addAllWithoutUsers() {
-  await addGuilds();
+async function addAllWithoutUsersAndGuilds() {
   await addAbilities();
   await addCosmicEvents();
   await addShopItems();
   await addTypeQuestTexts();
   await addEnemies();
-  await addGameSettings();
+  await addApplicationSettings();
   await addWordQuestWords();
   await addWishes();
 }

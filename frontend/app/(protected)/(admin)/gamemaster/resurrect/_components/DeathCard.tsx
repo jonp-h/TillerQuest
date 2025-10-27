@@ -8,19 +8,19 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
 import { User } from "@prisma/client";
-import { resurrectUsers } from "@/data/admin/resurrectUser";
-import DiceBox from "@3d-dice/dice-box-threejs";
+import { resurrectUsers, rollDeathSave } from "@/data/admin/resurrectUser";
 import { useRouter } from "next/navigation";
-import { diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
+import { useDiceBox } from "./ResurrectDiceProvider";
 
 export default function DeathCard({ user }: { user: User }) {
-  const [number, setNumber] = React.useState<number | null>(0);
+  const [number, setNumber] = useState<number | null>(null);
   const router = useRouter();
+  const { diceBox, isReady } = useDiceBox();
 
   const handleRessurect = async (effect: string) => {
     const result = await resurrectUsers({
@@ -36,39 +36,25 @@ export default function DeathCard({ user }: { user: User }) {
     router.refresh();
   };
 
-  const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
-
-  const initializeDiceBox = async () => {
-    const diceContainer = document.querySelector("#dice-canvas");
-    if (diceContainer) {
-      const existingCanvases = diceContainer.querySelectorAll("canvas");
-      if (existingCanvases.length > 0) {
-        console.info("Removing existing dice canvases");
-        existingCanvases.forEach((canvas) => canvas.remove());
-      }
-    }
-
-    try {
-      const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
-      await newDiceBox.initialize();
-      console.info("DiceBox initialized successfully");
-      setDiceBox(newDiceBox);
-    } catch (error) {
-      console.error("Error initializing DiceBox:", error);
-    }
-  };
-
-  useEffect(() => {
-    initializeDiceBox();
-  }, []);
-
   const rollDice = async () => {
     if (!diceBox) {
       toast.error("Dice failed to initialize");
       return;
     }
-    // TODO: check if dice does not work on big screens because of client side
-    diceBox.roll("1d6").then((results) => setNumber(results.total));
+
+    diceBox.clearDice();
+
+    // Roll dice server-side
+    const result = await rollDeathSave();
+
+    if (result.success) {
+      // Display the roll result with animation
+      diceBox.roll(`1d6@${result.data.diceRoll}`).then(() => {
+        setNumber(result.data.roll);
+      });
+    } else {
+      toast.error(result.error);
+    }
   };
 
   return (
@@ -119,8 +105,9 @@ export default function DeathCard({ user }: { user: User }) {
               color="error"
               endIcon={<Casino />}
               onClick={() => rollDice()}
+              disabled={!isReady}
             >
-              {diceBox ? "Death Save" : "Initialize Dice"}
+              {!isReady ? "Prepare dice!" : "Roll Death Save"}
             </Button>
             <DialogButton
               buttonText="Free Resurrection"

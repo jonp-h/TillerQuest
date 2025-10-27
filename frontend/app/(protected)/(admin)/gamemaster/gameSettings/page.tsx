@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import { List, ListItem, Typography } from "@mui/material";
-import React from "react";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { adminGetApplicationSettings } from "@/data/admin/gameSettings";
 import GameSettingsForm from "./_components/GameSettingsForm";
@@ -13,7 +12,7 @@ async function GameSettings() {
 
   const style = {
     p: 0,
-    width: "40%",
+    width: "70%",
     maxWidth: 1600,
     borderRadius: 2,
     border: "1px solid",

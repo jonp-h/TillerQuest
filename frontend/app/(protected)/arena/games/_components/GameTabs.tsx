@@ -114,6 +114,8 @@ function GameTabs({
         <Tabs
           centered
           value={tab}
+          indicatorColor="secondary"
+          textColor="inherit"
           onChange={handleChange}
           aria-label="Game tabs"
         >
@@ -140,7 +142,7 @@ function GameTabs({
       <div className="text-center mt-5 gap-5">
         {!gameEnabled && (
           <>
-            <Typography variant="h6" color="info" className="pb-4">
+            <Typography variant="h6" color="arenatoken" className="pb-4">
               You have {user.arenaTokens} <Stadium className="mx-1" />
             </Typography>
             <DialogButton
@@ -171,7 +173,9 @@ function GameTabs({
       </div>
       <GameTabPanel tab={tab} value={"TypeQuest"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">TypeQuest</h1>
+          <Typography variant="h3" component={"h1"}>
+            TypeQuest
+          </Typography>
           <Typography variant="subtitle1" color="success">
             Type the text as fast as you can
           </Typography>
@@ -198,7 +202,9 @@ function GameTabs({
       </GameTabPanel>
       <GameTabPanel tab={tab} value={"WordQuest"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">WordQuest</h1>
+          <Typography variant="h3" component={"h1"}>
+            WordQuest
+          </Typography>
           <Typography variant="subtitle1" color="success">
             Find hidden words in the letter grid
           </Typography>
@@ -225,7 +231,9 @@ function GameTabs({
       </GameTabPanel>
       <GameTabPanel tab={tab} value={"BinaryJack"} ownsGame={ownsGame}>
         <div className="flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-bold">BinaryJack</h1>
+          <Typography variant="h3" component={"h1"}>
+            BinaryJack
+          </Typography>
           <Typography variant="subtitle1" color="success">
             Stake your gold in a high risk binary version of Blackjack
           </Typography>

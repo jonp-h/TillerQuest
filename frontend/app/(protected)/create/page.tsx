@@ -1,4 +1,3 @@
-import React from "react";
 import CreateUserForm from "./_components/CreateUserForm";
 import { redirectIfNotNewUser } from "@/lib/redirectUtils";
 import { getCreateUserById } from "@/data/user/getUser";

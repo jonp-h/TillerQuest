@@ -7,7 +7,6 @@ import { Button, Paper, Typography } from "@mui/material";
 import { Class, ShopItem } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { toast } from "react-toastify";
 
 function ShopCard({
@@ -72,6 +71,7 @@ function ShopCard({
         {item.specialReq && (
           <Typography
             variant="body1"
+            sx={{ marginTop: 1 }}
             color={
               user.special.includes(item.specialReq) ? "info" : "textSecondary"
             }
@@ -82,18 +82,18 @@ function ShopCard({
         )}
         {item.classReq && (
           <Typography
-            variant="body2"
+            variant="body1"
+            sx={{ marginTop: 1 }}
             color={user.class === item.classReq ? "info" : "error"}
-            className="text-lg pt-3"
           >
             {"Class requirement: " + item.classReq}
           </Typography>
         )}
         {item.levelReq && (
           <Typography
-            variant="body2"
+            variant="body1"
+            sx={{ marginTop: 1 }}
             color={user.level >= item.levelReq ? "info" : "error"}
-            className="text-lg pt-3"
           >
             {"Level requirement: " + item.levelReq}
           </Typography>

@@ -1,7 +1,6 @@
 import MainContainer from "@/components/MainContainer";
 import { adminGetDungeonInfo } from "@/data/admin/adminUserInteractions";
 import { List, ListItem, Typography } from "@mui/material";
-import React from "react";
 import DungeonsForm from "./_components/DungeonsForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 

@@ -1,6 +1,4 @@
 import MainContainer from "@/components/MainContainer";
-
-import React from "react";
 import Leaderboard from "./_components/Leaderboard";
 import { getVg1Leaderboard, getVg2Leaderboard } from "@/data/user/getUser";
 import { getDeadUsers } from "@/data/user/getUser";
@@ -18,7 +16,9 @@ async function ArenaPage() {
   return (
     <MainContainer>
       <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="my-10 text-5xl text-red-400 text-center ">Arena</h1>
+        <Typography variant="h1" sx={{ marginY: 4 }}>
+          Arena
+        </Typography>
         <Link href={"arena/games"}>
           <Button variant="contained" size="large">
             Go to the arena games
@@ -28,6 +28,7 @@ async function ArenaPage() {
           <Link href={"arena/valhalla"}>
             <Button
               variant="contained"
+              color="secondary"
               size="large"
               sx={{
                 background:
@@ -53,9 +54,9 @@ async function ArenaPage() {
         </div>
         {deadUsers.length > 0 && (
           <>
-            <h1 className="my-10 text-2xl text-red-400 text-center">
+            <Typography variant="h2" sx={{ marginY: 5 }} color="error">
               The dead
-            </h1>
+            </Typography>
             <div className="bg-red-900/50 lg:w-1/2 p-5 rounded-lg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {deadUsers.map((user) => (
                 <Link key={user.id} href={"/profile/" + user.username}>
@@ -89,9 +90,9 @@ async function ArenaPage() {
             </div>
           </>
         )}
-        <div className="flex flex-col mt-10 max-w-2/3 gap-3 justify-center xl:flex-row">
-          <Leaderboard title={"Top 10 Leaderboard Vg1"} users={usersVg1} />
-          <Leaderboard title={"Top 10 Leaderboard Vg2"} users={usersVg2} />
+        <div className="flex flex-col mt-10 max-w-2/3 gap-5 justify-center xl:flex-row">
+          <Leaderboard title={"Top 10 VG1"} users={usersVg1} />
+          <Leaderboard title={"Top 10 VG2"} users={usersVg2} />
         </div>
       </div>
     </MainContainer>

@@ -321,15 +321,17 @@ model UserPassive {
 }
 
 model CosmicEvent {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  description String
-  icon        String    @default("Cosmic.png")
-  recommended Boolean   @default(false)
-  selected    Boolean   @default(false)
-  presetDate  DateTime?
-  occurrences Int       @default(0)
-  frequency   Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  description    String
+  icon           String    @default("Cosmic.png")
+  recommended    Boolean   @default(false)
+  selectedForVg1 Boolean   @default(false)
+  selectedForVg2 Boolean   @default(false)
+  presetDate     DateTime?
+  occurrencesVg1 Int       @default(0)
+  occurrencesVg2 Int       @default(0)
+  frequency      Int       @default(100) // 1-100. 100 is the highest frequency. 1 is the lowest
 
   automatic         Boolean      @default(false)
   increaseCostType  AbilityType? // if the cosmic event should increase stats or ability values
@@ -373,11 +375,11 @@ model Wish {
 }
 
 model WishVote {
-  id       String @id @default(cuid())
-  userId   String
-  username String
-  wishId   Int
-  amount   Int
+  id        String  @id @default(cuid())
+  userId    String
+  wishId    Int
+  amount    Int
+  anonymous Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -522,10 +524,11 @@ model Session {
 }
 
 model ApplicationSettings {
-  key       String   @id
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  key         String   @id
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Verification {

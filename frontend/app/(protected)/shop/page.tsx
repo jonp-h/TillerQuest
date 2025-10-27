@@ -1,5 +1,4 @@
 import MainContainer from "@/components/MainContainer";
-import React from "react";
 import ShopCard from "./_components/ShopCard";
 import {
   getShopBadges,
@@ -30,8 +29,22 @@ async function Shop() {
 
   return (
     <MainContainer>
-      <h1 className=" text-6xl text-center mt-5">Shop</h1>
-      <h2 className="text-2xl text-center mt-5 text-green-400">
+      <Typography
+        variant="h2"
+        component={"h1"}
+        fontWeight={600}
+        sx={{ marginTop: 6 }}
+        align="center"
+      >
+        Shop
+      </Typography>
+      <Typography
+        variant="h5"
+        component={"h2"}
+        color="success"
+        sx={{ marginTop: 3 }}
+        className="text-2xl text-center mt-5 text-green-400"
+      >
         Buy items to help you on your journey. Some items require participation
         in certain IRL events to unlock{" "}
         <Tooltip
@@ -45,13 +58,18 @@ async function Shop() {
         >
           <HelpOutline className="text-white cursor-help" />
         </Tooltip>
-      </h2>
+      </Typography>
       <div className="flex justify-center mt-5">
         <RarityModal />
       </div>
-      <h3 className="text-xl text-center mt-5">
+      <Typography
+        variant="h6"
+        component={"h3"}
+        sx={{ marginTop: 3 }}
+        align="center"
+      >
         You have {user.gold} <Circle htmlColor="gold" /> gold
-      </h3>
+      </Typography>
       <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Badges

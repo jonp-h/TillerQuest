@@ -1,6 +1,5 @@
 import { Typography, LinearProgress } from "@mui/material";
 import Image from "next/image";
-import React from "react";
 
 function EnemyComponent({
   enemy,
@@ -39,9 +38,9 @@ function EnemyComponent({
         <Typography variant="h5" className="text-center">
           {enemy.name}
           <br />
-          <p>
+          <Typography variant="h6">
             {enemy.health <= 0 ? 0 : enemy.health} / {enemy.maxHealth} hp
-          </p>
+          </Typography>
         </Typography>
         <LinearProgress
           color="health"

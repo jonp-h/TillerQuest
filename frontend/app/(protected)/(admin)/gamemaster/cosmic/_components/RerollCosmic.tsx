@@ -1,8 +1,12 @@
 "use client";
 import {
+  Box,
   Button,
   Card,
   CardContent,
+  Checkbox,
+  FormControlLabel,
+  Input,
   Paper,
   Table,
   TableBody,
@@ -13,50 +17,58 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import { CosmicEvent } from "@prisma/client";
-import { randomCosmic, setSelectedCosmic } from "@/data/admin/cosmic";
+import {
+  randomCosmic,
+  setRecommendedCosmic,
+  setSelectedCosmic,
+} from "@/data/admin/cosmic";
 import { useRouter } from "next/navigation";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
-//FIXME: refactor this code
 export default function RerollCosmic({
   cosmicEvents,
+  recommendedCosmic,
+  selectedCosmicEvents,
 }: {
   cosmicEvents: CosmicEvent[];
+  recommendedCosmic: CosmicEvent | null;
+  selectedCosmicEvents: {
+    vg1: CosmicEvent | null;
+    vg2: CosmicEvent | null;
+  };
 }) {
-  const [recommendedCosmicEvent, setRecommendedCosmicEvent] =
-    useState<CosmicEvent | null>(null);
-  const [selectedCosmicEvent, setSelectedCosmicEvent] =
-    useState<CosmicEvent | null>(null);
+  const [notify, setNotify] = useState(true);
 
   const router = useRouter();
-
-  useEffect(() => {
-    const recommendedCosmic = cosmicEvents.find((cosmic) => cosmic.recommended);
-    if (recommendedCosmic) {
-      setRecommendedCosmicEvent(recommendedCosmic);
-    }
-    const selectedCosmic = cosmicEvents.find((cosmic) => cosmic.selected);
-    if (selectedCosmic) {
-      setSelectedCosmicEvent(selectedCosmic);
-    }
-  }, [cosmicEvents]);
 
   const handleReroll = async () => {
     const result = await randomCosmic();
 
     if (result.success) {
       toast.success("Rerolled cosmic!");
-      setRecommendedCosmicEvent(result.data);
     } else {
       toast.error(result.error);
     }
+    router.refresh();
   };
 
-  const handleSetSelectedCosmic = async (name: string) => {
-    const result = await setSelectedCosmic(name);
+  const handleSetRecommendedCosmic = async (name: string) => {
+    const result = await setRecommendedCosmic(name);
+
+    if (result.success) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
+
+    router.refresh();
+  };
+
+  const handleSetSelectedCosmic = async (name: string, grade: string) => {
+    const result = await setSelectedCosmic(name, grade, notify);
 
     if (result.success) {
       toast.success(result.data);
@@ -69,74 +81,144 @@ export default function RerollCosmic({
 
   return (
     <>
-      <div className="flex flex-col justify-center w-2/3 m-auto">
-        {selectedCosmicEvent && (
-          <Card elevation={8}>
+      <div className="flex flex-col justify-center w-3/4 m-auto">
+        <div className="flex">
+          <Card elevation={5} sx={{ width: "50%" }}>
             <CardContent className="flex flex-col items-center gap-5">
               <Typography variant="h4" align="center">
-                <strong>Selected Cosmic: </strong>
+                <strong>Selected Vg1 Cosmic: </strong>
               </Typography>
-              <Typography variant="h4" align="center" color="primary">
-                {selectedCosmicEvent?.name.replace(/-/g, " ")}
-              </Typography>
-              <Typography variant="h6" align="center" color="textSecondary">
-                {selectedCosmicEvent?.description}
-              </Typography>
-              <Typography variant="h6" align="center" color="info">
-                {selectedCosmicEvent?.automatic
-                  ? "This event will trigger automatically"
-                  : "This event requires manual triggering "}
-              </Typography>
+              {selectedCosmicEvents.vg1 ? (
+                <>
+                  <Typography variant="h4" align="center" color="warning">
+                    {selectedCosmicEvents.vg1?.name.replace(/-/g, " ")}
+                    <Tooltip title="This number represents the number of times this cosmic event has occurred in the past for vg1.">
+                      <span className="cursor-help">
+                        {" (" + selectedCosmicEvents.vg1?.occurrencesVg1 + ")"}
+                      </span>
+                    </Tooltip>
+                  </Typography>
+                  <Typography variant="h6" align="center" color="textSecondary">
+                    {selectedCosmicEvents.vg1?.description}
+                  </Typography>
+                  <Typography variant="h6" align="center" color="info">
+                    {selectedCosmicEvents.vg1?.automatic
+                      ? "This event will trigger automatically"
+                      : "This event requires manual triggering "}
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="h4" align="center" color="warning">
+                  No cosmic selected
+                </Typography>
+              )}
             </CardContent>
           </Card>
-        )}
-        {recommendedCosmicEvent && (
+          <Card elevation={5} sx={{ width: "50%" }}>
+            <CardContent className="flex flex-col items-center gap-5">
+              <Typography variant="h4" align="center">
+                <strong>Selected Vg2 Cosmic: </strong>
+              </Typography>
+              {selectedCosmicEvents.vg2 ? (
+                <>
+                  <Typography variant="h4" align="center" color="success">
+                    {selectedCosmicEvents.vg2?.name.replace(/-/g, " ")}
+                    <Tooltip title="This number represents the number of times this cosmic event has occurred in the past for vg2.">
+                      <Box
+                        component={"span"}
+                        sx={{ cursor: "help" }}
+                        color={"success.main"}
+                      >
+                        {" (" + selectedCosmicEvents.vg2?.occurrencesVg2 + ")"}
+                      </Box>
+                    </Tooltip>
+                  </Typography>
+                  <Typography variant="h6" align="center" color="textSecondary">
+                    {selectedCosmicEvents.vg2?.description}
+                  </Typography>
+                  <Typography variant="h6" align="center" color="info">
+                    {selectedCosmicEvents.vg2?.automatic
+                      ? "This event will trigger automatically"
+                      : "This event requires manual triggering "}
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="h4" align="center" color="success">
+                  No cosmic selected
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {recommendedCosmic && (
           <Card elevation={3} className="mt-20">
             <CardContent className="flex flex-col items-center gap-5">
               <Typography variant="h4" align="center">
                 <strong>Recommended Cosmic: </strong>
               </Typography>
-              <Typography variant="h4" align="center" color="primary">
-                {recommendedCosmicEvent?.name.replace(/-/g, " ")}
-                <Tooltip title="This number represents the number of times this cosmic event has occurred in the past.">
-                  <span className="cursor-help">
-                    {" (" + recommendedCosmicEvent?.occurrences + ")"}
-                  </span>
+              <Typography variant="h4" align="center" color="secondary">
+                {recommendedCosmic?.name.replace(/-/g, " ")}
+                <Tooltip title="This number represents the number of times this cosmic event has occurred in the past for vg1.">
+                  <Box
+                    component={"span"}
+                    sx={{ cursor: "help" }}
+                    color={"warning.main"}
+                  >
+                    {" (" + recommendedCosmic?.occurrencesVg1 + ")"}
+                  </Box>
+                </Tooltip>
+                <Tooltip title="This number represents the number of times this cosmic event has occurred in the past for vg2.">
+                  <Box
+                    component={"span"}
+                    sx={{ cursor: "help" }}
+                    color={"success.main"}
+                  >
+                    {" (" + recommendedCosmic?.occurrencesVg2 + ")"}
+                  </Box>
                 </Tooltip>
               </Typography>
               <Typography variant="h6" align="center" color="textSecondary">
-                {recommendedCosmicEvent?.description}
+                {recommendedCosmic?.description}
               </Typography>
               <Typography variant="h6" align="center" color="info">
-                {selectedCosmicEvent?.automatic
+                {recommendedCosmic?.automatic
                   ? "This event will trigger automatically"
                   : "This event requires manual triggering"}
               </Typography>
               <div className="flex gap-5">
                 <DialogButton
-                  buttonText="Select cosmic"
-                  dialogTitle="Confirm Selection"
+                  buttonText="Select cosmic for vg1"
+                  dialogTitle="Confirm Selection for vg1"
                   dialogContent={
-                    selectedCosmicEvent
-                      ? "Are you sure you want to select this cosmic event? This will replace the currently selected cosmic event."
-                      : "Are you sure you want to select this cosmic event? "
+                    recommendedCosmic
+                      ? "Are you sure you want to select this cosmic event for vg1? This will replace the currently selected cosmic event."
+                      : "Are you sure you want to select this cosmic event for vg1? "
                   }
+                  color="warning"
                   dialogFunction={() =>
-                    handleSetSelectedCosmic(recommendedCosmicEvent?.name)
+                    handleSetSelectedCosmic(recommendedCosmic?.name, "vg1")
                   }
                   buttonVariant="contained"
-                  agreeText="Set as daily cosmic"
+                  agreeText="Set as daily cosmic for vg1"
                   disagreeText="Cancel"
                 />
-                {/* <Button
-                  className="w-30"
-                  variant="contained"
-                  onClick={() =>
-                    handleSetSelectedCosmic(recommendedCosmicEvent?.name)
+                <DialogButton
+                  buttonText="Select cosmic for vg2"
+                  dialogTitle="Confirm Selection for vg2"
+                  dialogContent={
+                    recommendedCosmic
+                      ? "Are you sure you want to select this cosmic event for vg2? This will replace the currently selected cosmic event."
+                      : "Are you sure you want to select this cosmic event for vg2? "
                   }
-                >
-                  Select cosmic
-                </Button> */}
+                  dialogFunction={() =>
+                    handleSetSelectedCosmic(recommendedCosmic?.name, "vg2")
+                  }
+                  color="success"
+                  buttonVariant="contained"
+                  agreeText="Set as daily cosmic for vg2"
+                  disagreeText="Cancel"
+                />
                 <Button
                   variant="contained"
                   color="error"
@@ -145,6 +227,19 @@ export default function RerollCosmic({
                   Reroll
                 </Button>
               </div>
+              <Box className="flex items-center gap-2 mt-3">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="medium"
+                      checked={notify}
+                      color="secondary"
+                      onChange={() => setNotify(!notify)}
+                    />
+                  }
+                  label="Notify users on Discord"
+                />
+              </Box>
             </CardContent>
           </Card>
         )}
@@ -163,7 +258,7 @@ export default function RerollCosmic({
                 <TableCell align="right">Grants the users an ability</TableCell>
                 <TableCell align="right">Linked ability</TableCell>
                 <TableCell align="right">Increases cost</TableCell>
-                <TableCell align="right">Occurrences</TableCell>
+                <TableCell align="right">Occurrences Vg1 - Vg2</TableCell>
                 <TableCell align="right">Frequency</TableCell>
               </TableRow>
             </TableHead>
@@ -173,18 +268,27 @@ export default function RerollCosmic({
                   key={cosmic.name}
                   sx={{
                     "&:last-child td, &:last-child th": { border: 0 },
-                    backgroundColor: cosmic.selected ? "darkviolet" : "inherit",
                   }}
                 >
                   <TableCell component="th" scope="row">
                     <Button
                       variant={
-                        recommendedCosmicEvent === cosmic || cosmic.selected
+                        recommendedCosmic === cosmic ||
+                        selectedCosmicEvents.vg1 === cosmic ||
+                        selectedCosmicEvents.vg2 === cosmic
                           ? "contained"
                           : "outlined"
                       }
-                      color={cosmic.selected ? "primary" : "secondary"}
-                      onClick={() => setRecommendedCosmicEvent(cosmic)}
+                      color={
+                        recommendedCosmic === cosmic
+                          ? "success"
+                          : selectedCosmicEvents.vg1 === cosmic
+                            ? "warning"
+                            : selectedCosmicEvents.vg2 === cosmic
+                              ? "success"
+                              : "secondary"
+                      }
+                      onClick={() => handleSetRecommendedCosmic(cosmic.name)}
                     >
                       {cosmic.name.replace(/-/g, " ")}
                     </Button>
@@ -214,7 +318,15 @@ export default function RerollCosmic({
                         "%"
                       : null}
                   </TableCell>
-                  <TableCell align="right">{cosmic.occurrences}</TableCell>
+                  <TableCell align="center">
+                    <Box component={"span"} color={"warning.main"}>
+                      {cosmic.occurrencesVg1}
+                    </Box>
+                    <Box component={"span"}>{" - "}</Box>
+                    <Box component={"span"} color={"success.main"}>
+                      {cosmic.occurrencesVg2}
+                    </Box>
+                  </TableCell>
                   <TableCell align="right">{cosmic.frequency}</TableCell>
                 </TableRow>
               ))}

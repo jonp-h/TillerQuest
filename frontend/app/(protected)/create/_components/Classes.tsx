@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import clsx from "clsx";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getGuildClasses } from "@/data/guilds/getGuilds";
 
@@ -211,20 +211,25 @@ export default function Classes({
                 className={clsx(
                   "rounded-full shadow-inner shadow-black",
                   className === playerClass &&
-                    " border-4 shadow-inner shadow-black border-purple-600 ",
+                    " border-4 shadow-inner shadow-black border-purple-800 ",
                 )}
                 width={200}
                 height={150}
                 draggable="false"
               />
-              <h1
-                className={clsx(
-                  "text-2xl pt-1",
-                  className === playerClass && "text-purple-400 font-bold",
-                )}
+              <Typography
+                variant="h5"
+                component={"h2"}
+                sx={{
+                  color:
+                    className === playerClass
+                      ? "secondary.main"
+                      : "text.primary",
+                }}
+                fontWeight={"600"}
               >
                 {className.slice(0, -1)}
-              </h1>
+              </Typography>
             </div>
           </Tooltip>
         );

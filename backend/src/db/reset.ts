@@ -13,6 +13,7 @@ async function main() {
   2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role or reset guilds.
   3 - single normal reset. Reset a single user
   4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
+  5 - delete all analytics. Reset all analytics data
   `);
 
   process.stdin.setEncoding("utf8");
@@ -80,6 +81,20 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
+      case "5":
+        console.log(
+          "Are you sure you want to delete all analytics? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.toString().trim().toLowerCase() === "yes") {
+            console.log("Deleting analytics...");
+            await deleteAnalytics();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
+        });
+        break;
     }
   });
 }
@@ -114,6 +129,15 @@ async function resetUsers() {
       }
 
       // Remove and recreate guilds
+      // First delete GuildEnemy records to avoid foreign key constraint violations
+      await db.guildEnemy.deleteMany({
+        where: {
+          guild: {
+            archived: false,
+          },
+        },
+      });
+
       await db.guild.deleteMany({
         where: {
           archived: false,
@@ -431,6 +455,17 @@ async function deleteNonConsentingVG2Users() {
     console.info(
       "All NEW users and all non-consenting VG2 users have been deleted. Consenting users and guilds have been archived.",
     );
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+}
+
+async function deleteAnalytics() {
+  try {
+    await prisma.$transaction(async (db) => {
+      await db.analytics.deleteMany({});
+    });
+    console.info("All analytics data has been deleted.");
   } catch (error) {
     console.error("Error: ", error);
   }

@@ -15,7 +15,6 @@ import {
 } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import React from "react";
 
 export default async function GameMasterPage() {
   await redirectIfNotAdmin();
@@ -111,21 +110,17 @@ export default async function GameMasterPage() {
         </Typography>
         <div className="flex justify-center gap-10">
           <Link href="/gamemaster/log">
-            <Button color="warning" variant="contained" startIcon={<Info />}>
+            <Button color="info" variant="contained" startIcon={<Info />}>
               Log
             </Button>
           </Link>
           <Link href="/gamemaster/systemMessages">
-            <Button color="warning" variant="contained" startIcon={<Message />}>
+            <Button color="info" variant="contained" startIcon={<Message />}>
               System messages
             </Button>
           </Link>
           <Link href="/gamemaster/analytics">
-            <Button
-              color="warning"
-              variant="contained"
-              startIcon={<BarChart />}
-            >
+            <Button color="info" variant="contained" startIcon={<BarChart />}>
               Analytics
             </Button>
           </Link>

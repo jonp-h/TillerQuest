@@ -204,6 +204,66 @@ const typeQuestTexts: TypeQuestText[] = [
     id: 50,
     text: "adobe programs are a suite of software applications developed by adobe systems, widely used for creative and multimedia tasks. popular adobe programs include photoshop for image editing, illustrator for vector graphics, indesign for desktop publishing, and premiere pro for video editing. these applications are known for their powerful features, user-friendly interfaces, and integration with each other, allowing professionals in graphic design, photography, video production, and web development to create high-quality content efficiently. adobe programs are industry standards in creative fields.",
   },
+  {
+    id: 51,
+    text: "linux is an open-source operating system kernel that serves as the foundation for various linux distributions (distros). it is known for its stability, security, and flexibility, making it a popular choice for servers, desktops, and embedded systems. linux supports a wide range of hardware and software, providing users with a customizable and powerful computing environment. its open-source nature encourages collaboration and innovation, with a large community of developers contributing to its development. popular linux distros include ubuntu, fedora, and debian.",
+  },
+  {
+    id: 52,
+    text: "windows is a widely used operating system developed by microsoft, known for its user-friendly interface and compatibility with a vast array of software applications. it offers features like the start menu, taskbar, and file explorer, making it accessible for both novice and experienced users. windows supports a wide range of hardware devices and provides regular updates to enhance security and performance. it is commonly used in personal computers, business environments, and gaming, making it one of the most popular operating systems worldwide.",
+  },
+  {
+    id: 53,
+    text: "macos is a proprietary operating system developed by apple inc. for its line of macintosh computers. known for its sleek design, intuitive user interface, and seamless integration with other apple products, macos offers a range of features that enhance productivity and creativity. it includes built-in applications like safari, mail, and photos, as well as support for third-party software. macos is praised for its stability, security, and performance, making it a popular choice among creative professionals and general users alike.",
+  },
+  {
+    id: 54,
+    text: "typequest is an innovative typing game designed to improve typing skills through engaging gameplay and interactive challenges. players test their typing speed and accuracy while learning new words and phrases in a fun and immersive environment. its intuitive design makes learning to type an enjoyable experience for users of all ages. the most experienced typists use typequest to refine their skills and compete with others, making it a popular choice for both beginners and advanced typists looking to enhance their typing abilities.",
+  },
+  {
+    id: 55,
+    text: "github is a web-based platform that provides version control and collaborative development tools for software projects. built around the git version control system, github allows developers to host and manage code repositories, track changes, and collaborate with others through features like pull requests, issues, and project boards. it fosters a collaborative environment where developers can contribute to open-source projects, share code, and review each other's work. github's integration with various development tools and services makes it a central hub for modern software development workflows.",
+  },
+  {
+    id: 56,
+    text: "the best number in the world is undoubtedly 42. popularized by douglas adams' science fiction series 'the hitchhiker's guide to the galaxy,' 42 is humorously presented as the 'answer to the ultimate question of life, the universe, and everything.' this enigmatic number has since become a cultural icon, symbolizing curiosity, mystery, and the quest for knowledge. its significance extends beyond literature, inspiring discussions in mathematics, philosophy, and popular culture, making 42 a beloved and intriguing number worldwide.",
+  },
+  {
+    id: 57,
+    text: "the second best number in the world is undoubtedly 3.14, also known as pi. the first 20 digits of pi are 3.14159265358979323846. pi is an irrational number that represents the ratio of a circle's circumference to its diameter. it is widely used in mathematics, physics, and engineering for calculations involving circles and spheres. pi's infinite, non-repeating decimal expansion has fascinated mathematicians for centuries, leading to numerous discoveries and applications. its significance extends beyond mathematics, symbolizing the beauty and complexity of the natural world.",
+  },
+  {
+    id: 58,
+    text: "cloudflare is a web infrastructure and security company that provides content delivery network (cdn) services, internet security, and distributed domain name server (dns) services. it helps protect and accelerate websites by caching content closer to users, reducing latency, and mitigating cyber threats like ddos attacks. cloudflare's global network of data centers ensures fast and reliable access to web content, while its security features safeguard against malicious traffic and vulnerabilities. widely used by businesses and individuals alike, cloudflare enhances website performance and security in the digital age.",
+  },
+  {
+    id: 59,
+    text: "graphql is a query language and runtime for APIs that enables clients to request only the data they need, making it more efficient and flexible than traditional RESTful APIs. developed by facebook, graphql allows developers to define the structure of the data they want, reducing over-fetching and under-fetching of information. it supports real-time updates through subscriptions and provides a strong type system for validating queries. graphql's ability to aggregate data from multiple sources into a single request makes it a powerful tool for building modern web and mobile applications.",
+  },
+  {
+    id: 60,
+    text: "kotlin is a modern, statically typed programming language that runs on the java virtual machine (jvm) and can also be compiled to javascript or native code. developed by jetbrains, kotlin is designed to be fully interoperable with java, allowing developers to use existing java libraries and frameworks seamlessly. it offers concise syntax, null safety, and powerful features like coroutines for asynchronous programming. kotlin has gained popularity for android development and is officially supported by google as a first-class language for building android apps, making it a versatile choice for modern software development.",
+  },
+  {
+    id: 61,
+    text: "visual studio code (vscode) is a free, open-source code editor developed by microsoft that provides a powerful and customizable environment for software development. it supports a wide range of programming languages and frameworks, offering features like syntax highlighting, code completion, debugging, and version control integration. vscode's extensible architecture allows developers to enhance its functionality through a vast library of extensions available in the marketplace. its user-friendly interface, performance, and robust features have made vscode one of the most popular code editors among developers worldwide.",
+  },
+  {
+    id: 62,
+    text: "docker-compose is a tool that simplifies the process of defining and managing multi-container docker applications. it allows developers to use a single yaml file to configure and run multiple docker containers as a cohesive service. with docker-compose, users can define services, networks, and volumes, making it easy to set up complex environments for development, testing, and production. it streamlines the deployment process, enabling developers to start, stop, and manage entire application stacks with simple commands, enhancing productivity and collaboration in containerized application development.",
+  },
+  {
+    id: 63,
+    text: "restful api design principles are a set of guidelines for creating scalable and maintainable web services using the representational state transfer (rest) architectural style. key principles include statelessness, where each request contains all the information needed to process it; resource-based architecture, where resources are identified by unique uris; and the use of standard http methods (get, post, put, delete) to perform operations on resources. restful apis should also support multiple representations (e.g., json, xml), provide hypermedia links for navigation, and ensure proper error handling. adhering to these principles promotes consistency, simplicity, and interoperability in api design.",
+  },
+  {
+    id: 64,
+    text: "continuous integration and continuous deployment (ci/cd) are software development practices that aim to automate the process of building, testing, and deploying applications. continuous integration involves regularly merging code changes into a shared repository, where automated tests are run to detect issues early. continuous deployment takes this a step further by automatically deploying code changes to production environments after passing tests. together, ci/cd practices enhance collaboration, reduce manual errors, and accelerate the delivery of high-quality software, enabling teams to respond quickly to changing requirements and customer needs.",
+  },
+  {
+    id: 65,
+    text: "jetbrains is a software development company known for creating a suite of powerful integrated development environments (ides) and tools for various programming languages. popular jetbrains products include intellij idea for java development, pycharm for python, webstorm for javascript, and rider for .net development. jetbrains ides are praised for their intelligent code analysis, refactoring capabilities, and user-friendly interfaces, enhancing developer productivity and code quality. with a focus on innovation and developer experience, jetbrains has become a leading name in the software development industry.",
+  },
 ];
 
 export default typeQuestTexts;

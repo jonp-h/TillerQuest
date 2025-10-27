@@ -10,7 +10,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { red, blue } from "@mui/material/colors";
@@ -58,7 +57,7 @@ export default async function ProfilePage({
       <div className="flex flex-col justify-center lg:flex-row">
         {user.guildName && (
           <Paper
-            elevation={6}
+            elevation={3}
             className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
           >
             <Avatar
@@ -102,7 +101,7 @@ export default async function ProfilePage({
         )}
         <Paper
           className="flex flex-col m-3 gap-3 items-center p-5 lg:w-5/12 w-full order-first lg:order-2"
-          elevation={5}
+          elevation={3}
         >
           {session?.user.username === user.username && (
             <div className="self-end ml-auto absolute">
@@ -139,7 +138,7 @@ export default async function ProfilePage({
             <Typography variant="h5">{user.name}</Typography>
             <Typography
               variant="h4"
-              color="Highlight"
+              color="primary"
               sx={{ fontWeight: "bold" }}
             >
               &quot;{user?.username}&quot;
@@ -154,14 +153,10 @@ export default async function ProfilePage({
             >
               {user.title}
             </RarityText>
-            <Typography variant="h6" color="aquamarine">
+            <Typography variant="h6" color="secondary">
               {user.class}
             </Typography>
-            <Typography
-              variant="h6"
-              color="aquamarine"
-              className=" text-nowrap"
-            >
+            <Typography variant="h6" color="success" className=" text-nowrap">
               Level: {user.level}
             </Typography>
           </div>
@@ -213,24 +208,24 @@ export default async function ProfilePage({
         <div className="flex flex-col m-3 gap-3 items-center lg:w-5/12 w-full order-3 lg:order-2">
           <Paper
             className="flex flex-col items-center p-5 w-full h-1/4"
-            elevation={5}
+            elevation={3}
           >
             <Typography variant="h4">Resources</Typography>
             <div className="flex mt-2 gap-10">
               <Tooltip title="Earned by completing games in the arena">
-                <Typography variant="h5" color="gold">
+                <Typography variant="h5" color="gold" noWrap>
                   Gold: {user.gold}
                   <Circle />
                 </Typography>
               </Tooltip>
               <Tooltip title="Earned together with daily mana and certain events/abilities">
-                <Typography variant="h5" color="orange">
+                <Typography variant="h5" color="arenatoken" noWrap>
                   Tokens: {user.arenaTokens}
                   <Stadium />
                 </Typography>
               </Tooltip>
               <Tooltip title="Earned by gaining experience and leveling up">
-                <Typography variant="h5" color="cyan">
+                <Typography variant="h5" color="gemstones" noWrap>
                   Gemstones: {user.gemstones}
                   <Diamond />
                 </Typography>
@@ -239,12 +234,12 @@ export default async function ProfilePage({
           </Paper>
           <Paper
             className=" items-center p-5 lg:pb-40 w-full min-h-3/4"
-            elevation={6}
+            elevation={3}
           >
             <Typography variant="h4" align="center">
               Passives
             </Typography>
-            <div className="grid grid-cols-3 lg:grid-cols-4 mt-4 gap-4">
+            <div className="grid grid-cols-3 lg:grid-cols-5 mt-4 gap-4">
               {passives?.map((passive) => (
                 <Tooltip
                   placement="top"
@@ -276,20 +271,20 @@ export default async function ProfilePage({
                       <Paper
                         elevation={10}
                         sx={{
-                          minHeight: "8rem",
-                          minWidth: "8rem",
+                          minHeight: "6rem",
+                          minWidth: "6rem",
                           borderRadius: "9999px",
                           transition: "transform 0.3s ease-in-out",
                         }}
                         className="flex flex-col justify-center text-center items-center p-2 hover:scale-110"
                       >
                         <Image
-                          className="rounded-full border-slate-700 border-2"
+                          className="rounded-full"
                           src={"/abilities/" + passive.icon || "Test.jpg"}
                           alt={""}
                           draggable={false}
-                          width={120}
-                          height={120}
+                          width={100}
+                          height={100}
                         />
                       </Paper>
                     </Link>
@@ -306,12 +301,12 @@ export default async function ProfilePage({
           </Paper>
         </div>
       </div>
-      <Paper elevation={6} className="mx-3 text-center">
+      <Paper elevation={3} className="mx-3 text-center">
         <Typography variant="h4" align="center">
           Abilities
         </Typography>
         {user.hp !== 0 ? (
-          <div className="grid grid-cols-2 gap-3 p-5 lg:grid-cols-6 xl:grid-cols-8">
+          <div className="grid grid-cols-3 gap-3 p-5 lg:grid-cols-6 xl:grid-cols-10">
             {userAbilities?.map((ability) => (
               <AbilityCard
                 key={ability.ability.name}

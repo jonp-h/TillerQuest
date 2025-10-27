@@ -7,7 +7,7 @@ import {
 } from "@/data/games/game";
 import { diceSettings } from "@/lib/diceSettings";
 import DiceBox from "@3d-dice/dice-box-threejs";
-import { Button, Divider, Input } from "@mui/material";
+import { Button, Divider, Input, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -63,6 +63,7 @@ function BinaryJack({
 
   const handleSetStake = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
+    // frontend validation
     if (!isNaN(value) && value >= 1) {
       const maxStake = Math.floor(userGold * 0.5);
       if (value <= maxStake) {
@@ -77,21 +78,6 @@ function BinaryJack({
     }
   };
 
-  const handleSetTargetNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow binary digits (0 or 1)
-    if (/^[01]*$/.test(value)) {
-      const num = parseInt(value, 2);
-      if (!isNaN(num) && num >= 0 && num <= 31) {
-        setTargetNumber(num);
-      } else {
-        setTargetNumber(0);
-      }
-    } else {
-      toast.error("Only binary digits (0 and 1) are allowed.");
-    }
-  };
-
   const handleStartGame = async () => {
     if (!gameEnabled || !gameId) {
       return;
@@ -100,15 +86,12 @@ function BinaryJack({
     setGameEnabled(true);
 
     try {
-      // Initialize the BinaryJack game with the target number and stake
-      const result = await initializeBinaryJackGame(
-        gameId,
-        targetNumber,
-        stake,
-      );
+      // Initialize the BinaryJack game with stake only - target is generated server-side
+      const result = await initializeBinaryJackGame(gameId, stake);
 
       setCurrentValue(result.currentValue);
       setTurnsRemaining(result.turnsRemaining);
+      setTargetNumber(result.targetNumber); // Set from server response
       setGameStarted(true);
 
       if (!diceBox) {
@@ -123,7 +106,9 @@ function BinaryJack({
         // });
       }
 
-      toast.success("Game started! Roll the dice to begin.");
+      toast.success(
+        `Game started! Target: ${result.targetNumber} (${result.targetNumber.toString(2).padStart(5, "0")})`,
+      );
 
       // Start the first round
       await startNewRound();
@@ -217,8 +202,7 @@ function BinaryJack({
       />
 
       {/* How to Play Section */}
-
-      <div className="mb-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
+      <Paper variant="outlined" sx={{ marginBottom: 4, padding: 4 }}>
         <h3 className="text-lg font-bold mb-3 text-purple-400">
           How to Play BinaryJack
         </h3>
@@ -226,8 +210,8 @@ function BinaryJack({
           <div>
             <h4 className="font-semibold text-blue-300 mb-2">Objective:</h4>
             <p className="text-gray-300 mb-3">
-              Reach your target number using binary operations within the turn
-              limit.
+              Receive a target number from 1-30, and attempt to reach the target
+              using binary operations within the turn limit.
             </p>
 
             <h4 className="font-semibold text-green-300 mb-2">Each Round:</h4>
@@ -276,7 +260,7 @@ function BinaryJack({
             </p>
           </div>
         </div>
-      </div>
+      </Paper>
 
       <div className="font-mono p-4 border rounded-lg">
         {/* Game Status Panel */}
@@ -336,33 +320,6 @@ function BinaryJack({
             <div className="flex flex-col gap-3 bg-black/30 p-4 rounded-lg">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Enter target in binary (5 bits, 1-30):
-                </label>
-                <Input
-                  type="text"
-                  value={targetNumber.toString(2).padStart(5, "0")}
-                  disabled={!gameEnabled || gameStarted}
-                  onChange={handleSetTargetNumber}
-                  placeholder="Enter binary (0-30)"
-                  inputProps={{ min: 1, max: 30, pattern: "[01]*" }}
-                  className="w-full"
-                  sx={{
-                    backgroundColor: "rgba(0,0,0,0.3)",
-                    "& .MuiInputBase-input": {
-                      color: "white",
-                      fontFamily: "monospace",
-                      fontSize: "1.2rem",
-                      textAlign: "center",
-                    },
-                  }}
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Decimal value: {targetNumber}
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Set your stake (max {Math.floor(userGold * 0.5)} gold):
                 </label>
                 <Input
@@ -394,8 +351,6 @@ function BinaryJack({
                 onClick={handleStartGame}
                 disabled={
                   !gameEnabled ||
-                  targetNumber < 1 ||
-                  targetNumber > 30 ||
                   stake < 1 ||
                   stake > Math.floor(userGold * 0.5) ||
                   stake > userGold

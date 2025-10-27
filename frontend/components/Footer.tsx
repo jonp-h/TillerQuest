@@ -1,26 +1,38 @@
+import { Link, Typography } from "@mui/material";
+
 export default function Footer() {
   return (
-    <div className="flex flex-col w-full py-5 gap-2 items-center bg-linear-to-r from-slate-900 to-slate-950">
-      <h2>
+    <div className="flex flex-col w-full py-5 gap-2 items-center bg-background">
+      <Typography variant="subtitle1">
         Want a feature? Found a bug? Report issue {""}
-        <a
+        <Link
+          color="error"
+          variant="subtitle1"
+          underline="hover"
+          target="_blank"
+          rel="noreferrer"
           href="https://github.com/jonp-h/TillerQuest/issues/new/choose"
-          className="text-red-400 hover:text-red-500 hover:underline"
         >
           here 🪲
-        </a>
-      </h2>
-      <h2>
-        Made with ☕ by {}
-        <a
+        </Link>
+      </Typography>
+      <Typography variant="subtitle1">
+        Made with ☕ by{" "}
+        <Link
+          color="info"
+          variant="subtitle1"
+          underline="hover"
+          target="_blank"
+          rel="noreferrer"
           href="https://github.com/jonp-h"
-          className="text-blue-400 hover:text-blue-500 hover:underline"
         >
           jonp-h
-        </a>{" "}
+        </Link>{" "}
         and students at Tiller vgs
-      </h2>
-      <p>2025</p>
+      </Typography>
+      <Typography variant="subtitle2" color="textSecondary">
+        2025
+      </Typography>
     </div>
   );
 }

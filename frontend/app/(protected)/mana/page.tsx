@@ -1,8 +1,7 @@
 import MainContainer from "@/components/MainContainer";
-import { getUserById } from "@/data/user/getUser";
+import { getLastMana, getUserById } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
-import React from "react";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
@@ -14,7 +13,7 @@ export default async function ManaPage() {
     return null;
   }
 
-  const user = await getUserById(session.user.id);
+  const user = await getLastMana(session.user.id);
 
   if (!user) {
     notFound();
@@ -32,9 +31,17 @@ export default async function ManaPage() {
   return (
     <MainContainer>
       <Paper
-        elevation={6}
-        className="m-3 p-5 flex flex-col gap-5 items-center text-center justify-center"
+        elevation={3}
+        className="m-3 w-1/3 mx-auto p-5 flex flex-col gap-5 items-center text-center justify-center"
       >
+        <Typography
+          variant="h3"
+          component={"h1"}
+          align="center"
+          fontWeight={600}
+        >
+          The Magical Forest
+        </Typography>
         <Image
           src="/mana.jpg"
           className="rounded-full"
@@ -42,7 +49,7 @@ export default async function ManaPage() {
           width={400}
           height={400}
         />
-        <Typography variant="h5" align="center">
+        <Typography variant="h5" component={"h2"} align="center">
           You attempt to attune to the magic around you
         </Typography>
         <ManaForm user={user} currentDate={currentDate} isWeekend={isWeekend} />
