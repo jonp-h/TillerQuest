@@ -82,7 +82,7 @@ export default function AbilityForm({
     }, 500);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, []);
+  });
 
   // ---------------- UI helpers ----------------
 

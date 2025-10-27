@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { selectAbility } from "../abilityUsage/useAbility";
 import {
   AuthorizationError,
   validateUserIdAndActiveUserAuth,
