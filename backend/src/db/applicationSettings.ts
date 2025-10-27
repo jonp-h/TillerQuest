@@ -12,9 +12,9 @@ const settings: ApplicationSettings[] = [
   },
   {
     key: "SCHOOL_CLASS_RESTRICTION",
-    value: "SAME_CLASS", // Options: SAME_CLASS, CLASS_GROUP, ANY
+    value: "SAME_CLASS", // Options: SAME_CLASS, CLASS_GROUPS, ANY
     description:
-      "Restriction on school class selection. Options: SAME_CLASS, CLASS_GROUP, ANY",
+      "Restriction on school class selection. Options: SAME_CLASS, CLASS_GROUPS, ANY",
   },
   {
     key: "SCHOOL_CLASS_GROUPS",
