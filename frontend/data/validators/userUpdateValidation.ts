@@ -183,15 +183,15 @@ const validateSchoolClassRestrictions = async (
       // split groups based on the format: "1IM1,1IM2;1IM3,1IM4;2IT1,2IT2".
       // Comma seperate classes in the same group, semicolon seperate different groups
       const classGroups =
-        group?.value.split(",").map((g: string) => g.split(";")) || [];
+        group?.value.split(";").map((g: string) => g.split(",")) || [];
 
       if (classGroups.length === 0) {
         return userSchoolClass === targetSchoolClass;
       } else if (
         classGroups.some(
           (group: string[]) =>
-            group.includes(userSchoolClass) &&
-            group.includes(targetSchoolClass),
+            group.includes(userSchoolClass.replace("Class_", "")) &&
+            group.includes(targetSchoolClass.replace("Class_", "")),
         )
       ) {
         return true;
