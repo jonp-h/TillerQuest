@@ -33,9 +33,7 @@ export default function AbilityForm({
   guildMembers,
   targetHasPassive,
 }: AbilityFormProps) {
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([
-    guildMembers[0]?.id,
-  ]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,7 +80,7 @@ export default function AbilityForm({
     }, 500);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  });
+  }, []);
 
   // ---------------- UI helpers ----------------
 
