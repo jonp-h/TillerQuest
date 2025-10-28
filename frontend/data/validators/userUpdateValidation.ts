@@ -173,7 +173,7 @@ const validateSchoolClassRestrictions = async (
   switch (restrictionSettings.value) {
     case "SAME_CLASS":
       return userSchoolClass === targetSchoolClass;
-    case "CLASS_GROUP":
+    case "CLASS_GROUPS":
       const group = await db.applicationSettings.findFirst({
         where: {
           key: "SCHOOL_CLASS_GROUPS",
