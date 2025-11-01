@@ -386,10 +386,16 @@ export const randomCosmic = async (db: PrismaTransaction) => {
 
   await db.cosmicEvent.updateMany({
     where: {
-      recommended: true,
+      OR: [
+        { recommended: true },
+        { selectedForVg1: true },
+        { selectedForVg2: true },
+      ],
     },
     data: {
       recommended: false,
+      selectedForVg1: false,
+      selectedForVg2: false,
     },
   });
 
