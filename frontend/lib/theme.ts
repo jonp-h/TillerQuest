@@ -90,7 +90,7 @@ export const TillerQuestTheme = createTheme({
       contrastText: "#0d1117",
     },
     success: {
-      main: "#6EC348",
+      main: "#90ee90",
     },
     info: {
       main: "#3DBCEA",
