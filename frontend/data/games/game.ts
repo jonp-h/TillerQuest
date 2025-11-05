@@ -1111,3 +1111,86 @@ export const applyBinaryOperation = async (
     );
   }
 };
+
+// -------- CoinFlip specific functions --------
+
+export const initializeCoinFlipGame = async (
+  gameId: string,
+  stake: number,
+) => {
+  try {
+    await validateActiveUserAuth();
+
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId, status: "PENDING" },
+        include: { user: { select: { id: true, gold: true } } },
+      });
+
+      if (!game) {
+        throw new ErrorMessage("Game not found or not in correct state");
+      }
+
+      if (game.game !== "CoinFlip") {
+        throw new ErrorMessage("Invalid game type");
+      }
+
+      if (typeof stake !== "number" || Number.isNaN(stake) || stake < 1) {
+        throw new ErrorMessage("Stake must be at least 1 gold");
+      }
+
+      const userGold = game.user.gold;
+      const maxStake = Math.floor(userGold * 0.5); // 50% cap
+
+      if (stake > maxStake) {
+        throw new ErrorMessage(
+          `Stake cannot exceed 50% of your gold (${maxStake} gold)`,
+        );
+      }
+
+      if (stake > userGold) {
+        throw new ErrorMessage("You don't have enough gold for this stake");
+      }
+
+      // Deduct stake up front
+      await db.user.update({
+        where: { id: game.userId },
+        data: { gold: { decrement: stake } },
+      });
+
+      await addLog(
+        db,
+        game.userId,
+        `GAME: You entered a CoinFlip game with a stake of ${stake} gold`,
+        false,
+      );
+
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          status: "INPROGRESS",
+          startedAt: new Date(),
+          // Store stake in score (same pattern as BinaryJack)
+          score: stake,
+          // Minimal metadata result set by flipCoin
+          metadata: { stake },
+        },
+      });
+
+      return { gameId, stake };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to initialize CoinFlip game");
+      throw error;
+    }
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+    logger.error("Error initializing CoinFlip game: " + error);
+    throw new Error(
+      "Error initializing CoinFlip game. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
