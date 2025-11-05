@@ -247,7 +247,30 @@ export const finishGame = async (
           gold = 0;
           message = `💀 Game over. You lost your ${stake} gold stake. Perhaps you should practice some binary operations? 🤡`;
         }
-      } else {
+      } else if (game.game === "CoinFlip") {
+          let metadata: any = game.metadata || {};
+          if (typeof metadata === "string") {
+            try {
+              metadata = JSON.parse(metadata);
+            } catch {
+              metadata = {};
+            }
+          }
+          const stake = Number(game.score) || 0;
+          const payout = Number(metadata?.payout) || 0;
+          const result = metadata?.result as "Heads" | "Tails" | undefined;
+          const playerChoice = metadata?.playerChoice as "Heads" | "Tails" | undefined;
+
+          // Verify that payout amount is possible.
+          const safePayout = Math.max(0, Math.min(payout, stake * 2));
+          gold = safePayout;
+
+          if (gold > 0) {
+            message = `🎉 CoinFlip WIN! You chose ${playerChoice}, result ${result}. Won ${gold} gold (doubled your ${stake} stake)`;
+          } else {
+            message = `💀 CoinFlip LOSS. You chose ${playerChoice}, result ${result}. You lost your ${stake} gold stake.`;
+          }
+        } else {
         // For other games, use the existing gold validation system
         gold = await goldValidator(db, game.userId, game.score);
         gold = gold < 0 ? 0 : gold; // Ensure gold is non-negative
