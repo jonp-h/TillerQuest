@@ -1194,3 +1194,80 @@ export const initializeCoinFlipGame = async (
     );
   }
 };
+
+export const flipCoin = async (
+  gameId: string,
+  playerChoice: "Heads" | "Tails",
+) => {
+  try {
+    await validateActiveUserAuth();
+
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId, status: "INPROGRESS" },
+        include: { user: { select: { id: true } } },
+      });
+
+      if (!game) {
+        throw new ErrorMessage("Invalid game session");
+      }
+      if (game.game !== "CoinFlip") {
+        throw new ErrorMessage("Invalid game type");
+      }
+
+      // Parse metadata
+      let metadata: any = game.metadata || {};
+      if (typeof metadata === "string") {
+        try {
+          metadata = JSON.parse(metadata);
+        } catch {
+          metadata = {};
+        }
+      }
+
+      // SS coin flip logic
+      const result: "Heads" | "Tails" = Math.random() < 0.5 ? "Heads" : "Tails";
+      const stake = Number(game.score) || 0;
+      const win = result === playerChoice;
+      const payout = win ? stake * 2 : 0;
+
+      const updatedMetadata = {
+        ...metadata,
+        stake,
+        playerChoice,
+        result,
+        win,
+        payout,
+      };
+
+      // Status kept as INPROGRESS for now. Client will call again to collect winnings. Im too lazy to do it rn.
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          metadata: updatedMetadata
+        },
+      });
+
+      await addLog(
+        db,
+        game.userId,
+        `GAME: CoinFlip result ${result}. You chose ${playerChoice}. ${win ? "WIN" : "LOSS"}.`,
+      );
+
+      return { result, playerChoice, win, stake, payout };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to flip coin");
+      throw error;
+    }
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+    logger.error("Error performing coin flip: " + error);
+    throw new Error(
+      "Error performing coin flip. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
