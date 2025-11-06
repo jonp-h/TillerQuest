@@ -85,10 +85,8 @@ export default function CoinFlip({
     }
     try {
       setLoading(true);
-      if (!initialized) {
         await startCoinFlipGame();
         setInitialized(true);
-      }
       const res = await executeFlip();
       if (res) {
         // Fake flip the coin to land on server result (result is calculated SS)
