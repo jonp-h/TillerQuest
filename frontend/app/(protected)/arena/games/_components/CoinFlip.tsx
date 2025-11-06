@@ -1,9 +1,8 @@
 "use client";
 import { initializeCoinFlipGame, flipCoin } from "@/data/games/game";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Button, Input, Paper, Divider, Box } from "@mui/material";
 import { toast } from "react-toastify";
-import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 
 // Keep coin sides explicit
@@ -31,8 +30,34 @@ export default function CoinFlip({
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // UI state for coin animation
-  const controls = useAnimation();
+  // UI state for coin animation (chatgpt replaced framer-motion package with this instead. So sue me for using AI)
+  const coinRef = useRef<HTMLDivElement | null>(null);
+  type Bezier = [number, number, number, number];
+  const controls = {
+    async start({ rotateY, transition }: { rotateY: number; transition?: { duration?: number; ease?: Bezier } }) {
+      return new Promise<void>((resolve) => {
+        const el = coinRef.current;
+        if (!el) return resolve();
+        const duration = transition?.duration ?? 0.3;
+        const ease = transition?.ease ?? [0.25, 0.1, 0.25, 1.0];
+        el.style.transition = `transform ${duration}s cubic-bezier(${ease.join(",")})`;
+        const handle = () => {
+          el.removeEventListener("transitionend", handle);
+          resolve();
+        };
+        el.addEventListener("transitionend", handle, { once: true } as any);
+        el.style.transform = `rotateY(${rotateY}deg)`;
+      });
+    },
+    set({ rotateY }: { rotateY: number }) {
+      const el = coinRef.current;
+      if (!el) return;
+      el.style.transition = "none";
+      el.style.transform = `rotateY(${rotateY}deg)`;
+      // Force reflow before allowing future transitions
+      void el.offsetHeight;
+    },
+  };
 
   // LO
   const [lastResult, setLastResult] = useState<{
@@ -123,9 +148,9 @@ export default function CoinFlip({
         {/* Border */}
         <Paper elevation={3} sx={{ position: "absolute", inset: 0, p: 1, borderRadius: 2 }}>
           <Box sx={{ position: "relative", width: "100%", height: "100%", perspective: 1000 }}>
-            <motion.div
-              animate={controls}
-              style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", cursor: "default" }}
+            <div
+              ref={coinRef}
+              style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", cursor: "default", willChange: "transform", transform: "rotateY(0deg)" }}
             >
               {/* Heads side */}
               <Box
@@ -172,12 +197,10 @@ export default function CoinFlip({
                   draggable={false}
                 />
               </Box>
-            </motion.div>
+            </div>
             {/* Shadow */}
-            <motion.div
-              style={{ position: "absolute", bottom: -6, left: "50%", width: 140, height: 24, background: "#000", borderRadius: 999, opacity: 0.18, filter: "blur(6px)", transform: "translateX(-50%)" }}
-              animate={{ scaleX: loading ? 0.75 : 1, scaleY: loading ? 0.75 : 1 }}
-              transition={{ duration: 0.4 }}
+            <div
+              style={{ position: "absolute", bottom: -6, left: "50%", width: 140, height: 24, background: "#000", borderRadius: 999, opacity: 0.18, filter: "blur(6px)", transform: `translateX(-50%) scale(${loading ? 0.75 : 1}, ${loading ? 0.75 : 1})`, transition: "transform 0.4s ease" }}
             />
           </Box>
         </Paper>
