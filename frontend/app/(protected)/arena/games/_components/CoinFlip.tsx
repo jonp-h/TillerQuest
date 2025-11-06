@@ -1,8 +1,9 @@
 "use client";
 import { initializeCoinFlipGame, flipCoin } from "@/data/games/game";
 import { useCallback, useState } from "react";
-import { Button, Input, Paper, Divider } from "@mui/material";
+import { Button, Input, Paper, Divider, Box } from "@mui/material";
 import { toast } from "react-toastify";
+import { motion, useAnimation } from "framer-motion";
 
 // Keep coin sides explicit
 export type CoinSide = "Heads" | "Tails";
@@ -29,7 +30,10 @@ export default function CoinFlip({
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // last outcome (can be wired into UI later)
+  // UI state for coin animation
+  const controls = useAnimation();
+
+  // LO
   const [lastResult, setLastResult] = useState<{
     result: CoinSide;
     playerChoice: CoinSide;
@@ -86,12 +90,23 @@ export default function CoinFlip({
       }
       const res = await executeFlip();
       if (res) {
+        // Fake flip the coin to land on server result (result is calculated SS)
+        const endOffset = res.result === "Tails" ? 180 : 0;
+        await controls.start({
+          rotateY: 1800 + endOffset,
+          transition: {
+            duration: 1.8,
+            ease: [0.645, 0.045, 0.355, 1.0],
+          },
+        });
+        controls.set({ rotateY: endOffset });
+
         if (res.win) {
           toast.success(`WIN! Result: ${res.result}. Payout: ${res.payout}`);
         } else {
           toast.info(`LOSS. Result: ${res.result}.`);
         }
-        // Let handle finish payout
+        // Settle payout on server
         handleFinishGame();
       }
     } catch (e: any) {
@@ -100,10 +115,48 @@ export default function CoinFlip({
     } finally {
       setLoading(false);
     }
-  }, [executeFlip, initialized, gameId, startCoinFlipGame, handleFinishGame]);
+  }, [executeFlip, initialized, gameId, startCoinFlipGame, handleFinishGame, controls]);
 
   return (
-    <Paper elevation={2} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+    <Paper elevation={2} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+      {/* Box for coin */}
+      <Box sx={{ position: "relative", alignSelf: "center", width: 180, height: 180 }}>
+        {/* Border */}
+        <Paper elevation={3} sx={{ position: "absolute", inset: 0, p: 1, borderRadius: 2 }}>
+          <Box sx={{ position: "relative", width: "100%", height: "100%", perspective: 1000 }}>
+            <motion.div
+              animate={controls}
+              style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", cursor: "default" }}
+            >
+              {/* Heads side */}
+              <Box sx={{ position: "absolute", inset: 0, borderRadius: "50%", backfaceVisibility: "hidden", overflow: "hidden" }}>
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                  <circle cx="100" cy="100" r="90" fill="#FFD700" stroke="#B8860B" strokeWidth="5" />
+                  <circle cx="100" cy="100" r="80" fill="#FFC800" />
+                  <text x="100" y="115" fontSize="60" textAnchor="middle" fill="#B8860B" fontWeight="bold">H</text>
+                  <circle cx="100" cy="100" r="40" fill="none" stroke="#B8860B" strokeWidth="2" />
+                </svg>
+              </Box>
+              {/* Tails side */}
+              <Box sx={{ position: "absolute", inset: 0, borderRadius: "50%", backfaceVisibility: "hidden", transform: "rotateY(180deg)", overflow: "hidden" }}>
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                  <circle cx="100" cy="100" r="90" fill="#FFD700" stroke="#B8860B" strokeWidth="5" />
+                  <circle cx="100" cy="100" r="80" fill="#FFC800" />
+                  <text x="100" y="115" fontSize="60" textAnchor="middle" fill="#B8860B" fontWeight="bold">T</text>
+                  <path d="M60,80 Q100,120 140,80" fill="none" stroke="#B8860B" strokeWidth="3" />
+                </svg>
+              </Box>
+            </motion.div>
+            {/* Shadow */}
+            <motion.div
+              style={{ position: "absolute", bottom: -6, left: "50%", width: 140, height: 24, background: "#000", borderRadius: 999, opacity: 0.18, filter: "blur(6px)", transform: "translateX(-50%)" }}
+              animate={{ scaleX: loading ? 0.75 : 1, scaleY: loading ? 0.75 : 1 }}
+              transition={{ duration: 0.4 }}
+            />
+          </Box>
+        </Paper>
+      </Box>
+
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <label htmlFor="coinflip-stake" style={{ fontWeight: 500 }}>Stake</label>
         <Input
