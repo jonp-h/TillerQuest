@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Button, Input, Paper, Divider, Box } from "@mui/material";
 import { toast } from "react-toastify";
 import { motion, useAnimation } from "framer-motion";
+import Image from "next/image";
 
 // Keep coin sides explicit
 export type CoinSide = "Heads" | "Tails";
@@ -129,22 +130,49 @@ export default function CoinFlip({
               style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", cursor: "default" }}
             >
               {/* Heads side */}
-              <Box sx={{ position: "absolute", inset: 0, borderRadius: "50%", backfaceVisibility: "hidden", overflow: "hidden" }}>
-                <svg viewBox="0 0 200 200" width="100%" height="100%">
-                  <circle cx="100" cy="100" r="90" fill="#FFD700" stroke="#B8860B" strokeWidth="5" />
-                  <circle cx="100" cy="100" r="80" fill="#FFC800" />
-                  <text x="100" y="115" fontSize="60" textAnchor="middle" fill="#B8860B" fontWeight="bold">H</text>
-                  <circle cx="100" cy="100" r="40" fill="none" stroke="#B8860B" strokeWidth="2" />
-                </svg>
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "50%",
+                  backfaceVisibility: "hidden",
+                  overflow: "hidden",
+                  // Subtle metallic ring and fallback color
+                  boxShadow: "inset 0 0 0 5px #B8860B, inset 0 0 0 10px #FFD700",
+                  background: "radial-gradient(circle at 35% 30%, #ffd95a, #ffc800)",
+                }}
+              >
+                <Image
+                  src="/items/heads-coin-2005.png"
+                  alt="Heads"
+                  fill
+                  style={{ objectFit: "cover", transform: "scale(1.03)", transformOrigin: "50% 50%" }}
+                  priority
+                  draggable={false}
+                />
               </Box>
+
               {/* Tails side */}
-              <Box sx={{ position: "absolute", inset: 0, borderRadius: "50%", backfaceVisibility: "hidden", transform: "rotateY(180deg)", overflow: "hidden" }}>
-                <svg viewBox="0 0 200 200" width="100%" height="100%">
-                  <circle cx="100" cy="100" r="90" fill="#FFD700" stroke="#B8860B" strokeWidth="5" />
-                  <circle cx="100" cy="100" r="80" fill="#FFC800" />
-                  <text x="100" y="115" fontSize="60" textAnchor="middle" fill="#B8860B" fontWeight="bold">T</text>
-                  <path d="M60,80 Q100,120 140,80" fill="none" stroke="#B8860B" strokeWidth="3" />
-                </svg>
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "50%",
+                  backfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  overflow: "hidden",
+                  boxShadow: "inset 0 0 0 5px #B8860B, inset 0 0 0 10px #FFD700",
+                  background: "radial-gradient(circle at 35% 30%, #ffd95a, #ffc800)",
+                }}
+              >
+                <Image
+                  src="/items/tails-coin-2005.png"
+                  alt="Tails"
+                  fill
+                  style={{ objectFit: "cover", transform: "scale(1.03)", transformOrigin: "50% 50%" }}
+                  priority
+                  draggable={false}
+                />
               </Box>
             </motion.div>
             {/* Shadow */}
