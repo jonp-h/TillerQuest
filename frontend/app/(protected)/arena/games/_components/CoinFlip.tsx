@@ -67,9 +67,10 @@ export default function CoinFlip({
 
   // Execute CoinFlip
   const executeFlip = useCallback(async () => {
-    if (!gameId) return;
+    if (!gameId) return null;
     const res = await flipCoin(gameId, playerChoice);
     setLastResult(res);
+    return res;
   }, [gameId, playerChoice]);
 
   const onFlipClick = useCallback(async () => {
@@ -83,14 +84,23 @@ export default function CoinFlip({
         await startCoinFlipGame();
         setInitialized(true);
       }
-      await executeFlip();
+      const res = await executeFlip();
+      if (res) {
+        if (res.win) {
+          toast.success(`WIN! Result: ${res.result}. Payout: ${res.payout}`);
+        } else {
+          toast.info(`LOSS. Result: ${res.result}.`);
+        }
+        // Let handle finish payout
+        handleFinishGame();
+      }
     } catch (e: any) {
       const msg = e?.message || "Failed to flip the coin";
       toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [executeFlip, initialized, gameId, startCoinFlipGame]);
+  }, [executeFlip, initialized, gameId, startCoinFlipGame, handleFinishGame]);
 
   return (
     <Paper elevation={2} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
