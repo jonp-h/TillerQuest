@@ -29,6 +29,8 @@ export default function CoinFlip({
   const [playerChoice, setPlayerChoice] = useState<CoinSide>("Heads");
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Uhhhh ignore this line below, not an Easter Egg I swear.
+  const flipLabel = useRef(Math.random() < 1 / 30 ? "Made by Finn :3" : "FLIP!");
 
   // UI state for coin animation (chatgpt replaced framer-motion package with this instead. So sue me for using AI)
   const coinRef = useRef<HTMLDivElement | null>(null);
@@ -253,7 +255,7 @@ export default function CoinFlip({
         onClick={onFlipClick}
         disabled={loading || !gameId}
       >
-        {loading ? "Flipping..." : "FLIP!"}
+        {loading ? "Flipping..." : flipLabel.current}
       </Button>
     </Paper>
   );
