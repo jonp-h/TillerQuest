@@ -6,7 +6,7 @@ interface CosmicEvent {
   // presetDate?: string;
   frequency: number; // Frequency of the event
   automatic: boolean; // Whether the event is automatic or not
-  increaseCostType: "All" | "Damage" | "Heal" | "XP" | null; // Type of cost increase, if any
+  increaseCostType: "All" | "Damage" | "Heal" | "Experience" | null; // Type of cost increase, if any
   increaseCostValue: number | null; // Value of the cost increase, if any
   blockAbilityType: "Heal" | null; // Type of ability that is blocked, if any
   triggerAtNoon: boolean; // Whether the event triggers at noon or not
@@ -416,7 +416,7 @@ const cosmic: CosmicEvent[] = [
     // presetDate: "",
     frequency: 10,
     automatic: true,
-    increaseCostType: "XP",
+    increaseCostType: "Experience",
     increaseCostValue: 100, // 100% increased XP
     blockAbilityType: null,
     triggerAtNoon: false,
