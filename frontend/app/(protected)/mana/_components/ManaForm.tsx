@@ -2,7 +2,6 @@
 import { getDailyMana } from "@/data/mana/mana";
 import { magicalArea } from "@/lib/gameSetting";
 import { Button, Tooltip, Typography } from "@mui/material";
-import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";

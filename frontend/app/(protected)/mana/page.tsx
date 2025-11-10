@@ -1,5 +1,5 @@
 import MainContainer from "@/components/MainContainer";
-import { getLastMana, getUserById } from "@/data/user/getUser";
+import { getLastMana } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 import Image from "next/image";
