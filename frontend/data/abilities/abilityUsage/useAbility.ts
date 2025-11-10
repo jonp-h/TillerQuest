@@ -108,15 +108,19 @@ export const selectAbility = async (
     }
 
     // check if the user has a cosmic event passive that increases the cost. If the type is all, all abilities cost more
+    //FIXME: cost increase should not trigger on cosmic abilities that increase xpgain
+    // Skip cost increase if the increaseCostType is "Experience"
     const increasedCostType =
       cosmic?.increaseCostType === "All" ? "All" : ability.type;
-    const increasedCost =
-      (await getUserPassiveEffect(
-        prisma,
-        castingUser.id,
-        increasedCostType,
-        true,
-      )) / 100;
+    const shouldIncreaseCost = cosmic?.increaseCostType !== "Experience";
+    const increasedCost = shouldIncreaseCost
+      ? (await getUserPassiveEffect(
+          prisma,
+          castingUser.id,
+          increasedCostType,
+          true,
+        )) / 100
+      : 0;
 
     ability.manaCost = ability.manaCost! * (1 + increasedCost);
     ability.healthCost = ability.healthCost! * (1 + increasedCost);
