@@ -247,7 +247,30 @@ export const finishGame = async (
           gold = 0;
           message = `💀 Game over. You lost your ${stake} gold stake. Perhaps you should practice some binary operations? 🤡`;
         }
-      } else {
+      } else if (game.game === "CoinFlip") {
+          let metadata: any = game.metadata || {};
+          if (typeof metadata === "string") {
+            try {
+              metadata = JSON.parse(metadata);
+            } catch {
+              metadata = {};
+            }
+          }
+          const stake = Number(game.score) || 0;
+          const payout = Number(metadata?.payout) || 0;
+          const result = metadata?.result as "Heads" | "Tails" | undefined;
+          const playerChoice = metadata?.playerChoice as "Heads" | "Tails" | undefined;
+
+          // Verify that payout amount is possible.
+          const safePayout = Math.max(0, Math.min(payout, stake * 2));
+          gold = safePayout;
+
+          if (gold > 0) {
+            message = `🎉 CoinFlip WIN! You chose ${playerChoice}, result ${result}. Won ${gold} gold (doubled your ${stake} stake)`;
+          } else {
+            message = `💀 CoinFlip LOSS. You chose ${playerChoice}, result ${result}. You lost your ${stake} gold stake.`;
+          }
+        } else {
         // For other games, use the existing gold validation system
         gold = await goldValidator(db, game.userId, game.score);
         gold = gold < 0 ? 0 : gold; // Ensure gold is non-negative
@@ -1085,6 +1108,166 @@ export const applyBinaryOperation = async (
     throw new Error(
       "Error applying binary operation. Please inform a game master of this timestamp: " +
         Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+// -------- CoinFlip specific functions --------
+
+export const initializeCoinFlipGame = async (
+  gameId: string,
+  stake: number,
+) => {
+  try {
+    await validateActiveUserAuth();
+
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId, status: "PENDING" },
+        include: { user: { select: { id: true, gold: true } } },
+      });
+
+      if (!game) {
+        throw new ErrorMessage("Game not found or not in correct state");
+      }
+
+      if (game.game !== "CoinFlip") {
+        throw new ErrorMessage("Invalid game type");
+      }
+
+      if (typeof stake !== "number" || Number.isNaN(stake) || stake < 1) {
+        throw new ErrorMessage("Stake must be at least 1 gold");
+      }
+
+      const userGold = game.user.gold;
+      const maxStake = Math.floor(userGold * 0.5); // 50% cap
+
+      if (stake > maxStake) {
+        throw new ErrorMessage(
+          `Stake cannot exceed 50% of your gold (${maxStake} gold)`,
+        );
+      }
+
+      if (stake > userGold) {
+        throw new ErrorMessage("You don't have enough gold for this stake");
+      }
+
+      // Deduct stake up front
+      await db.user.update({
+        where: { id: game.userId },
+        data: { gold: { decrement: stake } },
+      });
+
+      await addLog(
+        db,
+        game.userId,
+        `GAME: You entered a CoinFlip game with a stake of ${stake} gold`,
+        false,
+      );
+
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          status: "INPROGRESS",
+          startedAt: new Date(),
+          // Store stake in score (same pattern as BinaryJack)
+          score: stake,
+          // Minimal metadata result set by flipCoin
+          metadata: { stake },
+        },
+      });
+
+      return { gameId, stake };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to initialize CoinFlip game");
+      throw error;
+    }
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+    logger.error("Error initializing CoinFlip game: " + error);
+    throw new Error(
+      "Error initializing CoinFlip game. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO"),
+    );
+  }
+};
+
+export const flipCoin = async (
+  gameId: string,
+  playerChoice: "Heads" | "Tails",
+) => {
+  try {
+    await validateActiveUserAuth();
+
+    return await prisma.$transaction(async (db) => {
+      const game = await db.game.findUnique({
+        where: { id: gameId, status: "INPROGRESS" },
+        include: { user: { select: { id: true } } },
+      });
+
+      if (!game) {
+        throw new ErrorMessage("Invalid game session");
+      }
+      if (game.game !== "CoinFlip") {
+        throw new ErrorMessage("Invalid game type");
+      }
+
+      // Parse metadata
+      let metadata: any = game.metadata || {};
+      if (typeof metadata === "string") {
+        try {
+          metadata = JSON.parse(metadata);
+        } catch {
+          metadata = {};
+        }
+      }
+
+      // SS coin flip logic
+      const result: "Heads" | "Tails" = Math.random() < 0.5 ? "Heads" : "Tails";
+      const stake = Number(game.score) || 0;
+      const win = result === playerChoice;
+      const payout = win ? stake * 2 : 0;
+
+      const updatedMetadata = {
+        ...metadata,
+        stake,
+        playerChoice,
+        result,
+        win,
+        payout,
+      };
+
+      // Status kept as INPROGRESS for now. Client will call again to collect winnings. Im too lazy to do it rn.
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          metadata: updatedMetadata
+        },
+      });
+
+      await addLog(
+        db,
+        game.userId,
+        `GAME: CoinFlip result ${result}. You chose ${playerChoice}. ${win ? "WIN" : "LOSS"}.`,
+      );
+
+      return { result, playerChoice, win, stake, payout };
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access attempt to flip coin");
+      throw error;
+    }
+    if (error instanceof ErrorMessage) {
+      throw error;
+    }
+    logger.error("Error performing coin flip: " + error);
+    throw new Error(
+      "Error performing coin flip. Please inform a game master of this timestamp: " +
+      Date.now().toLocaleString("no-NO"),
     );
   }
 };

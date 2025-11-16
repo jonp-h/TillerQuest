@@ -129,6 +129,7 @@ enum Access {
   WordQuest
   BinaryJack
   WIP
+  CoinFlip
 }
 
 enum GameStatus {

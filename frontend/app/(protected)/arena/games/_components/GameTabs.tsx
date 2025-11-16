@@ -12,6 +12,7 @@ import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";
 import BinaryJack from "./BinaryJack";
+import CoinFlip from "./CoinFlip";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -137,6 +138,12 @@ function GameTabs({
             {...a11yProps("BinaryJack")}
             value="BinaryJack"
           />
+          <Tab
+            disabled={gameEnabled}
+            label="CoinFlip"
+            {...a11yProps("CoinFlip")}
+            value="CoinFlip"
+          />
         </Tabs>
       </Box>
       <div className="text-center mt-5 gap-5">
@@ -251,6 +258,29 @@ function GameTabs({
             handleFinishGame={handleFinishGame}
             gameId={gameId}
             userGold={user.gold} // Pass user's gold to BinaryJack
+          />
+        </div>
+      </GameTabPanel>
+      <GameTabPanel tab={tab} value={"CoinFlip"} ownsGame={ownsGame}>
+        <div className="flex flex-col justify-center items-center">
+          <Typography variant="h3" component={"h1"}>
+            CoinFlip
+          </Typography>
+          <Typography variant="subtitle1" color="success">
+            Pick heads or tails and stake your gold (50/50 chance)
+          </Typography>
+          <div className="my-5">
+            <Typography variant="body1">
+              {/* Don't need this section but don't wanna remove it cuz then I might break things.*/}
+            </Typography>
+          </div>
+
+          <CoinFlip
+            gameEnabled={gameEnabled}
+            setGameEnabled={setGameEnabled}
+            handleFinishGame={handleFinishGame}
+            gameId={gameId}
+            userGold={user.gold}
           />
         </div>
       </GameTabPanel>
