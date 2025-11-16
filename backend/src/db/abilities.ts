@@ -823,7 +823,7 @@ const barbarian: Ability[] = [
     type: "Protection",
     target: "SingleTarget",
     description:
-      "You shield the next attack on a guildmember from 1d6+1 damage for the next 8 hours.",
+      "You shield the next attack on a guildmember from 1d6+1 damage for the next 16 hours.",
     duration: 960, // 16 hours
     icon: "Protector-of-the-Weak.png",
     gemstoneCost: 4,
@@ -865,7 +865,7 @@ const barbarian: Ability[] = [
     type: "Protection",
     target: "Others",
     description:
-      "You shield your guildmembers from 1d6 damage for the next 8 hours.",
+      "You shield your guildmembers from 1d6 damage for the next 16 hours.",
     duration: 960, // 16 hours
     icon: "Protector-of-the-People.png",
     gemstoneCost: 4,
