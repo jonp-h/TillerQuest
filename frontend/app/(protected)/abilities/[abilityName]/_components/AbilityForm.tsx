@@ -20,7 +20,7 @@ interface AbilityFormProps {
   userIsCorrectClass: boolean;
   missingParentAbility: boolean;
   guildMembers: GuildMember[];
-  targetHasPassive: boolean;
+  targetsHaveActivePassive: boolean;
 }
 
 export default function AbilityForm({
@@ -31,7 +31,7 @@ export default function AbilityForm({
   userIsCorrectClass,
   missingParentAbility,
   guildMembers,
-  targetHasPassive,
+  targetsHaveActivePassive,
 }: AbilityFormProps) {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
@@ -101,7 +101,7 @@ export default function AbilityForm({
     /*if (ability.isDungeon) {
       return "Go to dungeon";
     } else*/
-    if (targetHasPassive) {
+    if (targetsHaveActivePassive) {
       return "Activated";
     } else if (isDead) {
       return "You cannot use abilities while dead";
@@ -230,7 +230,7 @@ export default function AbilityForm({
             <Button
               variant="contained"
               onClick={handleUseAbility}
-              disabled={targetHasPassive || isLoading || isDead}
+              disabled={targetsHaveActivePassive || isLoading || isDead}
             >
               {getOwnedButtonText()}
             </Button>

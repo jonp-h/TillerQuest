@@ -402,3 +402,64 @@ export const goldValidator = async (
     );
   }
 };
+
+/**
+ * Validates that target users have a specific passive ability.
+ *
+ * @param db - Prisma transaction instance for database operations
+ * @param targetUsersIds - Array of user IDs to validate
+ * @param passiveName - Name of the passive ability to check for
+ *
+ * @returns Promise resolving to an array of user IDs that do not have the specified passive ability
+ *
+ * @throws {AuthorizationError} When the active user is not authorized to perform validation
+ * @throws {Error} When validation fails due to unexpected errors
+ */
+export const getUsersMissingPassive = async (
+  db: PrismaTransaction,
+  targetUsersIds: string[],
+  passiveName: string,
+) => {
+  try {
+    await validateActiveUserAuth();
+
+    const usersWithoutPassive: string[] = [];
+
+    await Promise.all(
+      targetUsersIds.map(async (targetUserId) => {
+        const userPassive = await db.userPassive.findFirst({
+          where: {
+            userId: targetUserId,
+            abilityName: passiveName,
+          },
+          select: { id: true },
+        });
+
+        // if one user does not have the passive, add to the list
+        if (!userPassive) {
+          usersWithoutPassive.push(targetUserId);
+        }
+      }),
+    );
+
+    return usersWithoutPassive;
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      logger.warn("Unauthorized access to active passive validation: " + error);
+      throw error;
+    }
+
+    logger.error(
+      "Validating active passive failed for passive " +
+        passiveName +
+        ": " +
+        error,
+    );
+    throw new Error(
+      "Something went wrong at " +
+        Date.now().toLocaleString("no-NO") +
+        " with error: " +
+        error,
+    );
+  }
+};
