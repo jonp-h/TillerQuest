@@ -5,6 +5,7 @@ import { db as prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PrismaTransaction } from "@/types/prismaTransaction";
 import {
+  getUsersMissingPassive,
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
@@ -183,10 +184,13 @@ export const selectAbility = async (
 
         case "Experience":
           return await activatePassive(db, castingUser, targetIds, ability);
+
         case "ManaShield":
           return await activatePassive(db, castingUser, targetIds, ability);
+
         case "GoldPassive":
           return await activatePassive(db, castingUser, targetIds, ability);
+
         case "TurnPassive":
           // TODO: considering moving this. Required to give immediate turns to the user
           await db.user.update({
@@ -200,13 +204,20 @@ export const selectAbility = async (
             },
           });
           return await activatePassive(db, castingUser, targetIds, ability);
+
         case "Access":
           return await useAccessAbility(db, castingUser, targetIds, ability);
+
         case "Crit":
           return await useCritAbility(db, castingUser, targetIds, ability);
+
         case "VictoryGold":
           return await activatePassive(db, castingUser, targetIds, ability);
+
         case "VictoryMana":
+          return await activatePassive(db, castingUser, targetIds, ability);
+
+        case "Protection": // shields a target from damage
           return await activatePassive(db, castingUser, targetIds, ability);
 
         // ---------------------------- Active abilities ----------------------------
@@ -233,16 +244,9 @@ export const selectAbility = async (
         case "Trade": // converts a resource from one type to another
           return await useTradeAbility(db, castingUser, targetIds[0], ability);
 
-        case "Protection": // shields a target from damage
-          return await useProtectionAbility(
-            db,
-            castingUser,
-            targetIds,
-            ability,
-          );
-
         case "Arena":
           return await useArenaAbility(db, castingUser, targetIds, ability);
+
         case "Turns":
           return await useTurnsAbility(db, castingUser, targetIds, ability);
 
@@ -354,78 +358,91 @@ const activatePassive = async (
 ): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
-  await Promise.all(
-    targetUsersIds.map(async (targetUserId) => {
-      const targetHasPassive = await db.userPassive.findFirst({
-        where: {
-          userId: targetUserId,
-          abilityName: ability.name,
-        },
-      });
+  const usersWithoutPassive = await getUsersMissingPassive(
+    db,
+    targetUsersIds,
+    ability.name,
+  );
 
-      // if the target is single and already has the passive, return an error message
-      if (targetHasPassive && targetUsersIds.length === 1) {
-        throw new ErrorMessage("Target already has this passive");
-      }
-      // if there are multiple targets and one of them has the passive, replace it with a new one
-      else if (targetHasPassive?.abilityName && targetUsersIds.length > 1) {
-        await db.userPassive.delete({
+  if (usersWithoutPassive.length === 0) {
+    throw new ErrorMessage(
+      `${targetUsersIds.length > 1 ? "All targets already have" : "Target already has"} this passive`,
+    );
+  }
+
+  await Promise.all(
+    usersWithoutPassive.map(async (targetUserId) => {
+      // TODO: validate correct logic. Users should not be able to activate passives for users with already existing passives
+      // const targetHasPassive = await db.userPassive.findFirst({
+      //   where: {
+      //     userId: targetUserId,
+      //     abilityName: ability.name,
+      //   },
+      // });
+
+      // // if the target is single and already has the passive, return an error message
+      // if (targetHasPassive && targetUsersIds.length === 1) {
+      //   throw new ErrorMessage("Target already has this passive");
+      // }
+      // // if there are multiple targets and one of them has the passive, replace it with a new one
+      // else if (targetHasPassive?.abilityName && targetUsersIds.length > 1) {
+      //   await db.userPassive.delete({
+      //     where: {
+      //       userId_abilityName: {
+      //         userId: targetUserId,
+      //         abilityName: targetHasPassive.abilityName,
+      //       },
+      //     },
+      //   });
+
+      // TODO: improve codequality
+      // if the ability increases health or mana, remove the previous effect
+      if (ability.type === "IncreaseHealth") {
+        await db.user.update({
           where: {
-            userId_abilityName: {
-              userId: targetUserId,
-              abilityName: targetHasPassive.abilityName,
+            id: targetUserId,
+          },
+          data: {
+            hpMax: {
+              decrement: ability.value ?? 0,
             },
           },
         });
-
-        // TODO: improve codequality
-        // if the ability increases health or mana, remove the previous effect
-        if (ability.type === "IncreaseHealth") {
-          await db.user.update({
-            where: {
-              id: targetUserId,
+      } else if (ability.type === "IncreaseMana") {
+        await db.user.update({
+          where: {
+            id: targetUserId,
+          },
+          data: {
+            manaMax: {
+              decrement: ability.value ?? 0,
             },
-            data: {
-              hpMax: {
-                decrement: ability.value ?? 0,
-              },
+          },
+        });
+      } else if (ability.type === "DecreaseHealth") {
+        await db.user.update({
+          where: {
+            id: targetUserId,
+          },
+          data: {
+            hpMax: {
+              increment: ability.healthCost ?? 0,
             },
-          });
-        } else if (ability.type === "IncreaseMana") {
-          await db.user.update({
-            where: {
-              id: targetUserId,
+          },
+        });
+      } else if (ability.type === "DecreaseMana") {
+        await db.user.update({
+          where: {
+            id: targetUserId,
+          },
+          data: {
+            manaMax: {
+              increment: ability.manaCost ?? 0,
             },
-            data: {
-              manaMax: {
-                decrement: ability.value ?? 0,
-              },
-            },
-          });
-        } else if (ability.type === "DecreaseHealth") {
-          await db.user.update({
-            where: {
-              id: targetUserId,
-            },
-            data: {
-              hpMax: {
-                increment: ability.healthCost ?? 0,
-              },
-            },
-          });
-        } else if (ability.type === "DecreaseMana") {
-          await db.user.update({
-            where: {
-              id: targetUserId,
-            },
-            data: {
-              manaMax: {
-                increment: ability.manaCost ?? 0,
-              },
-            },
-          });
-        }
+          },
+        });
       }
+      // }
 
       // if the ability decreases health or mana, the value should be set to the cost
       if (ability.type === "DecreaseHealth") {
@@ -494,6 +511,13 @@ const activatePassive = async (
           },
         });
       }
+      await addLog(
+        db,
+        targetUserId,
+        `You were granted ${ability.name} from ${castingUser.username}` +
+          (ability.duration ? ` for ${ability.duration} minutes.` : ""),
+        false,
+      );
     }),
   );
   await finalizeAbilityUsage(db, castingUser, ability);
@@ -1012,67 +1036,6 @@ const useDecreaseHealthAbility = async (
         manaValue +
         " mana",
       diceRoll: "",
-    },
-  };
-};
-
-const useProtectionAbility = async (
-  db: PrismaTransaction,
-  castingUser: User,
-  targetUserIds: string[],
-  ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
-  const abilityValue = getAbilityValue(ability);
-
-  await Promise.all(
-    targetUserIds.map(async (targetUserId) => {
-      // check if user already has passive
-      const targetHasPassive = await db.userPassive.findFirst({
-        where: {
-          userId: targetUserId,
-          abilityName: ability.name,
-        },
-      });
-
-      if (targetHasPassive && targetUserIds.length === 1) {
-        throw new ErrorMessage("Target already has this passive");
-      }
-
-      await db.userPassive.create({
-        data: {
-          userId: targetUserId,
-          effectType: ability.type,
-          passiveName: ability.name,
-          abilityName: ability.name,
-          icon: ability.icon,
-          value: abilityValue.total,
-          endTime: ability.duration
-            ? new Date(Date.now() + ability.duration * 60000).toISOString()
-            : undefined, // 1 * 60000 = 1 minute
-        },
-      });
-      await addLog(
-        db,
-        targetUserId,
-        `${castingUser.username} is shielding you`,
-        false,
-      );
-    }),
-  );
-
-  await finalizeAbilityUsage(db, castingUser, ability);
-  logger.info(
-    `User ${castingUser.username} used ability ${ability.name} on user ${targetUserIds} and gained ${ability.xpGiven} XP`,
-  );
-
-  return {
-    success: true,
-    data: {
-      message: "Target received " + abilityValue.total + " shield",
-      diceRoll:
-        "output" in abilityValue
-          ? abilityValue.output.split("[")[1].split("]")[0]
-          : "",
     },
   };
 };

@@ -67,15 +67,21 @@ export default async function AbilityNamePage({
   );
 
   // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
-  let targetHasPassive = false;
+  let targetsHaveActivePassive = false;
   if (ability.target == "Self") {
-    targetHasPassive = await checkIfAllTargetsHavePassive(
+    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
       [user.id],
       abilityName,
     );
-  } else if (ability.target == "All" || ability.target == "Others") {
-    // check if all guild members have active passive
-    targetHasPassive = await checkIfAllTargetsHavePassive(
+  } else if (ability.target == "Others") {
+    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
+      guildMembers
+        ?.filter((member) => member.id !== user.id)
+        .map((member) => member.id) || [],
+      abilityName,
+    );
+  } else if (ability.target == "All") {
+    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
       guildMembers?.map((member) => member.id) || [],
       abilityName,
     );
@@ -207,7 +213,7 @@ export default async function AbilityNamePage({
               userOwnsAbility={userOwnsAbility}
               userIsCorrectClass={userIsCorrectClass}
               missingParentAbility={missingParentAbility}
-              targetHasPassive={targetHasPassive}
+              targetsHaveActivePassive={targetsHaveActivePassive}
             />
           </div>
         </Paper>

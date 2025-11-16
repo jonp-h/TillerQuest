@@ -8,6 +8,7 @@ import {
 } from "@/lib/authUtils";
 import { ErrorMessage } from "@/lib/error";
 import { ServerActionResult } from "@/types/serverActionResult";
+import { selectAbility } from "../abilityUsage/useAbility";
 
 /**
  * Buys an ability for a user.
@@ -51,42 +52,35 @@ export const buyAbility = async (
       throw new Error("Something went wrong. Please notify a game master.");
     }
 
-    return await db.$transaction(async (db) => {
-      // decrement the cost from the user's gemstones
-      await db.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          gemstones: {
-            decrement: ability.gemstoneCost,
-          },
-        },
-      });
+    const shouldActivateImmediately =
+      ability.target === "Self" &&
+      ability.duration === null &&
+      ability.manaCost === null &&
+      ability.healthCost === null;
 
-      await db.userAbility.create({
-        data: {
-          userId: user.id,
-          abilityName: ability.name,
-        },
-      });
+    await db.$transaction([
+      db.user.update({
+        where: { id: user.id },
+        data: { gemstones: { decrement: ability.gemstoneCost } },
+      }),
+      db.userAbility.create({
+        data: { userId: user.id, abilityName: ability.name },
+      }),
+    ]);
 
-      // TODO: disabled because of issues with transactions timouts and deadlocks
-      // // ease of use for passive abilities with unlimited duration
-      // const useAbilityImmediately =
-      //   ability.target === "Self" && ability.duration === null;
+    // After purchase completes, activate ability if passive
+    if (shouldActivateImmediately) {
+      await selectAbility(user.id, [user.id], ability.name);
+    }
 
-      // if (useAbilityImmediately) {
-      //   // FIXME: Not awaited because of timeout errors
-      //   selectAbility(user.id, [user.id], ability.name);
-      // }
-
-      logger.info(`User ${user.username} bought ability ${ability.name}`);
-      return {
-        success: true,
-        data: "Bought " + ability.name + " successfully!",
-      };
-    });
+    logger.info(`User ${user.username} bought ability ${ability.name}`);
+    return {
+      success: true,
+      data:
+        "Bought " + ability.name + " successfully!" + shouldActivateImmediately
+          ? " Passive activated."
+          : "",
+    };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(
