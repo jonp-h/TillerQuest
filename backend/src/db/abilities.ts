@@ -66,7 +66,7 @@ interface Ability {
   icon: string;
   gemstoneCost: 0 | 1 | 2 | 4;
   manaCost: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
-  healthCost: 2 | 3 | 5 | 6 | 10 | 12 | null;
+  healthCost: 2 | 3 | 5 | 6 | 10 | 12 | 15 | null;
   xpGiven: 20 | 40 | 80 | 120 | 160 | 200 | 240 | 320 | 480 | null;
   diceNotation: string | null;
   value: number | null;
@@ -997,12 +997,12 @@ const warlock: Ability[] = [
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
-      "Lose 5 of your maximum health to grant 2 mana to a guild member. This ability can only be used once per day.",
+      "Lose 10 of your maximum health to grant 2 mana to a guild member. This ability can only be used once per day.",
     duration: 960, // 16 hours
     icon: "Crimson-Gift.png",
     gemstoneCost: 2,
     manaCost: null,
-    healthCost: 5,
+    healthCost: 10,
     xpGiven: 120,
     diceNotation: null,
     value: 2,
@@ -1039,12 +1039,12 @@ const warlock: Ability[] = [
     type: "DecreaseHealth",
     target: "SingleTarget",
     description:
-      "Lose 10 of your maximum health to grant 5 mana to a guild member.",
+      "Lose 15 of your maximum health to grant 5 mana to a guild member.",
     duration: 180, // 3 hours
     icon: "Gift-of-Life.png",
     gemstoneCost: 4,
     manaCost: null,
-    healthCost: 10,
+    healthCost: 15,
     xpGiven: 160,
     diceNotation: null,
     value: 5,

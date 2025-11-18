@@ -65,7 +65,8 @@ export const removePassivesWithDecreasedValues = async (
 
   for (const passive of usersWithDecreasedHealth) {
     const newMaxHp = passive.user.hpMax + (passive.value || 0);
-    const newHp = Math.min(passive.user.hp, newMaxHp);
+    // HP is restored up to the original value before the decrease
+    const newHp = Math.min(passive.user.hp + (passive.value || 0), newMaxHp);
     await db.user.update({
       where: { id: passive.userId },
       data: { hp: newHp, hpMax: newMaxHp },
