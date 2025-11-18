@@ -164,7 +164,7 @@ cron.schedule(
   },
 );
 
-// Schedule a job to run every day before midnight to remove all cosmic passives and abilities
+// Schedule a job to run every day before midnight to remove all cosmic passives, cosmic abilities and logs
 cron.schedule(
   "00 00 * * *",
   async () => {
@@ -191,7 +191,7 @@ cron.schedule(
     }
   },
   {
-    name: "generateRandomCosmicEventService",
+    name: "removeCosmicEventAndLogsService",
   },
 );
 

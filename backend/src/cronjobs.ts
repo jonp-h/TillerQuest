@@ -21,13 +21,11 @@ export const removePassivesWithIncreasedValues = async (
   });
 
   for (const passive of usersWithIncreasedHealth) {
-    const newHp = Math.min(
-      passive.user.hp,
-      passive.user.hpMax - (passive.value ?? 0),
-    );
+    const newMaxHp = passive.user.hpMax - (passive.value || 0);
+    const newHp = Math.min(passive.user.hp, newMaxHp);
     await db.user.update({
       where: { id: passive.userId },
-      data: { hp: newHp, hpMax: { decrement: passive.value || 0 } },
+      data: { hp: newHp, hpMax: newMaxHp },
     });
   }
 
@@ -42,13 +40,11 @@ export const removePassivesWithIncreasedValues = async (
   });
 
   for (const passive of usersWithIncreasedMana) {
-    const newMana = Math.min(
-      passive.user.mana,
-      passive.user.manaMax - (passive.value ?? 0),
-    );
+    const newMaxMana = passive.user.manaMax - (passive.value || 0);
+    const newMana = Math.min(passive.user.mana, newMaxMana);
     await db.user.update({
       where: { id: passive.userId },
-      data: { mana: newMana, manaMax: { decrement: passive.value || 0 } },
+      data: { mana: newMana, manaMax: newMaxMana },
     });
   }
 };
@@ -68,13 +64,11 @@ export const removePassivesWithDecreasedValues = async (
   });
 
   for (const passive of usersWithDecreasedHealth) {
-    const newHp = Math.min(
-      passive.user.hp,
-      passive.user.hpMax + (passive.value ?? 0),
-    );
+    const newMaxHp = passive.user.hpMax + (passive.value || 0);
+    const newHp = Math.min(passive.user.hp, newMaxHp);
     await db.user.update({
       where: { id: passive.userId },
-      data: { hp: newHp, hpMax: { increment: passive.value || 0 } },
+      data: { hp: newHp, hpMax: newMaxHp },
     });
   }
 
@@ -89,13 +83,11 @@ export const removePassivesWithDecreasedValues = async (
   });
 
   for (const passive of usersWithDecreasedMana) {
-    const newMana = Math.min(
-      passive.user.mana,
-      passive.user.manaMax + (passive.value ?? 0),
-    );
+    const newMaxMana = passive.user.manaMax + (passive.value || 0);
+    const newMana = Math.min(passive.user.mana, newMaxMana);
     await db.user.update({
       where: { id: passive.userId },
-      data: { mana: newMana, manaMax: { increment: passive.value || 0 } },
+      data: { mana: newMana, manaMax: newMaxMana },
     });
   }
 };
@@ -269,7 +261,7 @@ export const removeCosmicPassivesAndAbilities = async (
 ) => {
   await db.userPassive.deleteMany({
     where: {
-      effectType: "Cosmic",
+      cosmicEvent: true,
     },
   });
 

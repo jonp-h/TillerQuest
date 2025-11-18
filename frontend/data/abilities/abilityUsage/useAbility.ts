@@ -372,78 +372,6 @@ const activatePassive = async (
 
   await Promise.all(
     usersWithoutPassive.map(async (targetUserId) => {
-      // TODO: validate correct logic. Users should not be able to activate passives for users with already existing passives
-      // const targetHasPassive = await db.userPassive.findFirst({
-      //   where: {
-      //     userId: targetUserId,
-      //     abilityName: ability.name,
-      //   },
-      // });
-
-      // // if the target is single and already has the passive, return an error message
-      // if (targetHasPassive && targetUsersIds.length === 1) {
-      //   throw new ErrorMessage("Target already has this passive");
-      // }
-      // // if there are multiple targets and one of them has the passive, replace it with a new one
-      // else if (targetHasPassive?.abilityName && targetUsersIds.length > 1) {
-      //   await db.userPassive.delete({
-      //     where: {
-      //       userId_abilityName: {
-      //         userId: targetUserId,
-      //         abilityName: targetHasPassive.abilityName,
-      //       },
-      //     },
-      //   });
-
-      // TODO: improve codequality
-      // if the ability increases health or mana, remove the previous effect
-      if (ability.type === "IncreaseHealth") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            hpMax: {
-              decrement: ability.value ?? 0,
-            },
-          },
-        });
-      } else if (ability.type === "IncreaseMana") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            manaMax: {
-              decrement: ability.value ?? 0,
-            },
-          },
-        });
-      } else if (ability.type === "DecreaseHealth") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            hpMax: {
-              increment: ability.healthCost ?? 0,
-            },
-          },
-        });
-      } else if (ability.type === "DecreaseMana") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            manaMax: {
-              increment: ability.manaCost ?? 0,
-            },
-          },
-        });
-      }
-      // }
-
       // if the ability decreases health or mana, the value should be set to the cost
       if (ability.type === "DecreaseHealth") {
         abilityValue.total = ability.healthCost!;
@@ -1001,7 +929,7 @@ const useDecreaseHealthAbility = async (
 
   if (!ability.healthCost) {
     throw new ErrorMessage(
-      "Error during health health cost calculation. Please notify a game master.",
+      "Error during health cost calculation. Please notify a game master.",
     );
   }
 
