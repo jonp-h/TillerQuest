@@ -1,6 +1,6 @@
 {
   "name": "tillerquest",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Tillerquest",
   "scripts": {
     "lint": "eslint .",
@@ -8,13 +8,13 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
-    "commitlint": "^17.0.3",
-    "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.1.1",
-    "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
-    "prettier": "^3.3.3"
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "commitlint": "^20.1.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2"
   }
 }
