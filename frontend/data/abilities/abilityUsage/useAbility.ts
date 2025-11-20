@@ -567,6 +567,7 @@ const useHealAbility = async (
   ability: Ability,
 ): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
+  let deadUsers = false;
 
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
@@ -586,31 +587,32 @@ const useHealAbility = async (
         throw new ErrorMessage(
           "You can't heal a dead target. The dead require a different kind of magic.",
         );
-      } else if (typeof valueToHeal === "string") {
-        throw new ErrorMessage(valueToHeal);
-      }
-
-      const targetUser = await db.user.update({
-        where: {
-          id: targetUserId,
-        },
-        data: {
-          hp: {
-            increment: valueToHeal,
+        // if the value is a number, heal the target
+      } else if (typeof valueToHeal !== "string") {
+        const targetUser = await db.user.update({
+          where: {
+            id: targetUserId,
           },
-        },
-        select: {
-          username: true,
-        },
-      });
-      await addLog(
-        db,
-        targetUserId,
-        `${targetUser.username} was healed for ${valueToHeal} by ${castingUser.username}`,
-      );
+          data: {
+            hp: {
+              increment: valueToHeal,
+            },
+          },
+          select: {
+            username: true,
+          },
+        });
+        await addLog(
+          db,
+          targetUserId,
+          `${targetUser.username} was healed for ${valueToHeal} by ${castingUser.username}`,
+        );
+        // the only remaining option is that the user is dead. Else if for clarity
+      } else if (valueToHeal === "User is dead") {
+        deadUsers = true;
+      }
     }),
   );
-
   await finalizeAbilityUsage(db, castingUser, ability);
   logger.info(
     `User ${castingUser.username} used ability ${ability.name} on users ${targetUsersIds} and gained ${ability.xpGiven} XP`,
@@ -619,7 +621,11 @@ const useHealAbility = async (
   return {
     success: true,
     data: {
-      message: "Healed " + abilityValue.total + " successfully",
+      message:
+        "Healed " +
+        abilityValue.total +
+        " successfully" +
+        (deadUsers ? " (Some targets are dead and were not healed)" : ""),
       diceRoll:
         "output" in abilityValue
           ? abilityValue.output.split("[")[1].split("]")[0]

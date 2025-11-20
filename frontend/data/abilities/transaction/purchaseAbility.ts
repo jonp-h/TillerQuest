@@ -77,9 +77,10 @@ export const buyAbility = async (
     return {
       success: true,
       data:
-        "Bought " + ability.name + " successfully!" + shouldActivateImmediately
-          ? " Passive activated."
-          : "",
+        "Bought " +
+        ability.name +
+        " successfully!" +
+        (shouldActivateImmediately ? " Passive activated." : ""),
     };
   } catch (error) {
     if (error instanceof AuthorizationError) {
