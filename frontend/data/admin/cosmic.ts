@@ -128,7 +128,7 @@ export const setSelectedCosmic = async (
     const session = await validateAdminAuth();
 
     return await db.$transaction(async (db) => {
-      await handleSetCosmic(cosmicName, grade, notify);
+      await handleSetCosmic(cosmicName, grade, session.user.username, notify);
 
       await db.log.create({
         data: {
@@ -171,6 +171,7 @@ export const setSelectedCosmic = async (
 const handleSetCosmic = async (
   cosmicName: string,
   grade: string,
+  username: string,
   notify: boolean,
 ) => {
   let query: string;
@@ -319,8 +320,9 @@ const handleSetCosmic = async (
 
   if (notify) {
     await sendDiscordMessage(
-      "TillerQuest",
-      `Today's cosmic event for ${grade} is "**${cosmic.name.replace(/-/g, " ")}**"! \n ${cosmic.description}`,
+      username,
+      `Today's cosmic event for ${grade} is "**${cosmic.name.replace(/-/g, " ")}**"!`,
+      `${cosmic.description}`,
     );
   }
 };

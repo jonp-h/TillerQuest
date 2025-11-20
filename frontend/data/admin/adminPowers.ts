@@ -23,7 +23,7 @@ export const healUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     if (value <= 0) {
       throw new ErrorMessage("Healing value must be greater than 0");
@@ -66,7 +66,7 @@ export const healUsers = async (
             await addLog(
               db,
               user.id,
-              `${targetUser.username} was healed for ${valueToHeal} HP. ${reason}`,
+              `${targetUser.username} was healed for ${valueToHeal} HP by GM ${session.user.username}. ${reason}`,
             );
           } else {
             logger.info(
@@ -81,7 +81,8 @@ export const healUsers = async (
 
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "Healing from the Game Masters",
           `User(s) ${healedUsers.map((user) => user).join(", ")} has been healed for ${value} HP. ${reason}`,
         );
       return {
@@ -126,7 +127,7 @@ export const damageUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     if (value <= 0) {
       throw new ErrorMessage("Damage value must be greater than 0");
@@ -179,7 +180,7 @@ export const damageUsers = async (
           await addLog(
             db,
             user.id,
-            `${updatedUser.username} was damaged for ${valueToDamage} HP. ${reason}`,
+            `${updatedUser.username} was damaged for ${valueToDamage} HP by GM ${session.user.username}. ${reason}`,
           );
           if (updatedUser.hp === 0) {
             logger.info("DEATH: User " + updatedUser.username + " died.");
@@ -189,7 +190,8 @@ export const damageUsers = async (
       );
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "Damage from the Game Masters",
           `User ${damagedUsers.map((user) => user).join(", ")} has been damaged for ${value} HP. ${reason}`,
         );
       return {
@@ -237,7 +239,7 @@ export const giveXpToUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     const validatedReason = await adminReasonValidation(reason);
 
@@ -249,12 +251,19 @@ export const giveXpToUsers = async (
     return await db.$transaction(async (db) => {
       await Promise.all(
         users.map(async (user) => {
-          await experienceAndLevelValidator(db, user, xp, reason);
+          await experienceAndLevelValidator(
+            db,
+            user,
+            xp,
+            reason,
+            session.user.username,
+          );
         }),
       );
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "XP from the Game Masters",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${xp} XP. ${reason}`,
         );
       return {
@@ -296,7 +305,7 @@ export const giveManaToUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     const validatedReason = await adminReasonValidation(reason);
 
@@ -323,13 +332,14 @@ export const giveManaToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} received ${manaToGive} mana. ${reason}`,
+            `${user.username} received ${manaToGive} mana from GM ${session.user.username}. ${reason}`,
           );
         }),
       );
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "Mana from the Game Masters",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${mana} mana. ${reason}`,
         );
       return {
@@ -371,7 +381,7 @@ export const giveArenatokenToUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     const validatedReason = await adminReasonValidation(reason);
 
@@ -395,13 +405,14 @@ export const giveArenatokenToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} received ${arenatoken} arenatokens. ${reason}`,
+            `${user.username} received ${arenatoken} arenatokens from GM ${session.user.username}. ${reason}`,
           );
         }),
       );
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "Arenatokens from the Game Masters",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${arenatoken} arenatokens. ${reason}`,
         );
       return {
@@ -447,7 +458,7 @@ export const giveGoldToUsers = async (
   reason: string,
 ): Promise<ServerActionResult> => {
   try {
-    await validateAdminAuth();
+    const session = await validateAdminAuth();
 
     const validatedReason = await adminReasonValidation(reason);
 
@@ -471,13 +482,14 @@ export const giveGoldToUsers = async (
           await addLog(
             db,
             user.id,
-            `${user.username} received ${gold} gold. ${reason}`,
+            `${user.username} received ${gold} gold from GM ${session.user.username}. ${reason}`,
           );
         }),
       );
       if (notify)
         await sendDiscordMessage(
-          "TillerQuest",
+          session.user.username,
+          "Gold from the Game Masters",
           `User(s) ${users.map((user) => user.username).join(", ")} has been given ${gold} gold. ${reason}`,
         );
       return {

@@ -258,6 +258,7 @@ export const experienceAndLevelValidator = async (
   user: User,
   xp: number,
   reason: string = "",
+  gamemasterName?: string,
 ) => {
   try {
     await validateActiveUserAuth();
@@ -329,12 +330,11 @@ export const experienceAndLevelValidator = async (
       },
     });
 
-    if (xpToGive > 0)
-      await addLog(
-        db,
-        user.id,
-        `${user.username} gained ${xpToGive} XP. ${reason}`,
-      );
+    const message = gamemasterName
+      ? `${user.username} was given ${xpToGive} XP by GM ${gamemasterName}. ${reason}`
+      : `${user.username} gained ${xpToGive} XP. ${reason}`;
+
+    if (xpToGive > 0) await addLog(db, user.id, message);
 
     if (levelDifference > 0) {
       await addLog(
