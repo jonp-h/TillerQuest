@@ -172,6 +172,7 @@ export const getUserProfileByUsername = async (username: string) => {
         xp: true,
         gemstones: true,
         arenaTokens: true,
+        turns: true,
         level: true,
         image: true,
         guildName: true,

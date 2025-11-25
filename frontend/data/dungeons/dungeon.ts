@@ -20,6 +20,16 @@ export const startGuildBattle = async (
     return await db.$transaction(async (db) => {
       const guild = await db.guild.findFirst({
         where: { guildLeader: userId, members: { some: { id: userId } } },
+        select: {
+          id: true,
+          name: true,
+          level: true,
+          _count: {
+            select: {
+              members: true,
+            },
+          },
+        },
       });
 
       if (!guild) {
@@ -45,12 +55,14 @@ export const startGuildBattle = async (
         throw new Error("No enemy found for the battle.");
       }
 
-      const maxHealth = Math.floor(Math.sqrt(guild.level) * 12 * 5);
+      const maxHealth = Math.floor(
+        Math.sqrt(guild.level) * 12 * guild._count.members,
+      );
       const attack = Math.floor(Math.sqrt(guild.level) + 0.5);
       const xp = Math.floor(Math.sqrt(guild.level) * 80);
       const gold = Math.floor(guild.level * 50);
 
-      // Number of enemies scales with guild level: 1 at low levels, up to 4 at high levels
+      // Number of enemies scales with guild level: 1 at low levels, up to 5 at high levels
       const maxEnemies = 5;
       // Use sqrt(level) to bias towards more enemies at higher levels
       const levelFactor = Math.sqrt(guild.level);

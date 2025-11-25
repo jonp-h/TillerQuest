@@ -355,8 +355,8 @@ export const resetUserTurns = async (db: PrismaTransaction) => {
       if (turn.value) turnsToSet += turn.value;
     }
 
-    // if user has used any turns, recharge turns
-    if (user.turns < turnsToSet) {
+    // if user has more or less turns than the passive value, reset to passive value
+    if (user.turns != turnsToSet) {
       await db.user.update({
         where: { id: user.id },
         data: { turns: turnsToSet },
@@ -366,7 +366,7 @@ export const resetUserTurns = async (db: PrismaTransaction) => {
         data: {
           global: false,
           userId: user.id,
-          message: `You have regained your strength and are now ready to enter the dungeon once again!`,
+          message: `You have regained your strength and are now ready to enter the dungeons once again!`,
         },
       });
     }

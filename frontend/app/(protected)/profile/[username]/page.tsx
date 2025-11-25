@@ -16,6 +16,7 @@ import { red, blue } from "@mui/material/colors";
 import {
   Circle,
   Diamond,
+  HourglassEmpty,
   LocalPolice,
   Settings,
   Stadium,
@@ -211,24 +212,34 @@ export default async function ProfilePage({
             elevation={3}
           >
             <Typography variant="h4">Resources</Typography>
-            <div className="flex mt-2 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
               <Tooltip title="Earned by completing games in the arena">
-                <Typography variant="h5" color="gold" noWrap>
-                  Gold: {user.gold}
-                  <Circle />
-                </Typography>
+                <div className="flex items-center justify-center gap-2">
+                  <Typography variant="h5" color="gold">
+                    Gold: {user.gold} <Circle sx={{ color: "gold" }} />
+                  </Typography>
+                </div>
               </Tooltip>
               <Tooltip title="Earned together with daily mana and certain events/abilities">
-                <Typography variant="h5" color="arenatoken" noWrap>
-                  Tokens: {user.arenaTokens}
-                  <Stadium />
-                </Typography>
+                <div className="flex items-center justify-center gap-2">
+                  <Typography variant="h5" color="arenatoken">
+                    Tokens: {user.arenaTokens} <Stadium color="inherit" />
+                  </Typography>
+                </div>
+              </Tooltip>
+              <Tooltip title="Earned together with daily mana and certain events/abilities. Reset each day">
+                <div className="flex items-center justify-center gap-2">
+                  <Typography variant="h5" color="health">
+                    Turns: {user.turns} <HourglassEmpty color="inherit" />
+                  </Typography>
+                </div>
               </Tooltip>
               <Tooltip title="Earned by gaining experience and leveling up">
-                <Typography variant="h5" color="gemstones" noWrap>
-                  Gemstones: {user.gemstones}
-                  <Diamond />
-                </Typography>
+                <div className="flex items-center justify-center gap-2">
+                  <Typography variant="h5" color="gemstones">
+                    Gemstones: {user.gemstones} <Diamond color="inherit" />
+                  </Typography>
+                </div>
               </Tooltip>
             </div>
           </Paper>

@@ -67,7 +67,7 @@ interface Ability {
   gemstoneCost: 0 | 1 | 2 | 4;
   manaCost: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
   healthCost: 2 | 3 | 5 | 6 | 10 | 12 | 15 | null;
-  xpGiven: 20 | 40 | 80 | 120 | 160 | 200 | 240 | 320 | 480 | null;
+  xpGiven: 20 | 40 | 60 | 80 | 120 | 160 | 200 | 240 | 320 | 480 | null;
   diceNotation: string | null;
   value: number | null;
   parentAbility: string | null;
@@ -510,7 +510,7 @@ const wizard: Ability[] = [
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
-    xpGiven: 160,
+    xpGiven: 120,
     diceNotation: "2d6+2", // efficiency +3
     value: null,
     parentAbility: "Greater-Essence-Transfer",
@@ -648,14 +648,14 @@ const druid: Ability[] = [
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
-    xpGiven: 160,
+    xpGiven: 120,
     diceNotation: "2d6", // efficiency +2
     value: null,
     parentAbility: "Greater-Heal",
   },
-  // Base: 160 XP / 5 Mana = 32
+  // Base: 120 XP / 5 Mana = 24
   // No duration penalty
-  // Final: 32 efficiency
+  // Final: 24 efficiency
   {
     id: 26,
     name: "Healing-Aura",
@@ -802,7 +802,7 @@ const barbarian: Ability[] = [
     type: "Arena",
     target: "All",
     description:
-      "You long for the thrill of battle, bringing your guildmates with you for another round in the arena.",
+      "You long for the thrill of battle, bringing your guildmates with you for another round in the arena. All guildmembers gain 1 extra arena turn for today. This ability stacks.",
     duration: null,
     icon: "Battle-Ready.png",
     gemstoneCost: 2,
@@ -982,7 +982,7 @@ const warlock: Ability[] = [
     gemstoneCost: 2,
     manaCost: 1,
     healthCost: 3,
-    xpGiven: 40,
+    xpGiven: 60,
     diceNotation: null,
     value: 3,
     parentAbility: "Crimson-Shield",
@@ -1003,14 +1003,14 @@ const warlock: Ability[] = [
     gemstoneCost: 2,
     manaCost: null,
     healthCost: 10,
-    xpGiven: 120,
+    xpGiven: 160,
     diceNotation: null,
     value: 2,
     parentAbility: "Crimson-Shield",
   },
-  // Base: 120 XP / 5 HP = 24.4
-  // Duration penalty: -35% = 15.6
-  // Final: 15.6 efficiency
+  // Base: 160 XP / 5 HP = 32
+  // Duration penalty: -35% = 20.8
+  // Final: 20.8 efficiency
   {
     id: 41,
     name: "Crimson-Shift",
@@ -1024,14 +1024,14 @@ const warlock: Ability[] = [
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
-    xpGiven: 120,
+    xpGiven: 160,
     diceNotation: null,
     value: null,
     parentAbility: "Crimson-Bond",
   },
-  // Base: 120 XP / 4 Mana = 30
-  // Duration penalty: -35% = 19.5
-  // Final: 19.5 efficiency
+  // Base: 160 XP / 4 Mana = 40
+  // Duration penalty: -35% = 26
+  // Final: 26 efficiency
   {
     id: 42,
     name: "Gift-of-Life",
@@ -1148,12 +1148,12 @@ const bard: Ability[] = [
     gemstoneCost: 2,
     manaCost: 2,
     healthCost: null,
-    xpGiven: 40,
+    xpGiven: 60,
     diceNotation: "1d6", // efficiency +1
     value: null,
     parentAbility: "An-Eye-for-Gold",
   },
-  // Base: 40 XP / 2 Mana = 20
+  // Base: 60 XP / 3 Mana = 20
   // Duration penalty: -10% = 18
   // Final: 18 efficiency
   {
@@ -1211,14 +1211,14 @@ const bard: Ability[] = [
     gemstoneCost: 4,
     manaCost: 4,
     healthCost: null,
-    xpGiven: 240,
+    xpGiven: 320,
     diceNotation: null,
     value: 5,
     parentAbility: "Inspiration",
   },
-  // Base: 240 XP / 4 Mana = 60
-  // Duration penalty: -75% = 15
-  // Final: 15 efficiency
+  // Base: 320 XP / 4 Mana = 80
+  // Duration penalty: -75% = 20
+  // Final: 20 efficiency
   {
     id: 49,
     name: "Feast-of-Heroes",
@@ -1460,20 +1460,20 @@ const fighter: Ability[] = [
     type: "VictoryMana",
     target: "SingleTarget",
     description:
-      "When your guild wins a battle, a guildmember of your choice gains 2 mana. The guildmember must be chosen before the enemy is killed.",
-    duration: 960, // 16 hours
+      "When your guild slay an enemy, a guildmember of your choice gains 2 mana. The guildmember must be chosen before the enemy is slain.",
+    duration: 180, // 3 hours
     icon: "Surge-of-Power.png",
     gemstoneCost: 4,
-    manaCost: 2,
+    manaCost: 3,
     healthCost: null,
     xpGiven: 80,
     diceNotation: null,
     value: 2,
     parentAbility: "Loot-Goblin",
   },
-  // Base: 80 XP / 2 Mana = 40
-  // Duration penalty: -35% = 26
-  // Final: 26 efficiency
+  // Base: 80 XP / 3 Mana = 26.7
+  // Duration penalty: -35% = 17.3
+  // Final: 17.3 efficiency
   {
     id: 86,
     name: "Did-Someone-Say-Loot",
@@ -1520,8 +1520,9 @@ const fighter: Ability[] = [
     category: "Fighter",
     type: "VictoryMana",
     target: "All",
-    description: "When your guild wins a battle all members gains 2 mana.",
-    duration: 960, // 16 hours
+    description:
+      "When your guild slay an enemy, all guildmembers gains 1 mana.",
+    duration: 180, // 3 hours
     icon: "Victorious-Reward.png",
     gemstoneCost: 4,
     manaCost: 4,
