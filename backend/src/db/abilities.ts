@@ -1286,23 +1286,23 @@ const bard: Ability[] = [
     id: 67,
     name: "Song-of-Inspiration",
     category: "Bard",
-    type: "Turns",
+    type: "TurnPassive",
     target: "All",
     description:
-      "You inspire your guildmates with a song, giving them an extra turn in the Dungeon.",
-    duration: null,
+      "You inspire your guildmates with a song, giving them an extra daily turn for 5 days.",
+    duration: 7200, // 5 days
     icon: "Song-of-Inspiration.png",
     gemstoneCost: 4,
     manaCost: 5,
     healthCost: null,
-    xpGiven: 80,
+    xpGiven: 480,
     diceNotation: null,
     value: 1,
     parentAbility: "Inspiration",
   },
-  // Base: 80 XP / 5 Mana = 16
-  // No duration penalty
-  // Final: 16 efficiency
+  // Base: 480 XP / 5 Mana = 96
+  // Duration penalty: -75% = 24
+  // Final: 24 efficiency
   {
     id: 92,
     name: "Vicious-Mockery",
