@@ -8,7 +8,7 @@ import { getSessionCookie } from "better-auth/cookies";
 // only checks if the user has a session cookie, if else redirect to login
 // runs on the edge, so no database queries can be made
 // running more extensive checks here is not recommended, as the middleware runs on every request
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const sessionCookie = getSessionCookie(req, {
     cookiePrefix: "tillerquest",
   });

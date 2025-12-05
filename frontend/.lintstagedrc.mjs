@@ -1,16 +1,12 @@
 import { relative } from "path";
 
 const buildEslintCommand = (filenames) =>
-  `npx next lint --fix --file ${filenames
-    .map((f) => relative(process.cwd(), f))
-    .join(" --file ")}`;
+  `eslint --fix ${filenames
+    .map((f) => `"${relative(process.cwd(), f)}"`)
+    .join(" ")}`;
 
 const lintStagedConfig = {
-  "**/*.{js,jsx,ts,tsx}": [
-    "eslint --cache --fix",
-    buildEslintCommand,
-    "prettier --write",
-  ],
+  "**/*.{js,jsx,ts,tsx}": [buildEslintCommand, "prettier --write"],
 };
 
 export default lintStagedConfig;
