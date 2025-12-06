@@ -963,6 +963,21 @@ const cosmic: CosmicEvent[] = [
     grantAbility: false,
     abilityName: null,
   },
+  {
+    id: 62,
+    name: "The-Fractured-Aurora",
+    description: "A shimmering rift opens in the sky above Tiller. Instead of normal northern lights, the aurora fractures into gemstones, granting all students 2 Gemstones",
+    // icon: ".png"
+    // presetDate: "",
+    frequency: 5,
+    automatic: false,
+    increaseCostType: null,
+    increaseCostValue: null,
+    blockAbilityType: null,
+    triggerAtNoon: false,
+    grantAbility: false,
+    abilityName: null,
+  },
 ];
 const cosmics = [...cosmic];
 export default cosmics;
