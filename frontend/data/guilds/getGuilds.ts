@@ -89,6 +89,14 @@ export const getGuildByUserId = async (userId: string) => {
             manaMax: true,
           },
         },
+        imageUploads: {
+          where: {
+            status: "PENDING",
+          },
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
