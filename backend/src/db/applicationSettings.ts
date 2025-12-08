@@ -27,6 +27,12 @@ const settings: ApplicationSettings[] = [
     value: "6", // default maximum number of members per guild
     description: "Maximum number of members allowed in a guild. Default: 6",
   },
+  {
+    key: "GUILD_IMAGE_UPLOAD_COOLDOWN_HOURS",
+    value: "24", // default cooldown period in hours for guild image uploads
+    description:
+      "Cooldown period in hours for guild image uploads. Default: 24",
+  },
 ];
 
 export default settings;

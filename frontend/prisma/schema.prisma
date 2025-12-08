@@ -152,6 +152,12 @@ enum ShopItemType {
   Object
 }
 
+enum UploadStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id          String       @id @default(cuid())
   name        String?
@@ -205,7 +211,9 @@ model User {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  sessions Session[]
+  sessions     Session[]
+  imageUploads ImageUpload[] @relation("ImageUploader")
+  imageReviews ImageUpload[] @relation("ImageReviewer")
 
   @@index([username])
 }
@@ -224,11 +232,32 @@ model Guild {
   level           Int      @default(1)
   nextBattleVotes String[] // userIds of users who voted to enter the next battle
 
-  enemies   GuildEnemy[]
-  members   User[]
-  analytics Analytics[] // m-n relation to analytics. A guild can have many analytics records
+  enemies      GuildEnemy[]
+  members      User[]
+  analytics    Analytics[] // m-n relation to analytics. A guild can have many analytics records
+  imageUploads ImageUpload[]
 
   @@index([id])
+}
+
+model ImageUpload {
+  id         String   @id @default(cuid())
+  uploadedBy String
+  guildName  String?
+  filename   String
+  fileHash   String? // SHA-256 hash for file integrity verification
+  uploadedAt DateTime @default(now())
+
+  status     UploadStatus @default(PENDING)
+  reviewedBy String?
+  reviewedAt DateTime?
+  reason     String?
+
+  guild    Guild? @relation(fields: [guildName], references: [name], onUpdate: Cascade)
+  uploader User   @relation("ImageUploader", fields: [uploadedBy], references: [id], onUpdate: Cascade)
+  reviewer User?  @relation("ImageReviewer", fields: [reviewedBy], references: [id], onUpdate: Cascade)
+
+  @@index([status])
 }
 
 model Ability {

@@ -1,11 +1,13 @@
 import MainContainer from "@/components/MainContainer";
 import { getDeadUserCount } from "@/data/user/getUser";
+import { getPendingImageUploadsCount } from "@/data/admin/imageReview";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import {
   AutoAwesome,
   BarChart,
   Bolt,
   Castle,
+  CloudUpload,
   Edit,
   Groups,
   Info,
@@ -13,12 +15,13 @@ import {
   Settings,
   Star,
 } from "@mui/icons-material";
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, Paper, Typography, Badge } from "@mui/material";
 import Link from "next/link";
 
 export default async function GameMasterPage() {
   await redirectIfNotAdmin();
   const deadUsers = await getDeadUserCount();
+  const pendingUploads = await getPendingImageUploadsCount();
 
   return (
     <MainContainer>
@@ -123,6 +126,22 @@ export default async function GameMasterPage() {
             <Button color="info" variant="contained" startIcon={<BarChart />}>
               Analytics
             </Button>
+          </Link>
+          <Link href="/gamemaster/uploads">
+            <Badge
+              badgeContent={pendingUploads}
+              color="error"
+              max={99}
+              invisible={pendingUploads === 0}
+            >
+              <Button
+                color="info"
+                variant="contained"
+                startIcon={<CloudUpload />}
+              >
+                Uploads
+              </Button>
+            </Badge>
           </Link>
         </div>
       </div>
