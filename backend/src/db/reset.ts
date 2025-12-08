@@ -1,6 +1,7 @@
 import { PrismaClient, SchoolClass } from "@prisma/client";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
+import { resetUserTurns } from "cronjobs.js";
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
@@ -14,6 +15,7 @@ async function main() {
   3 - single normal reset. Reset a single user
   4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
+  6 - reset user turns. Reset the turns for all users to their passives' turn value
   `);
 
   process.stdin.setEncoding("utf8");
@@ -89,6 +91,20 @@ async function main() {
           if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Deleting analytics...");
             await deleteAnalytics();
+          } else {
+            console.log("Operation canceled.");
+          }
+          process.stdin.pause(); // Stop listening for input after handling this case
+        });
+        break;
+      case "6":
+        console.log(
+          "Are you sure you want to reset user turns? Type 'yes' to confirm:",
+        );
+        process.stdin.once("data", async (confirmation) => {
+          if (confirmation.toString().trim().toLowerCase() === "yes") {
+            console.log("Resetting user turns...");
+            await resetUserTurns(prisma);
           } else {
             console.log("Operation canceled.");
           }
