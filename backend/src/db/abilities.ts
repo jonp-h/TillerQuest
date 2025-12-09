@@ -2,64 +2,64 @@ interface Ability {
   id: number;
   name: string;
   category:
-    | "Health"
-    | "Mana"
-    | "Heal"
-    | "Trickery"
-    | "Wizard"
-    | "Druid"
-    | "Warlock"
-    | "Barbarian"
-    | "Bard"
-    | "Fighter"
-    | "Arena"
-    | "Dungeon"
-    | "Cosmic";
+  | "Health"
+  | "Mana"
+  | "Heal"
+  | "Trickery"
+  | "Wizard"
+  | "Druid"
+  | "Warlock"
+  | "Barbarian"
+  | "Bard"
+  | "Fighter"
+  | "Arena"
+  | "Dungeon"
+  | "Cosmic";
   type: // Abilities
   | "Heal"
-    | "XP"
-    | "Mana"
-    | "Swap"
-    | "Transfer"
-    | "Trade"
-    | "Revive"
-    | "Damage"
-    | "ArenaToken"
-    | "Gold"
+  | "XP"
+  | "Mana"
+  | "Swap"
+  | "Transfer"
+  | "Trade"
+  | "Revive"
+  | "Damage"
+  | "ArenaToken"
+  | "Gold"
 
-    // Dungeons
-    | "TurnPassive"
-    | "DungeonAttack"
-    | "VictoryGold"
-    | "VictoryMana"
+  // Dungeons
+  | "TurnPassive"
+  | "DungeonAttack"
+  | "VictoryGold"
+  | "VictoryMana"
 
-    // Passives
-    | "Access"
-    | "Deathsave"
-    | "Cosmic"
-    | "All"
-    | "Health"
-    | "LastStand"
-    | "DailyMana"
-    | "ManaPassive"
-    | "Experience"
-    | "Protection"
-    | "ManaShield"
-    | "GoldShield"
-    | "Strength"
-    | "Agility"
-    | "Trickery"
-    | "Postpone"
-    | "Magic"
-    | "Adventurer"
-    | "Arena"
-    | "Turns"
-    | "Crit"
-    | "GoldPassive"
-    | "IncreaseHealth"
-    | "DecreaseHealth"
-    | "IncreaseMana"
-    | "DecreaseMana";
+  // Passives
+  | "Access"
+  | "Deathsave"
+  | "Cosmic"
+  | "All"
+  | "Health"
+  | "LastStand"
+  | "DailyMana"
+  | "ManaPassive"
+  | "Experience"
+  | "Protection"
+  | "ManaShield"
+  | "GoldShield"
+  | "Strength"
+  | "Agility"
+  | "Trickery"
+  | "Postpone"
+  | "Magic"
+  | "Adventurer"
+  | "Arena"
+  | "Turns"
+  | "Crit"
+  | "GoldPassive"
+  | "IncreaseHealth"
+  | "DecreaseHealth"
+  | "IncreaseMana"
+  | "DecreaseMana";
   target: "Self" | "SingleTarget" | "All" | "Others";
   description: string;
   duration: 60 | 180 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
@@ -278,13 +278,13 @@ const trickery: Ability[] = [
     type: "Trickery",
     target: "Self",
     description:
-      "Roll a d20. On a natural 20, today's event is rerolled. You may only use this ability once per day.",
+      "Roll a d20. On a natural 20, today's event is rerolled. If you roll a natrual 1 you die. You may only use this ability once per day.",
     duration: 960, // 16 hours
     icon: "Twist-of-Fate.png",
     gemstoneCost: 2,
     manaCost: 8,
     healthCost: null,
-    xpGiven: 200,
+    xpGiven: 320,
     diceNotation: "1d20",
     value: null,
     parentAbility: "Devilish-Deal",
