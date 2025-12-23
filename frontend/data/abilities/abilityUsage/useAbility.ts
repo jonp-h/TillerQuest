@@ -9,6 +9,7 @@ import {
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
+  damageValidator,
 } from "@/data/validators/validators";
 import { getUserPassiveEffect } from "@/data/passives/getPassive";
 import { addLog } from "@/data/log/addLog";
@@ -284,13 +285,13 @@ export const selectAbility = async (
     }
     logger.error(
       "Error using " +
-        abilityName +
-        " by user " +
-        userId +
-        " on targets " +
-        targetIds +
-        ": " +
-        error,
+      abilityName +
+      " by user " +
+      userId +
+      " on targets " +
+      targetIds +
+      ": " +
+      error,
     );
     return {
       success: false,
@@ -454,10 +455,10 @@ const activatePassive = async (
     data: {
       message: ability.diceNotation
         ? "You rolled " +
-          abilityValue.total +
-          ". " +
-          ability.name.replace(/-/g, " ") +
-          " activated!"
+        abilityValue.total +
+        ". " +
+        ability.name.replace(/-/g, " ") +
+        " activated!"
         : "Activated " + ability.name.replace(/-/g, " ") + "!",
       diceRoll:
         "output" in abilityValue
@@ -1148,6 +1149,15 @@ const useTwistOfFateAbility = async (
   if (dice.total === 20) {
     message =
       "You rolled a 20! Inform a game master to (potentially) reroll the cosmic event!";
+  } if (dice.total === 1) {
+    message = "You rolled a 1, now you die!!!!"
+
+    const damage = 999999;
+    const damageToTake = await damageValidator(db, castingUser.id, castingUser.hp, damage, castingUser.class);
+    await db.user.update({
+      where: { id: castingUser.id },
+      data: { hp: { decrement: damageToTake } },
+    })
   } else {
     message = "You rolled a " + dice.total + ". Better luck next time!";
   }
@@ -1291,9 +1301,9 @@ const useDungeonAttackAbility = async (
   message =
     critPassive > 0
       ? "Rolled " +
-        value.total +
-        "! But with crit it turned into " +
-        damageResult
+      value.total +
+      "! But with crit it turned into " +
+      damageResult
       : "Rolled " + value.total + "!";
 
   await addAnalytics(db, castingUser.id, "dungeon_attack", {
