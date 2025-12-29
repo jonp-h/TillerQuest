@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "Tillerquest",
   "scripts": {
+    "postinstall": "prisma generate",
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
     "prepare": "husky"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.13.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.2.0",
@@ -15,6 +19,7 @@
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "prisma": "^6.13.0"
   }
 }

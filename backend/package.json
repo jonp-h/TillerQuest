@@ -9,13 +9,13 @@
     "lint:check": "eslint . --ext .js,.ts,",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "gen": "prisma generate && tsx src/db/generate.ts",
-    "generate": "prisma generate && tsx src/db/generate.ts",
-    "reset": "prisma generate && tsx src/db/reset.ts"
+    "gen": "tsx src/db/generate.ts",
+    "generate": "tsx src/db/generate.ts",
+    "reset": "tsx src/db/reset.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
-    "better-auth": "^1.4.5",
+    "better-auth": "^1.4.9",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
