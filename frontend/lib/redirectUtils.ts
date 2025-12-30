@@ -1,33 +1,32 @@
 import { redirect } from "next/navigation";
 import { logger } from "./logger";
-import { auth } from "@/auth";
-import { headers } from "next/headers";
+import { authClient } from "./auth-client";
 
 /**
  * Redirects unauthenticated users to the sign-in page
  */
 const redirectIfUnauthenticated = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await authClient.getSession();
 
-  if (!session?.user) {
+  if (!session.data?.user) {
     logger.warn("Unauthenticated user redirected to sign-up");
     redirect(`/signup`);
   }
 
-  return session;
+  return session.data;
 };
 
 /**
  * Redirects users with "NEW" role to a specified page
  */
 export const redirectIfNewUser = async (redirectTo: string = "/create") => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await authClient.getSession();
 
-  if (session && session.user.role === "NEW") {
+  if (session.data && session.data.user.role === "NEW") {
     redirect(redirectTo);
   }
 
-  return session;
+  return session.data;
 };
 
 /**

@@ -8,9 +8,9 @@ export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
-  // should be automatically set to true in production
+  trustedOrigins: [process.env.FRONTEND_URL as string],
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: process.env.NODE_ENV === "production",
     cookiePrefix: "tillerquest",
   },
   user: {

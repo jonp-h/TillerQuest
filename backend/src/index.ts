@@ -16,9 +16,9 @@ import {
   triggerGuildEnemyDamage,
   weeklyGuildReset,
 } from "./cronjobs.js";
-// import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
-// import { auth } from "./auth.js";
-// import authRoutes from "./routes/auth.js";
+import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+import { auth } from "./auth.js";
+import authRoutes from "./routes/auth.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
@@ -28,9 +28,11 @@ const app = express();
 app.set("trust proxy", 1);
 
 // ------ Uncomment the following line to enable Better Auth authentication ------
-// app.use("/auth", authRoutes);
 
-// app.all("/api/auth/{*any}", toNodeHandler(auth));
+app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+// have moved this below the nodehandler(auth). might be wrong
+// app.use("/auth", authRoutes);
 
 // ----------------------------------------------------------------------------
 

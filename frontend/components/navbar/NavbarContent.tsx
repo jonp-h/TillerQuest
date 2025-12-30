@@ -18,6 +18,8 @@ import { signIn, signOut, useSession } from "@/lib/auth-client";
 export default function NavbarContent() {
   const session = useSession();
   const pathname = usePathname();
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
   if (!session) {
     return (
@@ -161,7 +163,7 @@ export default function NavbarContent() {
                 display: { xs: "none", md: "none", lg: "flex" },
               }}
               onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
+                signIn.social({ provider: "github", callbackURL: frontendUrl })
               }
             >
               Sign in
@@ -173,7 +175,7 @@ export default function NavbarContent() {
               color="primary"
               size="large"
               onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
+                signIn.social({ provider: "github", callbackURL: frontendUrl })
               }
             >
               <LoginIcon />

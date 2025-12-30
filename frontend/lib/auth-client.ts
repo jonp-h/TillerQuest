@@ -3,7 +3,7 @@ import { inferAdditionalFields } from "better-auth/client/plugins";
 import { $Enums } from "@prisma/client";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL, // Optional if the API base URL matches the frontend
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL, // Optional if the API base URL matches the frontend
   plugins: [
     inferAdditionalFields({
       user: {
