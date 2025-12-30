@@ -16,24 +16,24 @@ import {
   triggerGuildEnemyDamage,
   weeklyGuildReset,
 } from "./cronjobs.js";
-import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
-import authRoutes from "./routes/auth.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
+import {
+  requireActiveUser,
+  requireAdmin,
+  requireAuth,
+} from "middleware/authMiddleware.js";
 
 const app = express();
 
+// If behind a proxy (e.g., Cloudflare, Nginx), trust the first proxy
 app.set("trust proxy", 1);
 
-// ------ Uncomment the following line to enable Better Auth authentication ------
-
+// ------------------ BETTER AUTH HANDLER ------------------------
 app.all("/api/auth/{*any}", toNodeHandler(auth));
-
-// have moved this below the nodehandler(auth). might be wrong
-// app.use("/auth", authRoutes);
-
 // ----------------------------------------------------------------------------
 
 // Mount express json middleware after Better Auth handler
@@ -42,7 +42,7 @@ app.use(express.json());
 
 // Rate limiting to prevent abuse and DoS attacks
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 });
 
@@ -51,22 +51,17 @@ app.use(limiter);
 app.use(
   cors({
     origin: "http://localhost:3000", // The frontend's origin
-    methods: ["GET"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
+    methods: ["GET", "POST", "PUT", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );
 
-// app.use("/api/me", async (req, res) => {
-//   const session = await auth.api.getSession({
-//     headers: fromNodeHeaders(req.headers),
-//   });
-//   res.json(session);
-//   return;
-// });
+app.use("/api/me", requireAuth, requireAdmin, async (req, res) => {
+  res.json({ message: "This is the /api/me endpoint" });
+  return;
+});
 
 app.use("/api", leaderboardRoutes);
-
-// const server = http.createServer(app);
 
 // ---------------------- CRONJOBS ------------------------------
 
