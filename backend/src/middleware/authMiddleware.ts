@@ -43,6 +43,8 @@ export const requireAuth = async (
       headers: fromNodeHeaders(req.headers),
     });
 
+    console.log("Auth session data:", session);
+
     if (!session?.user) {
       logger.warn(
         `Unauthenticated access attempt to ${req.path} from IP ${req.ip}`,

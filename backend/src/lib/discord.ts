@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import { logger } from "./logger.js";
 
 const webhookUrl = process.env.WEBHOOK_URL;
 // const websiteUrl = process.env.WEBSITE_URL || "http://localhost:3000";

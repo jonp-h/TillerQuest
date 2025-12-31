@@ -16,7 +16,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { voteForWish } from "@/data/wish/wish";
 import { Circle } from "@mui/icons-material";
 
 function WishCard({
@@ -47,7 +46,27 @@ function WishCard({
   const router = useRouter();
 
   const handleWish = async (amount: number) => {
-    const result = await voteForWish(wish.id, userId, amount, anonymous);
+    const result = await fetch(
+      `${process.env.BACKEND_URL}/api/wishes/${userId}/vote`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          wishId: wish.id,
+          amount: amount,
+          anonymous: anonymous,
+        }),
+      },
+    )
+      .then((res) =>
+        res
+          .json()
+          .catch(() => ({ success: false, error: "Invalid server response" })),
+      )
+      .catch(() => {
+        return { success: false, error: "Network error" };
+      });
 
     if (result.success) {
       toast.success(result.data);

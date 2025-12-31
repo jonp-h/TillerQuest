@@ -26,6 +26,8 @@ import {
   requireAdmin,
   requireAuth,
 } from "middleware/authMiddleware.js";
+import routes from "routes/routes.js";
+import { ErrorMessage } from "lib/error.js";
 
 const app = express();
 
@@ -50,7 +52,7 @@ app.use(limiter);
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // The frontend's origin
+    origin: process.env.FRONTEND_URL, // The frontend's origin
     methods: ["GET", "POST", "PUT", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
@@ -61,7 +63,45 @@ app.use("/api/me", requireAuth, requireAdmin, async (req, res) => {
   return;
 });
 
-app.use("/api", leaderboardRoutes);
+// app.use("/api", leaderboardRoutes);
+
+app.use("/api/v1/", routes);
+
+// ✅ Global error handler - catches errors from middleware
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    // Business logic errors (400 Bad Request)
+    if (err instanceof ErrorMessage) {
+      logger.info("Business logic error", {
+        path: req.path,
+        error: err.message,
+      });
+      res.status(400).json({
+        success: false,
+        error: err.message,
+      });
+      return;
+    }
+
+    // Unknown errors (500 Internal Server Error)
+    logger.error("Unhandled error", {
+      error: err.message,
+      stack: err.stack,
+      path: req.path,
+    });
+
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      timestamp: new Date().toISOString(),
+    });
+  },
+);
 
 // ---------------------- CRONJOBS ------------------------------
 
