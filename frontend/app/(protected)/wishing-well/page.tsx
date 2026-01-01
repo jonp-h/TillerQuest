@@ -2,7 +2,23 @@ import MainContainer from "@/components/MainContainer";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import WishCard from "./_components/WishCard";
 import { Typography } from "@mui/material";
-import { cookies } from "next/headers";
+import { secureGet } from "@/lib/secureFetch";
+
+interface Wish {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  value: number;
+  scheduled: Date | null;
+  wishVotes: Array<{
+    anonymous: boolean;
+    amount: number;
+    user: {
+      username: string;
+    };
+  }>;
+}
 
 async function WishingWellPage() {
   const session = await redirectIfNotActiveUser();
@@ -11,29 +27,11 @@ async function WishingWellPage() {
     throw new Error("User error");
   }
 
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
-
-  const wishes = await fetch(
-    `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/v1/wishes`,
-    {
-      credentials: "include", // Include session cookies
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieHeader,
-      },
-    },
-  );
-
-  console.log("Wishes fetch status:", wishes.status);
+  const wishes = await secureGet<Wish[]>("/wishes");
 
   if (!wishes.ok) {
-    throw new Error("Failed to fetch wishes");
+    throw new Error(wishes.error);
   }
-
-  const wishesData = await wishes.json();
-
-  console.log("Wishes data:", wishesData);
 
   return (
     <MainContainer>
@@ -72,7 +70,7 @@ async function WishingWellPage() {
             </Typography>
           </div>
           <div className="grid grid-cols-4 gap-4 my-8">
-            {wishesData.data.map((wish) => (
+            {wishes.data.map((wish) => (
               <WishCard key={wish.id} userId={session.user.id} wish={wish} />
             ))}
           </div>

@@ -4,37 +4,35 @@ import { fromNodeHeaders } from "better-auth/node";
 import { logger } from "../lib/logger.js";
 
 // Extend Express Request type to include session
-declare global {
-  namespace Express {
-    interface Request {
-      session?: {
-        user: {
-          id: string;
-          email: string;
-          name: string;
-          image?: string | null;
-          username: string;
-          role: string;
-          class: string;
-          emailVerified: boolean;
-          createdAt: Date;
-          updatedAt: Date;
-        };
-        session: {
-          id: string;
-          userId: string;
-          expiresAt: Date;
-          token: string;
-          ipAddress?: string | null;
-          userAgent?: string | null;
-        };
-      };
-    }
-  }
+export interface AuthSession {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    image?: string | null;
+    username: string;
+    role: string;
+    class: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  session: {
+    id: string;
+    userId: string;
+    expiresAt: Date;
+    token: string;
+    ipAddress?: string | null;
+    userAgent?: string | null;
+  };
+}
+
+export interface AuthenticatedRequest extends Request {
+  session?: AuthSession;
 }
 
 export const requireAuth = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -43,7 +41,7 @@ export const requireAuth = async (
       headers: fromNodeHeaders(req.headers),
     });
 
-    console.log("Auth session data:", session);
+    console.log("recieved auth request");
 
     if (!session?.user) {
       logger.warn(
@@ -84,7 +82,7 @@ export const requireAuth = async (
  * router.post('/ability/use', requireAuth, requireActiveUser, abilityController)
  */
 export const requireActiveUser = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -128,7 +126,7 @@ export const requireActiveUser = async (
  * router.delete('/user/:id', requireAuth, requireAdmin, deleteUserController)
  */
 export const requireAdmin = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -174,7 +172,7 @@ export const requireAdmin = async (
  * router.post('/onboarding/complete', requireAuth, requireNewUser, completeOnboardingController)
  */
 export const requireNewUser = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -225,7 +223,11 @@ export const requireNewUser = async (
  * router.get('/profile/:id', requireAuth, requireUserId('id'), getUserProfileController)
  */
 export const requireUserId = (paramName: string = "userId") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     if (!req.session?.user) {
       logger.error(
         "requireUserId called without session - check middleware order",
@@ -290,7 +292,11 @@ export const requireUserId = (paramName: string = "userId") => {
  * router.get('/user/:username/stats', requireAuth, requireUsername(), getUserStatsController)
  */
 export const requireUsername = (paramName: string = "username") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     if (!req.session?.user) {
       logger.error(
         "requireUsername called without session - check middleware order",
@@ -350,7 +356,11 @@ export const requireUsername = (paramName: string = "username") => {
  * router.post('/user/:userId/ability', requireUserIdAndActive(), useAbilityController)
  */
 export const requireUserIdAndActive = (paramName: string = "userId") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     // Step 1: Verify authentication
     try {
       const session = await auth.api.getSession({
@@ -434,7 +444,11 @@ export const requireUserIdAndActive = (paramName: string = "userId") => {
  * router.post('/profile/:username/update', requireUsernameAndActive(), updateProfileController)
  */
 export const requireUsernameAndActive = (paramName: string = "username") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const session = await auth.api.getSession({
         headers: fromNodeHeaders(req.headers),
@@ -515,7 +529,11 @@ export const requireUsernameAndActive = (paramName: string = "username") => {
  * router.post('/onboarding/:userId/class', requireUserIdAndNew(), selectClassController)
  */
 export const requireUserIdAndNew = (paramName: string = "userId") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const session = await auth.api.getSession({
         headers: fromNodeHeaders(req.headers),
