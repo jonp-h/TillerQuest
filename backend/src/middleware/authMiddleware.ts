@@ -2,34 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { auth } from "../auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { logger } from "../lib/logger.js";
-
-// Extend Express Request type to include session
-export interface AuthSession {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    image?: string | null;
-    username: string;
-    role: string;
-    class: string;
-    emailVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-  session: {
-    id: string;
-    userId: string;
-    expiresAt: Date;
-    token: string;
-    ipAddress?: string | null;
-    userAgent?: string | null;
-  };
-}
-
-export interface AuthenticatedRequest extends Request {
-  session?: AuthSession;
-}
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const requireAuth = async (
   req: AuthenticatedRequest,

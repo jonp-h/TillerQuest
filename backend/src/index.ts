@@ -65,7 +65,7 @@ app.use("/api/me", requireAuth, requireAdmin, async (req, res) => {
 
 // app.use("/api", leaderboardRoutes);
 
-app.use("/api/v1/", routes);
+app.use("/api/v1", routes);
 
 // ✅ Global error handler - catches errors from middleware
 app.use(

@@ -82,10 +82,6 @@ export const voteForWish = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        logger.info("Wish vote validation error", {
-          userId: req.params.userId,
-          error: error.message,
-        });
         return res.status(400).json({
           success: false,
           error: error.message,

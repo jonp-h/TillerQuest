@@ -1,0 +1,29 @@
+import { Request, Response } from "express";
+import { db } from "../../lib/db.js";
+import { logger } from "../../lib/logger.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
+
+export const getObjectItems = [
+  requireAuth,
+  requireActiveUser,
+  async (req: Request, res: Response) => {
+    try {
+      const items = await db.shopItem.findMany({
+        where: { type: "Object" },
+        orderBy: [{ rarity: "asc" }, { price: "asc" }, { levelReq: "asc" }],
+      });
+
+      res.json({ success: true, data: items });
+    } catch (error) {
+      logger.error("Error fetching object items: " + error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to fetch object items",
+        timestamp: new Date().toISOString(),
+      });
+    }
+  },
+];
