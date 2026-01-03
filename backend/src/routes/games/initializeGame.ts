@@ -4,16 +4,20 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import z from "zod";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { validateBody } from "middleware/validationMiddleware.js";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-
-export const initializeGameSchema = z.object({
-  gameName: z.enum(["TypeQuest", "WordQuest", "BinaryJack"]),
-});
+import {
+  gameNameSchema,
+  userIdParamSchema,
+} from "utils/validators/validationUtils.js";
 
 export const initializeGame = [
   requireUserIdAndActive(),
-  validateBody(initializeGameSchema),
+  validateParams(userIdParamSchema),
+  validateBody(gameNameSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.params.userId;
@@ -58,10 +62,11 @@ export const initializeGame = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
       logger.error("Error initializing game: " + error);
       res.status(500).json({

@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getDeadUserCount = [
   requireAuth,
   requireAdmin,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const deadUserCount = await db.user.count({
         where: {

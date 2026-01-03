@@ -2,28 +2,37 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
-import z from "zod";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { validateBody } from "middleware/validationMiddleware.js";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { updateTypeQuestGame } from "utils/games/typeQuest.js";
 import { updateWordQuestGame } from "utils/games/wordQuest.js";
+import {
+  gameIdParamSchema,
+  updateGameSchema,
+} from "utils/validators/validationUtils.js";
 
-export const updateGameSchema = z.object({
-  data: z.array(z.number()),
-  mistakes: z.number().optional(),
-});
+interface UpdateGameRequest extends AuthenticatedRequest {
+  body: {
+    data: number[];
+    mistakes?: number;
+  };
+}
 
 export const updateGame = [
   requireUserIdAndActive(),
+  validateParams(gameIdParamSchema),
   validateBody(updateGameSchema),
-  async (req: AuthenticatedRequest, res: Response) => {
+  async (req: UpdateGameRequest, res: Response) => {
     try {
       const gameId = req.params.gameId;
       const { data, mistakes } = req.body;
-      const userId = req.session?.user.id;
+      const userId = req.session!.user.id;
 
-      return await db.$transaction(async (db) => {
+      await db.$transaction(async (db) => {
         const game = await db.game.findUnique({
           where: { id: gameId, userId: userId },
         });
@@ -45,7 +54,7 @@ export const updateGame = [
               metadata,
               game,
               data[0],
-              mistakes,
+              mistakes!,
             ));
             break;
           case "WordQuest":
@@ -73,10 +82,11 @@ export const updateGame = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
       logger.error("Error starting game: " + error);
       res.status(500).json({

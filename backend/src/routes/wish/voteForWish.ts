@@ -1,26 +1,23 @@
-import { Request, Response } from "express";
-import { z } from "zod";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { ErrorMessage } from "../../lib/error.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-
-// Validation schema (could be in validators.ts if shared)
-const voteForWishSchema = z.object({
-  wishId: z.number().int().positive("Wish ID must be a positive integer"),
-  amount: z
-    .number()
-    .int()
-    .positive("Amount must be greater than zero")
-    .max(10000, "Amount must not exceed 10000 gold"),
-  anonymous: z.boolean().default(false),
-});
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import {
+  userIdParamSchema,
+  voteForWishSchema,
+} from "utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const voteForWish = [
   requireUserIdAndActive(),
+  validateParams(userIdParamSchema),
   validateBody(voteForWishSchema),
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.params.userId;
 
@@ -82,10 +79,11 @@ export const voteForWish = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Unexpected error voting for wish:", {

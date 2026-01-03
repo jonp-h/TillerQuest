@@ -1,19 +1,23 @@
-import { Request, Response } from "express";
-import { z } from "zod";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { ErrorMessage } from "../../lib/error.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-
-const equipItemSchema = z.object({
-  itemId: z.number().int().positive("Id must be greater than zero"),
-});
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import {
+  equipItemSchema,
+  userIdParamSchema,
+} from "utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const equipItem = [
   requireUserIdAndActive(),
+  validateParams(userIdParamSchema),
   validateBody(equipItemSchema),
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.params.userId;
 
@@ -56,10 +60,11 @@ export const equipItem = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Unexpected error when equipping item:", {

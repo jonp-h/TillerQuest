@@ -1,36 +1,37 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-import z from "zod";
-import { escapeHtml } from "utils/validators/validationUtils.js";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import {
+  escapeHtml,
+  guildNameParamSchema,
+  updateGuildNameSchema,
+} from "utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
-export const updateGuildNameSchema = z.object({
-  newName: z
-    .string()
-    .min(3, "Guild name must be above 3 characters")
-    .max(25, "Guild name must be below 25 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
-});
-
-interface UpdateGuildNameProps {
-  newName: string;
+interface UpdateGuildNameRequest extends AuthenticatedRequest {
+  body: {
+    newName: string;
+  };
 }
 
 export const updateGuildName = [
   requireUserIdAndActive(),
+  validateParams(guildNameParamSchema),
   validateBody(updateGuildNameSchema),
-  async (req: AuthenticatedRequest, res: Response) => {
+  async (req: UpdateGuildNameRequest, res: Response) => {
     try {
       const oldName = req.params.guildName;
       const userId = req.session!.user.id;
 
-      const data = req.body as UpdateGuildNameProps;
+      const { newName } = req.body;
 
-      if (oldName === data.newName) {
+      if (oldName === newName) {
         throw new ErrorMessage(
           "New guild name must be different from the old one.",
         );
@@ -57,7 +58,7 @@ export const updateGuildName = [
       const guildNameTaken = await db.guild.findFirst({
         where: {
           name: {
-            equals: data.newName,
+            equals: newName,
             mode: "insensitive",
           },
         },
@@ -69,7 +70,7 @@ export const updateGuildName = [
 
       // Sanitize inputs
       const validatedData = {
-        name: escapeHtml(data.newName),
+        name: escapeHtml(newName),
       };
 
       await db.$transaction(async (db) => {
@@ -119,14 +120,15 @@ export const updateGuildName = [
 
       res.json({
         success: true,
-        data: "Successfully updated guild name to " + data.newName,
+        data: "Successfully updated guild name to " + newName,
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Error updating user: " + error);

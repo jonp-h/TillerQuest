@@ -1,22 +1,29 @@
-import { Request, Response } from "express";
-import { z } from "zod";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { ErrorMessage } from "../../lib/error.js";
+import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import {
-  requireAuth,
-  requireUserIdAndActive,
-} from "../../middleware/authMiddleware.js";
-import { validateBody } from "middleware/validationMiddleware.js";
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import {
+  purchaseItemSchema,
+  userIdParamSchema,
+} from "utils/validators/validationUtils.js";
 
-const purchaseItemSchema = z.object({
-  itemId: z.number().int().positive("Id must be greater than zero"),
-});
+interface PurchaseItemRequest extends AuthenticatedRequest {
+  body: {
+    itemId: number;
+  };
+}
 
 export const purchaseItem = [
   requireUserIdAndActive(),
+  validateParams(userIdParamSchema),
   validateBody(purchaseItemSchema),
-  async (req: Request, res: Response) => {
+  async (req: PurchaseItemRequest, res: Response) => {
     try {
       const userId = req.params.userId;
 
@@ -79,10 +86,11 @@ export const purchaseItem = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Unexpected error when purchasing item:", {

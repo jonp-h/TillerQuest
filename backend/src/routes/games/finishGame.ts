@@ -5,9 +5,11 @@ import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import z from "zod";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { ErrorMessage } from "lib/error.js";
-import { addLog } from "lib/addLog.js";
+import { addLog } from "utils/logs/addLog.js";
 import { goldValidator } from "utils/abilities/abilityValidators.js";
-import { addAnalytics } from "lib/addAnalytics.js";
+import { addAnalytics } from "utils/analytics/addAnalytics.js";
+import { validateParams } from "middleware/validationMiddleware.js";
+import { gameIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const finishGameSchema = z.object({
   gameName: z.enum(["TypeQuest", "WordQuest", "BinaryJack"]),
@@ -15,10 +17,11 @@ export const finishGameSchema = z.object({
 
 export const finishGame = [
   requireUserIdAndActive(),
+  validateParams(gameIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const gameId = req.params.gameId;
-      const userId = req.session?.user.id;
+      const userId = req.session!.user.id;
 
       return await db.$transaction(async (db) => {
         const game = await db.game.findUnique({
@@ -100,10 +103,11 @@ export const finishGame = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
       logger.error("Error starting game: " + error);
       res.status(500).json({

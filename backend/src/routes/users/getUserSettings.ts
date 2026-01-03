@@ -1,15 +1,19 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireAuth,
   requireUserIdAndActive,
 } from "../../middleware/authMiddleware.js";
+import { usernameParamSchema } from "utils/validators/validationUtils.js";
+import { validateParams } from "middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getUserSettings = [
   requireAuth,
   requireUserIdAndActive(),
-  async (req: Request, res: Response) => {
+  validateParams(usernameParamSchema),
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const username = req.params.username;
       const user = await db.user.findUnique({

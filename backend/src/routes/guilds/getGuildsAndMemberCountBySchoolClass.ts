@@ -3,11 +3,14 @@ import { db, SchoolClass } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAuth, requireUserId } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { validateQuery } from "middleware/validationMiddleware.js";
+import { schoolClassSchema } from "utils/validators/validationUtils.js";
 
 // get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
 export const getGuildsAndMemberCountBySchoolClass = [
   requireAuth,
   requireUserId(),
+  validateQuery(schoolClassSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const schoolClass = req.query.schoolClass as string;

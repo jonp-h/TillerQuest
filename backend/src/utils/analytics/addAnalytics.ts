@@ -1,5 +1,5 @@
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { logger } from "./logger.js";
+import { logger } from "../../lib/logger.js";
 
 /**
  * Adds an analytics record to the database for a specific user and trigger event.

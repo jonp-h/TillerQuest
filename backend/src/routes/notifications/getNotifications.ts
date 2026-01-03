@@ -2,17 +2,13 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-  requireUserIdAndActive,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 
 export const getNotifications = [
   requireUserIdAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const userId = req.session?.user.id;
+      const userId = req.session!.user.id;
 
       const logs = await db.systemMessage.findMany({
         where: {

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { $Enums, db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
@@ -7,62 +7,45 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { checkNewUserSecret } from "utils/validators/secretValidation.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-import z from "zod";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
 import { validateUserCreation } from "utils/validators/userUpdateValidation.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import {
+  updateUserSchema,
+  userIdParamSchema,
+} from "utils/validators/validationUtils.js";
 
-export const updateUserSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Username must be above 3 characters")
-    .max(20, "Username must be below 20 characters")
-    .regex(
-      /^[a-zA-Z0-9-_]+$/,
-      "Username may only contain latin letters, numbers, - and _",
-    ),
-  name: z
-    .string()
-    .min(3, "Given name must be above 3 characters")
-    .max(20, "Given name must be below 20 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Given name may only contain letters"),
-  lastname: z
-    .string()
-    .min(3, "Lastname must be above 3 characters")
-    .max(20, "Lastname must be below 20 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
-  playerClass: z.string(),
-  guildId: z.number(),
-  image: z.string(),
-  schoolClass: z.enum($Enums.SchoolClass, "Invalid school class"),
-  publicHighscore: z.boolean(),
-  secret: z.string(),
-});
-
-interface UpdateUserProps {
-  secret: string;
-  username: string;
-  name: string;
-  lastname: string;
-  playerClass: $Enums.Class;
-  image: string;
-  guildId: number;
-  schoolClass: $Enums.SchoolClass;
-  publicHighscore: boolean;
+interface UserUpdateRequest extends AuthenticatedRequest {
+  body: {
+    secret: string;
+    username: string;
+    name: string;
+    lastname: string;
+    playerClass: $Enums.Class;
+    image: string;
+    guildId: number;
+    schoolClass: $Enums.SchoolClass;
+    publicHighscore: boolean;
+  };
 }
 
 export const updateUser = [
   requireAuth,
   requireUserIdAndNew(),
+  validateParams(userIdParamSchema),
   validateBody(updateUserSchema),
-  async (req: Request, res: Response) => {
+  async (req: UserUpdateRequest, res: Response) => {
     try {
       const userId = req.params.userId;
 
-      const data = req.body as UpdateUserProps;
+      const data = req.body;
 
       // backend validation
       if (!(await checkNewUserSecret(userId, data.secret))) {
-        return false;
+        throw new ErrorMessage("Invalid secret provided.");
       }
 
       const formValues = {
@@ -139,10 +122,11 @@ export const updateUser = [
       res.json({ success: true, data: "Success!" });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Error updating user: " + error);

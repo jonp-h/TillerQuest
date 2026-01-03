@@ -135,7 +135,7 @@ export const updateProfile = async (
         archiveConsent: data.archiveConsent,
       },
     });
-    return "Profile updated successfully";
+    return { success: true, data: "Profile updated successfully." };
   } catch (error) {
     if (error instanceof AuthorizationError) {
       logger.warn(

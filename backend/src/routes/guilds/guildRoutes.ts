@@ -1,7 +1,11 @@
 import express from "express";
 import { getGuildMembersForAbilityTarget } from "./getGuildMembersForAbilityTarget.js";
 import { getGuildMembers } from "./getGuildMembers.js";
+import { startGuildBattle } from "./startGuildBattle.js";
+import { voteToStartNextBattle } from "./voteToStartNextBattle.js";
+import { getGuildEnemies } from "./getGuildEnemies.js";
 import { updateGuildName } from "./updateGuildName.js";
+import { getGuildsAndMemberCountBySchoolClass } from "./getGuildsAndMemberCountBySchoolClass.js";
 
 const router = express.Router();
 
@@ -21,5 +25,12 @@ router.get(
   "/guilds?schoolclass=:schoolClass",
   getGuildsAndMemberCountBySchoolClass,
 );
+
+// Guild battle routes
+router.post("/guilds/:guildName/battles", startGuildBattle);
+router.post("/guilds/:guildName/battles/vote", voteToStartNextBattle);
+
+// Guild enemy routes
+router.get("/guilds/:guildName/enemies", getGuildEnemies);
 
 export default router;

@@ -9,6 +9,7 @@ generator client {
 
 enum UserRole {
   NEW
+  INACTIVE
   USER
   ARCHIVED
   ADMIN
@@ -195,13 +196,13 @@ model User {
 
   role UserRole @default(NEW)
 
-  readMessages    SystemMessage[] @relation("ReadMessages") // m-n relation to system messages. A user can read many system messages
-  wishVotes       WishVote[] // m-n relation to wishes. A user can vote on many wishes
-  publicHighscore Boolean         @default(false)
-  archiveConsent  Boolean         @default(false)
-  email           String?         @unique
-  emailVerified   Boolean         @default(false)
-  accounts        Account[] // Relation to OAuth account
+  readNotifications Notifications[] @relation("ReadNotifications") // m-n relation to system messages. A user can read many system messages
+  wishVotes         WishVote[] // m-n relation to wishes. A user can vote on many wishes
+  publicHighscore   Boolean         @default(false)
+  archiveConsent    Boolean         @default(false)
+  email             String?         @unique
+  emailVerified     Boolean         @default(false)
+  accounts          Account[] // Relation to OAuth account
   // sessions      Session[]      
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
@@ -211,9 +212,11 @@ model User {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  sessions     Session[]
-  imageUploads ImageUpload[] @relation("ImageUploader")
-  imageReviews ImageUpload[] @relation("ImageReviewer")
+  sessions        Session[]
+  imageUploads    ImageUpload[]  @relation("ImageUploader")
+  imageReviews    ImageUpload[]  @relation("ImageReviewer")
+  notifications   Notifications? @relation(fields: [notificationsId], references: [id])
+  notificationsId Int?
 
   @@index([username])
 }
@@ -430,13 +433,15 @@ model Log {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model SystemMessage {
+model Notifications {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
   createdAt DateTime @default(now())
 
-  readers User[] @relation("ReadMessages")
+  readers User[]  @relation("ReadMessages")
+  user    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }
 
 model Game {

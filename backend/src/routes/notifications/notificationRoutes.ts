@@ -5,6 +5,6 @@ import { readNotification } from "./readNotification.js";
 const router = express.Router();
 
 router.get("/notifications", getNotifications);
-router.get("/notifications/:id/read", readNotification);
+router.post("/notifications/:id/read", readNotification);
 
 export default router;

@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireActiveUser,
   requireAuth,
 } from "../../middleware/authMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 /**
  * Get all guilds with their members for admin view.
@@ -13,7 +14,7 @@ import {
 export const getGuilds = [
   requireAuth,
   requireActiveUser,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guilds = await db.guild.findMany({
         select: {

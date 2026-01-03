@@ -1,9 +1,9 @@
 import { logger } from "lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { getUserPassiveEffect } from "./abilityHelpers.js";
+import { getUserPassiveEffect } from "./getUserPassiveEffect.js";
 import { $Enums, User } from "lib/db.js";
 import { gemstonesOnLevelUp } from "gameSettings.js";
-import { addLog } from "lib/addLog.js";
+import { addLog } from "../logs/addLog.js";
 
 export const healingValidator = async (
   db: PrismaTransaction,

@@ -1,10 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin, requireAuth } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import { validateBody } from "middleware/validationMiddleware.js";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
 import z from "zod";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 
 export const adminUpdateNextGuildLeaderSchema = z.object({
   nextGuildLeaderId: z.cuid(),
@@ -13,8 +18,9 @@ export const adminUpdateNextGuildLeaderSchema = z.object({
 export const adminUpdateNextGuildLeader = [
   requireAuth,
   requireAdmin,
+  validateParams(guildNameParamSchema),
   validateBody(adminUpdateNextGuildLeaderSchema),
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guildName = req.params.guildName;
 
@@ -45,7 +51,7 @@ export const adminUpdateNextGuildLeader = [
         }
       }
 
-      const updatedGuild = await db.guild.update({
+      await db.guild.update({
         where: {
           name: guildName,
         },
@@ -60,10 +66,11 @@ export const adminUpdateNextGuildLeader = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Error updating next guild leader: " + error);

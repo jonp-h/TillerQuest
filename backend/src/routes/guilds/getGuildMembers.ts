@@ -1,15 +1,19 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireActiveUser,
   requireAuth,
 } from "../../middleware/authMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { validateParams } from "middleware/validationMiddleware.js";
+import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 
 export const getGuildMembers = [
   requireAuth,
   requireActiveUser,
-  async (req: Request, res: Response) => {
+  validateParams(guildNameParamSchema),
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guildName = req.params.guildName;
       const members = await db.user.findMany({

@@ -1,20 +1,24 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin, requireAuth } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-import z from "zod";
-
-export const adminUpdateGuildLeaderSchema = z.object({
-  newLeaderId: z.cuid(),
-});
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import {
+  guildNameParamSchema,
+  userIdParamSchema,
+} from "utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const adminUpdateGuildLeader = [
   requireAuth,
   requireAdmin,
-  validateBody(adminUpdateGuildLeaderSchema),
-  async (req: Request, res: Response) => {
+  validateParams(guildNameParamSchema),
+  validateBody(userIdParamSchema),
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guildName = req.params.guildName;
 
@@ -60,10 +64,11 @@ export const adminUpdateGuildLeader = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Error updating guild leader: " + error);

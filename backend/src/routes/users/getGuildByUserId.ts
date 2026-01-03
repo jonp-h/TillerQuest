@@ -1,11 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { validateParams } from "middleware/validationMiddleware.js";
+import { userIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const getGuildByUserId = [
   requireUserIdAndActive(),
-  async (req: Request, res: Response) => {
+  validateParams(userIdParamSchema),
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.params.userId;
 

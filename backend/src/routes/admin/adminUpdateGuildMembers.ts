@@ -1,37 +1,40 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db, SchoolClass } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin, requireAuth } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import { validateBody } from "middleware/validationMiddleware.js";
-import z from "zod";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import {
+  adminUpdateGuildMembersSchema,
+  guildNameParamSchema,
+} from "utils/validators/validationUtils.js";
 
-export const adminUpdateGuildMembersSchema = z.object({
-  newName: z
-    .string()
-    .min(3, "Guild name must be above 3 characters")
-    .max(25, "Guild name must be below 25 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
-  oldName: z.string(),
-});
-
-interface UpdateGuildMembersProps {
-  id: string;
-  name: string | null;
-  lastname: string | null;
-  schoolClass: SchoolClass | null;
+interface AdminUpdateGuildMembersRequest extends AuthenticatedRequest {
+  body: {
+    id: string;
+    name: string | null;
+    lastname: string | null;
+    schoolClass: SchoolClass | null;
+  }[];
+  params: {
+    guildName: string;
+  };
 }
-[];
 
 export const adminUpdateGuildMembers = [
   requireAuth,
   requireAdmin,
+  validateParams(guildNameParamSchema),
   validateBody(adminUpdateGuildMembersSchema),
-  async (req: Request, res: Response) => {
+  async (req: AdminUpdateGuildMembersRequest, res: Response) => {
     try {
       const guildName = req.params.guildName;
 
-      const newMembers = req.body as UpdateGuildMembersProps;
+      const newMembers = req.body;
 
       const guilds = await db.guild.update({
         where: {
@@ -50,10 +53,11 @@ export const adminUpdateGuildMembers = [
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: error.message,
         });
+        return;
       }
 
       logger.error("Error updating guild members: " + error);

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { z } from "zod";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
@@ -7,6 +7,7 @@ import {
   requireAuth,
 } from "../../middleware/authMiddleware.js";
 import { validateBody } from "middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 const passiveCheckSchema = z.object({
   userIds: z.array(z.cuid()),
@@ -17,10 +18,8 @@ export const checkIfTargetsHavePassive = [
   requireAuth,
   requireActiveUser,
   validateBody(passiveCheckSchema),
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const userId = req.params.userId;
-
       const { userIds, abilityName } = req.body;
 
       let allUsersHavePassive = true;

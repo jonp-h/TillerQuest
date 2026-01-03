@@ -1,17 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireUserIdAndActive,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getLastMana = [
-  requireAuth,
   requireUserIdAndActive(),
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const userId = req.params.userId;
+      const userId = req.session!.user.id;
       const user = await db.user.findUnique({
         where: { id: userId },
         select: {
