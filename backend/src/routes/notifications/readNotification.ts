@@ -5,14 +5,26 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { idParamSchema } from "utils/validators/validationUtils.js";
+import { validateBody } from "../../middleware/validationMiddleware.js";
+import { userIdParamSchema } from "../../utils/validators/validationUtils.js";
+
+interface ReadNotificationRequest extends AuthenticatedRequest {
+  params: {
+    userId: string;
+  };
+  body: {
+    messageId: number;
+  };
+}
 
 export const readNotification = [
   requireUserIdAndActive(),
-  validateParams(idParamSchema),
-  async (req: AuthenticatedRequest, res: Response) => {
+  validateParams(userIdParamSchema),
+  validateBody(idParamSchema("messageId")),
+  async (req: ReadNotificationRequest, res: Response) => {
     try {
-      const messageId = parseInt(req.params.id, 10);
-      const userId = req.session?.user.id;
+      const userId = req.params.userId;
+      const messageId = req.body.messageId;
 
       await db.systemMessage.update({
         where: {

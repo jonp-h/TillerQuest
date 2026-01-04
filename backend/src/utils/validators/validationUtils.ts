@@ -48,7 +48,7 @@ export const updateUserSchema = z.object({
 });
 
 export const updateUserSettingsSchema = z.object({
-  username: z
+  newUsername: z
     .string()
     .min(3, "Username must be above 3 characters")
     .max(20, "Username must be below 20 characters")
@@ -170,9 +170,10 @@ export const checkIfUserOwnsAbilitySchema = z.object({
   abilityName: z.string().min(1, "Ability name is required"),
 });
 
-export const idParamSchema = z.object({
-  id: z.coerce.number().int().positive(),
-});
+export const idParamSchema = (idName = "id") =>
+  z.object({
+    [idName]: z.coerce.number("ID must be a number").int().positive(),
+  });
 
 export const updateGameSchema = z.object({
   data: z.array(z.number()),

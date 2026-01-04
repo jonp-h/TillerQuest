@@ -1,6 +1,4 @@
 import MainContainer from "@/components/MainContainer";
-import { getGuildmembersByGuildname } from "@/data/user/getGuildmembers";
-import { getUserProfileByUsername } from "@/data/user/getUser";
 import {
   Avatar,
   Button,
@@ -22,8 +20,6 @@ import {
   Stadium,
 } from "@mui/icons-material";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { getUserProfileAbilities } from "@/data/abilities/getters/getAbilities";
-import { getUserPassives } from "@/data/passives/getPassive";
 import TimeLeft from "@/components/TimeLeft";
 import InformationBox from "./_components/InformationBox";
 import AbilityCard from "@/components/AbilityCard";
@@ -32,6 +28,9 @@ import ProfileBadge from "./_components/ProfileBadge";
 import Log from "./_components/Log";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityText from "@/components/RarityText";
+import { secureFetch } from "@/lib/secureFetch";
+import { UserProfile } from "./_components/types";
+import { GuildMember } from "../../abilities/[abilityName]/_components/interfaces";
 
 export default async function ProfilePage({
   params,
@@ -40,23 +39,28 @@ export default async function ProfilePage({
 }) {
   const { username } = await params;
   const session = await redirectIfNotActiveUser();
-  const user = await getUserProfileByUsername(username);
-
-  if (!user) {
+  const user = await secureFetch<UserProfile>(
+    `/users/username/${username}/profile`,
+  );
+  if (!user.ok) {
     notFound();
   }
 
-  const guildMembers = await getGuildmembersByGuildname(user.guildName || "");
+  // TODO: could be optimized by inserting into profile query
+  const guildMembers = await secureFetch<GuildMember[]>(
+    `/guilds/${user.data.guildName || ""}/members`,
+  );
+  if (!guildMembers.ok) {
+    throw new Error(guildMembers.error);
+  }
 
-  const userAbilities = await getUserProfileAbilities(user.id);
-  const passives = await getUserPassives(user.id);
   return (
     <MainContainer>
-      {session?.user.username === user.username && (
-        <InformationBox user={user} />
+      {session?.user.username === user.data.username && (
+        <InformationBox user={user.data} />
       )}
       <div className="flex flex-col justify-center lg:flex-row">
-        {user.guildName && (
+        {user.data.guildName && (
           <Paper
             elevation={3}
             className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
@@ -72,23 +76,23 @@ export default async function ProfilePage({
                 fontSize: "3rem",
                 fontWeight: "bold",
               }}
-              src={"/guilds/" + user.guild?.icon}
+              src={"/guilds/" + user.data.guild?.icon}
               draggable={false}
             >
-              {user.guildName.charAt(0)}
+              {user.data.guildName.charAt(0)}
             </Avatar>
             <Typography variant="h4" align="center" flexWrap="wrap">
-              {user.guildName}
+              {user.data.guildName}
             </Typography>
             <div className="grid justify-center grid-flow-col-dense lg:grid-flow-row lg:grid-cols-1  gap-4 items-center p-5 flex-grow">
-              {guildMembers?.map((member) =>
-                member.username !== user.username ? (
+              {guildMembers.data.map((member) =>
+                member.username !== user.data.username ? (
                   <MiniatureProfile key={member.id} member={member} />
                 ) : null,
               )}
             </div>
 
-            {session?.user.username === user.username && (
+            {session?.user.username === user.data.username && (
               <Button
                 variant="text"
                 color="inherit"
@@ -104,7 +108,7 @@ export default async function ProfilePage({
           className="flex flex-col m-3 gap-3 items-center p-5 lg:w-5/12 w-full order-first lg:order-2"
           elevation={3}
         >
-          {session?.user.username === user.username && (
+          {session?.user.username === user.data.username && (
             <div className="self-end ml-auto absolute">
               <Link href={`/profile/${username}/settings`}>
                 <Settings
@@ -118,16 +122,16 @@ export default async function ProfilePage({
             <Image
               className="rounded-full"
               src={
-                user.hp !== 0
-                  ? "/classes/" + user.image + ".png"
+                user.data.hp !== 0
+                  ? "/classes/" + user.data.image + ".png"
                   : "/classes/Grave.png"
               }
-              alt={user.username || ""}
+              alt={user.data.username || ""}
               width={250}
               height={250}
               draggable={false}
             />
-            {user.guild?.guildLeader === user.id && (
+            {user.data.guild?.guildLeader === user.data.id && (
               <div className="absolute top-5 right-5">
                 <Tooltip title="This week's guild leader" arrow placement="top">
                   <LocalPolice sx={{ color: "silver", fontSize: 50 }} />
@@ -136,66 +140,66 @@ export default async function ProfilePage({
             )}
           </div>
           <div className=" flex justify-evenly gap-3 items-center text-2xl">
-            <Typography variant="h5">{user.name}</Typography>
+            <Typography variant="h5">{user.data.name}</Typography>
             <Typography
               variant="h4"
               color="primary"
               sx={{ fontWeight: "bold" }}
             >
-              &quot;{user?.username}&quot;
+              &quot;{user.data.username}&quot;
             </Typography>
-            <Typography variant="h5">{user?.lastname}</Typography>
+            <Typography variant="h5">{user.data.lastname}</Typography>
           </div>
           <div className="flex gap-5">
             <RarityText
               className="text-2xl"
-              rarity={user.titleRarity || "Common"}
+              rarity={user.data.titleRarity || "Common"}
               width="full"
             >
-              {user.title}
+              {user.data.title}
             </RarityText>
             <Typography variant="h6" color="secondary">
-              {user.class}
+              {user.data.class}
             </Typography>
             <Typography variant="h6" color="success" className=" text-nowrap">
-              Level: {user.level}
+              Level: {user.data.level}
             </Typography>
           </div>
 
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.xp} / {Math.ceil(user.xp / 1000) * 1000}
+                XP: {user.data.xp} / {Math.ceil(user.data.xp / 1000) * 1000}
               </Typography>
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.xp % 1000) / 10}
+                value={(user.data.xp % 1000) / 10}
               />
             </div>
             <div>
               <Typography variant="body2" color={red[600]}>
-                HP: {user.hp} / {user.hpMax}
+                HP: {user.data.hp} / {user.data.hpMax}
               </Typography>
               <LinearProgress
                 color="health"
                 variant="determinate"
-                value={(user.hp / user.hpMax) * 100}
+                value={(user.data.hp / user.data.hpMax) * 100}
               />
             </div>
             <div>
               <Typography variant="body2" color={blue[300]}>
-                Mana: {user.mana} / {user.manaMax}
+                Mana: {user.data.mana} / {user.data.manaMax}
               </Typography>
               <LinearProgress
                 color="mana"
                 variant="determinate"
-                value={(user.mana / user.manaMax) * 100}
+                value={(user.data.mana / user.data.manaMax) * 100}
               />
             </div>
           </div>
           <div className="flex w-full mt-3 justify-evenly gap-3 flex-wrap">
-            {user.inventory.map((badge) => (
+            {user.data.inventory.map((badge) => (
               <ProfileBadge
                 key={badge.name}
                 badgeTitle={badge.name}
@@ -216,28 +220,28 @@ export default async function ProfilePage({
               <Tooltip title="Earned by completing games in the arena">
                 <div className="flex items-center justify-center gap-2">
                   <Typography variant="h5" color="gold">
-                    Gold: {user.gold} <Circle sx={{ color: "gold" }} />
+                    Gold: {user.data.gold} <Circle sx={{ color: "gold" }} />
                   </Typography>
                 </div>
               </Tooltip>
               <Tooltip title="Earned together with daily mana and certain events/abilities">
                 <div className="flex items-center justify-center gap-2">
                   <Typography variant="h5" color="arenatoken">
-                    Tokens: {user.arenaTokens} <Stadium color="inherit" />
+                    Tokens: {user.data.arenaTokens} <Stadium color="inherit" />
                   </Typography>
                 </div>
               </Tooltip>
               <Tooltip title="Earned together with daily mana and certain events/abilities. Reset each day">
                 <div className="flex items-center justify-center gap-2">
                   <Typography variant="h5" color="health">
-                    Turns: {user.turns} <HourglassEmpty color="inherit" />
+                    Turns: {user.data.turns} <HourglassEmpty color="inherit" />
                   </Typography>
                 </div>
               </Tooltip>
               <Tooltip title="Earned by gaining experience and leveling up">
                 <div className="flex items-center justify-center gap-2">
                   <Typography variant="h5" color="gemstones">
-                    Gemstones: {user.gemstones} <Diamond color="inherit" />
+                    Gemstones: {user.data.gemstones} <Diamond color="inherit" />
                   </Typography>
                 </div>
               </Tooltip>
@@ -251,7 +255,7 @@ export default async function ProfilePage({
               Passives
             </Typography>
             <div className="grid grid-cols-3 lg:grid-cols-5 mt-4 gap-4">
-              {passives?.map((passive) => (
+              {user.data.passives.map((passive) => (
                 <Tooltip
                   placement="top"
                   enterDelay={1000}
@@ -316,9 +320,9 @@ export default async function ProfilePage({
         <Typography variant="h4" align="center">
           Abilities
         </Typography>
-        {user.hp !== 0 ? (
+        {user.data.hp !== 0 ? (
           <div className="grid grid-cols-3 gap-3 p-5 lg:grid-cols-6 xl:grid-cols-10">
-            {userAbilities?.map((ability) => (
+            {user.data.abilities.map((ability) => (
               <AbilityCard
                 key={ability.ability.name}
                 ability={ability.ability}
@@ -331,7 +335,7 @@ export default async function ProfilePage({
           </Typography>
         )}
       </Paper>
-      <Log userId={user.id} />
+      <Log userId={user.data.id} />
     </MainContainer>
   );
 }

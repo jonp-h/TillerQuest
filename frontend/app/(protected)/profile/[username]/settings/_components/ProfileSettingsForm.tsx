@@ -1,6 +1,4 @@
 "use client";
-import { validateUserUpdate } from "@/data/validators/userUpdateValidation";
-import { updateProfile } from "@/data/user/updateUser";
 import { ArrowBack } from "@mui/icons-material";
 import {
   TextField,
@@ -14,18 +12,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
+import { securePatch } from "@/lib/secureFetchClient";
+import { UserSettings } from "./types";
 
-function ProfileSettingsForm({
-  user,
-}: {
-  user: {
-    id: string;
-    username: string | null;
-    publicHighscore: boolean;
-    archiveConsent: boolean;
-  };
-}) {
-  const [username, setUsername] = useState(user.username);
+function ProfileSettingsForm({ user }: { user: UserSettings }) {
+  const [newUsername, setNewUsername] = useState(user.username);
   const [publicHighscore, setPublicHighscore] = useState(user.publicHighscore);
   const [archiveConsent, setArchiveConsent] = useState(user.archiveConsent);
   const [loading, setLoading] = useState(false);
@@ -34,47 +25,27 @@ function ProfileSettingsForm({
 
   const handleUpdate = async () => {
     setLoading(true);
-    const validatedData = await validateUserUpdate(user.id, {
-      username,
-      publicHighscore,
-      archiveConsent,
-    });
 
-    // if the data is a string, it is an error message
-    if (typeof validatedData == "string") {
-      toast.error(validatedData);
-      setLoading(false);
-      return;
-    }
-
-    await toast.promise(
-      updateProfile(user.id, {
-        username: validatedData.username,
-        publicHighscore: validatedData.publicHighscore,
-        archiveConsent: validatedData.archiveConsent,
-      }),
+    const result = await securePatch<string>(
+      `/users/${user.username}/settings`,
       {
-        pending: "Updating profile...",
-        success: {
-          render: ({ data }) => {
-            return data;
-          },
-        },
-        error: {
-          render: ({ data }) => {
-            return data instanceof Error
-              ? data.message
-              : "Something went wrong";
-          },
-        },
+        newUsername: newUsername,
+        publicHighscore,
+        archiveConsent,
       },
     );
 
-    router.push(`/profile/${validatedData.username}/settings`);
-    setLoading(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
+    if (result.ok) {
+      toast.success(result.data);
+      setLoading(false);
+      router.push(`/profile/${newUsername}/settings`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      toast.error(result.error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,7 +85,7 @@ function ProfileSettingsForm({
             label="Username"
             color="secondary"
             defaultValue={user.username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setNewUsername(e.target.value)}
           />
         </div>
         <Paper

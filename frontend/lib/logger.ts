@@ -10,8 +10,8 @@ const consoleFormat = winston.format.combine(
 
 const fileFormat = winston.format.combine(
   winston.format.timestamp({ format: "DD-MM-YYYY HH:mm:ss" }),
-  winston.format.printf(({ timestamp, level, message }) => {
-    return `${timestamp} ${level}: ${message}`;
+  winston.format.printf(({ timestamp, level, message, stack }) => {
+    return `${timestamp} ${level}: ${message} ${stack || ""}`;
   }),
 );
 

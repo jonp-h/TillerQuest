@@ -264,6 +264,21 @@ export async function securePostClient<T = unknown>(
 }
 
 /**
+ * Convenience wrapper for PATCH requests
+ */
+export async function securePatch<T = unknown>(
+  url: string,
+  body?: unknown,
+  options?: Omit<SecureFetchClientOptions, "method" | "body">,
+): Promise<SecureFetchResult<T>> {
+  return secureFetchClient<T>(url, {
+    ...options,
+    method: "PATCH",
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
+/**
  * Convenience wrapper for PUT requests (client)
  */
 export async function securePutClient<T = unknown>(

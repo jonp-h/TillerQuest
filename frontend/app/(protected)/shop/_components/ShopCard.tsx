@@ -1,7 +1,7 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
 import RarityText from "@/components/RarityText";
-import { equipItem, purchaseItem } from "@/data/shop/items";
+import { securePostClient } from "@/lib/secureFetchClient";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import { Class, ShopItem } from "@prisma/client";
@@ -26,9 +26,14 @@ function ShopCard({
   const router = useRouter();
 
   const handlePurchase = async (itemId: number) => {
-    const result = await purchaseItem(user.id, itemId);
+    const result = await securePostClient<string>(
+      `/users/${user.id}/inventory`,
+      {
+        itemId: itemId,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -38,9 +43,11 @@ function ShopCard({
   };
 
   const handleEquip = async (itemId: number) => {
-    const result = await equipItem(user.id, itemId);
+    const result = await securePostClient<string>(`/users/${user.id}/equip`, {
+      itemId: itemId,
+    });
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

@@ -6,15 +6,24 @@ import guildRoutes from "./guilds/guildRoutes.js";
 import adminRoutes from "./admin/adminRoutes.js";
 import manaRoutes from "./mana/manaRoutes.js";
 import gameRoutes from "./games/gameRoutes.js";
+import itemRoutes from "./items/itemRoutes.js";
+import notificationRoutes from "./notifications/notificationRoutes.js";
+import logsRoutes from "./logsRoute/logRoutes.js";
+import cosmicRoutes from "./cosmics/cosmicRoutes.js";
 
 const routes = express.Router();
 
 routes.use(wishRoutes);
+routes.use(notificationRoutes);
+routes.use(logsRoutes);
+routes.use(gameRoutes);
+routes.use(cosmicRoutes);
 routes.use(userRoutes);
 routes.use(manaRoutes);
+routes.use(itemRoutes);
 routes.use(gameRoutes);
-routes.use(adminRoutes);
 routes.use(guildRoutes);
 routes.use(abilityRoutes);
+routes.use(adminRoutes);
 
 export default routes;

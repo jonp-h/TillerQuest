@@ -3,23 +3,22 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireAuth,
-  requireUserIdAndNew,
+  requireUsernameAndActive,
 } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import {
-  validateBody,
-  validateParams,
-} from "middleware/validationMiddleware.js";
+import { validateBody } from "middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import {
   escapeHtml,
   updateUserSettingsSchema,
-  userIdParamSchema,
 } from "utils/validators/validationUtils.js";
 
 interface UserUpdateSettingsRequest extends AuthenticatedRequest {
-  body: {
+  params: {
     username: string;
+  };
+  body: {
+    newUsername: string;
     publicHighscore: boolean;
     archiveConsent: boolean;
   };
@@ -27,38 +26,40 @@ interface UserUpdateSettingsRequest extends AuthenticatedRequest {
 
 export const updateUserSettings = [
   requireAuth,
-  requireUserIdAndNew(),
-  validateParams(userIdParamSchema),
+  requireUsernameAndActive(),
   validateBody(updateUserSettingsSchema),
   async (req: UserUpdateSettingsRequest, res: Response) => {
     try {
-      const userId = req.params.userId;
+      const username = req.params.username;
 
-      const { username, publicHighscore, archiveConsent } = req.body;
+      const { newUsername, publicHighscore, archiveConsent } = req.body;
+      const userId = req.session!.user.id;
 
-      const userNameTaken = await db.user.findFirst({
-        where: {
-          username: {
-            equals: username,
-            mode: "insensitive",
+      await db.$transaction(async (tx) => {
+        const userNameTaken = await tx.user.findFirst({
+          where: {
+            username: {
+              equals: username,
+              mode: "insensitive",
+            },
+            NOT: {
+              id: userId,
+            },
           },
-          NOT: {
-            id: userId,
+        });
+
+        if (userNameTaken) {
+          throw new ErrorMessage("Try a different username");
+        }
+
+        await tx.user.update({
+          where: { username },
+          data: {
+            username: escapeHtml(newUsername),
+            publicHighscore: publicHighscore,
+            archiveConsent: archiveConsent,
           },
-        },
-      });
-
-      if (userNameTaken) {
-        throw new ErrorMessage("Try a different username");
-      }
-
-      await db.user.update({
-        where: { id: userId },
-        data: {
-          username: escapeHtml(username),
-          publicHighscore: publicHighscore,
-          archiveConsent: archiveConsent,
-        },
+        });
       });
 
       res.json({ success: true, data: "Profile updated successfully." });

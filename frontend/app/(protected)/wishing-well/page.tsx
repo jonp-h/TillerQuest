@@ -3,22 +3,7 @@ import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import WishCard from "./_components/WishCard";
 import { Typography } from "@mui/material";
 import { secureGet } from "@/lib/secureFetch";
-
-interface Wish {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  value: number;
-  scheduled: Date | null;
-  wishVotes: Array<{
-    anonymous: boolean;
-    amount: number;
-    user: {
-      username: string;
-    };
-  }>;
-}
+import { WishWithVotes } from "@/app/(protected)/wishing-well/_components/types";
 
 async function WishingWellPage() {
   const session = await redirectIfNotActiveUser();
@@ -27,7 +12,7 @@ async function WishingWellPage() {
     throw new Error("Authentication required");
   }
 
-  const wishes = await secureGet<Wish[]>("/wishes");
+  const wishes = await secureGet<WishWithVotes[]>("/wishes");
 
   // Critical data failure - throw error to trigger error.tsx boundary
   // This shows user a friendly error page via ErrorPage component

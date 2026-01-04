@@ -57,7 +57,7 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
     updatePosition();
 
     if (
-      user.lastMana.toISOString().slice(0, 10) ===
+      new Date(user.lastMana).toISOString().slice(0, 10) ===
       currentDate.toISOString().slice(0, 10)
     ) {
       toast.error(

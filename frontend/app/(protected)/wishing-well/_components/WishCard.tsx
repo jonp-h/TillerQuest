@@ -18,28 +18,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Circle } from "@mui/icons-material";
 import { securePostClient } from "@/lib/secureFetchClient";
+import { WishWithVotes } from "./types";
 
-function WishCard({
-  userId,
-  wish,
-}: {
-  userId: string;
-  wish: {
-    name: string;
-    id: number;
-    image: string | null;
-    description: string | null;
-    value: number;
-    scheduled: Date | null;
-    wishVotes: {
-      user: {
-        username: string | null;
-      };
-      amount: number;
-      anonymous: boolean;
-    }[];
-  };
-}) {
+function WishCard({ userId, wish }: { userId: string; wish: WishWithVotes }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
   const [anonymous, setAnonymous] = useState(false);
@@ -152,7 +133,7 @@ function WishCard({
           </Typography>
           {wish.scheduled && (
             <Typography variant="h6" align="center" color="secondary">
-              Scheduled for {wish.scheduled.toLocaleDateString()}
+              Scheduled for {new Date(wish.scheduled).toLocaleDateString()}
             </Typography>
           )}
           <Typography variant="h6" align="center">

@@ -49,7 +49,7 @@ app.use(limiter);
 app.use(
   cors({
     origin: process.env.FRONTEND_URL, // The frontend's origin
-    methods: ["GET", "POST", "PUT", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );

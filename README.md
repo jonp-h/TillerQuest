@@ -200,10 +200,10 @@ $ npm run dev
 
 **This project uses Typescript**
 
-- Types should be defined as interfaces, to enable inheritance
+- Types should be defined as interfaces when possible, to enable inheritance
 - Types specific to a component or page should be kept inside that file
-- Types required in multiple components should be kept in an interfaces.ts file in the closest \_components folder
-- _Any_ should rarely be used
+- Types required in multiple components should be kept in an interfaces.ts or types.ts file in the closest \_components folder
+- _Any_ should be avoided
 
 ### Project structure
 
@@ -283,7 +283,6 @@ $ npm run dev
 ```
 
 - Tailwind responsive:
-
   - xl: Desktop
   - lg: Laptop
   - md: Tablet
@@ -291,13 +290,11 @@ $ npm run dev
   - xs: Phone (reduced screen size)
 
 - Client Side Rendering:
-
   - Try to keep client side rendering inside "client based components" where possible
     - Eg. the needed client side code should be moved inside its own component
     - This is to take advantage of SSR (Server Side Rendering)
 
 - Server Side Rendering:
-
   - SSR is preferred when possible
   - All pages (page.tsx) should be kept SSR
 

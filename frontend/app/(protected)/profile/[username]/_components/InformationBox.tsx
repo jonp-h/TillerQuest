@@ -1,18 +1,26 @@
-import { getCosmic } from "@/data/cosmic/getCosmic";
-import { getSystemMessages } from "@/data/messages/systemMessages";
-import { UserProfile } from "@/types/users";
+import { UserProfile } from "./types";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
+import { secureFetch } from "@/lib/secureFetch";
+import { CosmicEvent, SystemMessage as Notification } from "@prisma/client";
 import SystemMessage from "./SystemMessage";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function InformationBox({
   user,
 }: {
   user: UserProfile;
 }): Promise<JSX.Element> {
-  const cosmic = await getCosmic(user.schoolClass);
-  const systemMessages = await getSystemMessages(user.id);
+  const cosmic = await secureFetch<CosmicEvent>(
+    `/cosmics/events?schoolClass=${user.schoolClass}`,
+  );
+  const systemMessages = await secureFetch<Notification[]>(
+    `/notifications/${user.id}`,
+  );
+  if (!systemMessages.ok) {
+    return <ErrorAlert message={systemMessages.error} />;
+  }
 
   // Server-side component: date-time check
   const currentDate = new Date();
@@ -22,13 +30,13 @@ export default async function InformationBox({
   };
 
   const sameDay =
-    user.lastMana.toISOString().slice(0, 10) ===
+    new Date(user.lastMana ?? "").toISOString().slice(0, 10) ===
     currentDate.toISOString().slice(0, 10);
 
   return (
     <>
       {/* Render system messages if they exist and the user has not read them yet */}
-      {systemMessages?.map((message) => (
+      {systemMessages.data.map((message) => (
         <SystemMessage key={message.id} message={message} userId={user.id} />
       ))}
       {/* User is eligible for mana if the user has not received mana today, and it is not weekend  */}
@@ -52,7 +60,7 @@ export default async function InformationBox({
           </Link>
         </Paper>
       )}
-      {cosmic && (
+      {cosmic.ok && (
         <Paper
           elevation={4}
           className="m-3 p-5 flex flex-col gap-5 text-center justify-center"
@@ -64,14 +72,14 @@ export default async function InformationBox({
               color={"success.main"}
               style={{ fontWeight: "bold" }}
             >
-              {cosmic.name.replace(/-/g, " ")}
+              {cosmic.data.name.replace(/-/g, " ")}
             </Box>
           </Typography>
           <Typography variant="h6" align="center">
-            {cosmic.description}
+            {cosmic.data.description}
           </Typography>
           <Typography variant="h6" align="center" color="textSecondary">
-            {cosmic.triggerAtNoon ? "Can be avoided before 11:20" : ""}
+            {cosmic.data.triggerAtNoon ? "Can be avoided before 11:20" : ""}
           </Typography>
         </Paper>
       )}

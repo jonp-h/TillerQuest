@@ -3,19 +3,17 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireAuth,
-  requireUserIdAndActive,
+  requireUsernameAndActive,
 } from "../../middleware/authMiddleware.js";
-import { usernameParamSchema } from "utils/validators/validationUtils.js";
-import { validateParams } from "middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getUserSettings = [
   requireAuth,
-  requireUserIdAndActive(),
-  validateParams(usernameParamSchema),
+  requireUsernameAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const username = req.params.username;
+
       const user = await db.user.findUnique({
         where: { username },
         select: {

@@ -222,7 +222,7 @@ export const requireUserId = (paramName: string = "userId") => {
         path: req.path,
       });
       res.status(400).json({
-        error: "Invalid request",
+        error: `Invalid request parameter ${paramName}`,
         code: "INVALID_PARAMETER",
       });
       return;
@@ -289,7 +289,7 @@ export const requireUsername = (paramName: string = "username") => {
         path: req.path,
       });
       res.status(400).json({
-        error: "Invalid request",
+        error: `Invalid request parameter ${paramName}`,
         code: "INVALID_PARAMETER",
       });
       return;
@@ -362,7 +362,7 @@ export const requireUserIdAndActive = (paramName: string = "userId") => {
           path: req.path,
         });
         res.status(400).json({
-          error: "Invalid request",
+          error: `Invalid request parameter ${paramName}`,
           code: "INVALID_PARAMETER",
         });
         return;
@@ -448,7 +448,7 @@ export const requireUsernameAndActive = (paramName: string = "username") => {
           path: req.path,
         });
         res.status(400).json({
-          error: "Invalid request",
+          error: `Invalid request parameter ${paramName}`,
           code: "INVALID_PARAMETER",
         });
         return;
@@ -533,7 +533,7 @@ export const requireUserIdAndNew = (paramName: string = "userId") => {
           path: req.path,
         });
         res.status(400).json({
-          error: "Invalid request",
+          error: `Invalid request parameter ${paramName}`,
           code: "INVALID_PARAMETER",
         });
         return;

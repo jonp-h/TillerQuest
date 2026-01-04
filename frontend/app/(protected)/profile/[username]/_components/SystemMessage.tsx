@@ -1,5 +1,5 @@
 "use client";
-import { discardSystemMessage } from "@/data/messages/systemMessages";
+import { securePostClient } from "@/lib/secureFetchClient";
 import { Paper, Typography, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -17,21 +17,18 @@ function SystemMessage({ message, userId }: SystemMessageProps) {
   const router = useRouter();
 
   const handleDiscard = async () => {
-    await toast.promise(discardSystemMessage(userId, message.id), {
-      pending: "Discarding message...",
-      success: {
-        render({ data }) {
-          return data;
-        },
-      },
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? data.message
-            : "An error occurred while discarding the message";
-        },
-      },
-    });
+    const result = await securePostClient<string>(
+      `/notifications/${userId}/read`,
+      { messageId: message.id },
+    );
+
+    console.log(JSON.stringify(result));
+
+    if (result.ok) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+    }
     router.refresh();
   };
   return (

@@ -17,7 +17,6 @@ export const getCosmicEvent = [
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const schoolClass = req.query.schoolClass as string | undefined;
-
       if (!schoolClass) {
         throw new ErrorMessage("schoolClass query parameter is required");
       }

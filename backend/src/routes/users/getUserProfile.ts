@@ -73,6 +73,31 @@ export const getUserProfile = [
               },
             },
           },
+
+          abilities: {
+            where: {
+              ability: {
+                userPassives: {
+                  none: {
+                    userId: username,
+                  },
+                },
+              },
+            },
+            select: {
+              ability: {
+                select: {
+                  name: true,
+                  icon: true,
+                },
+              },
+            },
+            orderBy: {
+              ability: {
+                name: "asc",
+              },
+            },
+          },
         },
       });
 

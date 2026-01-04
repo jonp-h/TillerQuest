@@ -1,4 +1,4 @@
-import { getLogsByUserId } from "@/data/log/getLog";
+import { secureFetch } from "@/lib/secureFetch";
 import {
   Divider,
   List,
@@ -7,10 +7,14 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { Log as LogType } from "@prisma/client";
 import { Fragment } from "react";
 
 async function Log(userID: { userId: string }) {
-  const userLogs = await getLogsByUserId(userID.userId);
+  const userLogs = await secureFetch<LogType[]>(`/logs/${userID.userId}`);
+  if (!userLogs.ok) {
+    throw new Error("Failed to fetch user logs");
+  }
 
   const style = {
     p: 0,
@@ -33,7 +37,7 @@ async function Log(userID: { userId: string }) {
         Log
       </Typography>
       <List sx={style}>
-        {userLogs?.map((row) => {
+        {userLogs.data.map((row) => {
           return (
             <Fragment key={row.id}>
               <ListItem

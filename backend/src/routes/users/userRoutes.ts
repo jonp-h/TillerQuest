@@ -17,6 +17,7 @@ import { checkIfUserOwnsAbility } from "./checkIfUserOwnsAbility.js";
 import { purchaseAbility } from "./purchaseAbility.js";
 import { updateUserSettings } from "./updateUserSettings.js";
 import { equipItem } from "./equipItem.js";
+import { getUserPassives } from "./getUserPassives.js";
 
 const router = express.Router();
 
@@ -26,9 +27,9 @@ router.get("/users/:userId", getBaseUser);
 router.put("/users/:userId", updateUser);
 
 router.get("/users/:userId/game", getGameUser);
-router.get("/users/:userId/settings", getUserSettings);
+router.get("/users/:username/settings", getUserSettings);
 // Update user profile settings (after account creation)
-router.patch("/users/:userId/settings", updateUserSettings);
+router.patch("/users/:username/settings", updateUserSettings);
 
 router.get("/users/:userId/new", getNewUser);
 
@@ -39,18 +40,18 @@ router.patch("/users/:userId/equipment", equipItem);
 router.get("/users/:userId/turns", getUserTurns);
 
 // User ability routes
-router.get("/users/:userId/abilities", ...getUserAbilities);
-router.post("/users/:userId/abilities", ...purchaseAbility);
-router.get("/users/:userId/abilities/profile", ...getUserProfileAbilities);
-router.get("/users/:userId/abilities/dungeon", ...getUserDungeonAbilities);
+router.get("/users/:userId/abilities", getUserAbilities);
+router.post("/users/:userId/abilities", purchaseAbility);
+router.get("/users/:userId/passives", getUserPassives);
+router.get("/users/:userId/abilities/profile", getUserProfileAbilities);
+router.get("/users/:userId/abilities/dungeon", getUserDungeonAbilities);
 // TODO: Considering implementing together with abilityFetch route
 router.get(
   "/users/:userId/abilities/:abilityName/owns",
-  ...checkIfUserOwnsAbility,
+  checkIfUserOwnsAbility,
 );
 
-// Get user by username (alternative lookup)
-router.get("/users/username/:username", getUserProfile);
+router.get("/users/username/:username/profile", getUserProfile);
 
 // Collection endpoints
 router.get("/users/dead", getDeadUsers);
