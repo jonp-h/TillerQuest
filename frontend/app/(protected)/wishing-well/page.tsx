@@ -24,11 +24,13 @@ async function WishingWellPage() {
   const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
-    throw new Error("User error");
+    throw new Error("Authentication required");
   }
 
   const wishes = await secureGet<Wish[]>("/wishes");
 
+  // Critical data failure - throw error to trigger error.tsx boundary
+  // This shows user a friendly error page via ErrorPage component
   if (!wishes.ok) {
     throw new Error(wishes.error);
   }

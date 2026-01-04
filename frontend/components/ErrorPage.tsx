@@ -3,10 +3,14 @@ import Image from "next/image";
 
 export default function ErrorPage({
   text,
-  redirectLink,
+  redirectLink = "/",
+  buttonText = "Return to safety!",
+  reset,
 }: {
   text: string;
-  redirectLink: string;
+  redirectLink?: string;
+  buttonText?: string;
+  reset?: () => void;
 }) {
   return (
     <Paper
@@ -27,9 +31,16 @@ export default function ErrorPage({
       <Typography variant="body1" component="p" gutterBottom>
         {text}
       </Typography>
-      <Button variant="contained" color="primary" href={redirectLink}>
-        Return to safety!
-      </Button>
+      <div className="flex flex-col gap-5 w-fit m-auto">
+        <Button variant="contained" color="primary" href={redirectLink}>
+          {buttonText}
+        </Button>
+        {reset && (
+          <Button variant="contained" color="info" onClick={() => reset()}>
+            Try again
+          </Button>
+        )}
+      </div>
     </Paper>
   );
 }
