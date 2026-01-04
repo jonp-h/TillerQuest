@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 import { $Enums, db } from "lib/db.js";
 import { escapeHtml } from "utils/validators/validationUtils.js";
 
@@ -174,9 +172,10 @@ const validateSchoolClassRestrictions = async (
   }
 
   switch (restrictionSettings.value) {
-    case "SAME_CLASS":
+    case "SAME_CLASS": {
       return userSchoolClass === targetSchoolClass;
-    case "CLASS_GROUPS":
+    }
+    case "CLASS_GROUPS": {
       const group = await db.applicationSettings.findFirst({
         where: {
           key: "SCHOOL_CLASS_GROUPS",
@@ -201,9 +200,12 @@ const validateSchoolClassRestrictions = async (
       } else {
         return false;
       }
-    case "ANY":
+    }
+    case "ANY": {
       return true;
-    default:
+    }
+    default: {
       return userSchoolClass === targetSchoolClass;
+    }
   }
 };

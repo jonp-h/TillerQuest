@@ -2,7 +2,6 @@ import { Response } from "express";
 import { $Enums, db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
-import z from "zod";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import {
   validateBody,

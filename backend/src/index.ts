@@ -21,11 +21,7 @@ import { auth } from "./auth.js";
 import leaderboardRoutes from "./routes/leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
-import {
-  requireActiveUser,
-  requireAdmin,
-  requireAuth,
-} from "middleware/authMiddleware.js";
+import { requireAdmin, requireAuth } from "middleware/authMiddleware.js";
 import routes from "routes/routes.js";
 import { ErrorMessage } from "lib/error.js";
 
@@ -67,7 +63,7 @@ app.use("/api/me", requireAuth, requireAdmin, async (req, res) => {
 
 app.use("/api/v1", routes);
 
-// ✅ Global error handler - catches errors from middleware
+// Global error handler - catches errors from middleware
 app.use(
   (
     err: Error,

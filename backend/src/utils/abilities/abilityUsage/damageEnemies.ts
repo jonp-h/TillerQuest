@@ -56,7 +56,7 @@ async function rewardUsers(
   }
 
   for (const user of users) {
-    await experienceAndLevelValidator(db, user, rewards.xp);
+    await experienceAndLevelValidator(db, user.id, rewards.xp);
     const goldMultipler = await getUserPassiveEffect(
       db,
       user.id,

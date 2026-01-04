@@ -43,7 +43,7 @@ router.get("/users/:userId/abilities", ...getUserAbilities);
 router.post("/users/:userId/abilities", ...purchaseAbility);
 router.get("/users/:userId/abilities/profile", ...getUserProfileAbilities);
 router.get("/users/:userId/abilities/dungeon", ...getUserDungeonAbilities);
-// TODO: Considering implementing in abilityFetch
+// TODO: Considering implementing together with abilityFetch route
 router.get(
   "/users/:userId/abilities/:abilityName/owns",
   ...checkIfUserOwnsAbility,
@@ -55,7 +55,5 @@ router.get("/users/username/:username", getUserProfile);
 // Collection endpoints
 router.get("/users/dead", getDeadUsers);
 router.get("/users/valhalla", getValhallaUsers);
-router.get("/users/count/total", getTotalUserCount);
-router.get("/users/count/dead", getDeadUserCount);
 
 export default router;

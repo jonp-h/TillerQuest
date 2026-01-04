@@ -11,7 +11,6 @@ const router = express.Router();
 
 // Get all members of a guild
 router.get("/guilds/:guildName/members", getGuildMembers);
-// GET /guilds/phoenixes/members
 
 // Get guild members formatted for ability targeting
 router.get(
@@ -21,10 +20,8 @@ router.get(
 
 router.post("/guilds/:guildName/name", updateGuildName);
 
-router.get(
-  "/guilds?schoolclass=:schoolClass",
-  getGuildsAndMemberCountBySchoolClass,
-);
+// /guilds?schoolClass=Class_1IM1
+router.get("/guilds", getGuildsAndMemberCountBySchoolClass);
 
 // Guild battle routes
 router.post("/guilds/:guildName/battles", startGuildBattle);

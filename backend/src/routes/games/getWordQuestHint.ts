@@ -7,7 +7,6 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
-import z from "zod";
 import {
   validateBody,
   validateParams,

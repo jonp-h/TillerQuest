@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorMessage } from "../lib/error.js";
 
 export const validateBody = <T extends z.ZodType>(schema: T) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
@@ -18,7 +18,7 @@ export const validateBody = <T extends z.ZodType>(schema: T) => {
 };
 
 export const validateQuery = <T extends z.ZodType>(schema: T) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.query);
 
     if (!result.success) {
@@ -33,7 +33,7 @@ export const validateQuery = <T extends z.ZodType>(schema: T) => {
 };
 
 export const validateParams = <T extends z.ZodType>(schema: T) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.params);
 
     if (!result.success) {

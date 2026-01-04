@@ -47,7 +47,7 @@ export const adminGiveXp = [
           users.map(async (user) => {
             await experienceAndLevelValidator(
               db,
-              user,
+              user.id,
               value,
               reason,
               username,

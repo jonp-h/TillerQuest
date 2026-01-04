@@ -4,9 +4,9 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
-import { addLog } from "../../data/log/addLog.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { guildNameParamSchema } from "utils/validators/validationUtils.js";
+import { addLog } from "utils/logs/addLog.js";
 
 export const startGuildBattle = [
   requireUserIdAndActive(),

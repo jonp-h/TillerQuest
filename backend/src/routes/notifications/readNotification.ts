@@ -4,7 +4,6 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { validateParams } from "middleware/validationMiddleware.js";
-import z from "zod";
 import { idParamSchema } from "utils/validators/validationUtils.js";
 
 export const readNotification = [

@@ -3,7 +3,6 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { ErrorMessage } from "lib/error.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { idParamSchema } from "utils/validators/validationUtils.js";
 

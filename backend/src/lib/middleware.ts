@@ -76,7 +76,7 @@ export const apiKeyRateLimit = createRateLimiter(60 * 1000, 10, true); // 10 req
 
 // Request signature validation
 export const validateRequestSignature = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
@@ -168,7 +168,7 @@ export const validateRequestSignature = (
 
 // TODO: when using non-internal origins. Whitelist allowed origins (additional to CORS)
 // export const validateOrigin = (allowedOrigins: string[]) => {
-//   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+//   return (req: Request, res: Response, next: NextFunction) => {
 //     const origin = req.headers.origin;
 //     const forwarded = req.headers["x-forwarded-for"];
 //     const realIp = req.headers["x-real-ip"];
@@ -208,7 +208,7 @@ export const validateRequestSignature = (
 
 // Security headers middleware (OWASP recommended)
 export const securityHeaders = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {

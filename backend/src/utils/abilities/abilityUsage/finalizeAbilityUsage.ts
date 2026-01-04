@@ -32,7 +32,7 @@ export const finalizeAbilityUsage = async (
 
   await addLog(db, user.id, `${user.username} used ${ability.name}`);
   if (ability.xpGiven)
-    await experienceAndLevelValidator(db, user, ability.xpGiven!);
+    await experienceAndLevelValidator(db, user.id, ability.xpGiven!);
 
   await addAnalytics(db, user.id, user.role, "ability_use", {
     category: ability.category,

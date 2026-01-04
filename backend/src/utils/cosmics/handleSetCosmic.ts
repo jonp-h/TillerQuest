@@ -1,5 +1,4 @@
 import { db } from "../../lib/db.js";
-import { logger } from "../../lib/logger.js";
 import { SchoolClass } from "@prisma/client";
 import { sendDiscordMessage } from "../../lib/discord.js";
 import { PrismaTransaction } from "../../types/prismaTransaction.js";

@@ -1,17 +1,15 @@
 import { Response } from "express";
-import { $Enums, db } from "../../lib/db.js";
+import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireAuth,
   requireUserIdAndNew,
 } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import { checkNewUserSecret } from "utils/validators/secretValidation.js";
 import {
   validateBody,
   validateParams,
 } from "middleware/validationMiddleware.js";
-import { validateUserCreation } from "utils/validators/userUpdateValidation.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import {
   escapeHtml,

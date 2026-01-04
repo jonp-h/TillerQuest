@@ -3,7 +3,7 @@ import {
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
-} from "data/validators.js";
+} from "utils/abilities/abilityValidators.js";
 import { PrismaTransaction } from "./types/prismaTransaction.js";
 
 export const removePassivesWithIncreasedValues = async (
@@ -210,10 +210,17 @@ export const activateCosmicEvent = async (db: PrismaTransaction) => {
             break;
           }
           case "damage": {
+            const targetUser = await db.user.findUnique({
+              where: { id: user.userId },
+              select: { hp: true, class: true },
+            });
+            if (!targetUser) break;
             const damageToTake = await damageValidator(
               db,
               user.userId,
+              targetUser.hp,
               cosmic.ability?.value ?? 0,
+              targetUser.class,
             );
 
             await db.user.update({
@@ -554,7 +561,19 @@ export const triggerGuildEnemyDamage = async (db: PrismaTransaction) => {
 
     await Promise.all(
       users.map(async (user) => {
-        const damageToTake = await damageValidator(db, user.id, enemy.attack);
+        const targetUser = await db.user.findUnique({
+          where: { id: user.id },
+          select: { hp: true, class: true },
+        });
+        if (!targetUser) return;
+
+        const damageToTake = await damageValidator(
+          db,
+          user.id,
+          targetUser.hp,
+          enemy.attack,
+          targetUser.class,
+        );
         await db.user.update({
           where: { id: user.id },
           data: { hp: { decrement: damageToTake } },

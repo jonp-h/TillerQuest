@@ -1,7 +1,7 @@
 import { logger } from "lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
 import { getUserPassiveEffect } from "./getUserPassiveEffect.js";
-import { $Enums, User } from "lib/db.js";
+import { $Enums } from "lib/db.js";
 import { gemstonesOnLevelUp } from "gameSettings.js";
 import { addLog } from "../logs/addLog.js";
 
@@ -109,6 +109,7 @@ export const manaValidator = async (
  * @param targetUserId - The ID of the user who is the target of the damage.
  * @param targetUserHp - The current health points of the target user.
  * @param damage - The initial amount of damage to be applied.
+ * @param targetUserClass - The class of the target user, which may affect damage calculations (e.g., Warlock).
  * @param healthTreshold - The minimum health threshold that the target user should not go below. Defaults to 0.
  * @returns The final amount of damage to be applied, adjusted for passive effects and health thresholds.
  */
@@ -233,17 +234,18 @@ const manaShieldValidator = async (
 
 export const experienceAndLevelValidator = async (
   db: PrismaTransaction,
-  user: User,
+  userId: string,
   xp: number,
   reason: string = "",
   gamemasterName?: string,
 ) => {
   try {
+    // TODO: consider removing query and instead adding required user data as arguments to increase performance
     const targetUser = await db.user.findFirst({
       where: {
-        id: user.id,
+        id: userId,
       },
-      select: { xp: true, level: true },
+      select: { username: true, xp: true, level: true },
     });
 
     if (!targetUser) {
@@ -268,7 +270,7 @@ export const experienceAndLevelValidator = async (
       }
 
       await db.user.update({
-        where: { id: user.id },
+        where: { id: userId },
         data: {
           xp: { increment: xp },
           ...levelUpData,
@@ -279,7 +281,7 @@ export const experienceAndLevelValidator = async (
     // ------------- handle positive XP ---------------------
 
     const xpMultipler =
-      (await getUserPassiveEffect(db, user.id, "Experience")) / 100;
+      (await getUserPassiveEffect(db, userId, "Experience")) / 100;
     const xpToGive = Math.round(xp * (1 + xpMultipler));
 
     // Calculate the new XP and level
@@ -299,7 +301,7 @@ export const experienceAndLevelValidator = async (
     }
 
     await db.user.update({
-      where: { id: user.id },
+      where: { id: userId },
       data: {
         xp: { increment: xpToGive },
         ...levelUpData,
@@ -307,19 +309,19 @@ export const experienceAndLevelValidator = async (
     });
 
     const message = gamemasterName
-      ? `${user.username} was given ${xpToGive} XP by GM ${gamemasterName}. ${reason}`
-      : `${user.username} gained ${xpToGive} XP. ${reason}`;
+      ? `${targetUser.username} was given ${xpToGive} XP by GM ${gamemasterName}. ${reason}`
+      : `${targetUser.username} gained ${xpToGive} XP. ${reason}`;
 
-    if (xpToGive > 0) await addLog(db, user.id, message);
+    if (xpToGive > 0) await addLog(db, userId, message);
 
     if (levelDifference > 0) {
       await addLog(
         db,
-        user.id,
-        `LEVEL UP: ${user.username} leveled up to level ${targetUser.level + levelDifference}. Granting ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+        userId,
+        `LEVEL UP: ${targetUser.username} leveled up to level ${targetUser.level + levelDifference}. Granting ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );
       logger.info(
-        `LEVEL UP: User ${user.username} leveled up to level ${targetUser.level + levelDifference}. User received ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
+        `LEVEL UP: User ${targetUser.username} leveled up to level ${targetUser.level + levelDifference}. User received ${xpToGive} XP. Granting a level difference of ${levelDifference} and ${gemstonesOnLevelUp * levelDifference} gemstones.`,
       );
     }
     return "Successfully gave XP to user";

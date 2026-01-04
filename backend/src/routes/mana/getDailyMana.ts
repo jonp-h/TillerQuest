@@ -4,15 +4,15 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { addLog } from "data/log/addLog.js";
 import { dailyArenaTokenBase, dailyManaBase } from "gameSettings.js";
 import { manaValidator } from "utils/abilities/abilityValidators.js";
+import { addLog } from "utils/logs/addLog.js";
 
 export const getDailyMana = [
   requireUserIdAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { id: userId, role } = req.session?.user!;
+      const { id: userId, role } = req.session!.user;
 
       // Archived users are not allowed to get daily mana
       if (role === "ARCHIVED") {

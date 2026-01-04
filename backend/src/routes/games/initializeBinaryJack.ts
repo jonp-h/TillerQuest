@@ -7,16 +7,15 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
-import z from "zod";
 import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { addLog } from "../../data/log/addLog.js";
 import {
   gameIdParamSchema,
   initializeBinaryJackSchema,
 } from "utils/validators/validationUtils.js";
+import { addLog } from "utils/logs/addLog.js";
 
 const BINARY_JACK_MAX_TURNS = 6;
 

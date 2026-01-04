@@ -1,7 +1,6 @@
-import { Ability, GuildEnemy, User } from "lib/db.js";
-import { logger } from "../../../lib/logger.js";
+import { Ability, User } from "lib/db.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ServerResult } from "../../../types/serverActionResult.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { getUserPassiveEffect } from "../getUserPassiveEffect.js";
 import { addLog } from "../../logs/addLog.js";
@@ -16,7 +15,7 @@ export const useDungeonAttackAbility = async (
   castingUser: User,
   targetIds: string[],
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ServerResult<{ message: string; diceRoll: string }>> => {
   if (castingUser?.turns <= 0) {
     throw new ErrorMessage("You don't have any turns left!");
   }
