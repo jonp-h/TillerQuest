@@ -12,8 +12,8 @@ export const adminRandomCosmic = [
       // const now = new Date();
       // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
-      const result = await db.$transaction(async (db) => {
-        await db.cosmicEvent.updateMany({
+      const result = await db.$transaction(async (tx) => {
+        await tx.cosmicEvent.updateMany({
           where: {
             recommended: true,
           },
@@ -35,7 +35,7 @@ export const adminRandomCosmic = [
         // }
 
         // Get all events
-        const events = await db.cosmicEvent.findMany({
+        const events = await tx.cosmicEvent.findMany({
           select: {
             name: true,
             frequency: true,
@@ -84,7 +84,7 @@ export const adminRandomCosmic = [
           cosmic = events[0];
         }
 
-        const chosenCosmic = await db.cosmicEvent.update({
+        const chosenCosmic = await tx.cosmicEvent.update({
           where: {
             name: cosmic.name,
           },

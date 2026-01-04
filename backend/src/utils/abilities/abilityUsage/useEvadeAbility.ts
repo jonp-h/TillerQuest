@@ -1,14 +1,14 @@
 import { Ability, User } from "lib/db.js";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { activatePassive } from "./activatePassive.js";
 
 export const useEvadeAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   // checks if user has passive, decrements cost and gives xp
   await activatePassive(db, castingUser, [castingUser.id], ability);
 

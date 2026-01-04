@@ -136,7 +136,7 @@ export const adminReasonSchema = z.object({
 });
 
 export const userIdParamSchema = z.object({
-  userId: z.cuid(),
+  userId: z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
 });
 
 export const usernameParamSchema = z.object({

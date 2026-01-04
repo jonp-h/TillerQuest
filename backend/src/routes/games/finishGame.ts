@@ -23,8 +23,8 @@ export const finishGame = [
       const gameId = req.params.gameId;
       const userId = req.session!.user.id;
 
-      return await db.$transaction(async (db) => {
-        const game = await db.game.findUnique({
+      return await db.$transaction(async (tx) => {
+        const game = await tx.game.findUnique({
           where: { id: gameId },
           include: { user: { select: { id: true, gold: true } } },
         });
@@ -63,12 +63,12 @@ export const finishGame = [
           }
         } else {
           // For other games, use the existing gold validation system
-          gold = await goldValidator(db, game.userId, game.score);
+          gold = await goldValidator(tx, game.userId, game.score);
           gold = gold < 0 ? 0 : gold; // Ensure gold is non-negative
           message = "Received " + gold + " gold";
         }
 
-        const targetUser = await db.user.update({
+        const targetUser = await tx.user.update({
           where: { id: game.userId },
           data: { gold: { increment: gold } },
           select: {
@@ -76,19 +76,19 @@ export const finishGame = [
           },
         });
 
-        await db.game.update({
+        await tx.game.update({
           where: { id: gameId },
           data: { status: "FINISHED" },
         });
 
         await addLog(
-          db,
+          tx,
           game.userId,
           `GAME: ${targetUser.username} finished a game of ${game.game}, and received ${gold} gold`,
         );
 
         await addAnalytics(
-          db,
+          tx,
           game.userId,
           req.session!.user.role,
           "game_completion",

@@ -65,8 +65,8 @@ export const updateUser = [
         throw new ErrorMessage(validatedData);
       }
 
-      await db.$transaction(async (db) => {
-        const guild = await db.guild.findFirst({
+      await db.$transaction(async (tx) => {
+        const guild = await tx.guild.findFirst({
           where: { id: validatedData.guildId },
           select: {
             _count: {
@@ -86,7 +86,7 @@ export const updateUser = [
 
         // if the guild has no members, set the user as the guild leader
         if (guildMemberCount === 0) {
-          await db.guild.update({
+          await tx.guild.update({
             where: { id: validatedData.guildId },
             data: {
               guildLeader: userId,
@@ -94,7 +94,7 @@ export const updateUser = [
           });
           // if the guild has one member, set the user as the next guild leader
         } else if (guildMemberCount === 1) {
-          await db.guild.update({
+          await tx.guild.update({
             where: { id: validatedData.guildId },
             data: {
               nextGuildLeader: userId,
@@ -102,7 +102,7 @@ export const updateUser = [
           });
         }
 
-        await db.user.update({
+        await tx.user.update({
           where: { id: userId },
           data: {
             role: "USER",

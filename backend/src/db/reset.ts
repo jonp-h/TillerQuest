@@ -117,8 +117,8 @@ async function main() {
 
 async function resetUsers() {
   try {
-    await prisma.$transaction(async (db) => {
-      const users = await db.user.findMany({
+    await prisma.$transaction(async (tx) => {
+      const users = await tx.user.findMany({
         select: {
           id: true,
           mana: true,
@@ -141,12 +141,12 @@ async function resetUsers() {
       });
 
       for (const user of users) {
-        await normalResetUserHandler(db, user);
+        await normalResetUserHandler(tx, user);
       }
 
       // Remove and recreate guilds
       // First delete GuildEnemy records to avoid foreign key constraint violations
-      await db.guildEnemy.deleteMany({
+      await tx.guildEnemy.deleteMany({
         where: {
           guild: {
             archived: false,
@@ -154,12 +154,12 @@ async function resetUsers() {
         },
       });
 
-      await db.guild.deleteMany({
+      await tx.guild.deleteMany({
         where: {
           archived: false,
         },
       });
-      await db.guild.createMany({
+      await tx.guild.createMany({
         data: guilds.map((g) => ({
           name: g.name,
           schoolClass: g.schoolClass as SchoolClass,
@@ -244,8 +244,8 @@ async function normalResetUserHandler(
 
 async function resetUsersAndShopItems() {
   try {
-    await prisma.$transaction(async (db) => {
-      const users = await db.user.findMany({
+    await prisma.$transaction(async (tx) => {
+      const users = await tx.user.findMany({
         select: {
           id: true,
           mana: true,
@@ -269,7 +269,7 @@ async function resetUsersAndShopItems() {
       });
 
       for (const user of users) {
-        await softResetUserHandler(db, user);
+        await softResetUserHandler(tx, user);
       }
     });
     console.info(
@@ -390,8 +390,8 @@ async function resetSingleUser(username: string) {
 
 async function deleteNonConsentingVG2Users() {
   try {
-    await prisma.$transaction(async (db) => {
-      await db.user.deleteMany({
+    await prisma.$transaction(async (tx) => {
+      await tx.user.deleteMany({
         where: {
           AND: [
             { archiveConsent: false },
@@ -406,7 +406,7 @@ async function deleteNonConsentingVG2Users() {
       });
 
       // Find consenting users and their guilds
-      const consentingUsers = await db.user.findMany({
+      const consentingUsers = await tx.user.findMany({
         where: {
           AND: [
             { archiveConsent: true },
@@ -425,7 +425,7 @@ async function deleteNonConsentingVG2Users() {
       });
 
       // Archive the users
-      await db.user.updateMany({
+      await tx.user.updateMany({
         where: {
           AND: [
             { archiveConsent: true },
@@ -452,7 +452,7 @@ async function deleteNonConsentingVG2Users() {
         ),
       ];
       if (guildNames.length > 0) {
-        await db.guild.updateMany({
+        await tx.guild.updateMany({
           where: {
             name: { in: guildNames },
           },
@@ -462,7 +462,7 @@ async function deleteNonConsentingVG2Users() {
         });
       }
 
-      await db.user.deleteMany({
+      await tx.user.deleteMany({
         where: {
           role: "NEW",
         },
@@ -478,8 +478,8 @@ async function deleteNonConsentingVG2Users() {
 
 async function deleteAnalytics() {
   try {
-    await prisma.$transaction(async (db) => {
-      await db.analytics.deleteMany({});
+    await prisma.$transaction(async (tx) => {
+      await tx.analytics.deleteMany({});
     });
     console.info("All analytics data has been deleted.");
   } catch (error) {

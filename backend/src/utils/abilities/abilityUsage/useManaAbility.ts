@@ -1,7 +1,7 @@
 import { Ability, User } from "lib/db.js";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { manaValidator } from "../abilityValidators.js";
 import { addLog } from "../../logs/addLog.js";
@@ -13,7 +13,7 @@ export const useManaAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   const abilityValue = getAbilityValue(ability);
 
   await Promise.all(

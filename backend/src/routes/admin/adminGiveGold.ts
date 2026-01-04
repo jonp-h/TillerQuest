@@ -34,8 +34,8 @@ export const adminGiveGold = [
       const { userIds, value, notify, reason } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      const usernames = await db.$transaction(async (db) => {
-        const users = await db.user.findMany({
+      const usernames = await db.$transaction(async (tx) => {
+        const users = await tx.user.findMany({
           where: {
             id: {
               in: userIds,
@@ -49,7 +49,7 @@ export const adminGiveGold = [
 
         await Promise.all(
           users.map(async (user) => {
-            await db.user.update({
+            await tx.user.update({
               where: {
                 id: user.id,
               },
@@ -59,7 +59,7 @@ export const adminGiveGold = [
             });
 
             await addLog(
-              db,
+              tx,
               user.id,
               `${user.username} received ${value} gold from GM ${username}. ${reason}`,
             );

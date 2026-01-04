@@ -40,8 +40,8 @@ export const adminResurrectUser = [
       const userId = req.params.userId;
       const { effect } = req.body;
 
-      await db.$transaction(async (db) => {
-        const user = await db.user.findFirst({
+      await db.$transaction(async (tx) => {
+        const user = await tx.user.findFirst({
           where: {
             id: userId,
           },
@@ -69,7 +69,7 @@ export const adminResurrectUser = [
 
         // If the effect is free, the user will be resurrected without any consequences
         if (effect === "free") {
-          await db.user.update({
+          await tx.user.update({
             data: {
               hp: minResurrectionHP,
             },
@@ -90,7 +90,7 @@ export const adminResurrectUser = [
         // Apply resurrection with effects
         switch (effect) {
           case "criticalMiss":
-            await resurrectUser(db, userId, [
+            await resurrectUser(tx, userId, [
               "Phone-loss",
               "Reduced-xp-gain",
               "Hat-of-shame",
@@ -98,19 +98,19 @@ export const adminResurrectUser = [
             ]);
             break;
           case "phone":
-            await resurrectUser(db, userId, ["Phone-loss"]);
+            await resurrectUser(tx, userId, ["Phone-loss"]);
             break;
           case "xp":
-            await resurrectUser(db, userId, ["Reduced-xp-gain"]);
+            await resurrectUser(tx, userId, ["Reduced-xp-gain"]);
             break;
           case "hat":
-            await resurrectUser(db, userId, ["Hat-of-shame"]);
+            await resurrectUser(tx, userId, ["Hat-of-shame"]);
             break;
           case "quiz":
-            await resurrectUser(db, userId, ["Pop-quiz"]);
+            await resurrectUser(tx, userId, ["Pop-quiz"]);
             break;
           case "criticalHit":
-            await resurrectUser(db, userId, []);
+            await resurrectUser(tx, userId, []);
             break;
         }
 

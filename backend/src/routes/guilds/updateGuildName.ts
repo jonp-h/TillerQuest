@@ -73,8 +73,8 @@ export const updateGuildName = [
         name: escapeHtml(newName),
       };
 
-      await db.$transaction(async (db) => {
-        const guildExists = await db.guild.findUnique({
+      await db.$transaction(async (tx) => {
+        const guildExists = await tx.guild.findUnique({
           where: {
             name: validatedData.name,
           },
@@ -108,7 +108,7 @@ export const updateGuildName = [
         //   },
         // });
 
-        await db.guild.update({
+        await tx.guild.update({
           where: {
             name: oldName,
           },

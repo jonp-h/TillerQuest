@@ -1,6 +1,6 @@
 import { $Enums, Ability, User } from "lib/db.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { activatePassive } from "./activatePassive.js";
 
@@ -18,7 +18,7 @@ export const useAccessAbility = async (
   castingUser: User,
   targetUsersIds: string[],
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   await Promise.all(
     targetUsersIds.map(async (targetUserId) => {
       // validate access

@@ -29,8 +29,8 @@ export const initializeBinaryJack = [
       const gameId = req.params.gameId;
       const { stake } = req.body;
 
-      await db.$transaction(async (db) => {
-        const game = await db.game.findUnique({
+      await db.$transaction(async (tx) => {
+        const game = await tx.game.findUnique({
           where: { id: gameId, status: "PENDING" },
           include: { user: { select: { id: true, gold: true } } },
         });
@@ -61,13 +61,13 @@ export const initializeBinaryJack = [
         }
 
         // Deduct the stake from user's gold
-        await db.user.update({
+        await tx.user.update({
           where: { id: game.userId },
           data: { gold: { decrement: stake } },
         });
 
         await addLog(
-          db,
+          tx,
           game.userId,
           `GAME: You entered a BinaryJack game with a stake of ${stake} gold`,
           false,
@@ -81,7 +81,7 @@ export const initializeBinaryJack = [
           stake,
         };
 
-        await db.game.update({
+        await tx.game.update({
           where: { id: gameId },
           data: {
             status: "INPROGRESS",

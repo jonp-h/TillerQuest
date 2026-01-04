@@ -32,8 +32,8 @@ export const updateGame = [
       const { data, mistakes } = req.body;
       const userId = req.session!.user.id;
 
-      await db.$transaction(async (db) => {
-        const game = await db.game.findUnique({
+      await db.$transaction(async (tx) => {
+        const game = await tx.game.findUnique({
           where: { id: gameId, userId: userId },
         });
 
@@ -48,7 +48,7 @@ export const updateGame = [
         switch (game.game) {
           case "TypeQuest":
             ({ score, metadata } = await updateTypeQuestGame(
-              db,
+              tx,
               userId,
               score,
               metadata,
@@ -59,7 +59,7 @@ export const updateGame = [
             break;
           case "WordQuest":
             ({ score, metadata } = await updateWordQuestGame(
-              db,
+              tx,
               userId,
               score,
               metadata,
@@ -73,7 +73,7 @@ export const updateGame = [
             break;
         }
 
-        await db.game.update({
+        await tx.game.update({
           where: { id: gameId },
           data: { score, metadata },
         });

@@ -1,6 +1,6 @@
 import { Ability, User } from "lib/db.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { addLog } from "../../logs/addLog.js";
 import { activatePassive } from "./activatePassive.js";
 import { getAbilityValue } from "./getAbilityValue.js";
@@ -9,7 +9,7 @@ export const useTwistOfFateAbility = async (
   db: PrismaTransaction,
   castingUser: User,
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   const dice = getAbilityValue(ability);
 
   let message = "";

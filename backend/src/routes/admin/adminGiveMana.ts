@@ -35,8 +35,8 @@ export const adminGiveMana = [
       const { userIds, value, notify, reason } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      const usernames = await db.$transaction(async (db) => {
-        const users = await db.user.findMany({
+      const usernames = await db.$transaction(async (tx) => {
+        const users = await tx.user.findMany({
           where: {
             id: {
               in: userIds,
@@ -50,9 +50,9 @@ export const adminGiveMana = [
 
         await Promise.all(
           users.map(async (user) => {
-            const manaToGive = await manaValidator(db, user.id, value);
+            const manaToGive = await manaValidator(tx, user.id, value);
 
-            await db.user.update({
+            await tx.user.update({
               where: {
                 id: user.id,
               },
@@ -62,7 +62,7 @@ export const adminGiveMana = [
             });
 
             await addLog(
-              db,
+              tx,
               user.id,
               `${user.username} received ${manaToGive} mana from GM ${username}. ${reason}`,
             );

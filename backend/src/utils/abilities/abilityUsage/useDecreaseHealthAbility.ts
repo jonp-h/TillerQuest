@@ -1,7 +1,7 @@
 import { Ability, User } from "lib/db.js";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { manaValidator } from "../abilityValidators.js";
 import { activatePassive } from "./activatePassive.js";
@@ -11,7 +11,7 @@ export const useDecreaseHealthAbility = async (
   castingUser: User,
   targetUserId: string,
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   // TODO: At the moment the ability only decreases maxhealth to mana
   const manaValue = await manaValidator(db, targetUserId, ability.value!);
 

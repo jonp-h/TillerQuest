@@ -35,12 +35,12 @@ export const adminDamageUsers = [
       const { userIds, value, notify, reason } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      const result = await db.$transaction(async (db) => {
+      const result = await db.$transaction(async (tx) => {
         const damagedUsers: string[] = [];
 
         await Promise.all(
           userIds.map(async (userId) => {
-            const targetUser = await db.user.findFirst({
+            const targetUser = await tx.user.findFirst({
               where: {
                 id: userId,
               },
@@ -52,14 +52,14 @@ export const adminDamageUsers = [
             }
 
             const valueToDamage = await damageValidator(
-              db,
+              tx,
               userId,
               targetUser.hp,
               value,
               targetUser?.class,
             );
 
-            const updatedUser = await db.user.update({
+            const updatedUser = await tx.user.update({
               where: {
                 id: userId,
               },
@@ -74,14 +74,14 @@ export const adminDamageUsers = [
             damagedUsers.push(updatedUser.username ?? "Hidden");
 
             await addLog(
-              db,
+              tx,
               userId,
               `${updatedUser.username} was damaged for ${valueToDamage} HP by GM ${username}. ${reason}`,
             );
 
             if (updatedUser.hp === 0) {
               logger.info("DEATH: User " + updatedUser.username + " died.");
-              await addLog(db, userId, `DEATH: ${updatedUser.username} died.`);
+              await addLog(tx, userId, `DEATH: ${updatedUser.username} died.`);
             }
           }),
         );

@@ -25,10 +25,10 @@ export const adminSelectCosmic = [
       const { grade, notify } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      await db.$transaction(async (db) => {
-        await handleSetCosmic(cosmicName, grade, username, notify, db);
+      await db.$transaction(async (tx) => {
+        await handleSetCosmic(cosmicName, grade, username, notify, tx);
 
-        await db.log.create({
+        await tx.log.create({
           data: {
             userId: req.session!.user.id || "",
             message: `GM ${username} has selected the cosmic event "${cosmicName.replace(/-/g, " ")}"`,

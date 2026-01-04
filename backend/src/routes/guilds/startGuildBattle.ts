@@ -24,8 +24,8 @@ export const startGuildBattle = [
         return;
       }
 
-      await db.$transaction(async (db) => {
-        const guild = await db.guild.findFirst({
+      await db.$transaction(async (tx) => {
+        const guild = await tx.guild.findFirst({
           where: {
             name: guildName,
             guildLeader: userId,
@@ -47,10 +47,10 @@ export const startGuildBattle = [
           throw new ErrorMessage("Only the guild leader can start a battle.");
         }
 
-        const totalEnemies = await db.enemy.count();
+        const totalEnemies = await tx.enemy.count();
         const randomOffset = Math.floor(Math.random() * totalEnemies);
 
-        const enemy = await db.enemy.findFirst({
+        const enemy = await tx.enemy.findFirst({
           select: {
             id: true,
             name: true,
@@ -88,7 +88,7 @@ export const startGuildBattle = [
         const enemyGold = Math.floor(gold / numberOfEnemies);
 
         for (let i = 0; i < numberOfEnemies; i++) {
-          await db.guildEnemy.create({
+          await tx.guildEnemy.create({
             data: {
               guildName: guild.name,
               enemyId: enemy.id,
@@ -103,7 +103,7 @@ export const startGuildBattle = [
           });
         }
 
-        await db.guild.update({
+        await tx.guild.update({
           where: { name: guild.name },
           data: { nextBattleVotes: [] }, // reset next battle votes after a battle is started
         });
@@ -111,7 +111,7 @@ export const startGuildBattle = [
         // TODO: Consider re-adding guild enemy attack when starting battles
 
         await addLog(
-          db,
+          tx,
           userId,
           `DUNGEON: ${guild.name} has started a guild battle against ${enemy.name}.`,
         );

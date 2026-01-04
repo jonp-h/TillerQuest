@@ -1,7 +1,7 @@
 import { db } from "lib/db.js";
 import { ErrorMessage } from "lib/error.js";
 import { logger } from "lib/logger.js";
-import { ServerActionResult } from "types/serverActionResult.js";
+import { ApiResponse } from "types/apiResponse.js";
 import { getUserPassiveEffect } from "../getUserPassiveEffect.js";
 import { activatePassive } from "./activatePassive.js";
 import { useAccessAbility } from "./useAccessAbility.js";
@@ -38,7 +38,7 @@ export const selectAbility = async (
   userId: string,
   targetIds: string[],
   abilityName: string,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   try {
     const castingUser = await db.user.findUnique({
       where: {
@@ -135,60 +135,60 @@ export const selectAbility = async (
       );
     }
 
-    return await db.$transaction(async (db) => {
+    return await db.$transaction(async (tx) => {
       // check ability type and call the appropriate function
       switch (ability.type) {
         // ---------------------------- Passive abilities ----------------------------
         // TODO: make passives default in switch case
         case "IncreaseHealth":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "IncreaseMana":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "DecreaseHealth":
           return await useDecreaseHealthAbility(
-            db,
+            tx,
             castingUser,
             targetIds[0],
             ability,
           );
 
         case "DailyMana": // gives daily mana to the target
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "ManaPassive": // gives extra mana to the target on every mana granting ability
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Health":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Experience":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "ArenaToken":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Trickery":
           if (ability.name === "Evade") {
-            return await useEvadeAbility(db, castingUser, ability);
+            return await useEvadeAbility(tx, castingUser, ability);
           } else if (ability.name === "Twist-of-Fate") {
-            return await useTwistOfFateAbility(db, castingUser, ability);
+            return await useTwistOfFateAbility(tx, castingUser, ability);
           }
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Postpone":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "ManaShield":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "GoldPassive":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "TurnPassive":
           // TODO: considering moving this. Required to give immediate turns to the user
-          await db.user.update({
+          await tx.user.update({
             where: {
               id: castingUser.id,
             },
@@ -198,59 +198,59 @@ export const selectAbility = async (
               },
             },
           });
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Access":
-          return await useAccessAbility(db, castingUser, targetIds, ability);
+          return await useAccessAbility(tx, castingUser, targetIds, ability);
 
         case "Crit":
-          return await useCritAbility(db, castingUser, targetIds, ability);
+          return await useCritAbility(tx, castingUser, targetIds, ability);
 
         case "VictoryGold":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "VictoryMana":
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Protection": // shields a target from damage
-          return await activatePassive(db, castingUser, targetIds, ability);
+          return await activatePassive(tx, castingUser, targetIds, ability);
 
         // ---------------------------- Active abilities ----------------------------
 
         case "Heal": // heal the target
-          return await useHealAbility(db, castingUser, targetIds, ability);
+          return await useHealAbility(tx, castingUser, targetIds, ability);
 
         case "Revive": // revive a dead target without negative consequences
-          return await useReviveAbility(db, castingUser, targetIds, ability);
+          return await useReviveAbility(tx, castingUser, targetIds, ability);
 
         case "Mana": // give mana to the target
-          return await useManaAbility(db, castingUser, targetIds, ability);
+          return await useManaAbility(tx, castingUser, targetIds, ability);
 
         case "Gold":
-          return await useGoldAbility(db, castingUser, targetIds, ability);
+          return await useGoldAbility(tx, castingUser, targetIds, ability);
 
         case "Transfer": // transfer a resource from one player to another player
-          return await useTransferAbility(db, castingUser, targetIds, ability);
+          return await useTransferAbility(tx, castingUser, targetIds, ability);
 
         case "Swap": // swap a resource between two players
-          return await useSwapAbility(db, castingUser, targetIds[0], ability);
+          return await useSwapAbility(tx, castingUser, targetIds[0], ability);
 
         // TODO: validate to only target self?
         case "Trade": // converts a resource from one type to another
-          return await useTradeAbility(db, castingUser, targetIds[0], ability);
+          return await useTradeAbility(tx, castingUser, targetIds[0], ability);
 
         case "Arena":
-          return await useArenaAbility(db, castingUser, targetIds, ability);
+          return await useArenaAbility(tx, castingUser, targetIds, ability);
 
         case "Turns":
-          return await useTurnsAbility(db, castingUser, targetIds, ability);
+          return await useTurnsAbility(tx, castingUser, targetIds, ability);
 
         case "XP":
-          return await useXPAbility(db, castingUser, ability);
+          return await useXPAbility(tx, castingUser, ability);
 
         case "DungeonAttack":
           return await useDungeonAttackAbility(
-            db,
+            tx,
             castingUser,
             targetIds,
             ability,

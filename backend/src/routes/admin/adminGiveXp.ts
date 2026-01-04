@@ -34,8 +34,8 @@ export const adminGiveXp = [
       const { userIds, value, notify, reason } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      const usernames = await db.$transaction(async (db) => {
-        const users = await db.user.findMany({
+      const usernames = await db.$transaction(async (tx) => {
+        const users = await tx.user.findMany({
           where: {
             id: {
               in: userIds,
@@ -46,7 +46,7 @@ export const adminGiveXp = [
         await Promise.all(
           users.map(async (user) => {
             await experienceAndLevelValidator(
-              db,
+              tx,
               user.id,
               value,
               reason,

@@ -75,8 +75,8 @@ export const adminUpdateGuildName = [
         name: escapeHtml(newName),
       };
 
-      await db.$transaction(async (db) => {
-        const guildExists = await db.guild.findUnique({
+      await db.$transaction(async (tx) => {
+        const guildExists = await tx.guild.findUnique({
           where: {
             name: validatedData.name,
           },
@@ -86,7 +86,7 @@ export const adminUpdateGuildName = [
           throw new ErrorMessage("A guild with this name already exists.");
         }
 
-        await db.guild.update({
+        await tx.guild.update({
           where: {
             name: oldName,
           },

@@ -23,8 +23,8 @@ export const voteToStartNextBattle = [
         return;
       }
 
-      await db.$transaction(async (db) => {
-        const guild = await db.guild.findFirst({
+      await db.$transaction(async (tx) => {
+        const guild = await tx.guild.findFirst({
           where: {
             name: guildName,
             members: { some: { id: userId } },
@@ -43,7 +43,7 @@ export const voteToStartNextBattle = [
           throw new ErrorMessage("You have already voted.");
         }
 
-        await db.guild.update({
+        await tx.guild.update({
           where: { id: guild.id },
           data: {
             nextBattleVotes: [...guild.nextBattleVotes, userId],
@@ -58,7 +58,7 @@ export const voteToStartNextBattle = [
 
         if (newVoteCount >= requiredVotes && guild.enemies.length > 0) {
           // Enable the guild leader to start the battle by removing all enemies
-          await db.guild.update({
+          await tx.guild.update({
             where: { name: guild.name },
             data: {
               level: {
@@ -67,7 +67,7 @@ export const voteToStartNextBattle = [
             },
           });
 
-          await db.guildEnemy.deleteMany({
+          await tx.guildEnemy.deleteMany({
             where: { guildName: guild.name },
           });
 

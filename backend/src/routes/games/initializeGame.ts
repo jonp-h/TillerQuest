@@ -22,8 +22,8 @@ export const initializeGame = [
       const userId = req.params.userId;
       const gameName = req.body.gameName as string;
 
-      await db.$transaction(async (db) => {
-        const user = await db.user.findUnique({
+      await db.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({
           where: { id: userId },
           select: {
             id: true,
@@ -45,12 +45,12 @@ export const initializeGame = [
           throw new ErrorMessage("You do not have enough arena tokens");
         }
 
-        await db.user.update({
+        await tx.user.update({
           where: { id: user.id },
           data: { arenaTokens: { decrement: 1 } },
         });
 
-        const game = await db.game.create({
+        const game = await tx.game.create({
           data: {
             userId: user.id,
             game: gameName,

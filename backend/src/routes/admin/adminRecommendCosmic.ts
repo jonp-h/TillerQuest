@@ -15,8 +15,8 @@ export const adminRecommendCosmic = [
       const cosmicName = req.params.cosmicName;
       const username = req.session!.user.username || "Admin";
 
-      await db.$transaction(async (db) => {
-        await db.cosmicEvent.updateMany({
+      await db.$transaction(async (tx) => {
+        await tx.cosmicEvent.updateMany({
           where: {
             recommended: true,
           },
@@ -25,7 +25,7 @@ export const adminRecommendCosmic = [
           },
         });
 
-        await db.cosmicEvent.update({
+        await tx.cosmicEvent.update({
           where: {
             name: cosmicName,
           },
@@ -34,7 +34,7 @@ export const adminRecommendCosmic = [
           },
         });
 
-        await db.log.create({
+        await tx.log.create({
           data: {
             userId: req.session!.user.id || "",
             message: `GM ${username} has recommended the cosmic event "${cosmicName.replace(/-/g, " ")}"`,

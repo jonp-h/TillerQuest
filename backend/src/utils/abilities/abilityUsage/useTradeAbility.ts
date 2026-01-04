@@ -1,7 +1,7 @@
 import { Ability, User } from "lib/db.js";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { manaValidator } from "../abilityValidators.js";
 import { finalizeAbilityUsage } from "./finalizeAbilityUsage.js";
@@ -11,7 +11,7 @@ export const useTradeAbility = async (
   castingUser: User,
   targetUserId: string,
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   // TODO: At the moment the trade ability is only used to trade health to mana
   const manaValue = await manaValidator(db, targetUserId, ability.value!);
 

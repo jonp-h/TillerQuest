@@ -1,7 +1,7 @@
 import { Ability, User } from "lib/db.js";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
-import { ServerActionResult } from "../../../types/serverActionResult.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { finalizeAbilityUsage } from "./finalizeAbilityUsage.js";
 
 export const useTurnsAbility = async (
@@ -9,7 +9,7 @@ export const useTurnsAbility = async (
   castingUser: User,
   targetUserIds: string[],
   ability: Ability,
-): Promise<ServerActionResult<{ message: string; diceRoll: string }>> => {
+): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
   await Promise.all(
     targetUserIds.map(async (targetUserId) => {
       await db.user.update({

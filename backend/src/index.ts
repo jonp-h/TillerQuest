@@ -107,12 +107,12 @@ cron.schedule(
   async () => {
     const now = new Date();
     try {
-      await db.$transaction(async (db) => {
-        await removePassivesWithIncreasedValues(db, now);
+      await db.$transaction(async (tx) => {
+        await removePassivesWithIncreasedValues(tx, now);
 
-        await removePassivesWithDecreasedValues(db, now);
+        await removePassivesWithDecreasedValues(tx, now);
 
-        await removeExpiredPassives(db, now);
+        await removeExpiredPassives(tx, now);
       });
       console.log("Expired passives removed");
     } catch (error) {
@@ -129,8 +129,8 @@ cron.schedule(
   "20 11 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await activateCosmicEvent(db);
+      await db.$transaction(async (tx) => {
+        await activateCosmicEvent(tx);
       });
 
       console.log("Triggered cosmic event");
@@ -148,8 +148,8 @@ cron.schedule(
   "00 16 * * 1-5",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await triggerGuildEnemyDamage(db);
+      await db.$transaction(async (tx) => {
+        await triggerGuildEnemyDamage(tx);
       });
       console.log("Enemy damage triggered.");
     } catch (error) {
@@ -166,8 +166,8 @@ cron.schedule(
   "58 23 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await sessionCleanup(db);
+      await db.$transaction(async (tx) => {
+        await sessionCleanup(tx);
       });
       console.log("Cleared expired sessions.");
     } catch (error) {
@@ -184,8 +184,8 @@ cron.schedule(
   "59 23 * * 0",
   async () => {
     try {
-      db.$transaction(async (db) => {
-        await resetGameHighscores(db);
+      db.$transaction(async (tx) => {
+        await resetGameHighscores(tx);
       });
       console.log("Game highscore rewards granted, and leaderboard reset.");
     } catch (error) {
@@ -202,8 +202,8 @@ cron.schedule(
   "00 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await removeCosmicPassivesAndAbilities(db);
+      await db.$transaction(async (tx) => {
+        await removeCosmicPassivesAndAbilities(tx);
       });
 
       const twoWeeksAgo = new Date();
@@ -233,8 +233,8 @@ cron.schedule(
   "01 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await randomCosmic(db);
+      await db.$transaction(async (tx) => {
+        await randomCosmic(tx);
       });
       console.log("Generated random cosmic event");
     } catch (error) {
@@ -251,8 +251,8 @@ cron.schedule(
   "02 00 * * 0",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await weeklyGuildReset(db);
+      await db.$transaction(async (tx) => {
+        await weeklyGuildReset(tx);
       });
       console.log("Weekly guild reset completed");
     } catch (error) {
@@ -269,8 +269,8 @@ cron.schedule(
   "03 0 * * 1-5",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await resetUserTurns(db);
+      await db.$transaction(async (tx) => {
+        await resetUserTurns(tx);
       });
       console.log("Reset user turns.");
     } catch (error) {
@@ -305,8 +305,8 @@ cron.schedule(
   "05 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await removeOldLogs(db);
+      await db.$transaction(async (tx) => {
+        await removeOldLogs(tx);
       });
 
       console.log("Removed old logs.");

@@ -15,8 +15,8 @@ export const startGame = [
       const gameId = req.params.gameId;
       const userId = req.session?.user.id;
 
-      await db.$transaction(async (db) => {
-        const game = await db.game.update({
+      await db.$transaction(async (tx) => {
+        const game = await tx.game.update({
           where: { id: gameId, userId: userId, status: "PENDING" },
           data: { status: "INPROGRESS", startedAt: new Date() },
         });

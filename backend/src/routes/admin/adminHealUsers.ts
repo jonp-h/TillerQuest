@@ -35,15 +35,15 @@ export const adminHealUsers = [
       const { userIds, value, notify, reason } = req.body;
       const username = req.session!.user.username || "Admin";
 
-      const result = await db.$transaction(async (db) => {
+      const result = await db.$transaction(async (tx) => {
         const healedUsers: string[] = [];
 
         await Promise.all(
           userIds.map(async (userId) => {
-            const valueToHeal = await healingValidator(db, userId, value);
+            const valueToHeal = await healingValidator(tx, userId, value);
 
             if (typeof valueToHeal === "number" && valueToHeal !== 0) {
-              const targetUser = await db.user.update({
+              const targetUser = await tx.user.update({
                 where: {
                   id: userId,
                 },
@@ -61,7 +61,7 @@ export const adminHealUsers = [
               );
 
               await addLog(
-                db,
+                tx,
                 userId,
                 `${targetUser.username} was healed for ${valueToHeal} HP by GM ${username}. ${reason}`,
               );
