@@ -13,50 +13,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
-import { $Enums } from "@prisma/client";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { validateGuildNameUpdate } from "@/data/validators/guildUpdateValidation";
-import { updateGuildname } from "@/data/guilds/updateGuilds";
-import {
-  startGuildBattle,
-  voteToStartNextBattle,
-} from "@/data/dungeons/dungeon";
 import { CloudUpload, HourglassEmpty } from "@mui/icons-material";
-import { uploadGuildImage } from "@/data/guilds/imageUpload";
 import Image from "next/image";
+import { GuildSettings } from "./types";
+import { securePostClient } from "@/lib/secureFetchClient";
 
 function ProfileSettingsForm({
   userId,
   guild,
 }: {
   userId: string;
-  guild: {
-    name: string;
-    icon: string | null;
-    schoolClass: $Enums.SchoolClass | null;
-    level: number;
-    guildLeader: string | null;
-    nextGuildLeader: string | null;
-    nextBattleVotes: string[];
-    enemies: {
-      name: string;
-      health: number;
-    }[];
-    members: {
-      id: string;
-      username: string | null;
-      title: string | null;
-      titleRarity: $Enums.Rarity | null;
-      image: string | null;
-      hp: number;
-      hpMax: number;
-      mana: number;
-      manaMax: number;
-    }[];
-    imageUploads: {
-      id: string;
-    }[];
-  };
+  guild: GuildSettings;
 }) {
   const [name, setName] = useState(guild.name);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -72,22 +40,15 @@ function ProfileSettingsForm({
 
   const handleUpdate = async () => {
     setLoading(true);
-    // FIXME: remove frontend validation to remove server action
-    const validatedData = await validateGuildNameUpdate(userId, name);
 
-    if (!validatedData.success) {
-      toast.error(validatedData.error);
-      setLoading(false);
-      return;
-    }
-
-    const result = await updateGuildname(
-      userId,
-      guild.name,
-      validatedData.data,
+    const result = await securePostClient<string>(
+      `/guilds/${guild.name}/name`,
+      {
+        newName: name,
+      },
     );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -100,9 +61,11 @@ function ProfileSettingsForm({
   const handleStartBattle = async () => {
     setLoading(true);
 
-    const result = await startGuildBattle(userId);
+    const result = await securePostClient<string>(
+      `/guilds/${guild.name}/battles`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -115,9 +78,14 @@ function ProfileSettingsForm({
   const vote = async () => {
     setLoading(true);
 
-    const result = await voteToStartNextBattle(userId);
+    const result = await securePostClient<string>(
+      `/users/${userId}/guild/battles/vote`,
+      {
+        guildName: guild.name,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -171,22 +139,23 @@ function ProfileSettingsForm({
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    const result = await uploadGuildImage(userId, guild.name, formData);
+    //FIXME: add uploadGuildImage function
+    // const result = await uploadGuildImage(userId, guild.name, formData);
 
-    if (result.success) {
-      toast.success(result.data);
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      // Reset file input
-      const fileInput = document.getElementById(
-        "guild-image-upload",
-      ) as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = "";
-      }
-    } else {
-      toast.error(result.error);
-    }
+    // if (result.success) {
+    //   toast.success(result.data);
+    //   setSelectedFile(null);
+    //   setPreviewUrl(null);
+    //   // Reset file input
+    //   const fileInput = document.getElementById(
+    //     "guild-image-upload",
+    //   ) as HTMLInputElement;
+    //   if (fileInput) {
+    //     fileInput.value = "";
+    //   }
+    // } else {
+    //   toast.error(result.error);
+    // }
 
     setLoading(false);
     router.refresh();

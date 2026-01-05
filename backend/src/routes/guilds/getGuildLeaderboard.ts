@@ -34,7 +34,6 @@ export const getGuildLeaderboard = [
             select: {
               id: true,
               username: true,
-              xp: true,
             },
           },
         },

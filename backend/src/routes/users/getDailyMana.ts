@@ -12,7 +12,8 @@ export const getDailyMana = [
   requireUserIdAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { id: userId, role } = req.session!.user;
+      const userId = req.params.userId;
+      const { role } = req.session!.user;
 
       // Archived users are not allowed to get daily mana
       if (role === "ARCHIVED") {

@@ -1,4 +1,4 @@
-import { secureFetch } from "@/lib/secureFetch";
+import { secureGet } from "@/lib/secureFetch";
 import {
   Divider,
   List,
@@ -11,7 +11,7 @@ import { Log as LogType } from "@prisma/client";
 import { Fragment } from "react";
 
 async function Log(userID: { userId: string }) {
-  const userLogs = await secureFetch<LogType[]>(`/logs/${userID.userId}`);
+  const userLogs = await secureGet<LogType[]>(`/logs/${userID.userId}`);
   if (!userLogs.ok) {
     throw new Error("Failed to fetch user logs");
   }

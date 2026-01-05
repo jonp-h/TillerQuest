@@ -118,15 +118,7 @@ export const startGuildBattle = [
 
         res.json({
           success: true,
-          data: {
-            message: `Battle started against ${enemy.name}!`,
-            enemy: {
-              id: enemy.id,
-              name: enemy.name,
-              icon: enemy.icon,
-            },
-            numberOfEnemies,
-          },
+          data: `Battle started against ${enemy.name}!`,
         });
       });
     } catch (error) {

@@ -2,7 +2,7 @@ import { UserProfile } from "./types";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
-import { secureFetch } from "@/lib/secureFetch";
+import { secureGet } from "@/lib/secureFetch";
 import { CosmicEvent, SystemMessage as Notification } from "@prisma/client";
 import SystemMessage from "./SystemMessage";
 import ErrorAlert from "@/components/ErrorAlert";
@@ -12,10 +12,10 @@ export default async function InformationBox({
 }: {
   user: UserProfile;
 }): Promise<JSX.Element> {
-  const cosmic = await secureFetch<CosmicEvent>(
+  const cosmic = await secureGet<CosmicEvent>(
     `/cosmics/events?schoolClass=${user.schoolClass}`,
   );
-  const systemMessages = await secureFetch<Notification[]>(
+  const systemMessages = await secureGet<Notification[]>(
     `/notifications/${user.id}`,
   );
   if (!systemMessages.ok) {

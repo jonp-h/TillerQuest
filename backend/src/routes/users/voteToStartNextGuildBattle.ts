@@ -4,24 +4,29 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
-import { validateParams } from "middleware/validationMiddleware.js";
+import {
+  validateBody,
+  validateParams,
+} from "middleware/validationMiddleware.js";
 import { guildNameParamSchema } from "utils/validators/validationUtils.js";
+
+interface VoteToStartNextBattleRequest extends AuthenticatedRequest {
+  params: {
+    userId: string;
+  };
+  body: {
+    guildName: string;
+  };
+}
 
 export const voteToStartNextBattle = [
   requireUserIdAndActive(),
   validateParams(guildNameParamSchema),
-  async (req: AuthenticatedRequest, res: Response) => {
+  validateBody(guildNameParamSchema),
+  async (req: VoteToStartNextBattleRequest, res: Response) => {
     try {
-      const guildName = req.params.guildName;
-      const userId = req.session?.user.id;
-
-      if (!userId) {
-        res.status(401).json({
-          success: false,
-          error: "Authentication required",
-        });
-        return;
-      }
+      const userId = req.params.userId;
+      const guildName = req.body.guildName;
 
       await db.$transaction(async (tx) => {
         const guild = await tx.guild.findFirst({

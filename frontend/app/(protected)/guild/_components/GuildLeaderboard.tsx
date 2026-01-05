@@ -5,23 +5,9 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import Link from "next/link";
+import { GuildLeaderboardType } from "./types";
 
-function GuildLeaderboard({
-  guilds,
-}: {
-  guilds: {
-    name: string;
-    schoolClass: $Enums.SchoolClass | null;
-    level: number;
-    icon: string | null;
-    guildLeader: string | null;
-    members: {
-      id: string;
-      username: string | null;
-      xp: number;
-    }[];
-  }[];
-}) {
+function GuildLeaderboard({ guilds }: { guilds: GuildLeaderboardType }) {
   // Sort guilds by level in descending order
   const sortedGuilds = [...guilds].sort((a, b) => b.level - a.level);
 
@@ -170,10 +156,12 @@ function GuildLeaderboard({
                     <Box className="flex flex-wrap gap-2">
                       {guild.members
                         .sort((a, b) => {
-                          // Sort guild leader first, then by XP
+                          // Sort guild leader first, then by username
                           if (guild.guildLeader === a.id) return -1;
                           if (guild.guildLeader === b.id) return 1;
-                          return b.xp - a.xp;
+                          return (a.username || "").localeCompare(
+                            b.username || "",
+                          );
                         })
                         .map((member) => (
                           <Link

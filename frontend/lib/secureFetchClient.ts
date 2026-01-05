@@ -121,7 +121,7 @@ function fetchWithTimeout(
  * }
  * ```
  */
-export async function secureFetchClient<T = unknown>(
+async function secureFetchClient<T = unknown>(
   url: string,
   options: SecureFetchClientOptions = {},
 ): Promise<SecureFetchResult<T>> {

@@ -2,7 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { notFound } from "next/navigation";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
 import { redirectIfWrongUsernameOrNotActiveUser } from "@/lib/redirectUtils";
-import { secureFetch } from "@/lib/secureFetch";
+import { secureGet } from "@/lib/secureFetch";
 import { UserSettings } from "./_components/types";
 
 async function ProfileSettingsPage({
@@ -14,7 +14,7 @@ async function ProfileSettingsPage({
 
   await redirectIfWrongUsernameOrNotActiveUser(username);
 
-  const user = await secureFetch<UserSettings>(`/users/${username}/settings`);
+  const user = await secureGet<UserSettings>(`/users/${username}/settings`);
 
   if (!user.ok) {
     notFound();

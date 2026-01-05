@@ -8,7 +8,7 @@ export const getLastMana = [
   requireUserIdAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const userId = req.session!.user.id;
+      const userId = req.params.userId;
       const user = await db.user.findUnique({
         where: { id: userId },
         select: {

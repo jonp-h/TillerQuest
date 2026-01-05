@@ -18,26 +18,38 @@ import { purchaseAbility } from "./purchaseAbility.js";
 import { updateUserSettings } from "./updateUserSettings.js";
 import { equipItem } from "./equipItem.js";
 import { getUserPassives } from "./getUserPassives.js";
+import { getLastMana } from "./lastMana.js";
+import { getDailyMana } from "./getDailyMana.js";
+import { getGuildByUserId } from "./getGuildByUserId.js";
+import { voteToStartNextBattle } from "./voteToStartNextGuildBattle.js";
 
 const router = express.Router();
 
+router.get("/users/:userId/new", getNewUser);
 // Get user by ID (with query param for data type)
 router.get("/users/:userId", getBaseUser);
+router.get("/users/username/:username/profile", getUserProfile);
+
 // Update/create user profile (account setup)
 router.put("/users/:userId", updateUser);
 
+router.get("/users/:userId/last-mana", getLastMana);
+router.post("/users/:userId/daily-mana", getDailyMana);
+
 router.get("/users/:userId/game", getGameUser);
+
 router.get("/users/:username/settings", getUserSettings);
 // Update user profile settings (after account creation)
 router.patch("/users/:username/settings", updateUserSettings);
 
-router.get("/users/:userId/new", getNewUser);
+router.get("/users/:userId/guild", getGuildByUserId);
+router.post("/users/:userId/guild/battles/vote", voteToStartNextBattle);
+
+router.get("/users/:userId/turns", getUserTurns);
 
 router.get("/users/:userId/inventory", getUserInventory);
 router.post("/users/:userId/inventory", purchaseItem);
 router.patch("/users/:userId/equipment", equipItem);
-
-router.get("/users/:userId/turns", getUserTurns);
 
 // User ability routes
 router.get("/users/:userId/abilities", getUserAbilities);
@@ -50,8 +62,6 @@ router.get(
   "/users/:userId/abilities/:abilityName/owns",
   checkIfUserOwnsAbility,
 );
-
-router.get("/users/username/:username/profile", getUserProfile);
 
 // Collection endpoints
 router.get("/users/dead", getDeadUsers);

@@ -1,16 +1,13 @@
 "use client";
-import { getDailyMana } from "@/data/mana/mana";
-import { magicalArea } from "@/lib/gameSetting";
 import { Button, Tooltip, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { LastMana } from "./types";
+import { securePostClient } from "@/lib/secureFetchClient";
 
 interface ManaFormProps {
-  user: {
-    id: string;
-    lastMana: Date;
-  };
+  user: LastMana;
   isWeekend: boolean;
   currentDate: Date;
 }
@@ -23,15 +20,17 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
   }>(null);
   const [correctLocation, setCorrectLocation] = useState<boolean>(false);
   const router = useRouter();
+  const magicalAreaRadius = 0.00144;
 
+  // TODO: move to backend
   function checkCorrectLocation(latitude: number, longtitude: number) {
     return (
       Math.abs(
         longtitude - Number(process.env.NEXT_PUBLIC_MAGICAL_AREA_LONGITUDE),
-      ) < magicalArea &&
+      ) < magicalAreaRadius &&
       Math.abs(
         latitude - Number(process.env.NEXT_PUBLIC_MAGICAL_AREA_LATITUDE),
-      ) < magicalArea
+      ) < magicalAreaRadius
     );
   }
 
@@ -80,9 +79,11 @@ function ManaForm({ user, isWeekend, currentDate }: ManaFormProps) {
       return;
     } else {
       try {
-        const result = await getDailyMana(user.id);
+        const result = await securePostClient<string>(
+          `/users/${user.id}/daily-mana`,
+        );
 
-        if (result.success) {
+        if (result.ok) {
           toast.success(result.data);
         } else {
           toast.error(result.error);

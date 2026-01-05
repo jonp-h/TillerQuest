@@ -28,7 +28,7 @@ import ProfileBadge from "./_components/ProfileBadge";
 import Log from "./_components/Log";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityText from "@/components/RarityText";
-import { secureFetch } from "@/lib/secureFetch";
+import { secureGet } from "@/lib/secureFetch";
 import { UserProfile } from "./_components/types";
 import { GuildMember } from "../../abilities/[abilityName]/_components/interfaces";
 
@@ -39,7 +39,7 @@ export default async function ProfilePage({
 }) {
   const { username } = await params;
   const session = await redirectIfNotActiveUser();
-  const user = await secureFetch<UserProfile>(
+  const user = await secureGet<UserProfile>(
     `/users/username/${username}/profile`,
   );
   if (!user.ok) {
@@ -47,7 +47,7 @@ export default async function ProfilePage({
   }
 
   // TODO: could be optimized by inserting into profile query
-  const guildMembers = await secureFetch<GuildMember[]>(
+  const guildMembers = await secureGet<GuildMember[]>(
     `/guilds/${user.data.guildName || ""}/members`,
   );
   if (!guildMembers.ok) {
