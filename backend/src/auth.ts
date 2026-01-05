@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 import { db } from "./lib/db.js";
-import { $Enums } from "@prisma/client";
+import { Class } from "@tillerquest/prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -35,7 +35,7 @@ export const auth = betterAuth({
         input: false,
         default: "DRUID",
         description: "Your class in the game, used to determine abilities.",
-        enum: $Enums.Class,
+        enum: Class,
       },
     },
   },

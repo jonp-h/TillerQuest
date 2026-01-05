@@ -1,0 +1,23 @@
+{
+  "name": "@tillerquest/prisma",
+  "version": "1.0.0",
+  "description": "Shared Prisma client for TillerQuest monorepo",
+  "type": "module",
+  "main": "./client.ts",
+  "types": "./client.ts",
+  "exports": {
+    ".": {
+      "import": "./client.ts",
+      "require": "./client.ts",
+      "types": "./client.ts"
+    },
+    "./browser": {
+      "import": "./browser.ts",
+      "require": "./browser.ts",
+      "types": "./browser.ts"
+    }
+  },
+  "peerDependencies": {
+    "@prisma/client": "^7.2.0"
+  }
+}

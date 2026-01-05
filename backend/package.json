@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "main": "index.js",
   "type": "module",
+  "prisma": {
+    "schema": "../prisma/schema.prisma"
+  },
   "scripts": {
     "start": "nodemon",
     "lint": "eslint . --ext .js,.ts, --fix",
@@ -15,7 +18,8 @@
   },
   "dependencies": {
     "@dice-roller/rpg-dice-roller": "^5.5.1",
-    "@prisma/client": "^6.13.0",
+    "@prisma/client": "^7.2.0",
+    "@tillerquest/prisma": "*",
     "better-auth": "^1.4.9",
     "cors": "^2.8.5",
     "express": "^5.2.1",

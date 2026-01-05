@@ -16,7 +16,7 @@
     "@mui/material-nextjs": "^7.3.6",
     "@mui/x-charts": "^8.21.0",
     "@mui/x-data-grid": "^8.21.0",
-    "@prisma/client": "^6.13.0",
+    "@tillerquest/prisma": "*",
     "better-auth": "^1.4.9",
     "clsx": "^2.1.1",
     "file-type": "^21.1.1",

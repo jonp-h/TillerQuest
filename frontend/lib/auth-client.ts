@@ -1,7 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields } from "better-auth/client/plugins";
-import { $Enums } from "@prisma/client";
-
+import { Class } from "@tillerquest/prisma/browser";
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL, // Optional if the API base URL matches the frontend
   plugins: [
@@ -27,7 +26,7 @@ export const authClient = createAuthClient({
           input: false,
           default: "DRUID",
           description: "Your class in the game, used to determine abilities.",
-          enum: $Enums.Class,
+          enum: Class,
         },
       },
     }),

@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { SchoolClass } from "@tillerquest/prisma";
 import { z } from "zod";
 
 const entityMap = {
@@ -42,7 +42,7 @@ export const updateUserSchema = z.object({
   playerClass: z.string(),
   guildId: z.number(),
   image: z.string(),
-  schoolClass: z.enum($Enums.SchoolClass, "Invalid school class"),
+  schoolClass: z.enum(SchoolClass, "Invalid school class"),
   publicHighscore: z.boolean(),
   secret: z.string(),
 });
@@ -99,7 +99,7 @@ export const guildNameParamSchema = z.object({
 });
 
 export const schoolClassSchema = z.object({
-  schoolClass: z.enum($Enums.SchoolClass, "Invalid school class"),
+  schoolClass: z.enum(SchoolClass, "Invalid school class"),
 });
 
 export const selectCosmicSchema = z.object({

@@ -7,7 +7,7 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { $Enums } from "@prisma/client";
+import { Access } from "@tillerquest/prisma";
 import {
   adminUpdateUserSchema,
   userIdParamSchema,
@@ -66,7 +66,7 @@ export const adminUpdateUser = [
           username,
           lastname,
           special,
-          access: processedAccess as $Enums.Access[] | undefined,
+          access: processedAccess as Access[] | undefined,
         },
       });
 
