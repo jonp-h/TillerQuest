@@ -1,4 +1,4 @@
-import { SchoolClass } from "@tillerquest/prisma";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 import { z } from "zod";
 
 const entityMap = {

@@ -1,5 +1,5 @@
 import { db } from "../../lib/db.js";
-import { SchoolClass } from "@tillerquest/prisma";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 import { sendDiscordMessage } from "../../lib/discord.js";
 import { PrismaTransaction } from "../../types/prismaTransaction.js";
 import { getActiveUsersBySchoolGrade } from "utils/users/getActiveUsersBySchoolGrade.js";

@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 import { db } from "./lib/db.js";
-import { Class } from "@tillerquest/prisma";
+import { Class, UserRole } from "@tillerquest/prisma/browser";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -27,7 +27,7 @@ export const auth = betterAuth({
         input: false,
         default: "NEW",
         description: "Your role in the game, used to determine permissions.",
-        enum: ["NEW", "USER", "ADMIN", "ARCHIVED"],
+        enum: UserRole,
       },
       class: {
         type: "string",

@@ -7,7 +7,7 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { Access } from "@tillerquest/prisma";
+import { Access } from "@tillerquest/prisma/browser";
 import {
   adminUpdateUserSchema,
   userIdParamSchema,

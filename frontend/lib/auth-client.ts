@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields } from "better-auth/client/plugins";
-import { Class } from "@tillerquest/prisma/browser";
+import { Class, UserRole } from "@tillerquest/prisma/browser";
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL, // Optional if the API base URL matches the frontend
   plugins: [
@@ -18,7 +18,7 @@ export const authClient = createAuthClient({
           input: false,
           default: "NEW",
           description: "Your role in the game, used to determine permissions.",
-          enum: ["NEW", "USER", "ADMIN", "ARCHIVED"],
+          enum: UserRole,
         },
         class: {
           type: "string",

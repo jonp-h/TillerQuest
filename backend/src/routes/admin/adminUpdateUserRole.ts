@@ -7,7 +7,7 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { UserRole } from "@tillerquest/prisma";
+import { UserRole } from "@tillerquest/prisma/browser";
 import {
   updateUserRoleSchema,
   userIdParamSchema,
