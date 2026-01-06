@@ -1,4 +1,5 @@
-import { db, SchoolClass } from "../../lib/db.js";
+import { SchoolClass } from "@tillerquest/prisma/browser";
+import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 
 /**

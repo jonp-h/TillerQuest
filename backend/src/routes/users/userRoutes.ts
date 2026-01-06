@@ -23,6 +23,7 @@ import { getDailyMana } from "./getDailyMana.js";
 import { getGuildByUserId } from "./getGuildByUserId.js";
 import { voteToStartNextBattle } from "./voteToStartNextGuildBattle.js";
 import { getGuildEnemiesByUserId } from "./getGuildEnemiesByUserId.js";
+import { getUserLeaderboards } from "./getUserLeaderboards.js";
 
 const router = express.Router();
 
@@ -67,6 +68,7 @@ router.get(
 
 // Collection endpoints
 router.get("/users/dead", getDeadUsers);
+router.get("/users/leaderboards", getUserLeaderboards);
 router.get("/users/valhalla", getValhallaUsers);
 
 export default router;

@@ -1,36 +1,30 @@
 import { Response } from "express";
-import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
-  requireAuth,
   requireActiveUser,
+  requireAuth,
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import {
+  getVg1Leaderboard,
+  getVg2Leaderboard,
+} from "utils/users/getLeaderboards.js";
 
-export const getDeadUsers = [
+export const getUserLeaderboards = [
   requireAuth,
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const deadUsers = await db.user.findMany({
-        where: {
-          hp: {
-            equals: 0,
-          },
-        },
+      const vg1 = await getVg1Leaderboard();
 
-        select: {
-          id: true,
-          username: true,
-        },
-      });
+      const vg2 = await getVg2Leaderboard();
 
-      res.json({ success: true, data: deadUsers });
+      res.json({ success: true, data: { vg1, vg2 } });
     } catch (error) {
-      logger.error("Error fetching dead users: " + error);
+      logger.error("Error fetching leaderboards: " + error);
       res.status(500).json({
         success: false,
-        error: "Failed to fetch dead users",
+        error: "Failed to fetch leaderboards",
         timestamp: new Date().toISOString(),
       });
     }

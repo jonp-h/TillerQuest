@@ -18,10 +18,10 @@ import {
 } from "./cronjobs.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
-import leaderboardRoutes from "./routes/leaderboard.js";
+import api_key_leaderboardRoutes from "./routes/api_key_leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
-import { requireAdmin, requireAuth } from "middleware/authMiddleware.js";
+import { requireAuth } from "middleware/authMiddleware.js";
 import routes from "routes/routes.js";
 import { ErrorMessage } from "lib/error.js";
 
@@ -36,7 +36,7 @@ app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 // Mount express json middleware after Better Auth handler
 // or only apply it to routes that don't interact with Better Auth
-app.use(express.json());
+app.use(express.json({ limit: "100kb" })); // Default: JSON body to 100kb to prevent DOS
 
 // Rate limiting to prevent abuse and DoS attacks
 const limiter = rateLimit({
@@ -49,19 +49,17 @@ app.use(limiter);
 app.use(
   cors({
     origin: process.env.FRONTEND_URL, // The frontend's origin
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );
 
-app.use("/api/me", requireAuth, requireAdmin, async (req, res) => {
-  res.json({ message: "This is the /api/me endpoint" });
-  return;
-});
+// ---------------------- ROUTES ------------------------------
+// Public API routes with API key authentication
+app.use("/api/public/v1", api_key_leaderboardRoutes);
 
-// app.use("/api", leaderboardRoutes);
-
-app.use("/api/v1", routes);
+// Protected API routes - require user authentication
+app.use("/api/v1", requireAuth, routes);
 
 // Global error handler - catches errors from middleware
 app.use(

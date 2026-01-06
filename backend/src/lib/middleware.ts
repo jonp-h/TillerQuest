@@ -72,7 +72,7 @@ export const createRateLimiter = (
 export const ipRateLimit = createRateLimiter(15 * 60 * 1000, 100); // 100 requests per 15 minutes per IP
 
 // API key-based rate limiting (more restrictive)
-export const apiKeyRateLimit = createRateLimiter(60 * 1000, 10, true); // 10 requests per minute per API key
+export const apiKeyRateLimit = createRateLimiter(60 * 1000, 20, true); // 20 requests per minute per API key
 
 // Request signature validation
 export const validateRequestSignature = (
