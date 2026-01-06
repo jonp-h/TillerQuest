@@ -6,7 +6,7 @@ import { Tooltip, Typography } from "@mui/material";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityModal from "./_components/RarityModal";
 import { secureGet } from "@/lib/secureFetch";
-import { ShopItem } from "@prisma/client";
+import { ShopItem } from "@tillerquest/prisma/browser";
 import { UserInventory } from "./_components/types";
 
 async function Shop() {

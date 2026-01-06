@@ -1,6 +1,6 @@
 "use client";
 import { Typography, Paper, Box, Avatar, Chip } from "@mui/material";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";

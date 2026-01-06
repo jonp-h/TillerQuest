@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { finishGame, initializeGame } from "@/data/games/game";
 import { toast } from "react-toastify";
 import { Circle, Stadium } from "@mui/icons-material";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";

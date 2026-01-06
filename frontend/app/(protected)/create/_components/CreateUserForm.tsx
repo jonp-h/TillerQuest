@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import Classes from "./Classes";
 import { checkNewUserSecret } from "@/data/validators/secretValidation";
-import { $Enums, SchoolClass } from "@prisma/client";
+import { $Enums, SchoolClass } from "@tillerquest/prisma/browser";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
 import { validateUserCreation } from "@/data/validators/userUpdateValidation";

@@ -3,7 +3,10 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
 import { secureGet } from "@/lib/secureFetch";
-import { CosmicEvent, SystemMessage as Notification } from "@prisma/client";
+import {
+  CosmicEvent,
+  SystemMessage as Notification,
+} from "@tillerquest/prisma/browser";
 import SystemMessage from "./SystemMessage";
 import ErrorAlert from "@/components/ErrorAlert";
 

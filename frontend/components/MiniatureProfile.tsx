@@ -1,5 +1,5 @@
 import { LinearProgress, Typography } from "@mui/material";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import Image from "next/image";
 import Link from "next/link";
 import RarityText from "./RarityText";

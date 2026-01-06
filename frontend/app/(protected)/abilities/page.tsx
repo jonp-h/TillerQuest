@@ -7,7 +7,7 @@ import {
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
 import { RootAbilities } from "./_components/interfaces";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 export default async function AbilitiesPage() {

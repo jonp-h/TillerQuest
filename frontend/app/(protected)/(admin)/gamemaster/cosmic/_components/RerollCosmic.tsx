@@ -16,7 +16,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { CosmicEvent } from "@prisma/client";
+import { CosmicEvent } from "@tillerquest/prisma/browser";
 import {
   randomCosmic,
   setRecommendedCosmic,

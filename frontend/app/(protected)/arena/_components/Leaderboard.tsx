@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { Class, SchoolClass } from "@prisma/client";
+import { Class, SchoolClass } from "@tillerquest/prisma/browser";
 import RarityText from "@/components/RarityText";
 
 interface LeaderboardUser {

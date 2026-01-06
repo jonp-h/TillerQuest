@@ -18,7 +18,7 @@ import {
 import { notFound } from "next/navigation";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";

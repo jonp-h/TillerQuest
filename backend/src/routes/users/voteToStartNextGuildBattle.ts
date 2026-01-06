@@ -21,7 +21,6 @@ interface VoteToStartNextBattleRequest extends AuthenticatedRequest {
 
 export const voteToStartNextBattle = [
   requireUserIdAndActive(),
-  validateParams(guildNameParamSchema),
   validateBody(guildNameParamSchema),
   async (req: VoteToStartNextBattleRequest, res: Response) => {
     try {

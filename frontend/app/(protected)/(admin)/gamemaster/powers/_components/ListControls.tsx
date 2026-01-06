@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { User } from "@prisma/client";
+import { User } from "@tillerquest/prisma/browser";
 import { useState, useTransition } from "react";
 import {
   damageUsers,

@@ -22,6 +22,7 @@ import { getLastMana } from "./lastMana.js";
 import { getDailyMana } from "./getDailyMana.js";
 import { getGuildByUserId } from "./getGuildByUserId.js";
 import { voteToStartNextBattle } from "./voteToStartNextGuildBattle.js";
+import { getGuildEnemiesByUserId } from "./getGuildEnemiesByUserId.js";
 
 const router = express.Router();
 
@@ -44,6 +45,7 @@ router.patch("/users/:username/settings", updateUserSettings);
 
 router.get("/users/:userId/guild", getGuildByUserId);
 router.post("/users/:userId/guild/battles/vote", voteToStartNextBattle);
+router.get("/users/:userId/guild/enemies", getGuildEnemiesByUserId);
 
 router.get("/users/:userId/turns", getUserTurns);
 

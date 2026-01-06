@@ -4,7 +4,7 @@ import RarityText from "@/components/RarityText";
 import { securePostClient } from "@/lib/secureFetchClient";
 import { Circle } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
-import { Class, ShopItem } from "@prisma/client";
+import { Class, ShopItem } from "@tillerquest/prisma/browser";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";

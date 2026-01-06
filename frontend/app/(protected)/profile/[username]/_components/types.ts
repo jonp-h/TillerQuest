@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@tillerquest/prisma/browser";
 import { DateToString } from "@/types/dateToString";
 
 /**

@@ -1,4 +1,4 @@
-import { PrismaClient, SchoolClass } from "@prisma/client";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
 import { resetUserTurns } from "cronjobs.js";

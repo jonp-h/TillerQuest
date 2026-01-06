@@ -2,7 +2,7 @@
 import { Paper, Tab, Tabs } from "@mui/material";
 import AbilityTree from "./AbilityTree";
 import { RootAbilities, UserAbilities } from "./interfaces";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import { SyntheticEvent, useEffect, useState } from "react";
 
 interface TabPanelProps {

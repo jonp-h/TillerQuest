@@ -1,4 +1,4 @@
-import { SchoolClass } from "@tillerquest/prisma/browser";
+import { SchoolClass, UserRole } from "@tillerquest/prisma/browser";
 import { z } from "zod";
 
 const entityMap = {
@@ -61,7 +61,7 @@ export const updateUserSettingsSchema = z.object({
 });
 
 export const updateUserRoleSchema = z.object({
-  role: z.enum(["NEW", "USER", "INACTIVE", "ADMIN", "ARCHIVED"]),
+  role: z.enum(UserRole),
 });
 
 export const adminUpdateUserSchema = z.object({
@@ -77,7 +77,10 @@ export const updateGuildNameSchema = z.object({
     .string()
     .min(3, "Guild name must be above 3 characters")
     .max(25, "Guild name must be below 25 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
+    .regex(
+      /^[A-Za-zŽžÀ-ÿ0-9\s'_-]+$/,
+      "Guild name may only contain letters, numbers, spaces, hyphens, underscores, and apostrophes",
+    ),
 });
 
 export const adminUpdateGuildMembersSchema = z.object({
@@ -85,8 +88,18 @@ export const adminUpdateGuildMembersSchema = z.object({
     .string()
     .min(3, "Guild name must be above 3 characters")
     .max(25, "Guild name must be below 25 characters")
-    .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Guild name may only contain letters"),
-  oldName: z.string(),
+    .regex(
+      /^[A-Za-zŽžÀ-ÿ0-9\s'_-]+$/,
+      "Guild name may only contain letters, numbers, spaces, hyphens, underscores, and apostrophes",
+    ),
+  oldName: z
+    .string()
+    .min(3, "Guild name must be above 3 characters")
+    .max(25, "Guild name must be below 25 characters")
+    .regex(
+      /^[A-Za-zŽžÀ-ÿ0-9\s'_-]+$/,
+      "Guild name may only contain letters, numbers, spaces, hyphens, underscores, and apostrophes",
+    ),
 });
 
 export const updateApplicationSettingSchema = z.object({
@@ -95,7 +108,14 @@ export const updateApplicationSettingSchema = z.object({
 });
 
 export const guildNameParamSchema = z.object({
-  guildName: z.string().min(3).max(25),
+  guildName: z
+    .string()
+    .min(3, "Guild name must be above 3 characters")
+    .max(25, "Guild name must be below 25 characters")
+    .regex(
+      /^[A-Za-zŽžÀ-ÿ0-9\s'_-]+$/,
+      "Guild name may only contain letters, numbers, spaces, hyphens, underscores, and apostrophes",
+    ),
 });
 
 export const schoolClassSchema = z.object({

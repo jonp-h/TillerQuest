@@ -13,7 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { JsonValue } from "@prisma/client/runtime/library";
 import RarityText from "@/components/RarityText";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 
 interface GameLeaderboardProps {
   user: {

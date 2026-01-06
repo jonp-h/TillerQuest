@@ -2,7 +2,6 @@ import express from "express";
 import { getGuildMembersForAbilityTarget } from "./getGuildMembersForAbilityTarget.js";
 import { getGuildMembers } from "./getGuildMembers.js";
 import { startGuildBattle } from "./startGuildBattle.js";
-import { getGuildEnemies } from "./getGuildEnemies.js";
 import { updateGuildName } from "./updateGuildName.js";
 import { getGuildsAndMemberCountBySchoolClass } from "./getGuildsAndMemberCountBySchoolClass.js";
 import { getGuildLeaderboard } from "./getGuildLeaderboard.js";
@@ -25,9 +24,6 @@ router.get("/guilds", getGuildsAndMemberCountBySchoolClass);
 
 // Guild battle routes
 router.post("/guilds/:guildName/battles", startGuildBattle);
-
-// Guild enemy routes
-router.get("/guilds/:guildName/enemies", getGuildEnemies);
 
 router.get("/guilds/leaderboard", getGuildLeaderboard);
 

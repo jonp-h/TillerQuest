@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
 import { validateParams } from "middleware/validationMiddleware.js";
@@ -9,20 +12,13 @@ import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 import { addLog } from "utils/logs/addLog.js";
 
 export const startGuildBattle = [
-  requireUserIdAndActive(),
+  requireAuth,
+  requireActiveUser,
   validateParams(guildNameParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guildName = req.params.guildName;
       const userId = req.session?.user.id;
-
-      if (!userId) {
-        res.status(401).json({
-          success: false,
-          error: "Authentication required",
-        });
-        return;
-      }
 
       await db.$transaction(async (tx) => {
         const guild = await tx.guild.findFirst({

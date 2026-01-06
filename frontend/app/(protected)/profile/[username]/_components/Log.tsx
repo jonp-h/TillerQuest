@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { Log as LogType } from "@prisma/client";
+import { Log as LogType } from "@tillerquest/prisma/browser";
 import { Fragment } from "react";
 
 async function Log(userID: { userId: string }) {

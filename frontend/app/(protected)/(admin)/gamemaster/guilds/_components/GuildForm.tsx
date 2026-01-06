@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import { SchoolClass } from "@prisma/client";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 import { Fragment, useEffect, useState } from "react";
 import {
   adminUpdateGuildname,

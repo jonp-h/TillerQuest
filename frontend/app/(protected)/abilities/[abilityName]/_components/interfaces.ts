@@ -1,4 +1,4 @@
-import { Rarity } from "@prisma/client";
+import { Rarity } from "@tillerquest/prisma/browser";
 
 export interface GuildMember {
   title: string | null;

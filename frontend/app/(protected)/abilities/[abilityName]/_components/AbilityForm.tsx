@@ -2,7 +2,7 @@
 import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
 import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
-import { Ability } from "@prisma/client";
+import { Ability } from "@tillerquest/prisma/browser";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";

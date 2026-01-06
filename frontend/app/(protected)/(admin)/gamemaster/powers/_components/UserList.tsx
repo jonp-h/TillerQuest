@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { User } from "@prisma/client";
+import { User } from "@tillerquest/prisma/browser";
 import { useState } from "react";
 import Link from "next/link";
 

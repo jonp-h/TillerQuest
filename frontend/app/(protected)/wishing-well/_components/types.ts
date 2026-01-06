@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@tillerquest/prisma/browser";
 
 export type WishWithVotes = Prisma.WishGetPayload<{
   select: {

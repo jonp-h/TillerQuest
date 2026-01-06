@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
-import { User } from "@prisma/client";
+import { User } from "@tillerquest/prisma/browser";
 import { resurrectUsers, rollDeathSave } from "@/data/admin/resurrectUser";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";

@@ -1,9 +1,10 @@
 import MainContainer from "@/components/MainContainer";
 import Battleground from "./_components/Battleground";
-import { getDungeonAbilities } from "@/data/dungeons/dungeonAbilities";
-import { getEnemies, getUserTurns } from "@/data/dungeons/dungeon";
+
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import { Typography } from "@mui/material";
+import { secureGet } from "@/lib/secureFetch";
+import { Ability, GuildEnemy } from "@tillerquest/prisma/browser";
 
 async function DungeonPage() {
   const session = await redirectIfNotActiveUser();
@@ -12,9 +13,14 @@ async function DungeonPage() {
     throw new Error("User error");
   }
 
-  const dungeonAbilities = await getDungeonAbilities(session.user.id);
-  const enemies = await getEnemies(session.user.id);
-  const userTurns = await getUserTurns(session.user.id);
+  const dungeonAbilities = await secureGet<Ability[]>(
+    `/users/${session.user.id}/abilities/dungeon`,
+  );
+
+  const enemies = await secureGet<GuildEnemy[]>(
+    `/users/${session.user.id}/guild/enemies`,
+  );
+  const userTurns = await secureGet<number>(`/users/${session.user.id}/turns`);
 
   return (
     <MainContainer>
@@ -28,10 +34,10 @@ async function DungeonPage() {
       </Typography>{" "}
       {enemies ? (
         <Battleground
-          abilities={dungeonAbilities ?? []}
+          abilities={dungeonAbilities.ok ? dungeonAbilities.data : []}
           userId={session.user.id}
-          enemies={enemies}
-          userTurns={userTurns}
+          enemies={enemies.ok ? enemies.data : []}
+          userTurns={userTurns.ok ? userTurns.data : 0}
         />
       ) : (
         <Typography

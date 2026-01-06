@@ -15,7 +15,7 @@ import {
   Typography,
   Autocomplete,
 } from "@mui/material";
-import { UserRole, $Enums } from "@prisma/client";
+import { UserRole, $Enums } from "@tillerquest/prisma/browser";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

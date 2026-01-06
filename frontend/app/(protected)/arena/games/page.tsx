@@ -4,7 +4,7 @@ import { getGameUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
 import GameTabs from "./_components/GameTabs";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import ErrorPage from "@/components/ErrorPage";
 
 async function Games() {

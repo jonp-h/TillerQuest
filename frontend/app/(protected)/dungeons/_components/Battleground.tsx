@@ -6,33 +6,23 @@ import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
 import { AbilityGridProps } from "./interfaces";
 import AbilityGrid from "./AbilityGrid";
-import { Ability } from "@prisma/client";
+import { Ability, GuildEnemy } from "@tillerquest/prisma/browser";
 import { useRouter } from "next/navigation";
 import TimeLeft from "@/components/TimeLeft";
 import { Button, Typography } from "@mui/material";
 import Link from "next/link";
-import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
+import { AbilityResponse } from "@/types/apiResponse";
+import { securePostClient } from "@/lib/secureFetchClient";
 
 function Battleground({
   abilities,
-  userId,
   enemies,
   userTurns,
 }: AbilityGridProps & {
+  abilities: Ability[];
   userId: string;
-  enemies:
-    | {
-        name: string;
-        id: string;
-        guildName: string;
-        icon: string;
-        enemyId: number;
-        attack: number;
-        health: number;
-        maxHealth: number;
-      }[]
-    | null;
-  userTurns: { turns: number };
+  enemies: GuildEnemy[];
+  userTurns: number;
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [selectedEnemies, setSelectedEnemies] = useState<string[]>([]);
@@ -78,12 +68,18 @@ function Battleground({
     if (ability.target === "All") {
       // update the UI to show the selected enemies visually
       setSelectedEnemies(enemyIds);
-      result = await selectAbility(userId, enemyIds, ability.name);
+      result = await securePostClient<AbilityResponse>(`/abilities/use`, {
+        abilityName: ability.name,
+        targetIds: enemyIds,
+      });
     } else {
-      result = await selectAbility(userId, selectedEnemies, ability.name);
+      result = await securePostClient<AbilityResponse>(`/abilities/use`, {
+        abilityName: ability.name,
+        targetIds: selectedEnemies,
+      });
     }
 
-    if (result.success) {
+    if (result.ok) {
       diceBox
         .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
         .finally(() => {
@@ -162,15 +158,15 @@ function Battleground({
       <div className="flex flex-col justify-center p-2">
         <div className="text-center text-white">
           {abilities.some((ability) => ability.isDungeon) ? (
-            userTurns.turns ? (
+            userTurns ? (
               <div>
-                <Typography>You have {userTurns.turns} turns left</Typography>
+                <Typography>You have {userTurns} turns left</Typography>
                 <AbilityGrid
                   abilities={abilities}
                   onAbilityRoll={rollAbility}
                   disabled={
                     thrown ||
-                    userTurns.turns <= 0 ||
+                    userTurns <= 0 ||
                     !selectedEnemies.length ||
                     !enemies
                     // TODO: add a check for if the target is dead

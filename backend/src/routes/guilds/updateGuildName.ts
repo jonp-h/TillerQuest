@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import {
   validateBody,
@@ -21,7 +24,8 @@ interface UpdateGuildNameRequest extends AuthenticatedRequest {
 }
 
 export const updateGuildName = [
-  requireUserIdAndActive(),
+  requireAuth,
+  requireActiveUser,
   validateParams(guildNameParamSchema),
   validateBody(updateGuildNameSchema),
   async (req: UpdateGuildNameRequest, res: Response) => {

@@ -1,25 +1,22 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { validateParams } from "middleware/validationMiddleware.js";
-import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 
-export const getGuildEnemies = [
-  requireAuth,
-  requireActiveUser,
-  validateParams(guildNameParamSchema),
+export const getGuildEnemiesByUserId = [
+  requireUserIdAndActive(),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const guildName = req.params.guildName;
+      const userId = req.params.userId;
 
       const enemies = await db.guildEnemy.findMany({
         where: {
-          guildName,
+          guild: {
+            members: {
+              some: { id: userId },
+            },
+          },
         },
         select: {
           id: true,

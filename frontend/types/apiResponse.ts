@@ -9,3 +9,8 @@ export type ApiResponse<T = string> =
       success: false;
       error: string;
     };
+
+export type AbilityResponse = {
+  message: string;
+  diceRoll: string;
+};

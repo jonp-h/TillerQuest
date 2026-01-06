@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 
 const RARITY_CLASSES = {
   common: "text-common/80",

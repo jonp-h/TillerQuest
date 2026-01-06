@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
-import { DateToString } from "./apiResponse";
+import { Prisma } from "@tillerquest/prisma/browser";
+import { DateToString } from "./dateToString";
 
 /**
  * Wish with all vote relations and user data
