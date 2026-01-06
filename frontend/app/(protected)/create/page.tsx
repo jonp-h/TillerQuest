@@ -1,14 +1,22 @@
+import { secureGet } from "@/lib/secureFetch";
 import CreateUserForm from "./_components/CreateUserForm";
 import { redirectIfNotNewUser } from "@/lib/redirectUtils";
-import { getCreateUserById } from "@/data/user/getUser";
+import ErrorAlert from "@/components/ErrorAlert";
+import { NewUser } from "./_components/types";
 
 export default async function CreatePage() {
   const session = await redirectIfNotNewUser();
-  const data = await getCreateUserById(session.user.id);
+  const user = await secureGet<NewUser>(`/users/${session.user.id}/new`);
+
+  if (!user.ok) {
+    return ErrorAlert({
+      message: "Failed to load user data for creation page.",
+    });
+  }
 
   return (
     <div>
-      <CreateUserForm data={data} />
+      <CreateUserForm user={user.data} />
     </div>
   );
 }

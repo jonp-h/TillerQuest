@@ -1,15 +1,15 @@
 import { Response } from "express";
-import { db, SchoolClass } from "../../lib/db.js";
+import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireUserId } from "../../middleware/authMiddleware.js";
+import { requireAuth } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { validateQuery } from "middleware/validationMiddleware.js";
 import { schoolClassSchema } from "utils/validators/validationUtils.js";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 
 // get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
-export const getGuildsAndMemberCountBySchoolClass = [
+export const getClassGuildsAndMemberClasses = [
   requireAuth,
-  requireUserId(),
   validateQuery(schoolClassSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -59,16 +59,12 @@ export const getGuildsAndMemberCountBySchoolClass = [
         select: {
           id: true,
           name: true,
-          _count: {
-            select: {
-              members: true,
-            },
-          },
           members: {
+            select: {
+              class: true,
+            },
             where: {
-              id: {
-                not: userId,
-              },
+              id: { not: userId },
             },
           },
         },
@@ -77,13 +73,19 @@ export const getGuildsAndMemberCountBySchoolClass = [
         },
       });
 
-      const guildsWithMemberCount = guilds.map((guild) => ({
-        id: guild.id,
-        name: guild.name,
-        memberCount: guild.members.length,
-      }));
+      const guildMaxMembersSetting = await db.applicationSettings.findFirst({
+        where: {
+          key: "MAX_GUILD_MEMBERS",
+        },
+        select: {
+          value: true,
+        },
+      });
 
-      res.json({ success: true, data: guildsWithMemberCount });
+      res.json({
+        success: true,
+        data: { guilds, maxMembers: guildMaxMembersSetting?.value || "6" },
+      });
     } catch (error) {
       logger.error(
         "Error fetching guilds and member count by school class: " + error,

@@ -3,7 +3,7 @@ import { getGuildMembersForAbilityTarget } from "./getGuildMembersForAbilityTarg
 import { getGuildMembers } from "./getGuildMembers.js";
 import { startGuildBattle } from "./startGuildBattle.js";
 import { updateGuildName } from "./updateGuildName.js";
-import { getGuildsAndMemberCountBySchoolClass } from "./getGuildsAndMemberCountBySchoolClass.js";
+import { getClassGuildsAndMemberClasses } from "./getClassGuildsAndMemberClasses.js";
 import { getGuildLeaderboard } from "./getGuildLeaderboard.js";
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.get(
 router.post("/guilds/:guildName/name", updateGuildName);
 
 // /guilds?schoolClass=Class_1IM1
-router.get("/guilds", getGuildsAndMemberCountBySchoolClass);
+router.get("/guilds/members/classes", getClassGuildsAndMemberClasses);
 
 // Guild battle routes
 router.post("/guilds/:guildName/battles", startGuildBattle);

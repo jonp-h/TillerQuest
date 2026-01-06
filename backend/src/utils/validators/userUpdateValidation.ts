@@ -7,6 +7,7 @@ interface UpdateUserProps {
   name: string;
   lastname: string;
   playerClass: Class;
+  image: string;
   guildId: number;
   schoolClass: SchoolClass;
   publicHighscore: boolean;
@@ -91,12 +92,11 @@ export const validateUserCreation = async (
   // validate if the guild already has a member with the chosen class
   if (
     targetGuild?.members.some(
-      (member) =>
-        member.class === data.playerClass.slice(0, -1) && member.id !== userId,
+      (member) => member.class === data.playerClass && member.id !== userId,
     )
   ) {
     return (
-      data.playerClass.slice(0, -1) +
+      data.playerClass +
       " already exists in this guild. Choose a different class or guild."
     );
   }
@@ -114,6 +114,7 @@ export const validateUserCreation = async (
     name: capitalizeFullName(escapeHtml(data.name)),
     lastname: capitalizeFullName(escapeHtml(data.lastname)),
     playerClass: escapeHtml(data.playerClass),
+    image: escapeHtml(data.image),
     guildId: data.guildId,
     schoolClass: escapeHtml(data.schoolClass),
     publicHighscore: data.publicHighscore,

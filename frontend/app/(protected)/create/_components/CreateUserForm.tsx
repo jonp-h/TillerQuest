@@ -11,98 +11,91 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
-import { useState } from "react";
-import Classes from "./Classes";
-import { checkNewUserSecret } from "@/data/validators/secretValidation";
-import { $Enums, SchoolClass } from "@tillerquest/prisma/browser";
+import { useEffect, useState } from "react";
+import { Class, SchoolClass } from "@tillerquest/prisma/browser";
 import { ArrowDownward } from "@mui/icons-material";
 import ClassGuilds from "./ClassGuilds";
-import { validateUserCreation } from "@/data/validators/userUpdateValidation";
-import { updateUser } from "@/data/user/updateUser";
 import { useRouter } from "next/navigation";
 import MainContainer from "@/components/MainContainer";
+import { ChooseGuildResponse, GuildWithMemberClasses, NewUser } from "./types";
+import ErrorAlert from "@/components/ErrorAlert";
+import { toast } from "react-toastify";
+import { secureGetClient, securePutClient } from "@/lib/secureFetchClient";
 
-export default function CreateUserForm({
-  data,
-}: {
-  data: {
-    name: string | null;
-    id: string;
-    username: string | null;
-    lastname: string | null;
-    publicHighscore: boolean;
-  } | null;
-}) {
+export default function CreateUserForm({ user }: { user: NewUser }) {
   const [secret, setSecret] = useState("");
-  const [username, setUsername] = useState(data?.username || "");
-  const [name, setName] = useState(data?.name || "");
-  const [lastname, setLastname] = useState(data?.lastname || "");
-  const [playerClass, setPlayerClass] = useState<string>("");
+  const [username, setUsername] = useState(user.username || "");
+  const [name, setName] = useState(user.name || "");
+  const [lastname, setLastname] = useState(user.lastname || "");
+  const [playerClass, setPlayerClass] = useState<Class>();
+  const [image, setImage] = useState<string>("");
   const [guildId, setGuildId] = useState(0);
   const [schoolClass, setSchoolClass] = useState("");
   const [publicHighscore, setPublicHighscore] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  // const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const [guildsAndMembers, setGuildsAndMemberClasses] = useState<
+    GuildWithMemberClasses[]
+  >([]);
+  const [maxMembers, setMaxMembers] = useState(6);
+
+  useEffect(() => {
+    if (!schoolClass) {
+      return;
+    }
+    const fetchGuildNames = async () => {
+      const result = await secureGetClient<ChooseGuildResponse>(
+        `/guilds/members/classes?schoolClass=${schoolClass}`,
+      );
+      if (!result.ok) {
+        return;
+      }
+
+      setGuildsAndMemberClasses(
+        result.data.guilds.map((guild: GuildWithMemberClasses) => guild),
+      );
+      setMaxMembers(result.data.maxMembers);
+    };
+
+    fetchGuildNames();
+  }, [setGuildId, schoolClass]);
 
   const router = useRouter();
 
-  const refreshClasses = () => {
-    setRefreshTrigger((prev) => prev + 1);
-  };
+  // const refreshClasses = () => {
+  //   setRefreshTrigger((prev) => prev + 1);
+  // };
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    if (!data?.id) {
-      return;
-    }
-
-    // frontend validation
-    const isCorrectSecret = await checkNewUserSecret(data.id, secret);
-
-    if (!isCorrectSecret) {
-      setErrorMessage("Invalid secret code");
-      return;
-    }
-
-    const formValues = {
-      username,
-      name,
-      lastname,
-      playerClass,
-      guildId,
-      schoolClass,
-      publicHighscore,
-    };
-
     try {
-      //FIXME: remove frontend validation, to remove server action
-      // frontend validation
-      const validatedData = await validateUserCreation(data.id, formValues);
-
-      // if the data is a string, it is an error message
-      if (typeof validatedData == "string") {
-        setErrorMessage(validatedData);
-        // if the error message includes "class", we need to ensure class selection UI is refreshed
-        if (validatedData.includes("class")) {
-          refreshClasses();
-        }
-        return;
-      }
-
       // update the role from NEW to USER
       // add initial username, class and class image
-      await updateUser(data.id, {
+      const result = await securePutClient(`/users/${user.id}`, {
         secret,
-        username: validatedData.username,
-        name: validatedData.name,
-        lastname: validatedData.lastname,
-        class: validatedData.playerClass as $Enums.Class,
-        image: validatedData.playerClass,
-        guildId: validatedData.guildId,
-        schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
-        publicHighscore: validatedData.publicHighscore,
+        username,
+        name,
+        lastname,
+        playerClass,
+        image,
+        guildId,
+        schoolClass,
+        publicHighscore,
       });
+
+      if (!result.ok) {
+        toast.error("Failed to create user");
+        setErrorMessage(
+          result.error ||
+            "Failed to create user, please contact a game master.",
+        );
+        router.refresh();
+        return;
+      } else {
+        toast.success("User created successfully!");
+      }
 
       router.push("/");
     } catch (error) {
@@ -150,9 +143,9 @@ export default function CreateUserForm({
           required
           helperText={
             <>
-              Enter your given name so that the
+              Enter your given name
               <br />
-              game masters can identify who you are
+              Unidentifiable users will be removed without warning.
             </>
           }
         />
@@ -181,17 +174,14 @@ export default function CreateUserForm({
         </RadioGroup>
         <Typography variant="h5">Choose Guild</Typography>
         <ClassGuilds
-          userId={data?.id || ""}
           schoolClass={schoolClass}
           setGuildId={setGuildId}
-        />
-        <Typography variant="h5">Choose player class</Typography>
-        <Classes
-          playerClass={playerClass}
+          guilds={guildsAndMembers}
+          maxMembers={maxMembers}
           setPlayerClass={setPlayerClass}
-          userId={data?.id || ""}
+          image={image}
+          setImage={setImage}
           guildId={guildId}
-          refreshTrigger={refreshTrigger}
         />
         <Typography variant="body1">
           Do you want to be visible on public highscore lists?
@@ -233,7 +223,7 @@ export default function CreateUserForm({
             id="panel2-header"
           >
             <Typography component="span">
-              By creating a user you also agree the consequences of{" "}
+              By creating a user you also agree to the consequences of{" "}
               <span className="text-red-500">dying in the game</span>
             </Typography>
           </AccordionSummary>
@@ -248,13 +238,9 @@ export default function CreateUserForm({
           </AccordionDetails>
         </Accordion>
         {errorMessage && (
-          <Typography
-            variant="body1"
-            color="error"
-            sx={{ whiteSpace: "pre-line" }}
-          >
-            {errorMessage}
-          </Typography>
+          <div className="mx-auto w-1/2">
+            <ErrorAlert message={errorMessage} />
+          </div>
         )}
         <Button
           type="submit"

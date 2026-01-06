@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { $Enums, db } from "../../lib/db.js";
+import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
   requireAuth,
@@ -17,6 +17,7 @@ import {
   updateUserSchema,
   userIdParamSchema,
 } from "utils/validators/validationUtils.js";
+import { Class, SchoolClass } from "@tillerquest/prisma/browser";
 
 interface UserUpdateRequest extends AuthenticatedRequest {
   body: {
@@ -24,10 +25,10 @@ interface UserUpdateRequest extends AuthenticatedRequest {
     username: string;
     name: string;
     lastname: string;
-    playerClass: $Enums.Class;
+    playerClass: Class;
     image: string;
     guildId: number;
-    schoolClass: $Enums.SchoolClass;
+    schoolClass: SchoolClass;
     publicHighscore: boolean;
   };
 }
@@ -52,6 +53,7 @@ export const updateUser = [
         username: data.username,
         name: data.name,
         lastname: data.lastname,
+        image: data.image,
         playerClass: data.playerClass,
         guildId: data.guildId,
         schoolClass: data.schoolClass,
@@ -109,10 +111,10 @@ export const updateUser = [
             username: validatedData.username,
             name: validatedData.name,
             lastname: validatedData.lastname,
-            class: validatedData.playerClass.slice(0, -1) as $Enums.Class,
-            image: validatedData.playerClass,
+            class: validatedData.playerClass as Class,
+            image: validatedData.image,
             guildName: guild?.name,
-            schoolClass: validatedData.schoolClass as $Enums.SchoolClass,
+            schoolClass: validatedData.schoolClass as SchoolClass,
             publicHighscore: validatedData.publicHighscore,
             lastMana: new Date(new Date().setDate(new Date().getDate() - 1)),
           },

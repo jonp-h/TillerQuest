@@ -1,4 +1,4 @@
-import { SchoolClass, UserRole } from "@tillerquest/prisma/browser";
+import { Class, SchoolClass, UserRole } from "@tillerquest/prisma/browser";
 import { z } from "zod";
 
 const entityMap = {
@@ -39,12 +39,12 @@ export const updateUserSchema = z.object({
     .min(3, "Lastname must be above 3 characters")
     .max(20, "Lastname must be below 20 characters")
     .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
-  playerClass: z.string(),
-  guildId: z.number(),
-  image: z.string(),
+  playerClass: z.enum(Class, "Invalid class"),
+  guildId: z.number().positive("Guild ID must be a positive number"),
+  image: z.string().min(1),
   schoolClass: z.enum(SchoolClass, "Invalid school class"),
   publicHighscore: z.boolean(),
-  secret: z.string(),
+  secret: z.string().min(1, "Secret is required"),
 });
 
 export const updateUserSettingsSchema = z.object({

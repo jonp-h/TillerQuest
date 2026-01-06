@@ -1,38 +1,28 @@
-import { getGuildsAndMemberCountBySchoolClass } from "@/data/guilds/getGuilds";
 import { RadioGroup, FormControlLabel, Radio, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-
-interface Guild {
-  id: number;
-  name: string;
-  memberCount: number;
-}
+import { GuildWithMemberClasses } from "./types";
+import Classes from "./Classes";
+import { Class } from "@tillerquest/prisma/browser";
 
 function ClassGuilds({
-  userId,
+  guildId,
   schoolClass,
   setGuildId,
+  guilds,
+  maxMembers,
+  setPlayerClass,
+  image,
+  setImage,
 }: {
-  userId: string;
+  guildId: number;
   schoolClass: string;
   setGuildId: (guild: number) => void;
+  guilds: GuildWithMemberClasses[];
+  maxMembers: number;
+  setPlayerClass: (playerClass: Class) => void;
+  image: string;
+  setImage: (image: string) => void;
 }) {
-  const [guilds, setGuilds] = useState<Guild[]>([]);
-
-  useEffect(() => {
-    if (!schoolClass) {
-      return;
-    }
-    const fetchGuildNames = async () => {
-      const guilds = await getGuildsAndMemberCountBySchoolClass(
-        userId,
-        schoolClass,
-      );
-      setGuilds(guilds.map((guild) => guild));
-    };
-
-    fetchGuildNames();
-  }, [setGuildId, userId, schoolClass]);
+  const selectedGuild = guilds.find((g) => g.id === guildId);
 
   const handleClick = (guildId: number) => {
     setGuildId(guildId);
@@ -51,24 +41,35 @@ function ClassGuilds({
   }
 
   return (
-    <div className="w-2/3 flex flex-col items-center">
+    <div className="w-2/3 gap-5 flex flex-col items-center">
       <RadioGroup row name="row-radio-buttons-group">
         {guilds.map((guildWithCount) => (
           <FormControlLabel
             value={guildWithCount.name}
             key={guildWithCount.name}
             control={<Radio />}
-            disabled={guildWithCount.memberCount > 5}
+            disabled={guildWithCount.members.length > maxMembers}
             label={
               guildWithCount.name +
               " (" +
-              guildWithCount.memberCount +
+              guildWithCount.members.length +
               " members)"
             }
             onClick={() => handleClick(guildWithCount.id)}
           />
         ))}
       </RadioGroup>
+      {selectedGuild && (
+        <>
+          <Typography variant="h5">Choose player class</Typography>
+          <Classes
+            setPlayerClass={setPlayerClass}
+            image={image}
+            setImage={setImage}
+            guild={selectedGuild}
+          />
+        </>
+      )}
     </div>
   );
 }
