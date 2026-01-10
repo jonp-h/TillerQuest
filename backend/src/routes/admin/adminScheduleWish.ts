@@ -16,23 +16,19 @@ import {
 export const adminScheduleWish = [
   requireAuth,
   requireAdmin,
-  validateParams(idParamSchema),
+  validateParams(idParamSchema("wishId")),
   validateBody(scheduleWishSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const wishId = parseInt(req.params.wishId);
-      const { scheduleDate } = req.body;
-
-      if (isNaN(wishId)) {
-        throw new ErrorMessage("Invalid wish ID");
-      }
+      const { scheduledDate } = req.body;
 
       await db.wish.update({
         where: {
           id: wishId,
         },
         data: {
-          scheduled: new Date(scheduleDate),
+          scheduled: new Date(scheduledDate),
         },
       });
 

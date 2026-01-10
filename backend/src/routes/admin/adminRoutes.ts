@@ -46,8 +46,11 @@ import { adminGiveGold } from "./adminGiveGold.js";
 import { adminGiveXp } from "./adminGiveXp.js";
 import { adminGiveArenaTokens } from "./adminGiveArenaTokens.js";
 import { adminUpdateGuildName } from "./adminUpdateGuildName.js";
+import { requireAdmin } from "middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.use("/admin", requireAdmin);
 
 // Guild management routes
 router.patch("/admin/guilds/:guildName/name", adminUpdateGuildName);

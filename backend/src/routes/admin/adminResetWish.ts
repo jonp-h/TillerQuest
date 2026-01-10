@@ -10,14 +10,10 @@ import { idParamSchema } from "utils/validators/validationUtils.js";
 export const adminResetWish = [
   requireAuth,
   requireAdmin,
-  validateParams(idParamSchema),
+  validateParams(idParamSchema("wishId")),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const wishId = parseInt(req.params.wishId);
-
-      if (isNaN(wishId)) {
-        throw new ErrorMessage("Invalid wish ID");
-      }
 
       await db.wish.update({
         where: {

@@ -1,6 +1,7 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import { adminActivateWish, adminResetWish } from "@/data/admin/wishingWell";
+import { securePatchClient, securePostClient } from "@/lib/secureFetchClient";
+import { DateToString } from "@/types/dateToString";
 import { List, ListItem, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,22 +10,24 @@ import { toast } from "react-toastify";
 function WishingWellForm({
   wish,
 }: {
-  wish: {
-    wishVotes: {
-      user: {
-        name: string | null;
-        lastname: string | null;
-      };
-      amount: number;
-    }[];
-  } & {
-    image: string | null;
-    id: number;
-    name: string;
-    description: string | null;
-    value: number;
-    scheduled: Date | null;
-  };
+  wish: DateToString<
+    {
+      wishVotes: {
+        user: {
+          name: string | null;
+          lastname: string | null;
+        };
+        amount: number;
+      }[];
+    } & {
+      image: string | null;
+      id: number;
+      name: string;
+      description: string | null;
+      value: number;
+      scheduled: Date | null;
+    }
+  >;
 }) {
   const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
 
@@ -36,9 +39,14 @@ function WishingWellForm({
       return;
     }
 
-    const result = await adminActivateWish(wish.id, scheduledDate);
+    const result = await securePatchClient<string>(
+      `/admin/wishes/${wish.id}/schedule`,
+      {
+        scheduledDate: scheduledDate,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -47,9 +55,11 @@ function WishingWellForm({
     router.refresh();
   };
   const handleReset = async () => {
-    const result = await adminResetWish(wish.id);
+    const result = await securePostClient<string>(
+      `/admin/wishes/${wish.id}/reset`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -117,12 +127,7 @@ function WishingWellForm({
             align="center"
             sx={{ mt: 2 }}
           >
-            Scheduled for:{" "}
-            {wish.scheduled.toLocaleDateString("no-NO", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })}
+            Scheduled for: {new Date(wish.scheduled).toLocaleDateString()}
           </Typography>
         )}
         <List sx={style}>

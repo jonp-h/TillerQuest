@@ -132,7 +132,9 @@ export const cosmicNameSchema = z.object({
 });
 
 export const scheduleWishSchema = z.object({
-  scheduleDate: z.iso.datetime(),
+  scheduledDate: z.coerce
+    .date()
+    .min(new Date(), "Schedule date must be in the future"),
 });
 
 export const abilityNameSchema = z.object({
