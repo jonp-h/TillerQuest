@@ -10,26 +10,30 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Casino, ErrorOutline } from "@mui/icons-material";
-import { User } from "@tillerquest/prisma/browser";
-import { resurrectUsers, rollDeathSave } from "@/data/admin/resurrectUser";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
 import { useDiceBox } from "./ResurrectDiceProvider";
+import { securePostClient } from "@/lib/secureFetchClient";
+import { AdminDeadUser } from "./types";
 
-export default function DeathCard({ user }: { user: User }) {
+export default function DeathCard({ user }: { user: AdminDeadUser }) {
   const [number, setNumber] = useState<number | null>(null);
   const router = useRouter();
   const { diceBox, isReady } = useDiceBox();
 
   const handleRessurect = async (effect: string) => {
-    const result = await resurrectUsers({
-      userId: user.id,
-      effect: effect,
-    });
+    const result = await securePostClient<string>(
+      `/admin/users/${user.id}/resurrect`,
+      {
+        effect,
+      },
+    );
 
-    if (result.success) {
-      toast.success(result.data);
+    if (result.ok) {
+      toast.success(result.data, {
+        autoClose: false,
+      });
     } else {
       toast.error(result.error);
     }
@@ -45,9 +49,11 @@ export default function DeathCard({ user }: { user: User }) {
     diceBox.clearDice();
 
     // Roll dice server-side
-    const result = await rollDeathSave();
+    const result = await securePostClient<{ roll: number; diceRoll: string }>(
+      `/admin/death-saves/roll`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       // Display the roll result with animation
       diceBox.roll(`1d6@${result.data.diceRoll}`).then(() => {
         setNumber(result.data.roll);

@@ -15,6 +15,9 @@ import {
 } from "utils/validators/validationUtils.js";
 
 interface ResurrectUserRequest extends AuthenticatedRequest {
+  params: {
+    userId: string;
+  };
   body: {
     effect:
       | "free"
@@ -24,9 +27,6 @@ interface ResurrectUserRequest extends AuthenticatedRequest {
       | "hat"
       | "quiz"
       | "criticalHit";
-  };
-  params: {
-    userId: string;
   };
 }
 
@@ -80,9 +80,7 @@ export const adminResurrectUser = [
 
           res.json({
             success: true,
-            data: {
-              message: "The resurrection was successful",
-            },
+            data: "The resurrection was successful",
           });
           return;
         }
@@ -116,10 +114,7 @@ export const adminResurrectUser = [
 
         res.json({
           success: true,
-          data: {
-            message:
-              "The resurrection was successful, but it took its toll on the guild. All members of the guild have been damaged.",
-          },
+          data: "The resurrection was successful, but it took its toll on the guild. All members of the guild have been damaged.",
         });
       });
     } catch (error) {

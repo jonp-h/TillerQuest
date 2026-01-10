@@ -1,6 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import { adminCreateSystemMessage } from "@/data/admin/systemMessages";
+import { securePostClient } from "@/lib/secureFetchClient";
 import { TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,17 +18,17 @@ function CreateSystemMessageForm() {
       return;
     }
 
-    await toast.promise(adminCreateSystemMessage(title, content), {
-      pending: "Creating system message...",
-      success: "System message created successfully",
-      error: {
-        render({ data }) {
-          return data instanceof Error
-            ? `${data.message}`
-            : "An error occurred while creating the system message.";
-        },
-      },
+    const result = await securePostClient<string>(`/admin/notifications`, {
+      title,
+      content,
     });
+
+    if (result.ok) {
+      toast.success(result.data);
+    } else {
+      toast.error(result.error);
+      return;
+    }
 
     // Reset form after successful creation
     setTitle("");

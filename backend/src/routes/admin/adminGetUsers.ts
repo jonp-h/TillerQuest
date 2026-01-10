@@ -11,7 +11,7 @@ export const adminGetUsers = [
   requireAdmin,
   validateQuery(
     z.object({
-      fields: z.enum(["basic", "admin", "full"]).optional(),
+      fields: z.enum(["basic", "admin", "full", "dead"]).optional(),
     }),
   ),
   async (req: AuthenticatedRequest, res: Response) => {
@@ -41,6 +41,16 @@ export const adminGetUsers = [
             access: true,
           };
           break;
+        case "dead":
+          select = {
+            id: true,
+            username: true,
+            name: true,
+            lastname: true,
+            image: true,
+            level: true,
+          };
+          break;
         case "full":
         default:
           // Return all fields (full user objects)
@@ -51,12 +61,16 @@ export const adminGetUsers = [
       const whereClause =
         fields === "basic" || fields === "admin"
           ? undefined
-          : {
-              role: {
-                //TODO: INACTIVE required?
-                notIn: ["NEW", "ARCHIVED"],
-              },
-            };
+          : fields === "dead"
+            ? {
+                hp: 0,
+              }
+            : {
+                role: {
+                  //TODO: INACTIVE required?
+                  notIn: ["NEW", "ARCHIVED"],
+                },
+              };
 
       const users = await db.user.findMany({
         where: whereClause,

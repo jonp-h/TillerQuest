@@ -1,14 +1,28 @@
 import MainContainer from "@/components/MainContainer";
-import { getDeadUsers } from "@/data/user/getUser";
 import { Typography } from "@mui/material";
 import DeathCard from "./_components/DeathCard";
 import Image from "next/image";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import ResurrectDiceProvider from "./_components/ResurrectDiceProvider";
+import { secureGet } from "@/lib/secureFetch";
+import ErrorAlert from "@/components/ErrorAlert";
+import { AdminDeadUser } from "./_components/types";
 
 export default async function ResurrectPage() {
   await redirectIfNotAdmin();
-  const deadUsers = await getDeadUsers();
+  const deadUsers = await secureGet<AdminDeadUser[]>(
+    "/admin/users?fields=dead",
+  );
+
+  console.log("Dead users:", deadUsers);
+
+  if (!deadUsers.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={deadUsers.error} />
+      </MainContainer>
+    );
+  }
 
   return (
     <MainContainer>
@@ -38,8 +52,8 @@ export default async function ResurrectPage() {
           </Typography>
         </div>
         <div className="flex flex-wrap justify-center gap-4 py-6">
-          {deadUsers.map((user) => (
-            <DeathCard key={user.name} user={user} />
+          {deadUsers.data.map((user) => (
+            <DeathCard key={user.username} user={user} />
           ))}
         </div>
       </ResurrectDiceProvider>

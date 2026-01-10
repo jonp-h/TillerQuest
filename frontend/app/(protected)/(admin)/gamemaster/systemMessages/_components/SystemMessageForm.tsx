@@ -1,9 +1,11 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
 import {
-  adminDeleteSystemMessage,
-  adminUpdateSystemMessage,
-} from "@/data/admin/systemMessages";
+  secureDeleteClient,
+  securePatchClient,
+  securePostClient,
+} from "@/lib/secureFetchClient";
+
 import { TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -28,8 +30,14 @@ function SystemMessageForm(message: {
       return;
     }
 
-    const result = await adminUpdateSystemMessage(message.id, title, content);
-    if (result.success) {
+    const result = await securePatchClient<string>(
+      `/admin/notifications/${message.id}`,
+      {
+        title,
+        content,
+      },
+    );
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -39,9 +47,11 @@ function SystemMessageForm(message: {
   };
 
   const handleDelete = async () => {
-    const result = await adminDeleteSystemMessage(message.id);
+    const result = await secureDeleteClient<string>(
+      `/admin/notifications/${message.id}`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

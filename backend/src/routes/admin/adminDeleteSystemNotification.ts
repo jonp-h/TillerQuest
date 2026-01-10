@@ -9,7 +9,7 @@ import { idParamSchema } from "utils/validators/validationUtils.js";
 export const adminDeleteSystemNotification = [
   requireAuth,
   requireAdmin,
-  validateParams(idParamSchema),
+  validateParams(idParamSchema()),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);

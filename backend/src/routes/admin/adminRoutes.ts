@@ -88,8 +88,7 @@ router.get("/admin/cosmics/recommended", adminGetRecommendedCosmic);
 router.get("/admin/cosmics/selected", adminGetSelectedCosmics);
 
 // User management routes
-router.get("/admin/users", adminGetUsers);
-// GET /admin/users?fields=basic|admin|full
+router.get("/admin/users", adminGetUsers); // GET /admin/users?fields=basic|admin|full
 router.get("/admin/users/count/total", getTotalUserCount);
 router.get("/admin/users/count/dead", getDeadUserCount);
 router.patch("/admin/users/:userId", adminUpdateUser);
