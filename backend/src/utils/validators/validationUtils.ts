@@ -1,4 +1,9 @@
-import { Class, SchoolClass, UserRole } from "@tillerquest/prisma/browser";
+import {
+  Access,
+  Class,
+  SchoolClass,
+  UserRole,
+} from "@tillerquest/prisma/browser";
 import { z } from "zod";
 
 const entityMap = {
@@ -69,7 +74,7 @@ export const adminUpdateUserSchema = z.object({
   username: z.string().nullable().optional(),
   lastname: z.string().nullable().optional(),
   special: z.array(z.string()).optional(),
-  access: z.array(z.string()).optional(),
+  access: z.array(z.enum(Access)).optional(),
 });
 
 export const updateGuildNameSchema = z.object({

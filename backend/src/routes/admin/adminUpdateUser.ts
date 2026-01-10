@@ -72,9 +72,7 @@ export const adminUpdateUser = [
 
       res.json({
         success: true,
-        data: {
-          message: "User information updated successfully.",
-        },
+        data: "User information updated successfully.",
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {

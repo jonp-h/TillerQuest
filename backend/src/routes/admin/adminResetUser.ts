@@ -94,9 +94,7 @@ export const adminResetUser = [
 
       res.json({
         success: true,
-        data: {
-          message: "User successfully reset",
-        },
+        data: "User successfully reset",
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {

@@ -1,10 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import {
-  adminResetSingleUser,
-  adminUpdateUser,
-  updateRole,
-} from "@/data/admin/adminUserInteractions";
+import { securePatchClient, securePostClient } from "@/lib/secureFetchClient";
 import {
   TextField,
   Button,
@@ -57,35 +53,38 @@ function ManageUserForm(user: {
       name !== user.name ||
       username !== user.username ||
       lastname !== user.lastname ||
+      special.join(" ") !== user.special.join(" ") ||
       access.join(" ") !== user.access.join(" ")
     ) {
-      const result = await adminUpdateUser(
-        user.id,
-        special,
-        access,
-        name,
-        username,
-        lastname,
+      const result = await securePatchClient<string>(
+        `/admin/users/${user.id}`,
+        {
+          name: name !== user.name ? name : undefined,
+          username: username !== user.username ? username : undefined,
+          lastname: lastname !== user.lastname ? lastname : undefined,
+          special:
+            special.join(" ") !== user.special.join(" ") ? special : undefined,
+          access:
+            access.join(" ") !== user.access.join(" ") ? access : undefined,
+        },
       );
 
-      if (result.success) {
-        toast.success(result.data);
-      } else {
-        toast.error(result.error);
-      }
-    } else {
-      const result = await adminUpdateUser(user.id, special);
-
-      if (result.success) {
+      if (result.ok) {
         toast.success(result.data);
       } else {
         toast.error(result.error);
       }
     }
-    if (role !== user.role) {
-      const result = await updateRole(user.id, role);
 
-      if (result.success) {
+    if (role !== user.role) {
+      const result = await securePatchClient<string>(
+        `/admin/users/${user.id}/role`,
+        {
+          role,
+        },
+      );
+
+      if (result.ok) {
         toast.success(result.data);
       } else {
         toast.error(result.error);
@@ -94,10 +93,13 @@ function ManageUserForm(user: {
 
     router.refresh();
   };
-  const handleResetUser = async () => {
-    const result = await adminResetSingleUser(user.id);
 
-    if (result.success) {
+  const handleResetUser = async () => {
+    const result = await securePostClient<string>(
+      `/admin/users/${user.id}/reset`,
+    );
+
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

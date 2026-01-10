@@ -43,9 +43,7 @@ export const adminUpdateUserRole = [
 
       res.json({
         success: true,
-        data: {
-          message: "User role updated successfully.",
-        },
+        data: "User role updated successfully.",
       });
     } catch (error) {
       logger.error("Error updating user role: " + error);

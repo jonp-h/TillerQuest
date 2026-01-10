@@ -18,6 +18,7 @@ export const adminGetSpecialStatuses = [
         select: {
           specialReq: true,
         },
+        distinct: ["specialReq"],
       });
 
       res.json({ success: true, data: specialReqs });

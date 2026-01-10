@@ -1,16 +1,28 @@
 import MainContainer from "@/components/MainContainer";
-import {
-  adminGetUserInfo,
-  getSpecialStatuses,
-} from "@/data/admin/adminUserInteractions";
 import { List, ListItem, Typography } from "@mui/material";
 import ManageUserForm from "./_components/ManageUserForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import ErrorAlert from "@/components/ErrorAlert";
+import { AdminUserResponse } from "./_components/types";
 
 async function Users() {
   await redirectIfNotAdmin();
-  const userInfo = await adminGetUserInfo();
-  const specialStatues = await getSpecialStatuses();
+  const userInfo = await secureGet<AdminUserResponse[]>(
+    "/admin/users?fields=admin",
+  );
+
+  if (!userInfo.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={userInfo.error || "Failed to load user data."} />
+      </MainContainer>
+    );
+  }
+
+  const specialStatues = await secureGet<{ specialReq: string | null }[]>(
+    "/admin/special-statuses",
+  ).then((res) => (res.ok ? res.data : []));
 
   const style = {
     p: 0,
@@ -29,7 +41,7 @@ async function Users() {
       </Typography>
       <div className="flex justify-center mt-2">
         <List sx={style}>
-          {userInfo?.map((user) => (
+          {userInfo.data.map((user) => (
             <ListItem key={user.username} sx={{ padding: 2 }}>
               <ManageUserForm
                 name={user.name}
