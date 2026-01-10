@@ -9,6 +9,8 @@ export const requireAuth = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log("Validating query:", req.path);
+
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),

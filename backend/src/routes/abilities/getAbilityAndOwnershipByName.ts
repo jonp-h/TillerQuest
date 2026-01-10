@@ -16,13 +16,14 @@ interface GetAbilityByNameRequest extends AuthenticatedRequest {
   };
 }
 
-export const getAbilityByName = [
+export const getAbilityAndOwnershipByName = [
   requireAuth,
   requireActiveUser,
   validateParams(abilityNameSchema),
   async (req: GetAbilityByNameRequest, res: Response) => {
     try {
       const { abilityName } = req.params;
+      const userId = req.session!.user.id;
 
       const ability = await db.ability.findFirst({
         where: {
@@ -31,22 +32,42 @@ export const getAbilityByName = [
       });
 
       if (!ability) {
-        throw new ErrorMessage("Ability not found");
-      }
-
-      res.json({
-        success: true,
-        data: ability,
-      });
-    } catch (error) {
-      if (error instanceof ErrorMessage) {
-        res.status(400).json({
+        res.status(404).json({
           success: false,
-          error: error.message,
+          error: "Ability not found",
         });
         return;
       }
 
+      // check if user owns the ability and the root ability if applicable
+      const userAbility = await db.userAbility.findFirst({
+        where: {
+          userId,
+          abilityName,
+        },
+      });
+
+      let parentAbility = null;
+      if (ability.parentAbility) {
+        parentAbility = await db.userAbility.findFirst({
+          where: {
+            userId,
+            abilityName: ability.parentAbility,
+          },
+        });
+      } else {
+        // if no parent ability, consider it owned
+        parentAbility = true;
+      }
+      res.json({
+        success: true,
+        data: {
+          ability,
+          ownAbility: !!userAbility,
+          ownParentAbility: !!parentAbility,
+        },
+      });
+    } catch (error) {
       logger.error("Failed to get ability by name: " + error);
       res.status(500).json({
         success: false,

@@ -1,4 +1,3 @@
-import { getGameLeaderboard } from "@/data/games/game";
 import {
   TableContainer,
   Paper,
@@ -11,25 +10,18 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import { JsonValue } from "@prisma/client/runtime/library";
 import RarityText from "@/components/RarityText";
-import { $Enums } from "@tillerquest/prisma/browser";
-
-interface GameLeaderboardProps {
-  user: {
-    name: string | null;
-    lastname: string | null;
-    username: string | null;
-    title: string | null;
-    titleRarity: $Enums.Rarity | null;
-    image: string | null;
-  };
-  score: number;
-  metadata: JsonValue;
-}
+import { secureGet } from "@/lib/secureFetch";
+import { GameLeaderboardProps } from "./types";
 
 async function GameLeaderboard({ gameName }: { gameName: string }) {
-  const users = await getGameLeaderboard(gameName);
+  const users = await secureGet<GameLeaderboardProps[]>(
+    `/games/leaderboard/${gameName}`,
+  );
+
+  if (!users.ok) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col text-center">
@@ -49,9 +41,9 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
                 USER
               </TableCell>
               <TableCell align="center">SCORE</TableCell>
-              {users.length > 0 &&
+              {users.data.length > 0 &&
                 //   eslint-disable-next-line @typescript-eslint/no-explicit-any
-                Object.keys(users[0].metadata as Record<string, any>).map(
+                Object.keys(users.data[0].metadata as Record<string, any>).map(
                   (key) => (
                     <TableCell align="center" key={key}>
                       {key.toUpperCase()}
@@ -61,7 +53,7 @@ async function GameLeaderboard({ gameName }: { gameName: string }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users?.map((user: GameLeaderboardProps) => (
+            {users.data.map((user: GameLeaderboardProps) => (
               <TableRow
                 key={user.score}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

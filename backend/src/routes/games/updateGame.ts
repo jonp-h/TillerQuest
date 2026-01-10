@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import {
   validateBody,
@@ -23,7 +26,8 @@ interface UpdateGameRequest extends AuthenticatedRequest {
 }
 
 export const updateGame = [
-  requireUserIdAndActive(),
+  requireAuth,
+  requireActiveUser,
   validateParams(gameIdParamSchema),
   validateBody(updateGameSchema),
   async (req: UpdateGameRequest, res: Response) => {
@@ -70,7 +74,9 @@ export const updateGame = [
           case "BinaryJack":
             // BinaryJack uses its own dedicated functions (rollBinaryJackDice, applyBinaryOperation)
             // This case shouldn't be reached in normal gameplay
-            break;
+            throw new ErrorMessage("BinaryJack updates are not handled here");
+          default:
+            throw new ErrorMessage("Unknown game type");
         }
 
         await tx.game.update({
@@ -78,7 +84,7 @@ export const updateGame = [
           data: { score, metadata },
         });
 
-        res.json({ success: true, data: "Game started successfully" });
+        res.json({ success: true, data: { score, metadata } });
       });
     } catch (error) {
       if (error instanceof ErrorMessage) {

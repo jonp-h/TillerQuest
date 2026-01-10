@@ -30,7 +30,11 @@ export const rollBinaryJackDice = [
       const { dice } = req.body;
 
       const game = await db.game.findUnique({
-        where: { id: gameId, status: "INPROGRESS" },
+        where: {
+          id: gameId,
+          status: "INPROGRESS",
+          userId: req.session!.user.id,
+        },
       });
 
       if (!game) {
@@ -63,6 +67,16 @@ export const rollBinaryJackDice = [
         total: number;
         type: string;
       };
+
+      await db.game.update({
+        where: { id: gameId },
+        data: {
+          metadata: {
+            ...metadata,
+            rolledValue: rolledValue.total,
+          },
+        },
+      });
 
       res.json({
         success: true,

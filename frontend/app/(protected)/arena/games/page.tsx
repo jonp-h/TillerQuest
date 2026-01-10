@@ -1,11 +1,12 @@
 import MainContainer from "@/components/MainContainer";
 import { notFound } from "next/navigation";
-import { getGameUserById } from "@/data/user/getUser";
 import GameLeaderboard from "./_components/GameLeaderboard";
 import GameTabs from "./_components/GameTabs";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
-import { $Enums } from "@tillerquest/prisma/browser";
+import { Access } from "@tillerquest/prisma/browser";
 import ErrorPage from "@/components/ErrorPage";
+import { secureGet } from "@/lib/secureFetch";
+import { GameUser } from "./_components/types";
 
 async function Games() {
   const session = await redirectIfNotActiveUser();
@@ -14,13 +15,13 @@ async function Games() {
     return notFound();
   }
 
-  const user = await getGameUserById(session.user.id);
+  const user = await secureGet<GameUser>(`/users/${session.user.id}/game`);
 
-  if (!user) {
+  if (!user.ok) {
     return notFound();
   }
 
-  if (!user.access.includes($Enums.Access.Arena)) {
+  if (!user.data.access.includes(Access.Arena)) {
     return (
       <ErrorPage
         text="You do not have access to the Arena games. Buy access in the abilities tab."
@@ -31,7 +32,7 @@ async function Games() {
 
   return (
     <MainContainer>
-      <GameTabs user={user} />
+      <GameTabs user={user.data} />
       <div className="flex justify-center mt-5">
         <GameLeaderboard gameName="TypeQuest" />
       </div>

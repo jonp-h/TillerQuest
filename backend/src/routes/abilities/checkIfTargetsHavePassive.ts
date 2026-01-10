@@ -1,5 +1,4 @@
 import { Response } from "express";
-import { z } from "zod";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import {
@@ -8,44 +7,36 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { validateBody } from "middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-
-const passiveCheckSchema = z.object({
-  userIds: z.array(z.cuid()),
-  abilityName: z.string().min(1),
-});
+import { userIdListSchema } from "utils/validators/validationUtils.js";
 
 export const checkIfTargetsHavePassive = [
   requireAuth,
   requireActiveUser,
-  validateBody(passiveCheckSchema),
+  validateBody(userIdListSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { userIds, abilityName } = req.body;
+      const abilityName = req.params.abilityName;
+      const { userIds } = req.body;
 
       let allUsersHavePassive = true;
-      await Promise.all(
-        userIds.map(async (targetUserId: string) => {
-          const userPassive = await db.userPassive.findFirst({
-            where: {
-              userId: targetUserId,
-              abilityName: abilityName,
-              effectType: {
-                not: "Cosmic",
-              },
-            },
-          });
 
-          // if one user does not have the passive, return false
-          if (!userPassive) {
-            allUsersHavePassive = false;
-            res.json({
-              success: true,
-              data: allUsersHavePassive,
-            });
-            return;
-          }
-        }),
-      );
+      for (const targetUserId of userIds) {
+        const userPassive = await db.userPassive.findFirst({
+          where: {
+            userId: targetUserId,
+            abilityName: abilityName,
+            effectType: {
+              not: "Cosmic",
+            },
+          },
+        });
+
+        // if one user does not have the passive, set to false and break
+        if (!userPassive) {
+          allUsersHavePassive = false;
+          break; // Exit early once we find a user without the passive
+        }
+      }
 
       res.json({
         success: true,

@@ -1,11 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import {
-  checkIfUserOwnsAbility,
-  getAbilityByName,
-} from "@/data/abilities/getters/getAbilities";
-import { getGuildmembersForAbilityTarget } from "@/data/user/getGuildmembers";
-import { getBaseUser } from "@/data/user/getUser";
-import {
   Paper,
   Table,
   TableBody,
@@ -18,11 +12,17 @@ import {
 import { notFound } from "next/navigation";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
-import { $Enums } from "@tillerquest/prisma/browser";
-import { checkIfAllTargetsHavePassive } from "@/data/passives/getPassive";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";
 import BackButton from "./_components/BackButton";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { Class } from "@tillerquest/prisma/browser";
+import { secureGet, securePost } from "@/lib/secureFetch";
+import { BaseUser } from "@/types/users";
+import {
+  AbilityAndOwnershipResponse,
+  GuildMember,
+} from "./_components/interfaces";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function AbilityNamePage({
   params,
@@ -31,60 +31,63 @@ export default async function AbilityNamePage({
 }) {
   const session = await redirectIfNotActiveUser();
   const { abilityName } = await params;
-  const ability = await getAbilityByName(abilityName);
+  const ability = await secureGet<AbilityAndOwnershipResponse>(
+    `/abilities/${abilityName}`,
+  );
 
-  if (!ability || !session?.user.id) {
-    notFound();
+  if (!ability.ok) {
+    return notFound();
   }
 
-  const user = await getBaseUser(session?.user.id);
-  if (!user) {
-    notFound();
+  const user = await secureGet<BaseUser>(`/users/${session.user.id}`);
+
+  if (!user.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "User not found."} />
+      </MainContainer>
+    );
   }
 
   const userIsCorrectClass =
-    !Object.values($Enums.Class).includes(ability.category as $Enums.Class) ||
-    user.class === ability.category;
+    !Object.values(Class).includes(ability.data.ability.category as Class) ||
+    user.data.class === ability.data.ability.category;
 
-  const userOwnsAbility = await checkIfUserOwnsAbility(
-    session?.user.id,
-    abilityName,
+  const userOwnsAbility = ability.data.ownAbility;
+  const missingParentAbility = !ability.data.ownParentAbility;
+
+  const guildMembers = await secureGet<GuildMember[]>(
+    `/guilds/${user.data.guildName}/members/ability-targets`,
   );
 
-  // check if root, if not check if user owns parent ability
-  let missingParentAbility = true;
-  if (ability.parentAbility === null) {
-    missingParentAbility = false;
-  } else {
-    missingParentAbility = !(await checkIfUserOwnsAbility(
-      user.id,
-      ability.parentAbility,
-    ));
-  }
-
-  const guildMembers = await getGuildmembersForAbilityTarget(
-    user.guildName || "",
-  );
-
-  // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
   let targetsHaveActivePassive = false;
-  if (ability.target == "Self") {
-    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
-      [user.id],
-      abilityName,
-    );
-  } else if (ability.target == "Others") {
-    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
-      guildMembers
-        ?.filter((member) => member.id !== user.id)
-        .map((member) => member.id) || [],
-      abilityName,
-    );
-  } else if (ability.target == "All") {
-    targetsHaveActivePassive = await checkIfAllTargetsHavePassive(
-      guildMembers?.map((member) => member.id) || [],
-      abilityName,
-    );
+  if (guildMembers.ok) {
+    // TODO: consider checking if user has passive active for SingleTarget and MultipleTarget. requires moving state from AbilityForm
+    if (ability.data.ability.target == "Self") {
+      targetsHaveActivePassive = await securePost<boolean>(
+        `/abilities/${abilityName}/passive-check`,
+        {
+          userIds: [session.user.id],
+        },
+      ).then((res) => res.ok && res.data);
+    } else if (ability.data.ability.target == "Others") {
+      targetsHaveActivePassive = await securePost<boolean>(
+        `/abilities/${abilityName}/passive-check`,
+        {
+          userIds:
+            guildMembers.data
+              .filter((member) => member.id !== session.user.id)
+              .map((member) => member.id) || [],
+        },
+      ).then((res) => res.ok && res.data);
+    } else if (ability.data.ability.target == "All") {
+      targetsHaveActivePassive = await securePost<boolean>(
+        `/abilities/${abilityName}/passive-check`,
+        {
+          userIds: guildMembers.data.map((member) => member.id) || [],
+        },
+      ).then((res) => res.ok && res.data);
+    }
   }
 
   return (
@@ -108,34 +111,34 @@ export default async function AbilityNamePage({
               className={
                 !userOwnsAbility
                   ? "bg-blue-400 p-3 rounded-xl"
-                  : ability.manaCost
+                  : ability.data.ability.manaCost
                     ? "bg-blue-800 p-3 rounded-xl"
                     : "bg-red-800 p-3 rounded-xl"
               }
             >
               {!userOwnsAbility ? (
                 <Typography variant="body1" color="white">
-                  {user.gemstones} <Diamond htmlColor="white" />
+                  {user.data.gemstones} <Diamond htmlColor="white" />
                 </Typography>
-              ) : ability.manaCost ? (
+              ) : ability.data.ability.manaCost ? (
                 <Typography variant="body1" color="white">
-                  {user.mana}
+                  {user.data.mana}
                   <WaterDrop htmlColor="white" />
                 </Typography>
               ) : (
                 <Typography variant="body1" color="white">
-                  {user.hp} <Favorite htmlColor="white" />
+                  {user.data.hp} <Favorite htmlColor="white" />
                 </Typography>
               )}
             </div>
           </div>
           <div className="flex justify-center">
             <div className="flex justify-center rounded-full mb-3 p-5 from-zinc-600 to-zinc-700 bg-radial">
-              {ability.name && (
+              {ability.data.ability.name && (
                 <Image
                   className="rounded-full"
-                  src={"/abilities/" + ability.icon}
-                  alt={ability.name}
+                  src={"/abilities/" + ability.data.ability.icon}
+                  alt={ability.data.ability.name}
                   width={200}
                   height={200}
                 />
@@ -143,10 +146,10 @@ export default async function AbilityNamePage({
             </div>
           </div>
           <Typography variant="h3">
-            {ability.name.replace(/-/g, " ")}
+            {ability.data.ability.name.replace(/-/g, " ")}
           </Typography>
           <Typography variant="body1" className="py-5">
-            {ability.description}
+            {ability.data.ability.description}
           </Typography>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="Ability stats table">
@@ -154,21 +157,25 @@ export default async function AbilityNamePage({
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell align="right">Category</TableCell>
-                  {ability.duration && (
+                  {ability.data.ability.duration && (
                     <TableCell align="right">Duration</TableCell>
                   )}
                   <TableCell align="right">Gemstone cost</TableCell>
-                  {ability.healthCost && (
+                  {ability.data.ability.healthCost && (
                     <TableCell align="right">Health cost</TableCell>
                   )}
-                  {ability.manaCost && (
+                  {ability.data.ability.manaCost && (
                     <TableCell align="right">Mana cost</TableCell>
                   )}
-                  {ability.value && <TableCell align="right">Value</TableCell>}
-                  {ability.diceNotation && (
+                  {ability.data.ability.value && (
+                    <TableCell align="right">Value</TableCell>
+                  )}
+                  {ability.data.ability.diceNotation && (
                     <TableCell align="right">Dice</TableCell>
                   )}
-                  {ability.xpGiven && <TableCell align="right">XP</TableCell>}
+                  {ability.data.ability.xpGiven && (
+                    <TableCell align="right">XP</TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -176,29 +183,43 @@ export default async function AbilityNamePage({
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {ability.name.replace(/-/g, " ")}
+                    {ability.data.ability.name.replace(/-/g, " ")}
                   </TableCell>
-                  <TableCell align="right">{ability.category}</TableCell>
-                  {ability.duration && (
+                  <TableCell align="right">
+                    {ability.data.ability.category}
+                  </TableCell>
+                  {ability.data.ability.duration && (
                     <TableCell align="right">
-                      {`${Math.floor(ability.duration / 60)}h ${ability.duration % 60}m`}
+                      {`${Math.floor(ability.data.ability.duration / 60)}h ${ability.data.ability.duration % 60}m`}
                     </TableCell>
                   )}
-                  <TableCell align="right">{ability.gemstoneCost}</TableCell>
-                  {ability.healthCost && (
-                    <TableCell align="right">{ability.healthCost}</TableCell>
+                  <TableCell align="right">
+                    {ability.data.ability.gemstoneCost}
+                  </TableCell>
+                  {ability.data.ability.healthCost && (
+                    <TableCell align="right">
+                      {ability.data.ability.healthCost}
+                    </TableCell>
                   )}
-                  {ability.manaCost && (
-                    <TableCell align="right">{ability.manaCost}</TableCell>
+                  {ability.data.ability.manaCost && (
+                    <TableCell align="right">
+                      {ability.data.ability.manaCost}
+                    </TableCell>
                   )}
-                  {ability.value && (
-                    <TableCell align="right">{ability.value}</TableCell>
+                  {ability.data.ability.value && (
+                    <TableCell align="right">
+                      {ability.data.ability.value}
+                    </TableCell>
                   )}
-                  {ability.diceNotation && (
-                    <TableCell align="right">{ability.diceNotation}</TableCell>
+                  {ability.data.ability.diceNotation && (
+                    <TableCell align="right">
+                      {ability.data.ability.diceNotation}
+                    </TableCell>
                   )}
-                  {ability.xpGiven && (
-                    <TableCell align="right">{ability.xpGiven}</TableCell>
+                  {ability.data.ability.xpGiven && (
+                    <TableCell align="right">
+                      {ability.data.ability.xpGiven}
+                    </TableCell>
                   )}
                 </TableRow>
               </TableBody>
@@ -206,10 +227,10 @@ export default async function AbilityNamePage({
           </TableContainer>
           <div className="my-5">
             <AbilityForm
-              ability={ability}
-              user={user}
-              guildMembers={guildMembers}
-              isPurchaseable={ability.purchaseable}
+              ability={ability.data.ability}
+              user={user.data}
+              guildMembers={guildMembers.ok ? guildMembers.data : []}
+              isPurchaseable={ability.data.ability.purchaseable}
               userOwnsAbility={userOwnsAbility}
               userIsCorrectClass={userIsCorrectClass}
               missingParentAbility={missingParentAbility}

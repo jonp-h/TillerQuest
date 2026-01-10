@@ -1,24 +1,33 @@
 import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
-import {
-  getAbilityHierarchy,
-  getUserAbilities,
-} from "@/data/abilities/getters/getAbilities";
 import { notFound } from "next/navigation";
 import AbilityTabs from "./_components/AbilityTabs";
-import { RootAbilities } from "./_components/interfaces";
-import { $Enums } from "@tillerquest/prisma/browser";
+import { RootAbilities, UserAbilities } from "./_components/interfaces";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { Class } from "@tillerquest/prisma/browser";
+import { secureGet } from "@/lib/secureFetch";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function AbilitiesPage() {
   const session = await redirectIfNotActiveUser();
 
-  const abilities = await getAbilityHierarchy();
   if (!session?.user) {
     return notFound();
   }
 
-  const userAbilities = await getUserAbilities(session.user?.id);
+  const abilities = await secureGet<RootAbilities[]>(`/abilities/hierarchy`);
+
+  if (!abilities.ok) {
+    return ErrorAlert({ message: abilities.error });
+  }
+
+  const userAbilities = await secureGet<UserAbilities[]>(
+    `/users/${session.user.id}/abilities`,
+  );
+
+  if (!userAbilities.ok) {
+    return ErrorAlert({ message: userAbilities.error });
+  }
 
   return (
     <MainContainer>
@@ -26,9 +35,9 @@ export default async function AbilitiesPage() {
         Abilities
       </Typography>
       <AbilityTabs
-        userClass={session?.user.class as $Enums.Class}
-        rootAbilities={abilities as RootAbilities[]}
-        userAbilities={userAbilities}
+        userClass={session?.user.class as Class}
+        rootAbilities={abilities.data as RootAbilities[]}
+        userAbilities={userAbilities.data}
       />
     </MainContainer>
   );

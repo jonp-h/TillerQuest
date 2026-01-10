@@ -78,6 +78,7 @@ export const initializeBinaryJack = [
           currentValue: 0,
           turns: 0,
           maxTurns: BINARY_JACK_MAX_TURNS,
+          rolledValue: null,
           stake,
         };
 

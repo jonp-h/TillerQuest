@@ -1,6 +1,4 @@
 "use client";
-import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
-import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
 import { Ability } from "@tillerquest/prisma/browser";
 import { useRouter } from "next/navigation";
@@ -9,8 +7,10 @@ import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { diceSettings } from "@/lib/diceSettings";
-import { GuildMember } from "./interfaces";
+import { GuildMember, PurchaseAbilityResponse } from "./interfaces";
 import { BaseUser } from "@/types/users";
+import { securePostClient } from "@/lib/secureFetchClient";
+import { AbilityResponse } from "@/types/apiResponse";
 
 interface AbilityFormProps {
   ability: Ability;
@@ -137,9 +137,14 @@ export default function AbilityForm({
       // });
     }
 
-    const result = await selectAbility(user.id, selectedUsers, ability.name);
+    const result = await securePostClient<AbilityResponse>(
+      `/abilities/${ability.name}/use`,
+      {
+        userIds: selectedUsers,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       if (diceBox && result.data.diceRoll) {
         diceBox
           .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
@@ -189,10 +194,15 @@ export default function AbilityForm({
       return;
     }
 
-    const result = await buyAbility(user.id, ability.name);
+    const result = await securePostClient<PurchaseAbilityResponse>(
+      `/users/${user.id}/abilities`,
+      {
+        abilityName: ability.name,
+      },
+    );
 
-    if (result.success) {
-      toast.success(result.data);
+    if (result.ok) {
+      toast.success(result.data.message);
     } else {
       toast.error(result.error);
     }

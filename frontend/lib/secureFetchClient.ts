@@ -266,7 +266,7 @@ export async function securePostClient<T = unknown>(
 /**
  * Convenience wrapper for PATCH requests
  */
-export async function securePatch<T = unknown>(
+export async function securePatchClient<T = unknown>(
   url: string,
   body?: unknown,
   options?: Omit<SecureFetchClientOptions, "method" | "body">,

@@ -50,9 +50,6 @@ export default async function ProfilePage({
   const guildMembers = await secureGet<GuildMember[]>(
     `/guilds/${user.data.guildName || ""}/members`,
   );
-  if (!guildMembers.ok) {
-    throw new Error(guildMembers.error);
-  }
 
   return (
     <MainContainer>
@@ -60,7 +57,7 @@ export default async function ProfilePage({
         <InformationBox user={user.data} />
       )}
       <div className="flex flex-col justify-center lg:flex-row">
-        {user.data.guildName && (
+        {user.data.guildName && guildMembers.ok ? (
           <Paper
             elevation={3}
             className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
@@ -103,7 +100,7 @@ export default async function ProfilePage({
               </Button>
             )}
           </Paper>
-        )}
+        ) : null}
         <Paper
           className="flex flex-col m-3 gap-3 items-center p-5 lg:w-5/12 w-full order-first lg:order-2"
           elevation={3}

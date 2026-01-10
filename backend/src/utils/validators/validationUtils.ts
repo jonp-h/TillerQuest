@@ -159,6 +159,12 @@ export const userIdParamSchema = z.object({
   userId: z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
 });
 
+export const userIdListSchema = z.object({
+  userIds: z.array(
+    z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
+  ),
+});
+
 export const usernameParamSchema = z.object({
   username: z.string().min(3).max(20),
 });
@@ -221,6 +227,4 @@ export const wordQuestHintSchema = z.object({
 
 export const applyBinaryOperationSchema = z.object({
   operation: z.enum(["AND", "OR", "XOR", "NAND", "NOR", "XNOR"]),
-  currentValue: z.number().int().min(0),
-  rolledValue: z.number().int().positive(),
 });

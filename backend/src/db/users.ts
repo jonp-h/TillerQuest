@@ -26,7 +26,7 @@ interface User {
 
 const users: User[] = [
   {
-    id: "99991",
+    id: "11111111111111111111111111111111",
     username: "Ymir",
     name: "Snow",
     lastname: "Dog",
@@ -42,7 +42,7 @@ const users: User[] = [
     class: "Druid",
   },
   {
-    id: "99992",
+    id: "22222222222222222222222222222222",
     username: "Button",
     name: "Benja",
     lastname: "Min",
@@ -58,7 +58,7 @@ const users: User[] = [
     class: "Barbarian",
   },
   {
-    id: "99993",
+    id: "33333333333333333333333333333333",
     username: "Karl",
     name: "Karld",
     lastname: "Kai",
@@ -74,7 +74,7 @@ const users: User[] = [
     class: "Warlock",
   },
   {
-    id: "99994",
+    id: "44444444444444444444444444444444",
     username: "OlaLANGTNAVN123",
     name: "OlaLANGTNAVN123",
     lastname: "OlaLANGTNAVN123",
@@ -90,7 +90,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "99995",
+    id: "555555555555555555555555555555555",
     username: "aaaLANGTaaaa123",
     name: "aaaLANGTaaaa123",
     lastname: "aaaLANGTaaaa123",
@@ -107,7 +107,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "99996",
+    id: "666666666666666666666666666666666",
     username: "Luna1IM4",
     name: "Luna",
     lastname: "Moon",
@@ -124,7 +124,7 @@ const users: User[] = [
     class: "Druid",
   },
   {
-    id: "99997",
+    id: "77777777777777777777777777777777",
     username: "Rex1IM4",
     name: "Rex",
     lastname: "Stone",
@@ -141,7 +141,7 @@ const users: User[] = [
     class: "Barbarian",
   },
   {
-    id: "99998",
+    id: "888888888888888888888888888888888",
     username: "Mira1IM4",
     name: "Mira",
     lastname: "Sky",
@@ -158,7 +158,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "99999",
+    id: "99999999999999999999999999999999",
     username: "Finn1IM4",
     name: "Finn",
     lastname: "Lake",
@@ -175,7 +175,7 @@ const users: User[] = [
     class: "Warlock",
   },
   {
-    id: "100000",
+    id: "19999999999999999999999999999999",
     username: "Sage1IM4",
     name: "Sage",
     lastname: "Leaf",
@@ -192,7 +192,7 @@ const users: User[] = [
     class: "Druid",
   },
   {
-    id: "100001",
+    id: "29999999999999999999999999999999",
     username: "Blaze1IM4",
     name: "Blaze",
     lastname: "Fire",
@@ -209,7 +209,7 @@ const users: User[] = [
     class: "Barbarian",
   },
   {
-    id: "100002",
+    id: "39999999999999999999999999999999",
     username: "Nova1IM4",
     name: "Nova",
     lastname: "Star",
@@ -226,7 +226,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "100003",
+    id: "49999999999999999999999999999999",
     username: "Ava2IT1",
     name: "Ava",
     lastname: "Stone",
@@ -243,7 +243,7 @@ const users: User[] = [
     class: "Druid",
   },
   {
-    id: "100004",
+    id: "59999999999999999999999999999999",
     username: "Leo2IT1",
     name: "Leo",
     lastname: "Wolf",
@@ -260,12 +260,12 @@ const users: User[] = [
     class: "Barbarian",
   },
   {
-    id: "100005",
+    id: "69999999999999999999999999999999",
     username: "Ella2IT1",
     name: "Ella",
     lastname: "Rain",
     email: "ella2it1@example.com",
-    image: "Wizard5",
+    image: "Wizard2",
     hp: 50,
     hpMax: 100,
     mana: 48,
@@ -277,7 +277,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "100006",
+    id: "79999999999999999999999999999999",
     username: "Max2IT1",
     name: "Max",
     lastname: "Hill",
@@ -294,12 +294,12 @@ const users: User[] = [
     class: "Warlock",
   },
   {
-    id: "100007",
+    id: "89999999999999999999999999999999",
     username: "Zoe2IT1",
     name: "Zoe",
     lastname: "Sun",
     email: "zoe2it1@example.com",
-    image: "Druid5",
+    image: "Druid4",
     hp: 78,
     hpMax: 100,
     mana: 29,
@@ -311,12 +311,12 @@ const users: User[] = [
     class: "Druid",
   },
   {
-    id: "100008",
+    id: "1199999999999999999999999999999",
     username: "Jack2IT1",
     name: "Jack",
     lastname: "Storm",
     email: "jack2it1@example.com",
-    image: "Barbarian5",
+    image: "Barbarian4",
     hp: 92,
     hpMax: 100,
     mana: 17,
@@ -328,12 +328,12 @@ const users: User[] = [
     class: "Barbarian",
   },
   {
-    id: "100009",
+    id: "1299999999999999999999999999999",
     username: "Mia2IT1",
     name: "Mia",
     lastname: "Sky",
     email: "mia2it1@example.com",
-    image: "Wizard6",
+    image: "Wizard4",
     hp: 62,
     hpMax: 100,
     mana: 41,
@@ -345,7 +345,7 @@ const users: User[] = [
     class: "Wizard",
   },
   {
-    id: "100010",
+    id: "1399999999999999999999999999999",
     username: "Ben2IT1",
     name: "Ben",
     lastname: "Lake",

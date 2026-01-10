@@ -1,4 +1,4 @@
-import { Game } from "lib/db.js";
+import { Game } from "@tillerquest/prisma/browser";
 import { PrismaTransaction } from "types/prismaTransaction.js";
 
 export const updateWordQuestGame = async (

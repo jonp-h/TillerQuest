@@ -25,8 +25,8 @@ router.get("/games/leaderboard/:gameName", getGameLeaderboard);
 router.get("/games/typequest/text", getTypeQuestText);
 
 // WordQuest routes
-router.get("/games/wordquest/boards/:gameId", getWordQuestBoard);
-router.post("/games/wordquest/boards/:gameId/hints", getWordQuestHint);
+router.get("/games/wordquest/:gameId/board", getWordQuestBoard);
+router.post("/games/wordquest/:gameId/board/hints", getWordQuestHint);
 
 // BinaryJack routes
 router.post("/games/:gameId/binaryjack/initialize", initializeBinaryJack);

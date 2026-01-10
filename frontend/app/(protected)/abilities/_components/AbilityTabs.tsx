@@ -2,7 +2,7 @@
 import { Paper, Tab, Tabs } from "@mui/material";
 import AbilityTree from "./AbilityTree";
 import { RootAbilities, UserAbilities } from "./interfaces";
-import { $Enums } from "@tillerquest/prisma/browser";
+import { Class } from "@tillerquest/prisma/browser";
 import { SyntheticEvent, useEffect, useState } from "react";
 
 interface TabPanelProps {
@@ -38,7 +38,7 @@ export default function AbilityTabs({
   rootAbilities,
   userAbilities,
 }: {
-  userClass: $Enums.Class;
+  userClass: Class;
   rootAbilities: RootAbilities[] | null;
   userAbilities: UserAbilities[] | null;
 }) {
@@ -73,9 +73,8 @@ export default function AbilityTabs({
             label={ability.category}
             sx={{
               color:
-                Object.values($Enums.Class).includes(
-                  ability.category as $Enums.Class,
-                ) && userClass != (ability.category as $Enums.Class)
+                Object.values(Class).includes(ability.category as Class) &&
+                userClass != (ability.category as Class)
                   ? "error.main"
                   : "text.primary",
             }}

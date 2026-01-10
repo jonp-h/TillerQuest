@@ -26,10 +26,16 @@ export const applyBinaryOperation = [
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const gameId = req.params.gameId;
-      const { operation, currentValue, rolledValue } = req.body;
+      const { operation } = req.body;
+
+      console.log("Applying operation:", operation);
 
       const game = await db.game.findUnique({
-        where: { id: gameId, status: "INPROGRESS" },
+        where: {
+          id: gameId,
+          status: "INPROGRESS",
+          userId: req.session!.user.id,
+        },
       });
 
       if (!game) {
@@ -48,8 +54,17 @@ export const applyBinaryOperation = [
 
       const targetNumber = metadata.targetNumber;
       const availableOperations = metadata.availableOperations || [];
+      const currentValue = metadata.currentValue;
+      const rolledValue = metadata.rolledValue;
       if (targetNumber === undefined) {
         throw new ErrorMessage("Game not properly initialized");
+      }
+
+      console.log("metadata", metadata);
+
+      // validate if diceValue exists in metadata
+      if (rolledValue === undefined || rolledValue === null) {
+        throw new ErrorMessage("No rolled value found for this round");
       }
 
       // Validate operation against round's available operations
@@ -88,7 +103,7 @@ export const applyBinaryOperation = [
         currentValue: newValue,
         turns: (metadata.turns || 0) + 1,
         lastOperation: operation,
-        lastRolledValue: rolledValue,
+        rolledValue: null,
       };
 
       await db.game.update({

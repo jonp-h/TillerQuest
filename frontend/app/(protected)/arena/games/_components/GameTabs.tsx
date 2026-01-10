@@ -4,7 +4,6 @@ import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { ReactNode, useState } from "react";
 import TypeQuest from "./TypeQuest";
 import { useRouter } from "next/navigation";
-import { finishGame, initializeGame } from "@/data/games/game";
 import { toast } from "react-toastify";
 import { Circle, Stadium } from "@mui/icons-material";
 import { $Enums } from "@tillerquest/prisma/browser";
@@ -12,6 +11,8 @@ import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";
 import BinaryJack from "./BinaryJack";
+import { securePostClient } from "@/lib/secureFetchClient";
+import { FinishGameResponse, StartGameResponse } from "./types";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -74,12 +75,14 @@ function GameTabs({
   const ownsGame = user.access.includes(tab as $Enums.Access);
 
   const handleInitializeGame = async (gameName: string) => {
-    const result = await initializeGame(user.id, gameName);
+    const result = await securePostClient<StartGameResponse>(`/games`, {
+      gameName,
+    });
 
-    if (result.success) {
+    if (result.ok) {
       setGameEnabled(true);
       setScore(0);
-      setGameId(result.id);
+      setGameId(result.data.id);
     } else {
       toast.error(result.error);
       return;
@@ -88,9 +91,11 @@ function GameTabs({
 
   const handleFinishGame = async () => {
     if (gameEnabled === true && gameId) {
-      const result = await finishGame(gameId || "");
+      const result = await securePostClient<FinishGameResponse>(
+        `/games/${gameId}/finish`,
+      );
 
-      if (result.success) {
+      if (result.ok) {
         toast.success(result.data.message, {
           autoClose: 10000,
         });

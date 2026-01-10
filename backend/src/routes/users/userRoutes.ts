@@ -13,7 +13,6 @@ import { getUserTurns } from "./getUserTurns.js";
 import { getUserAbilities } from "./getUserAbilities.js";
 import { getUserProfileAbilities } from "./getUserProfileAbilities.js";
 import { getUserDungeonAbilities } from "./getUserDungeonAbilities.js";
-import { checkIfUserOwnsAbility } from "./checkIfUserOwnsAbility.js";
 import { purchaseAbility } from "./purchaseAbility.js";
 import { updateUserSettings } from "./updateUserSettings.js";
 import { equipItem } from "./equipItem.js";
@@ -26,6 +25,11 @@ import { getGuildEnemiesByUserId } from "./getGuildEnemiesByUserId.js";
 import { getUserLeaderboards } from "./getUserLeaderboards.js";
 
 const router = express.Router();
+
+// Collection endpoints
+router.get("/users/dead", getDeadUsers);
+router.get("/users/leaderboards", getUserLeaderboards);
+router.get("/users/valhalla", getValhallaUsers);
 
 router.get("/users/:userId/new", getNewUser);
 // Get user by ID (with query param for data type)
@@ -60,15 +64,5 @@ router.post("/users/:userId/abilities", purchaseAbility);
 router.get("/users/:userId/passives", getUserPassives);
 router.get("/users/:userId/abilities/profile", getUserProfileAbilities);
 router.get("/users/:userId/abilities/dungeon", getUserDungeonAbilities);
-// TODO: Considering implementing together with abilityFetch route
-router.get(
-  "/users/:userId/abilities/:abilityName/owns",
-  checkIfUserOwnsAbility,
-);
-
-// Collection endpoints
-router.get("/users/dead", getDeadUsers);
-router.get("/users/leaderboards", getUserLeaderboards);
-router.get("/users/valhalla", getValhallaUsers);
 
 export default router;

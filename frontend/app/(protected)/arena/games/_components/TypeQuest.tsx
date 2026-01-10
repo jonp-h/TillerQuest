@@ -1,11 +1,13 @@
-import {
-  getRandomTypeQuestText,
-  startGame,
-  updateGame,
-} from "@/data/games/game";
+import { securePost } from "@/lib/secureFetch";
 import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { UpdateGameResponse } from "./types";
+import {
+  secureGetClient,
+  securePatchClient,
+  securePostClient,
+} from "@/lib/secureFetchClient";
 
 function TypeQuest({
   gameEnabled,
@@ -59,16 +61,24 @@ function TypeQuest({
         setTime((time) => time - 1);
         // Update game data every 2 seconds to reduce the number of requests
         if (time % 2 === 0) {
-          const gamedata = await updateGame(
-            gameId || "",
-            [charIndex],
+          const gamedata = await securePatchClient<
+            UpdateGameResponse<{
+              wpm: number;
+              cpm: number;
+              totalCharacters: number;
+              mistakes: number;
+            }>
+          >(`/games/${gameId}`, {
+            gameId: gameId || "",
+            data: [charIndex],
             mistakes,
-          );
-          if (typeof gamedata === "string") {
-            toast.error(gamedata);
+          });
+
+          if (!gamedata.ok) {
+            toast.error(gamedata.error);
             return;
           }
-          const { score, metadata } = gamedata || {};
+          const { score, metadata } = gamedata.data;
           setWPM(metadata.wpm || 0);
           setCPM(metadata.cpm || 0);
           // the money reward given to the player upon completion of the game
@@ -96,11 +106,22 @@ function TypeQuest({
     if (!gameEnabled) {
       return;
     }
-    await startGame(gameId || "");
+    const response = await securePostClient<string>(`/games/${gameId}/start`);
+    if (!response.ok) {
+      toast.error("Failed to start the game.");
+      return;
+    }
+    // Fetch a new paragraph until it's different from the current one
     let newParagraph = currentParagraph;
     while (newParagraph === currentParagraph) {
-      const text = await getRandomTypeQuestText();
-      newParagraph = text?.text || "Error";
+      const text = await secureGetClient<{ text: string }>(
+        "/games/typequest/text",
+      );
+      if (!text.ok) {
+        toast.error("Failed to fetch text.");
+        return;
+      }
+      newParagraph = text.data.text;
     }
     setCurrentParagraph(newParagraph);
     setIsTyping(true);

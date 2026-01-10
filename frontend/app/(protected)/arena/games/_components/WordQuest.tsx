@@ -1,11 +1,16 @@
 import {
-  getRandomWordQuestBoard,
-  getWordQuestHint,
-  updateGame,
-} from "@/data/games/game";
+  secureGetClient,
+  securePatchClient,
+  securePostClient,
+} from "@/lib/secureFetchClient";
 import { Button } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+import {
+  UpdateGameResponse,
+  WordQuestBoardResponse,
+  WordQuestHintResponse,
+} from "./types";
 
 // Canvas component to render letters non-searchably
 const CanvasLetter = ({
@@ -192,14 +197,22 @@ function WordQuest({
       return;
     }
     setGameStarted(true);
-    const gameData = await getRandomWordQuestBoard(gameId);
-    setWords(gameData.words);
-    setGameBoard(gameData.board.flat());
+    const gameData = await secureGetClient<WordQuestBoardResponse>(
+      `/games/wordquest/${gameId}/board`,
+    );
+
+    if (!gameData.ok) {
+      toast.error("Failed to initialize the game.");
+      return;
+    }
+
+    setWords(gameData.data.words);
+    setGameBoard(gameData.data.board.flat());
 
     // Preserve existing game state if available
-    setFoundWords(gameData.foundWords || []);
-    setCurrentScore(gameData.score || 0);
-    setScore(gameData.score || 0);
+    setFoundWords(gameData.data.foundWords || []);
+    setCurrentScore(gameData.data.score || 0);
+    setScore(gameData.data.score || 0);
 
     // Reset UI state but preserve game progress
     setTriedWords([]);
@@ -383,22 +396,33 @@ function WordQuest({
     setTriedWords((prev) => [...prev, selectedWord]);
 
     try {
-      const result = await updateGame(gameId, orderedIndices, 0);
-      const newScore = result.score || 0;
+      const result = await securePatchClient<
+        UpdateGameResponse<{ foundWords: string[]; score: number }>
+      >(`/games/${gameId}`, {
+        data: orderedIndices,
+        mistakes: 0,
+      });
+
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      const newScore = result.data.score || 0;
       const oldFoundWordsCount = foundWords.length;
 
       setCurrentScore(newScore);
 
       // Update found words from metadata
-      if (result.metadata && result.metadata.foundWords) {
-        setFoundWords(result.metadata.foundWords);
+      if (result.data.metadata && result.data.metadata.foundWords) {
+        setFoundWords(result.data.metadata.foundWords);
 
         // Check if a new word was found
-        if (result.metadata.foundWords.length > oldFoundWordsCount) {
+        if (result.data.metadata.foundWords.length > oldFoundWordsCount) {
           toast.success(`🎉 Correct! You found: ${selectedWord}`);
 
           // Check if all words are found and auto-finish the game
-          if (result.metadata.foundWords.length === words.length) {
+          if (result.data.metadata.foundWords.length === words.length) {
             setTimeout(() => {
               toast.success("🎊 Congratulations! You found all words!");
               handleFinish();
@@ -444,13 +468,23 @@ function WordQuest({
   const getWordHint = async (word: string) => {
     if (!gameId) return;
     try {
-      const { score, index } = await getWordQuestHint(gameId, word);
-      if (index !== undefined) {
-        setCurrentScore(score); // Update local score state
-        setScore(score); // Update parent component score
-        setHints((prev) => [...prev, index]);
+      const response = await securePostClient<WordQuestHintResponse>(
+        `/games/wordquest/${gameId}/board/hints`,
+        { word },
+      );
+
+      if (!response.ok) {
+        toast.error(response.error);
+        return;
+      }
+
+      if (response.data.index !== undefined) {
+        setCurrentScore(response.data.score); // Update local score state
+        setScore(response.data.score); // Update parent component score
+        setHints((prev) => [...prev, response.data.index]);
       }
     } catch (error) {
+      toast.error("Error getting hint. Please try again.");
       console.error("Error getting hint:", error);
     }
   };

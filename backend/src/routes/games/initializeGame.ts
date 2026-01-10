@@ -1,26 +1,24 @@
 import { Response } from "express";
-import { $Enums, db } from "../../lib/db.js";
+import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import {
-  validateBody,
-  validateParams,
-} from "middleware/validationMiddleware.js";
+import { validateBody } from "middleware/validationMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import {
-  gameNameSchema,
-  userIdParamSchema,
-} from "utils/validators/validationUtils.js";
+import { gameNameSchema } from "utils/validators/validationUtils.js";
+import { Access } from "@tillerquest/prisma/browser";
 
 export const initializeGame = [
-  requireUserIdAndActive(),
-  validateParams(userIdParamSchema),
+  requireAuth,
+  requireActiveUser,
   validateBody(gameNameSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const userId = req.params.userId;
       const gameName = req.body.gameName as string;
+      const userId = req.session!.user.id;
 
       await db.$transaction(async (tx) => {
         const user = await tx.user.findUnique({
@@ -37,7 +35,7 @@ export const initializeGame = [
           throw new Error("User not found when starting a game");
         }
 
-        if (!user.access.includes(gameName as $Enums.Access)) {
+        if (!user.access.includes(gameName as Access)) {
           throw new ErrorMessage("You do not have access to this game");
         }
 

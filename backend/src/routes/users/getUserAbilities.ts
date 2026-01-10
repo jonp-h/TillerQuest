@@ -1,13 +1,8 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { validateParams } from "../../middleware/validationMiddleware.js";
-import { userIdParamSchema } from "utils/validators/validationUtils.js";
 
 interface GetUserAbilitiesRequest extends AuthenticatedRequest {
   params: {
@@ -16,9 +11,7 @@ interface GetUserAbilitiesRequest extends AuthenticatedRequest {
 }
 
 export const getUserAbilities = [
-  requireAuth,
-  requireActiveUser,
-  validateParams(userIdParamSchema),
+  requireUserIdAndActive(),
   async (req: GetUserAbilitiesRequest, res: Response) => {
     try {
       const { userId } = req.params;

@@ -6,19 +6,23 @@ import {
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import z from "zod";
-import { validateBody } from "../../middleware/validationMiddleware.js";
+import {
+  validateBody,
+  validateParams,
+} from "../../middleware/validationMiddleware.js";
 import { ErrorMessage } from "../../lib/error.js";
 import { selectAbility } from "utils/abilities/abilityUsage/selectAbility.js";
-
-const useAbilitySchema = z.object({
-  abilityName: z.string().min(1, "Ability name is required").max(100),
-  targetIds: z.array(z.cuid()),
-});
+import {
+  abilityNameSchema,
+  userIdListSchema,
+} from "utils/validators/validationUtils.js";
 
 interface UseAbilityRequest extends AuthenticatedRequest {
-  body: {
+  params: {
     abilityName: string;
-    targetIds: string[];
+  };
+  body: {
+    userIds: string[];
   };
 }
 /**
@@ -37,13 +41,15 @@ interface UseAbilityRequest extends AuthenticatedRequest {
 export const useAbility = [
   requireAuth,
   requireActiveUser,
-  validateBody(useAbilitySchema),
+  validateParams(abilityNameSchema),
+  validateBody(userIdListSchema),
   async (req: UseAbilityRequest, res: Response) => {
     try {
-      const { abilityName, targetIds } = req.body;
+      const { abilityName } = req.params;
+      const { userIds } = req.body;
       const userId = req.session!.user.id;
 
-      const result = await selectAbility(userId, targetIds, abilityName);
+      const result = await selectAbility(userId, userIds, abilityName);
 
       res.json(result);
     } catch (error) {

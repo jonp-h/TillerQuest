@@ -1,19 +1,23 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import {
+  requireActiveUser,
+  requireAuth,
+} from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { ErrorMessage } from "lib/error.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { gameIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const startGame = [
-  requireUserIdAndActive(),
+  requireAuth,
+  requireActiveUser,
   validateParams(gameIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const gameId = req.params.gameId;
-      const userId = req.session?.user.id;
+      const userId = req.session!.user.id;
 
       await db.$transaction(async (tx) => {
         const game = await tx.game.update({
