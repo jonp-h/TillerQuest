@@ -1,7 +1,5 @@
 import express from "express";
-import { adminUpdateGuildMembers } from "./adminUpdateGuildMembers.js";
-import { adminUpdateGuildLeader } from "./adminUpdateGuildLeader.js";
-import { adminUpdateNextGuildLeader } from "./adminUpdateNextGuildLeader.js";
+import { adminUpdateGuild } from "./adminUpdateGuild.js";
 import { getGuilds } from "./getGuilds.js";
 import { getAbilityUsageStats } from "./getAbilityUsageStats.js";
 import { getResourceAverages } from "./getResourceAverages.js";
@@ -45,7 +43,6 @@ import { adminGiveMana } from "./adminGiveMana.js";
 import { adminGiveGold } from "./adminGiveGold.js";
 import { adminGiveXp } from "./adminGiveXp.js";
 import { adminGiveArenaTokens } from "./adminGiveArenaTokens.js";
-import { adminUpdateGuildName } from "./adminUpdateGuildName.js";
 import { requireAdmin } from "middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -53,11 +50,8 @@ const router = express.Router();
 router.use("/admin", requireAdmin);
 
 // Guild management routes
-router.patch("/admin/guilds/:guildName/name", adminUpdateGuildName);
-router.patch("/admin/guilds/:guildName/members", adminUpdateGuildMembers);
-router.patch("/admin/guilds/:guildName/leader", adminUpdateGuildLeader);
-router.patch("/admin/guilds/:guildName/nextLeader", adminUpdateNextGuildLeader);
-router.patch("/admin/guilds", getGuilds);
+router.patch("/admin/guilds/:guildName", adminUpdateGuild);
+router.get("/admin/guilds", getGuilds);
 
 // Wish management routes
 router.get("/admin/wishes", adminGetWishes);

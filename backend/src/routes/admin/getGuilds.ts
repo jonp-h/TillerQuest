@@ -16,7 +16,10 @@ export const getGuilds = [
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const guilds = await db.guild.findMany({
+      const activeGuilds = await db.guild.findMany({
+        where: {
+          archived: false,
+        },
         select: {
           name: true,
           schoolClass: true,
@@ -32,10 +35,31 @@ export const getGuilds = [
             },
           },
         },
-        orderBy: [{ archived: "asc" }, { schoolClass: "asc" }, { name: "asc" }],
+        orderBy: [{ schoolClass: "asc" }, { name: "asc" }],
+      });
+      const archivedGuilds = await db.guild.findMany({
+        where: {
+          archived: true,
+        },
+        select: {
+          name: true,
+          schoolClass: true,
+          archived: true,
+          guildLeader: true,
+          nextGuildLeader: true,
+          members: {
+            select: {
+              id: true,
+              name: true,
+              lastname: true,
+              schoolClass: true,
+            },
+          },
+        },
+        orderBy: [{ schoolClass: "asc" }, { name: "asc" }],
       });
 
-      res.json({ success: true, data: guilds });
+      res.json({ success: true, data: { activeGuilds, archivedGuilds } });
     } catch (error) {
       logger.error("Error fetching guilds: " + error);
       res.status(500).json({

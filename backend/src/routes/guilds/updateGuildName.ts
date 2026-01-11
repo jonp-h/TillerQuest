@@ -13,15 +13,26 @@ import {
 import {
   escapeHtml,
   guildNameParamSchema,
-  updateGuildNameSchema,
 } from "utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import z from "zod";
 
 interface UpdateGuildNameRequest extends AuthenticatedRequest {
   body: {
     newName: string;
   };
 }
+
+const updateGuildNameSchema = z.object({
+  newName: z
+    .string()
+    .min(3, "Guild name must be above 3 characters")
+    .max(25, "Guild name must be below 25 characters")
+    .regex(
+      /^[A-Za-zŽžÀ-ÿ0-9\s'_-]+$/,
+      "Guild name may only contain letters, numbers, spaces, hyphens, underscores, and apostrophes",
+    ),
+});
 
 export const updateGuildName = [
   requireAuth,

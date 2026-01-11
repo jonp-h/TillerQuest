@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
     "prepare": "husky",
-    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run dev\""
+    "dev": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run dev\"",
+    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run start\""
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",

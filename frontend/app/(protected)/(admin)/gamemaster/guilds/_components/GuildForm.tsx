@@ -11,15 +11,11 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { SchoolClass } from "@tillerquest/prisma/browser";
 import { Fragment, useEffect, useState } from "react";
-import {
-  adminUpdateGuildname,
-  updateGuildmembers,
-  adminUpdateGuildLeader,
-  adminUpdateNextGuildLeader,
-} from "@/data/guilds/updateGuilds";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { BasicUser } from "./types";
+import { securePatchClient } from "@/lib/secureFetchClient";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -37,49 +33,35 @@ function GuildForm({
   guildMembers: {
     id: string;
     name: string | null;
-    lastname: string | null;
     schoolClass: SchoolClass | null;
+    lastname: string | null;
   }[];
   archived: boolean;
-  users: {
-    id: string;
-    name: string | null;
-    lastname: string | null;
-    schoolClass: SchoolClass | null;
-  }[];
+  users: BasicUser[];
 }) {
-  const [selectedUsers, setSelectedUsers] = useState<
-    {
-      id: string;
-      name: string | null;
-      lastname: string | null;
-      schoolClass: SchoolClass | null;
-    }[]
-  >(guildMembers);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>(
+    guildMembers.map((member) => member.id),
+  );
   const [newGuildName, setNewGuildName] = useState(guildName);
   const [guildArchived, setGuildArchived] = useState(archived);
-  const [selectedGuildLeader, setSelectedGuildLeader] = useState<{
-    id: string;
-    name: string | null;
-    lastname: string | null;
-    schoolClass: SchoolClass | null;
-  } | null>(() => {
-    // Find the current guild leader from the guild members
-    if (guildLeader) {
-      return guildMembers.find((member) => member.id === guildLeader) || null;
-    }
-    return null;
-  });
-  const [selectedNextGuildLeader, setSelectedNextGuildLeader] = useState<{
-    id: string;
-    name: string | null;
-    lastname: string | null;
-    schoolClass: SchoolClass | null;
-  } | null>(() => {
+  const [selectedGuildLeader, setSelectedGuildLeader] = useState<string | null>(
+    () => {
+      // Find the current guild leader from the guild members
+      if (guildLeader) {
+        return (
+          guildMembers.find((member) => member.id === guildLeader)?.id || null
+        );
+      }
+      return null;
+    },
+  );
+  const [selectedNextGuildLeader, setSelectedNextGuildLeader] = useState<
+    string | null
+  >(() => {
     // Find the current next guild leader from the guild members
     if (nextGuildLeader) {
       return (
-        guildMembers.find((member) => member.id === nextGuildLeader) || null
+        guildMembers.find((member) => member.id === nextGuildLeader)?.id || null
       );
     }
     return null;
@@ -91,14 +73,14 @@ function GuildForm({
   useEffect(() => {
     if (
       selectedGuildLeader &&
-      !selectedUsers.some((user) => user.id === selectedGuildLeader.id)
+      !selectedUsers.some((user) => user === selectedGuildLeader)
     ) {
       // If the current leader is no longer in the guild members, clear the selection
       setSelectedGuildLeader(null);
     }
     if (
       selectedNextGuildLeader &&
-      !selectedUsers.some((user) => user.id === selectedNextGuildLeader.id)
+      !selectedUsers.some((user) => user === selectedNextGuildLeader)
     ) {
       // If the current next leader is no longer in the guild members, clear the selection
       setSelectedNextGuildLeader(null);
@@ -106,50 +88,57 @@ function GuildForm({
   }, [selectedUsers, selectedGuildLeader, selectedNextGuildLeader]);
 
   const handleChange = async () => {
-    const result = await updateGuildmembers(guildName, selectedUsers);
+    // Only send data that has actually changed
+    const changes: {
+      userIds?: string[];
+      guildLeaderId?: string | null;
+      nextGuildLeaderId?: string | null;
+      archived?: boolean;
+      newName?: string;
+    } = {};
 
-    if (result.success) {
+    // Check if guild members changed
+    const originalMemberIds = guildMembers.map((member) => member.id).sort();
+    const newMemberIds = [...selectedUsers].sort();
+    if (JSON.stringify(originalMemberIds) !== JSON.stringify(newMemberIds)) {
+      changes.userIds = selectedUsers;
+    }
+
+    // Check if guild leader changed
+    if (selectedGuildLeader !== guildLeader) {
+      changes.guildLeaderId = selectedGuildLeader;
+    }
+
+    // Check if next guild leader changed
+    if (selectedNextGuildLeader !== nextGuildLeader) {
+      changes.nextGuildLeaderId = selectedNextGuildLeader;
+    }
+
+    // Check if archived status changed
+    if (guildArchived !== archived) {
+      changes.archived = guildArchived;
+    }
+
+    // Check if guild name changed
+    if (newGuildName !== guildName) {
+      changes.newName = newGuildName;
+    }
+
+    // If no changes, don't send request
+    if (Object.keys(changes).length === 0) {
+      toast.info("No changes to save");
+      return;
+    }
+
+    const result = await securePatchClient<string>(
+      `/admin/guilds/${guildName}`,
+      changes,
+    );
+
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
-    }
-
-    if (newGuildName !== guildName) {
-      const result = await adminUpdateGuildname(guildName, newGuildName);
-
-      if (result.success) {
-        toast.success(result.data);
-      } else {
-        toast.error(result.error);
-      }
-    }
-
-    // Update guild leader if it has changed
-    const currentLeaderId = selectedGuildLeader?.id || null;
-    if (currentLeaderId !== guildLeader) {
-      const result = await adminUpdateGuildLeader(
-        newGuildName || guildName,
-        currentLeaderId,
-      );
-      if (result.success) {
-        toast.success(result.data);
-      } else {
-        toast.error(result.error);
-      }
-    }
-
-    // Update next guild leader if it has changed
-    const currentNextLeaderId = selectedNextGuildLeader?.id || null;
-    if (currentNextLeaderId !== nextGuildLeader) {
-      const result = await adminUpdateNextGuildLeader(
-        newGuildName || guildName,
-        currentNextLeaderId,
-      );
-      if (result.success) {
-        toast.success(result.data);
-      } else {
-        toast.error(result.error);
-      }
     }
 
     // ensure the page is reloaded to reflect the changes
@@ -172,9 +161,11 @@ function GuildForm({
         getOptionLabel={(option) =>
           option.name + " " + (option.lastname ? option.lastname[0] : "") || ""
         }
-        value={selectedUsers}
+        value={selectedUsers.map((userId) => {
+          return users.find((user) => user.id === userId)!;
+        })}
         onChange={(event, newValue) => {
-          setSelectedUsers(newValue);
+          setSelectedUsers(newValue.map((user) => user.id));
         }}
         isOptionEqualToValue={(option, value) => option.name === value.name}
         renderOption={(props, option, { selected }) => {
@@ -213,14 +204,20 @@ function GuildForm({
         )}
       />
       <Autocomplete
-        options={selectedUsers} // Only show current guild members
+        options={selectedUsers.map((userId) => {
+          return users.find((user) => user.id === userId)!;
+        })} // Only show current guild members
         groupBy={(option) => option.schoolClass?.split("_")[1] || "No Class"}
         getOptionLabel={(option) =>
           option.name + " " + (option.lastname ? option.lastname[0] : "") || ""
         }
-        value={selectedGuildLeader}
+        value={
+          selectedGuildLeader
+            ? users.find((user) => user.id === selectedGuildLeader)!
+            : null
+        }
         onChange={(event, newValue) => {
-          setSelectedGuildLeader(newValue);
+          setSelectedGuildLeader(newValue?.id || null);
         }}
         isOptionEqualToValue={(option, value) => option.id === value?.id}
         renderOption={(props, option) => {
@@ -241,14 +238,20 @@ function GuildForm({
         )}
       />
       <Autocomplete
-        options={selectedUsers} // Only show current guild members
+        options={selectedUsers.map((userId) => {
+          return users.find((user) => user.id === userId)!;
+        })} // Only show current guild members
         groupBy={(option) => option.schoolClass?.split("_")[1] || "No Class"}
         getOptionLabel={(option) =>
           option.name + " " + (option.lastname ? option.lastname[0] : "") || ""
         }
-        value={selectedNextGuildLeader}
+        value={
+          selectedNextGuildLeader
+            ? users.find((user) => user.id === selectedNextGuildLeader)!
+            : null
+        }
         onChange={(event, newValue) => {
-          setSelectedNextGuildLeader(newValue);
+          setSelectedNextGuildLeader(newValue?.id || null);
         }}
         isOptionEqualToValue={(option, value) => option.id === value?.id}
         renderOption={(props, option) => {

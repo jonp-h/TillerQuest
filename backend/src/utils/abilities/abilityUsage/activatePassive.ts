@@ -1,4 +1,3 @@
-import { Ability, User } from "lib/db.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
 import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
@@ -6,6 +5,7 @@ import { getUsersMissingPassive } from "../abilityValidators.js";
 import { addLog } from "../../logs/addLog.js";
 import { finalizeAbilityUsage } from "./finalizeAbilityUsage.js";
 import { getAbilityValue } from "./getAbilityValue.js";
+import { Ability, User } from "@tillerquest/prisma/browser";
 
 export const activatePassive = async (
   db: PrismaTransaction,
@@ -96,13 +96,16 @@ export const activatePassive = async (
           },
         });
       }
-      await addLog(
-        db,
-        targetUserId,
-        `You were granted ${ability.name} from ${castingUser.username}` +
-          (ability.duration ? ` for ${ability.duration} minutes.` : ""),
-        false,
-      );
+      // Log to the target user that they have received the passive ability, unless the target user is the casting user
+      if (targetUserId !== castingUser.id) {
+        await addLog(
+          db,
+          targetUserId,
+          `You were granted ${ability.name} from ${castingUser.username}` +
+            (ability.duration ? ` for ${ability.duration} minutes.` : ""),
+          false,
+        );
+      }
     }),
   );
   await finalizeAbilityUsage(db, castingUser, ability);
