@@ -24,9 +24,7 @@ export const adminDeleteGuildEnemies = [
 
       res.json({
         success: true,
-        data: {
-          message: `Successfully deleted all enemies from guild: ${guildName}`,
-        },
+        data: `Successfully deleted all enemies from guild: ${guildName}`,
       });
     } catch (error) {
       logger.error("Error deleting guild enemies: " + error);

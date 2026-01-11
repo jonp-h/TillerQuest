@@ -19,7 +19,9 @@ export const adminGetApplicationSettings = [
         return;
       }
 
-      const applicationSettings = await db.applicationSettings.findMany();
+      const applicationSettings = await db.applicationSettings.findMany({
+        orderBy: { key: "asc" },
+      });
 
       res.json({ success: true, data: applicationSettings });
     } catch (error) {

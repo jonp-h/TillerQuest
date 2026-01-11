@@ -17,15 +17,12 @@ import {
   Typography,
 } from "@mui/material";
 import { CosmicEvent } from "@tillerquest/prisma/browser";
-import {
-  randomCosmic,
-  setRecommendedCosmic,
-  setSelectedCosmic,
-} from "@/data/admin/cosmic";
+
 import { useRouter } from "next/navigation";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { securePostClient } from "@/lib/secureFetchClient";
 
 export default function RerollCosmic({
   cosmicEvents,
@@ -44,10 +41,12 @@ export default function RerollCosmic({
   const router = useRouter();
 
   const handleReroll = async () => {
-    const result = await randomCosmic();
+    const result = await securePostClient<string>("/admin/cosmics/random");
 
-    if (result.success) {
-      toast.success("Rerolled cosmic!");
+    if (result.ok) {
+      toast.success(result.data, {
+        autoClose: 1000,
+      });
     } else {
       toast.error(result.error);
     }
@@ -55,9 +54,11 @@ export default function RerollCosmic({
   };
 
   const handleSetRecommendedCosmic = async (name: string) => {
-    const result = await setRecommendedCosmic(name);
+    const result = await securePostClient<string>(
+      `/admin/cosmics/${name}/recommend`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -67,9 +68,15 @@ export default function RerollCosmic({
   };
 
   const handleSetSelectedCosmic = async (name: string, grade: string) => {
-    const result = await setSelectedCosmic(name, grade, notify);
+    const result = await securePostClient<string>(
+      `/admin/cosmics/${name}/select`,
+      {
+        grade,
+        notify,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

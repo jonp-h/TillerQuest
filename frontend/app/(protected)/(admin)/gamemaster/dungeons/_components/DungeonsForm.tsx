@@ -1,31 +1,19 @@
 "use client";
-import { adminDeleteGuildEnemies } from "@/data/admin/adminUserInteractions";
 import { Button, Typography } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { DungeonInfo } from "./types";
+import { secureDeleteClient } from "@/lib/secureFetchClient";
 
-interface DungeonsFormProps {
-  dungeonInfo: {
-    name: string;
-    enemies: {
-      id: string;
-      name: string;
-      icon: string;
-      xp: number;
-      gold: number;
-      health: number;
-      attack: number;
-    }[];
-  };
-}
-
-function DungeonsForm({ dungeonInfo }: DungeonsFormProps) {
+function DungeonsForm({ dungeonInfo }: { dungeonInfo: DungeonInfo }) {
   const router = useRouter();
 
   const handleDeleteEnemies = async () => {
-    const result = await adminDeleteGuildEnemies(dungeonInfo.name);
-    if (result.success) {
+    const result = await secureDeleteClient<string>(
+      `/admin/guilds/${dungeonInfo.name}/enemies`,
+    );
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

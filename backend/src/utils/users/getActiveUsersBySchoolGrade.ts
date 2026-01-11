@@ -29,7 +29,7 @@ export const getActiveUsersBySchoolGrade = async (
         },
         role: {
           // FIXME: add new role
-          notIn: ["NEW", "INACTIVE", "ARCHIVED"],
+          notIn: ["NEW", "ARCHIVED"],
         },
       },
       select: {

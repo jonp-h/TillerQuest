@@ -41,9 +41,7 @@ export const adminUpdateApplicationSettings = [
 
       res.json({
         success: true,
-        data: {
-          message: `Successfully updated application setting: ${key}`,
-        },
+        data: `Successfully updated application setting: ${key}`,
       });
     } catch (error) {
       logger.error("Error updating application settings: " + error);

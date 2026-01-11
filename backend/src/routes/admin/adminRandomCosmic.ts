@@ -96,7 +96,7 @@ export const adminRandomCosmic = [
         return chosenCosmic;
       });
 
-      res.json({ success: true, data: result });
+      res.json({ success: true, data: "Rerolled cosmic event" });
     } catch (error) {
       logger.error("Error generating random cosmic: " + error);
       res.status(500).json({
