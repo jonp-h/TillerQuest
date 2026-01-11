@@ -19,6 +19,7 @@ export const adminGetUsers = [
       const fields = req.query.fields as string | undefined;
 
       let select: any;
+      let whereClause: any;
 
       switch (fields) {
         case "basic":
@@ -40,6 +41,7 @@ export const adminGetUsers = [
             schoolClass: true,
             access: true,
           };
+          whereClause = undefined;
           break;
         case "dead":
           select = {
@@ -50,27 +52,35 @@ export const adminGetUsers = [
             image: true,
             level: true,
           };
+          whereClause = {
+            hp: 0,
+          };
           break;
         case "full":
         default:
           // Return all fields (full user objects)
-          select = undefined;
+          select = {
+            id: true,
+            name: true,
+            username: true,
+            lastname: true,
+            hp: true,
+            mana: true,
+            xp: true,
+            gold: true,
+            level: true,
+            class: true,
+            guildName: true,
+            schoolClass: true,
+          };
+          whereClause = {
+            role: {
+              //TODO: INACTIVE required?
+              notIn: ["NEW", "ARCHIVED"],
+            },
+          };
           break;
       }
-
-      const whereClause =
-        fields === "basic" || fields === "admin"
-          ? undefined
-          : fields === "dead"
-            ? {
-                hp: 0,
-              }
-            : {
-                role: {
-                  //TODO: INACTIVE required?
-                  notIn: ["NEW", "ARCHIVED"],
-                },
-              };
 
       const users = await db.user.findMany({
         where: whereClause,

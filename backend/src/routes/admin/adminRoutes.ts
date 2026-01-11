@@ -102,12 +102,12 @@ router.get("/admin/dungeons", adminGetDungeonInfo);
 router.get("/admin/logs", adminGetAllLogs);
 
 // Admin powers - Bulk user operations
-router.post("/admin/users/heal", adminHealUsers);
-router.post("/admin/users/damage", adminDamageUsers);
-router.post("/admin/users/give-xp", adminGiveXp);
-router.post("/admin/users/give-mana", adminGiveMana);
-router.post("/admin/users/give-arena-tokens", adminGiveArenaTokens);
-router.post("/admin/users/give-gold", adminGiveGold);
+router.post("/admin/powers/heal", adminHealUsers);
+router.post("/admin/powers/damage", adminDamageUsers);
+router.post("/admin/powers/give-xp", adminGiveXp);
+router.post("/admin/powers/give-mana", adminGiveMana);
+router.post("/admin/powers/give-arenatokens", adminGiveArenaTokens);
+router.post("/admin/powers/give-gold", adminGiveGold);
 
 // Analytics routes
 router.get("/admin/analytics/ability-usage", getAbilityUsageStats);

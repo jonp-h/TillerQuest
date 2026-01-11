@@ -10,10 +10,12 @@ import { sendDiscordMessage } from "../../lib/discord.js";
 import { ErrorMessage } from "../../lib/error.js";
 
 const giveArenaTokensSchema = z.object({
-  userIds: z.array(z.cuid()),
+  userIds: z.array(
+    z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
+  ),
   value: z.number(),
   notify: z.boolean(),
-  reason: z.string().max(40, "Reason must be at most 40 characters"),
+  reason: z.string().max(40, "Reason must be at most 40 characters").optional(),
 });
 
 interface GiveArenaTokensRequest extends AuthenticatedRequest {
