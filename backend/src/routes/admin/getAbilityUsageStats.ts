@@ -9,7 +9,9 @@ import z from "zod";
 export const getAbilityUsageStats = [
   requireAuth,
   requireAdmin,
-  validateQuery(z.object({ days: z.number().min(1).max(90).optional() })),
+  validateQuery(
+    z.object({ days: z.coerce.number().min(1).max(90).optional() }),
+  ),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const days = parseInt(req.query.days as string) || 14;

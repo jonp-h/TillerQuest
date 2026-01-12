@@ -186,18 +186,23 @@ async function secureFetch<T = unknown>(
 
     // Parse JSON response
     let responseData: ApiResponse<T>;
+    const responseText = await response.text();
     try {
-      responseData = await response.json();
+      responseData = JSON.parse(responseText);
     } catch (parseError) {
-      logger.error("Failed to parse JSON response", {
+      logger.error("Failed to parse JSON response:", {
         url: fullUrl,
+        stack: parseError instanceof Error ? parseError.stack : undefined,
         status: response.status,
+        statusText: response.statusText,
+        contentType: response.headers.get("content-type"),
+        responseText: responseText.substring(0, 1000),
         error: parseError,
       });
       return {
         ok: false,
         status: response.status,
-        error: "Invalid response format from server",
+        error: `Server returned non-JSON response: ${responseText.substring(0, 200)}`,
       };
     }
 
