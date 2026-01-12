@@ -202,7 +202,7 @@ async function secureFetch<T = unknown>(
       return {
         ok: false,
         status: response.status,
-        error: `Server returned non-JSON response: ${responseText.substring(0, 200)}`,
+        error: `Invalid response format from server: ${responseText.substring(0, 200)}`,
       };
     }
 
