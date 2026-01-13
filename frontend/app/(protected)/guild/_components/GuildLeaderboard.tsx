@@ -1,11 +1,12 @@
 "use client";
-import { Typography, Paper, Box, Avatar, Chip } from "@mui/material";
+import { Typography, Paper, Box, Chip } from "@mui/material";
 import { $Enums } from "@tillerquest/prisma/browser";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import Link from "next/link";
 import { GuildLeaderboardType } from "./types";
+import GuildAvatar from "@/components/GuildAvatar";
 
 function GuildLeaderboard({ guilds }: { guilds: GuildLeaderboardType }) {
   // Sort guilds by level in descending order
@@ -90,18 +91,15 @@ function GuildLeaderboard({ guilds }: { guilds: GuildLeaderboardType }) {
                     {getRankIcon(position)}
                   </Box>
                   {/* Guild Icon */}
-                  <Avatar
-                    variant="rounded"
+                  <GuildAvatar
+                    guild={{ name: guild.name, icon: guild.icon }}
                     sx={{
-                      width: 56,
-                      height: 56,
+                      width: 72,
+                      height: 72,
                       fontSize: "1.5rem",
                       fontWeight: "bold",
                     }}
-                    src={guild.icon ? `/guilds/${guild.icon}` : undefined}
-                  >
-                    {guild.name.charAt(0).toUpperCase()}
-                  </Avatar>
+                  />
 
                   {/* Guild Info */}
                   <Box className="flex flex-col gap-1">

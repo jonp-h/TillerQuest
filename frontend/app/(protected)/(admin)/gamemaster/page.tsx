@@ -23,9 +23,9 @@ export default async function GameMasterPage() {
     (res) => (res.ok ? res.data : 0),
   );
   // TODO: fix
-  const pendingUploads = await secureGet<number>("/admin/placeholder").then(
-    (res) => (res.ok ? res.data : 0),
-  );
+  const pendingUploads = await secureGet<number>(
+    "/admin/images/pending/count",
+  ).then((res) => (res.ok ? res.data : 0));
 
   return (
     <MainContainer>

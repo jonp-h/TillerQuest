@@ -1,47 +1,33 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Paper, Typography, TextField, Box, Chip, Alert } from "@mui/material";
 import Image from "next/image";
-import {
-  approveImageUpload,
-  rejectImageUpload,
-} from "@/data/admin/imageReview";
 import DialogButton from "@/components/DialogButton";
+import { UploadReviewFormProps } from "./types";
+import { securePostClient } from "@/lib/secureFetchClient";
 
-interface UploadReviewFormProps {
-  upload: {
-    id: string;
-    filename: string;
-    uploadedAt: Date;
-    guildName: string | null;
-    previewUrl: string | null;
-    previewError: string | null;
-    uploader: {
-      id: string;
-      username: string | null;
-      name: string | null;
-      lastname: string | null;
-    };
-    guild: {
-      name: string;
-      id: number;
-    } | null;
-  };
-}
-
-export default function UploadReviewForm({ upload }: UploadReviewFormProps) {
+export default function UploadReviewForm({
+  upload,
+}: {
+  upload: UploadReviewFormProps;
+}) {
   const [rejectionReason, setRejectionReason] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleApprove = async () => {
     setLoading(true);
-    const result = await approveImageUpload(upload.id);
+    const result = await securePostClient<string>(
+      `/admin/images/pending/${upload.id}`,
+      {
+        action: "APPROVE",
+        reason: rejectionReason,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -57,9 +43,15 @@ export default function UploadReviewForm({ upload }: UploadReviewFormProps) {
     }
 
     setLoading(true);
-    const result = await rejectImageUpload(upload.id, rejectionReason);
+    const result = await securePostClient<string>(
+      `/admin/images/pending/${upload.id}`,
+      {
+        action: "REJECT",
+        reason: rejectionReason,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);

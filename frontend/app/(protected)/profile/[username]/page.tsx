@@ -1,6 +1,5 @@
 import MainContainer from "@/components/MainContainer";
 import {
-  Avatar,
   Button,
   Chip,
   LinearProgress,
@@ -31,6 +30,7 @@ import RarityText from "@/components/RarityText";
 import { secureGet } from "@/lib/secureFetch";
 import { UserProfile } from "./_components/types";
 import { GuildMember } from "../../abilities/[abilityName]/_components/interfaces";
+import GuildAvatar from "@/components/GuildAvatar";
 
 export default async function ProfilePage({
   params,
@@ -62,8 +62,8 @@ export default async function ProfilePage({
             elevation={3}
             className="flex flex-col m-3 lg:w-2/12 w-full order-2 lg:order-1"
           >
-            <Avatar
-              variant="rounded"
+            <GuildAvatar
+              guild={{ name: user.data.guildName, icon: user.data.guild?.icon }}
               sx={{
                 width: 100,
                 height: 100,
@@ -73,11 +73,8 @@ export default async function ProfilePage({
                 fontSize: "3rem",
                 fontWeight: "bold",
               }}
-              src={"/guilds/" + user.data.guild?.icon}
-              draggable={false}
-            >
-              {user.data.guildName.charAt(0)}
-            </Avatar>
+            />
+
             <Typography variant="h4" align="center" flexWrap="wrap">
               {user.data.guildName}
             </Typography>

@@ -7,7 +7,6 @@ import {
   Tooltip,
   Box,
   Alert,
-  Avatar,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,7 +16,8 @@ import MiniatureProfile from "@/components/MiniatureProfile";
 import { CloudUpload, HourglassEmpty } from "@mui/icons-material";
 import Image from "next/image";
 import { GuildSettings } from "./types";
-import { securePostClient } from "@/lib/secureFetchClient";
+import { securePostClient, secureUploadClient } from "@/lib/secureFetchClient";
+import GuildAvatar from "@/components/GuildAvatar";
 
 function ProfileSettingsForm({
   userId,
@@ -136,29 +136,40 @@ function ProfileSettingsForm({
 
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("image", selectedFile);
+    try {
+      const formData = new FormData();
+      formData.append("image", selectedFile);
 
-    //FIXME: add uploadGuildImage function
-    // const result = await uploadGuildImage(userId, guild.name, formData);
+      const result = await secureUploadClient<string>(
+        `/guilds/images`,
+        formData,
+      );
 
-    // if (result.success) {
-    //   toast.success(result.data);
-    //   setSelectedFile(null);
-    //   setPreviewUrl(null);
-    //   // Reset file input
-    //   const fileInput = document.getElementById(
-    //     "guild-image-upload",
-    //   ) as HTMLInputElement;
-    //   if (fileInput) {
-    //     fileInput.value = "";
-    //   }
-    // } else {
-    //   toast.error(result.error);
-    // }
-
-    setLoading(false);
-    router.refresh();
+      if (result.ok) {
+        toast.success(result.data);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        // Reset file input
+        const fileInput = document.getElementById(
+          "guild-image-upload",
+        ) as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = "";
+        }
+        router.refresh();
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload image. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClearSelection = () => {
@@ -185,19 +196,7 @@ function ProfileSettingsForm({
         className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
       >
         {/* Current Guild Logo */}
-        <Avatar
-          variant="rounded"
-          sx={{
-            width: 150,
-            height: 150,
-            fontSize: "2rem",
-            fontWeight: "bold",
-            bgcolor: "purple.900",
-          }}
-          src={"/guilds/" + guild.icon || undefined}
-        >
-          {guild.name.charAt(0).toUpperCase()}
-        </Avatar>
+        <GuildAvatar guild={{ name: guild.name, icon: guild.icon }} />
 
         <Typography variant="h2" align="center">
           {guild.name}

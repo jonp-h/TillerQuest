@@ -175,7 +175,7 @@ async function secureFetchClient<T = unknown>(
     const responseText = await response.text();
 
     try {
-      responseData = await response.json();
+      responseData = JSON.parse(responseText);
     } catch (parseError) {
       console.error("[Client Fetch] Failed to parse JSON response", {
         url: fullUrl,
@@ -307,4 +307,159 @@ export async function secureDeleteClient<T = unknown>(
   options?: Omit<SecureFetchClientOptions, "method" | "body">,
 ): Promise<SecureFetchResult<T>> {
   return secureFetchClient<T>(url, { ...options, method: "DELETE" });
+}
+
+/**
+ * Secure multipart/form-data upload for CLIENT COMPONENTS
+ * - Handles file uploads with FormData
+ * - Validates URLs to prevent SSRF
+ * - Browser automatically sets correct Content-Type with boundary
+ * - Includes timeout protection
+ *
+ * @param url - API endpoint (relative path like '/guilds/name/image' or full URL)
+ * @param formData - FormData object containing files and fields
+ * @param options - Fetch options (timeout, cache, etc.)
+ * @returns Typed response with ok/error handling
+ *
+ * @example
+ * ```typescript
+ * "use client";
+ * import { secureUploadClient } from "@/lib/secureFetchClient";
+ *
+ * const formData = new FormData();
+ * formData.append("image", fileInput.files[0]);
+ *
+ * const result = await secureUploadClient<string>(
+ *   `/guilds/${guildName}/image`,
+ *   formData
+ * );
+ *
+ * if (result.ok) {
+ *   toast.success(result.data);
+ * } else {
+ *   toast.error(result.error);
+ * }
+ * ```
+ */
+export async function secureUploadClient<T = unknown>(
+  url: string,
+  formData: FormData,
+  options: Omit<SecureFetchClientOptions, "method" | "body"> = {},
+): Promise<SecureFetchResult<T>> {
+  const {
+    timeout = 30000,
+    enableLogging: log = false,
+    ...fetchOptions
+  } = options;
+
+  const startTime = Date.now();
+  let fullUrl = url;
+
+  try {
+    // Build full URL if relative
+    const baseUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
+    if (!baseUrl) {
+      throw new Error(
+        "NEXT_PUBLIC_BETTER_AUTH_URL environment variable is not set",
+      );
+    }
+
+    if (url.startsWith("/")) {
+      fullUrl = `${baseUrl}${"/api/v1"}${url}`;
+    }
+
+    // Validate URL (SSRF prevention)
+    validateUrl(fullUrl);
+
+    // Log request in development
+    if (log) {
+      console.log(`[Client Upload] POST ${fullUrl}`);
+    }
+
+    // Make authenticated request with timeout
+    // IMPORTANT: Don't set Content-Type header - browser sets it with boundary
+    const response = await fetchWithTimeout(
+      fullUrl,
+      {
+        ...fetchOptions,
+        method: "POST",
+        body: formData,
+        credentials: "include", // Browser handles cookies automatically
+        cache: "no-store", // Never cache file uploads
+      },
+      timeout,
+    );
+
+    // Parse JSON response
+    let responseData: ApiResponse<T>;
+    const responseText = await response.text();
+
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("[Client Upload] Failed to parse JSON response", {
+        url: fullUrl,
+        stack: parseError instanceof Error ? parseError.stack : undefined,
+        status: response.status,
+        statusText: response.statusText,
+        contentType: response.headers.get("content-type"),
+        responseText: responseText.substring(0, 1000),
+        error: parseError,
+      });
+      return {
+        ok: false,
+        status: response.status,
+        error: `Invalid response format from server: ${responseText.substring(0, 200)}`,
+      };
+    }
+
+    // Handle unsuccessful responses
+    if (!response.ok || !responseData.success) {
+      const errorMessage =
+        responseData.error || `Upload failed with status ${response.status}`;
+
+      if (log) {
+        console.warn("[Client Upload] Request failed", {
+          url: fullUrl,
+          status: response.status,
+          error: errorMessage,
+          duration: Date.now() - startTime,
+        });
+      }
+
+      return {
+        ok: false,
+        status: response.status,
+        error: errorMessage,
+      };
+    }
+
+    // Log success in development
+    if (log) {
+      console.log(
+        `[Client Upload] Completed: ${response.status} in ${Date.now() - startTime}ms`,
+      );
+    }
+
+    return {
+      ok: true,
+      status: response.status,
+      data: responseData.data,
+    };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+
+    console.error("[Client Upload] Error:", {
+      url: fullUrl,
+      error: errorMessage,
+      duration: Date.now() - startTime,
+    });
+
+    return {
+      ok: false,
+      status: 500,
+      error: errorMessage,
+    };
+  }
 }

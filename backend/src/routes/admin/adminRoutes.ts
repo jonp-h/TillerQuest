@@ -44,6 +44,9 @@ import { adminGiveGold } from "./adminGiveGold.js";
 import { adminGiveXp } from "./adminGiveXp.js";
 import { adminGiveArenaTokens } from "./adminGiveArenaTokens.js";
 import { requireAdmin } from "middleware/authMiddleware.js";
+import { adminReviewImage } from "./adminReviewImage.js";
+import { adminGetPendingImages } from "./adminGetPendingImages.js";
+import { adminPendingImagesCount } from "./adminPendingImagesCount.js";
 
 const router = express.Router();
 
@@ -52,6 +55,10 @@ router.use("/admin", requireAdmin);
 // Guild management routes
 router.patch("/admin/guilds/:guildName", adminUpdateGuild);
 router.get("/admin/guilds", getGuilds);
+
+router.get("/admin/images/pending", adminGetPendingImages);
+router.get("/admin/images/pending/count", adminPendingImagesCount);
+router.post("/admin/images/pending/:uploadId", adminReviewImage);
 
 // Wish management routes
 router.get("/admin/wishes", adminGetWishes);

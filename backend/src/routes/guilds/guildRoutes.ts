@@ -5,6 +5,7 @@ import { startGuildBattle } from "./startGuildBattle.js";
 import { updateGuildName } from "./updateGuildName.js";
 import { getClassGuildsAndMemberClasses } from "./getClassGuildsAndMemberClasses.js";
 import { getGuildLeaderboard } from "./getGuildLeaderboard.js";
+import { uploadGuildImage } from "./uploadGuildImage.js";
 
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.get("/guilds/members/classes", getClassGuildsAndMemberClasses);
 router.post("/guilds/:guildName/battles", startGuildBattle);
 
 router.get("/guilds/leaderboard", getGuildLeaderboard);
+
+// upload guild image
+router.post("/guilds/images", uploadGuildImage);
 
 export default router;

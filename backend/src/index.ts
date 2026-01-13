@@ -24,6 +24,7 @@ import { logger } from "lib/logger.js";
 import { requireAuth } from "middleware/authMiddleware.js";
 import routes from "routes/routes.js";
 import { ErrorMessage } from "lib/error.js";
+import { join } from "path";
 
 const app = express();
 
@@ -32,7 +33,24 @@ app.set("trust proxy", 1);
 
 // ------------------ BETTER AUTH HANDLER ------------------------
 app.all("/api/auth/{*any}", toNodeHandler(auth));
-// ----------------------------------------------------------------------------
+
+// ------------------ STATIC FILES (BEFORE CORS/AUTH) ------------------------
+
+// Serve approved guild images publicly
+app.use(
+  "/static/guilds",
+  express.static(join(process.cwd(), "static", "guilds"), {
+    maxAge: "1y", // Cache for 1 year
+    immutable: true,
+    setHeaders: (res) => {
+      // OWASP: Security headers for static files
+      res.set({
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'none'",
+      });
+    },
+  }),
+);
 
 // Mount express json middleware after Better Auth handler
 // or only apply it to routes that don't interact with Better Auth
