@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
-import { securePatch } from "@/lib/secureFetchClient";
 import { UserSettings } from "./types";
+import { securePatchClient } from "@/lib/secureFetchClient";
 
 function ProfileSettingsForm({ user }: { user: UserSettings }) {
   const [newUsername, setNewUsername] = useState(user.username);
@@ -26,7 +26,7 @@ function ProfileSettingsForm({ user }: { user: UserSettings }) {
   const handleUpdate = async () => {
     setLoading(true);
 
-    const result = await securePatch<string>(
+    const result = await securePatchClient<string>(
       `/users/${user.username}/settings`,
       {
         newUsername: newUsername,
