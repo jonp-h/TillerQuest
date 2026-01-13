@@ -121,9 +121,9 @@ export default async function GameMasterPage() {
               Log
             </Button>
           </Link>
-          <Link href="/gamemaster/systemMessages">
+          <Link href="/gamemaster/notifications">
             <Button color="info" variant="contained" startIcon={<Message />}>
-              System messages
+              System Notifications
             </Button>
           </Link>
           <Link href="/gamemaster/analytics">

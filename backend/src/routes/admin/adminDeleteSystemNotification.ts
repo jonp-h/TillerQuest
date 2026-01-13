@@ -14,7 +14,7 @@ export const adminDeleteSystemNotification = [
     try {
       const id = parseInt(req.params.id);
 
-      await db.systemMessage.delete({
+      await db.notification.delete({
         where: { id },
       });
 

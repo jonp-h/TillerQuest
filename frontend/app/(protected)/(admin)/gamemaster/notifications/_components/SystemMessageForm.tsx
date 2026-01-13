@@ -1,10 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import {
-  secureDeleteClient,
-  securePatchClient,
-  securePostClient,
-} from "@/lib/secureFetchClient";
+import { secureDeleteClient, securePatchClient } from "@/lib/secureFetchClient";
 
 import { TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";

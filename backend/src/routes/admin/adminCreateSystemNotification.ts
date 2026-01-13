@@ -19,7 +19,7 @@ export const adminCreateSystemNotification = [
     try {
       const { title, content } = req.body;
 
-      await db.systemMessage.create({
+      await db.notification.create({
         data: {
           title,
           content,

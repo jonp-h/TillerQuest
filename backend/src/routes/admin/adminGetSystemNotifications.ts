@@ -9,7 +9,7 @@ export const adminGetSystemNotifications = [
   requireAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const readCounts = await db.systemMessage.findMany({
+      const readCounts = await db.notification.findMany({
         select: {
           id: true,
           title: true,

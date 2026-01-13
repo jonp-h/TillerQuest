@@ -3,11 +3,8 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
 import { secureGet } from "@/lib/secureFetch";
-import {
-  CosmicEvent,
-  SystemMessage as Notification,
-} from "@tillerquest/prisma/browser";
-import SystemMessage from "./SystemMessage";
+import { CosmicEvent, Notification } from "@tillerquest/prisma/browser";
+import NotificationBox from "./Notification";
 import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function InformationBox({
@@ -18,11 +15,11 @@ export default async function InformationBox({
   const cosmic = await secureGet<CosmicEvent>(
     `/cosmics/events?schoolClass=${user.schoolClass}`,
   );
-  const systemMessages = await secureGet<Notification[]>(
+  const notifications = await secureGet<Notification[]>(
     `/notifications/${user.id}`,
   );
-  if (!systemMessages.ok) {
-    return <ErrorAlert message={systemMessages.error} />;
+  if (!notifications.ok) {
+    return <ErrorAlert message={notifications.error} />;
   }
 
   // Server-side component: date-time check
@@ -39,8 +36,8 @@ export default async function InformationBox({
   return (
     <>
       {/* Render system messages if they exist and the user has not read them yet */}
-      {systemMessages.data.map((message) => (
-        <SystemMessage key={message.id} message={message} userId={user.id} />
+      {notifications.data.map((message) => (
+        <NotificationBox key={message.id} message={message} userId={user.id} />
       ))}
       {/* User is eligible for mana if the user has not received mana today, and it is not weekend  */}
       {!sameDay && !isWeekend() && (

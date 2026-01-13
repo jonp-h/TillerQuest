@@ -25,7 +25,7 @@ export const adminUpdateSystemNotification = [
         throw new ErrorMessage("Invalid notification ID");
       }
 
-      const message = await db.systemMessage.findFirst({
+      const message = await db.notification.findFirst({
         where: { id },
       });
 
@@ -33,7 +33,7 @@ export const adminUpdateSystemNotification = [
         throw new ErrorMessage(`System notification with ID ${id} not found`);
       }
 
-      await db.systemMessage.update({
+      await db.notification.update({
         where: { id },
         data: {
           title,

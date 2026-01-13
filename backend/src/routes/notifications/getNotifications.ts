@@ -13,7 +13,7 @@ export const getNotifications = [
     try {
       const userId = req.params.userId;
 
-      const logs = await db.systemMessage.findMany({
+      const logs = await db.notification.findMany({
         where: {
           readers: {
             none: {

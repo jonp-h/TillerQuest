@@ -4,7 +4,7 @@ import { Paper, Typography, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-interface SystemMessageProps {
+interface NotificationProps {
   message: {
     id: number;
     title: string;
@@ -13,7 +13,7 @@ interface SystemMessageProps {
   userId: string;
 }
 
-function SystemMessage({ message, userId }: SystemMessageProps) {
+function NotificationBox({ message, userId }: NotificationProps) {
   const router = useRouter();
 
   const handleDiscard = async () => {
@@ -61,4 +61,4 @@ function SystemMessage({ message, userId }: SystemMessageProps) {
   );
 }
 
-export default SystemMessage;
+export default NotificationBox;

@@ -64,7 +64,7 @@ export const ModelName = {
   Wish: 'Wish',
   WishVote: 'WishVote',
   Log: 'Log',
-  SystemMessage: 'SystemMessage',
+  Notification: 'Notification',
   Game: 'Game',
   TypeQuestText: 'TypeQuestText',
   WordQuestWord: 'WordQuestWord',
@@ -309,14 +309,14 @@ export const LogScalarFieldEnum = {
 export type LogScalarFieldEnum = (typeof LogScalarFieldEnum)[keyof typeof LogScalarFieldEnum]
 
 
-export const SystemMessageScalarFieldEnum = {
+export const NotificationScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
   createdAt: 'createdAt'
 } as const
 
-export type SystemMessageScalarFieldEnum = (typeof SystemMessageScalarFieldEnum)[keyof typeof SystemMessageScalarFieldEnum]
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const GameScalarFieldEnum = {

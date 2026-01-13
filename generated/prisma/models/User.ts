@@ -449,12 +449,12 @@ export type UserWhereInput = {
   abilities?: Prisma.UserAbilityListRelationFilter
   passives?: Prisma.UserPassiveListRelationFilter
   guild?: Prisma.XOR<Prisma.GuildNullableScalarRelationFilter, Prisma.GuildWhereInput> | null
-  readMessages?: Prisma.SystemMessageListRelationFilter
+  readMessages?: Prisma.NotificationListRelationFilter
   wishVotes?: Prisma.WishVoteListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  sessions?: Prisma.SessionListRelationFilter
   logs?: Prisma.LogListRelationFilter
   analytics?: Prisma.AnalyticsListRelationFilter
-  sessions?: Prisma.SessionListRelationFilter
   imageUploads?: Prisma.ImageUploadListRelationFilter
   imageReviews?: Prisma.ImageUploadListRelationFilter
 }
@@ -495,12 +495,12 @@ export type UserOrderByWithRelationInput = {
   abilities?: Prisma.UserAbilityOrderByRelationAggregateInput
   passives?: Prisma.UserPassiveOrderByRelationAggregateInput
   guild?: Prisma.GuildOrderByWithRelationInput
-  readMessages?: Prisma.SystemMessageOrderByRelationAggregateInput
+  readMessages?: Prisma.NotificationOrderByRelationAggregateInput
   wishVotes?: Prisma.WishVoteOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  sessions?: Prisma.SessionOrderByRelationAggregateInput
   logs?: Prisma.LogOrderByRelationAggregateInput
   analytics?: Prisma.AnalyticsOrderByRelationAggregateInput
-  sessions?: Prisma.SessionOrderByRelationAggregateInput
   imageUploads?: Prisma.ImageUploadOrderByRelationAggregateInput
   imageReviews?: Prisma.ImageUploadOrderByRelationAggregateInput
 }
@@ -544,12 +544,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   abilities?: Prisma.UserAbilityListRelationFilter
   passives?: Prisma.UserPassiveListRelationFilter
   guild?: Prisma.XOR<Prisma.GuildNullableScalarRelationFilter, Prisma.GuildWhereInput> | null
-  readMessages?: Prisma.SystemMessageListRelationFilter
+  readMessages?: Prisma.NotificationListRelationFilter
   wishVotes?: Prisma.WishVoteListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  sessions?: Prisma.SessionListRelationFilter
   logs?: Prisma.LogListRelationFilter
   analytics?: Prisma.AnalyticsListRelationFilter
-  sessions?: Prisma.SessionListRelationFilter
   imageUploads?: Prisma.ImageUploadListRelationFilter
   imageReviews?: Prisma.ImageUploadListRelationFilter
 }, "id" | "username" | "email">
@@ -663,12 +663,12 @@ export type UserCreateInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -708,12 +708,12 @@ export type UserUncheckedCreateInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -753,12 +753,12 @@ export type UserUpdateInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -798,12 +798,12 @@ export type UserUncheckedUpdateInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -1419,12 +1419,12 @@ export type UserCreateWithoutGuildInput = {
   games?: Prisma.GameCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -1463,12 +1463,12 @@ export type UserUncheckedCreateWithoutGuildInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -1570,12 +1570,12 @@ export type UserCreateWithoutImageUploadsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
 
@@ -1614,12 +1614,12 @@ export type UserUncheckedCreateWithoutImageUploadsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
 
@@ -1663,12 +1663,12 @@ export type UserCreateWithoutImageReviewsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
 }
 
@@ -1707,12 +1707,12 @@ export type UserUncheckedCreateWithoutImageReviewsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
 }
 
@@ -1767,12 +1767,12 @@ export type UserUpdateWithoutImageUploadsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
 
@@ -1811,12 +1811,12 @@ export type UserUncheckedUpdateWithoutImageUploadsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
 
@@ -1866,12 +1866,12 @@ export type UserUpdateWithoutImageReviewsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
 }
 
@@ -1910,12 +1910,12 @@ export type UserUncheckedUpdateWithoutImageReviewsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
 }
 
@@ -1953,12 +1953,12 @@ export type UserCreateWithoutAbilitiesInput = {
   games?: Prisma.GameCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -1997,12 +1997,12 @@ export type UserUncheckedCreateWithoutAbilitiesInput = {
   inventory?: Prisma.ShopItemUncheckedCreateNestedManyWithoutUsersInput
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2057,12 +2057,12 @@ export type UserUpdateWithoutAbilitiesInput = {
   games?: Prisma.GameUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -2101,12 +2101,12 @@ export type UserUncheckedUpdateWithoutAbilitiesInput = {
   inventory?: Prisma.ShopItemUncheckedUpdateManyWithoutUsersNestedInput
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -2145,12 +2145,12 @@ export type UserCreateWithoutPassivesInput = {
   games?: Prisma.GameCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2189,12 +2189,12 @@ export type UserUncheckedCreateWithoutPassivesInput = {
   inventory?: Prisma.ShopItemUncheckedCreateNestedManyWithoutUsersInput
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2249,12 +2249,12 @@ export type UserUpdateWithoutPassivesInput = {
   games?: Prisma.GameUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -2293,12 +2293,12 @@ export type UserUncheckedUpdateWithoutPassivesInput = {
   inventory?: Prisma.ShopItemUncheckedUpdateManyWithoutUsersNestedInput
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -2337,12 +2337,12 @@ export type UserCreateWithoutInventoryInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2381,12 +2381,12 @@ export type UserUncheckedCreateWithoutInventoryInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2447,11 +2447,11 @@ export type UserCreateWithoutWishVotesInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2491,11 +2491,11 @@ export type UserUncheckedCreateWithoutWishVotesInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2551,11 +2551,11 @@ export type UserUpdateWithoutWishVotesInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -2595,11 +2595,11 @@ export type UserUncheckedUpdateWithoutWishVotesInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -2639,11 +2639,11 @@ export type UserCreateWithoutLogsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2683,11 +2683,11 @@ export type UserUncheckedCreateWithoutLogsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2743,11 +2743,11 @@ export type UserUpdateWithoutLogsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -2787,11 +2787,11 @@ export type UserUncheckedUpdateWithoutLogsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -2833,9 +2833,9 @@ export type UserCreateWithoutReadMessagesInput = {
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2877,9 +2877,9 @@ export type UserUncheckedCreateWithoutReadMessagesInput = {
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -2939,12 +2939,12 @@ export type UserCreateWithoutGamesInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -2983,12 +2983,12 @@ export type UserUncheckedCreateWithoutGamesInput = {
   inventory?: Prisma.ShopItemUncheckedCreateNestedManyWithoutUsersInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -3043,12 +3043,12 @@ export type UserUpdateWithoutGamesInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -3087,12 +3087,12 @@ export type UserUncheckedUpdateWithoutGamesInput = {
   inventory?: Prisma.ShopItemUncheckedUpdateManyWithoutUsersNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -3132,11 +3132,11 @@ export type UserCreateWithoutAnalyticsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  logs?: Prisma.LogCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  logs?: Prisma.LogCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -3176,11 +3176,11 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -3236,11 +3236,11 @@ export type UserUpdateWithoutAnalyticsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -3280,11 +3280,11 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -3324,11 +3324,11 @@ export type UserCreateWithoutAccountsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadCreateNestedManyWithoutReviewerInput
 }
@@ -3368,11 +3368,11 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
   analytics?: Prisma.AnalyticsUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   imageUploads?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutUploaderInput
   imageReviews?: Prisma.ImageUploadUncheckedCreateNestedManyWithoutReviewerInput
 }
@@ -3428,11 +3428,11 @@ export type UserUpdateWithoutAccountsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -3472,11 +3472,11 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -3516,7 +3516,7 @@ export type UserCreateWithoutSessionsInput = {
   abilities?: Prisma.UserAbilityCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveCreateNestedManyWithoutUserInput
   guild?: Prisma.GuildCreateNestedOneWithoutMembersInput
-  readMessages?: Prisma.SystemMessageCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   logs?: Prisma.LogCreateNestedManyWithoutUserInput
@@ -3560,7 +3560,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   games?: Prisma.GameUncheckedCreateNestedManyWithoutUserInput
   abilities?: Prisma.UserAbilityUncheckedCreateNestedManyWithoutUserInput
   passives?: Prisma.UserPassiveUncheckedCreateNestedManyWithoutUserInput
-  readMessages?: Prisma.SystemMessageUncheckedCreateNestedManyWithoutReadersInput
+  readMessages?: Prisma.NotificationUncheckedCreateNestedManyWithoutReadersInput
   wishVotes?: Prisma.WishVoteUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   logs?: Prisma.LogUncheckedCreateNestedManyWithoutUserInput
@@ -3620,7 +3620,7 @@ export type UserUpdateWithoutSessionsInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
@@ -3664,7 +3664,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
@@ -3739,12 +3739,12 @@ export type UserUpdateWithoutGuildInput = {
   games?: Prisma.GameUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -3783,12 +3783,12 @@ export type UserUncheckedUpdateWithoutGuildInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -3859,12 +3859,12 @@ export type UserUpdateWithoutInventoryInput = {
   abilities?: Prisma.UserAbilityUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUpdateManyWithoutUserNestedInput
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
-  readMessages?: Prisma.SystemMessageUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -3903,12 +3903,12 @@ export type UserUncheckedUpdateWithoutInventoryInput = {
   games?: Prisma.GameUncheckedUpdateManyWithoutUserNestedInput
   abilities?: Prisma.UserAbilityUncheckedUpdateManyWithoutUserNestedInput
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
-  readMessages?: Prisma.SystemMessageUncheckedUpdateManyWithoutReadersNestedInput
+  readMessages?: Prisma.NotificationUncheckedUpdateManyWithoutReadersNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -3983,9 +3983,9 @@ export type UserUpdateWithoutReadMessagesInput = {
   guild?: Prisma.GuildUpdateOneWithoutMembersNestedInput
   wishVotes?: Prisma.WishVoteUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUpdateManyWithoutReviewerNestedInput
 }
@@ -4027,9 +4027,9 @@ export type UserUncheckedUpdateWithoutReadMessagesInput = {
   passives?: Prisma.UserPassiveUncheckedUpdateManyWithoutUserNestedInput
   wishVotes?: Prisma.WishVoteUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   logs?: Prisma.LogUncheckedUpdateManyWithoutUserNestedInput
   analytics?: Prisma.AnalyticsUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   imageUploads?: Prisma.ImageUploadUncheckedUpdateManyWithoutUploaderNestedInput
   imageReviews?: Prisma.ImageUploadUncheckedUpdateManyWithoutReviewerNestedInput
 }
@@ -4080,9 +4080,9 @@ export type UserCountOutputType = {
   readMessages: number
   wishVotes: number
   accounts: number
+  sessions: number
   logs: number
   analytics: number
-  sessions: number
   imageUploads: number
   imageReviews: number
 }
@@ -4095,9 +4095,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   readMessages?: boolean | UserCountOutputTypeCountReadMessagesArgs
   wishVotes?: boolean | UserCountOutputTypeCountWishVotesArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   logs?: boolean | UserCountOutputTypeCountLogsArgs
   analytics?: boolean | UserCountOutputTypeCountAnalyticsArgs
-  sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   imageUploads?: boolean | UserCountOutputTypeCountImageUploadsArgs
   imageReviews?: boolean | UserCountOutputTypeCountImageReviewsArgs
 }
@@ -4144,7 +4144,7 @@ export type UserCountOutputTypeCountPassivesArgs<ExtArgs extends runtime.Types.E
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountReadMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SystemMessageWhereInput
+  where?: Prisma.NotificationWhereInput
 }
 
 /**
@@ -4164,6 +4164,13 @@ export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LogWhereInput
 }
@@ -4173,13 +4180,6 @@ export type UserCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Exten
  */
 export type UserCountOutputTypeCountAnalyticsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AnalyticsWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SessionWhereInput
 }
 
 /**
@@ -4236,9 +4236,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   readMessages?: boolean | Prisma.User$readMessagesArgs<ExtArgs>
   wishVotes?: boolean | Prisma.User$wishVotesArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   logs?: boolean | Prisma.User$logsArgs<ExtArgs>
   analytics?: boolean | Prisma.User$analyticsArgs<ExtArgs>
-  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   imageUploads?: boolean | Prisma.User$imageUploadsArgs<ExtArgs>
   imageReviews?: boolean | Prisma.User$imageReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -4355,9 +4355,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   readMessages?: boolean | Prisma.User$readMessagesArgs<ExtArgs>
   wishVotes?: boolean | Prisma.User$wishVotesArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   logs?: boolean | Prisma.User$logsArgs<ExtArgs>
   analytics?: boolean | Prisma.User$analyticsArgs<ExtArgs>
-  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   imageUploads?: boolean | Prisma.User$imageUploadsArgs<ExtArgs>
   imageReviews?: boolean | Prisma.User$imageReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -4377,12 +4377,12 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     abilities: Prisma.$UserAbilityPayload<ExtArgs>[]
     passives: Prisma.$UserPassivePayload<ExtArgs>[]
     guild: Prisma.$GuildPayload<ExtArgs> | null
-    readMessages: Prisma.$SystemMessagePayload<ExtArgs>[]
+    readMessages: Prisma.$NotificationPayload<ExtArgs>[]
     wishVotes: Prisma.$WishVotePayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    sessions: Prisma.$SessionPayload<ExtArgs>[]
     logs: Prisma.$LogPayload<ExtArgs>[]
     analytics: Prisma.$AnalyticsPayload<ExtArgs>[]
-    sessions: Prisma.$SessionPayload<ExtArgs>[]
     imageUploads: Prisma.$ImageUploadPayload<ExtArgs>[]
     imageReviews: Prisma.$ImageUploadPayload<ExtArgs>[]
   }
@@ -4816,12 +4816,12 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   abilities<T extends Prisma.User$abilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$abilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAbilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passives<T extends Prisma.User$passivesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passivesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPassivePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   guild<T extends Prisma.User$guildArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guildArgs<ExtArgs>>): Prisma.Prisma__GuildClient<runtime.Types.Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  readMessages<T extends Prisma.User$readMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$readMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SystemMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  readMessages<T extends Prisma.User$readMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$readMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wishVotes<T extends Prisma.User$wishVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   logs<T extends Prisma.User$logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   analytics<T extends Prisma.User$analyticsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$analyticsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnalyticsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   imageUploads<T extends Prisma.User$imageUploadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$imageUploadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImageUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   imageReviews<T extends Prisma.User$imageReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$imageReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImageUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -5398,23 +5398,23 @@ export type User$guildArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
  */
 export type User$readMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the SystemMessage
+   * Select specific fields to fetch from the Notification
    */
-  select?: Prisma.SystemMessageSelect<ExtArgs> | null
+  select?: Prisma.NotificationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the SystemMessage
+   * Omit specific fields from the Notification
    */
-  omit?: Prisma.SystemMessageOmit<ExtArgs> | null
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SystemMessageInclude<ExtArgs> | null
-  where?: Prisma.SystemMessageWhereInput
-  orderBy?: Prisma.SystemMessageOrderByWithRelationInput | Prisma.SystemMessageOrderByWithRelationInput[]
-  cursor?: Prisma.SystemMessageWhereUniqueInput
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.SystemMessageScalarFieldEnum | Prisma.SystemMessageScalarFieldEnum[]
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**
@@ -5466,6 +5466,30 @@ export type User$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * User.sessions
+ */
+export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Session
+   */
+  select?: Prisma.SessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Session
+   */
+  omit?: Prisma.SessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SessionInclude<ExtArgs> | null
+  where?: Prisma.SessionWhereInput
+  orderBy?: Prisma.SessionOrderByWithRelationInput | Prisma.SessionOrderByWithRelationInput[]
+  cursor?: Prisma.SessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
+}
+
+/**
  * User.logs
  */
 export type User$logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5511,30 +5535,6 @@ export type User$analyticsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AnalyticsScalarFieldEnum | Prisma.AnalyticsScalarFieldEnum[]
-}
-
-/**
- * User.sessions
- */
-export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Session
-   */
-  select?: Prisma.SessionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Session
-   */
-  omit?: Prisma.SessionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SessionInclude<ExtArgs> | null
-  where?: Prisma.SessionWhereInput
-  orderBy?: Prisma.SessionOrderByWithRelationInput | Prisma.SessionOrderByWithRelationInput[]
-  cursor?: Prisma.SessionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
 }
 
 /**

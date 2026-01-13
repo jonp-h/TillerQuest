@@ -10,6 +10,7 @@ generator client {
 enum UserRole {
   NEW
   USER
+  INACTIVE
   ARCHIVED
   ADMIN
 }
@@ -195,14 +196,14 @@ model User {
 
   role UserRole @default(NEW)
 
-  readMessages    SystemMessage[] @relation("ReadMessages") // m-n relation to system messages. A user can read many system messages
+  readMessages    Notification[] @relation("ReadNotifications") // m-n relation to system messages. A user can read many system messages
   wishVotes       WishVote[] // m-n relation to wishes. A user can vote on many wishes
-  publicHighscore Boolean         @default(false)
-  archiveConsent  Boolean         @default(false)
-  email           String?         @unique
-  emailVerified   Boolean         @default(false)
+  publicHighscore Boolean        @default(false)
+  archiveConsent  Boolean        @default(false)
+  email           String?        @unique
+  emailVerified   Boolean        @default(false)
   accounts        Account[] // Relation to OAuth account
-  // sessions      Session[]      
+  sessions        Session[]
   // Optional for WebAuthn support
   // Authenticator Authenticator[]
 
@@ -211,7 +212,6 @@ model User {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  sessions     Session[]
   imageUploads ImageUpload[] @relation("ImageUploader")
   imageReviews ImageUpload[] @relation("ImageReviewer")
 
@@ -430,13 +430,13 @@ model Log {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model SystemMessage {
+model Notification {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
   createdAt DateTime @default(now())
 
-  readers User[] @relation("ReadMessages")
+  readers User[] @relation("ReadNotifications")
 }
 
 model Game {

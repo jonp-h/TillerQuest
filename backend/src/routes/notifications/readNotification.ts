@@ -26,7 +26,7 @@ export const readNotification = [
       const userId = req.params.userId;
       const messageId = req.body.messageId;
 
-      await db.systemMessage.update({
+      await db.notification.update({
         where: {
           id: messageId,
         },

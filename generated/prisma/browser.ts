@@ -83,10 +83,10 @@ export type WishVote = Prisma.WishVoteModel
  */
 export type Log = Prisma.LogModel
 /**
- * Model SystemMessage
+ * Model Notification
  * 
  */
-export type SystemMessage = Prisma.SystemMessageModel
+export type Notification = Prisma.NotificationModel
 /**
  * Model Game
  * 

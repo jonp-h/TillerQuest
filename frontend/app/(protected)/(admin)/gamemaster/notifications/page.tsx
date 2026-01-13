@@ -4,7 +4,6 @@ import SystemMessageForm from "./_components/SystemMessageForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import CreateSystemMessageForm from "./_components/CreateSystemMessageForm";
 import { secureGet } from "@/lib/secureFetch";
-import { Prisma } from "@tillerquest/prisma/browser";
 import ErrorAlert from "@/components/ErrorAlert";
 
 type Notification = {
