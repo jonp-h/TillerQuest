@@ -11,6 +11,7 @@ interface UpdateUserProps {
   guildId: number;
   schoolClass: SchoolClass;
   publicHighscore: boolean;
+  archiveConsent?: boolean;
 }
 
 export const validateUserCreation = async (
@@ -118,6 +119,7 @@ export const validateUserCreation = async (
     guildId: data.guildId,
     schoolClass: escapeHtml(data.schoolClass),
     publicHighscore: data.publicHighscore,
+    archiveConsent: data.archiveConsent,
   };
 
   return sanitizedData;

@@ -80,20 +80,26 @@ const redirectIfUnauthenticated = async (): Promise<BackendSessionResponse> => {
  * @param redirectTo - The path to redirect to (default: /create)
  * @returns Session data if user is not new, or redirects
  */
-export const redirectIfNewUser = async (
-  redirectTo: string = "/create",
-): Promise<BackendSessionResponse | null> => {
-  const session = await getSessionFromBackend();
+export const redirectIfNewOrInactiveUser =
+  async (): Promise<BackendSessionResponse | null> => {
+    const session = await getSessionFromBackend();
 
-  if (session?.user.role === "NEW") {
-    logger.info(
-      `NEW user ${session.user.username}(${session.user.id}) redirected to ${redirectTo}`,
-    );
-    redirect(redirectTo);
-  }
+    if (session?.user.role === "NEW") {
+      logger.info(
+        `NEW user ${session.user.username}(${session.user.id}) redirected to "/create"`,
+      );
+      redirect("/create");
+    }
 
-  return session;
-};
+    if (session?.user.role === "INACTIVE") {
+      logger.info(
+        `INACTIVE user ${session.user.username}(${session.user.id}) redirected to "/reset"`,
+      );
+      redirect("/reset");
+    }
+
+    return session;
+  };
 
 /**
  * Redirects users who don't have admin role
@@ -116,24 +122,29 @@ export const redirectIfNotAdmin = async (
 };
 
 /**
- * Redirects users with "NEW" role (not fully activated) to the creation page
- * @param redirectTo - The path to redirect to (default: /create)
+ * Redirects users with "NEW" or "INACTIVE" role (not fully activated) to the appropriate page
  * @returns Session data if user is active, or redirects
  */
-export const redirectIfNotActiveUser = async (
-  redirectTo: string = "/create",
-): Promise<BackendSessionResponse> => {
-  const session = await redirectIfUnauthenticated();
+export const redirectIfNotActiveUser =
+  async (): Promise<BackendSessionResponse> => {
+    const session = await redirectIfUnauthenticated();
 
-  if (session.user.role === "NEW") {
-    logger.warn(
-      `NEW user ${session.user.username}(${session.user.id}) redirected to complete onboarding`,
-    );
-    redirect(redirectTo);
-  }
+    if (session.user.role === "NEW") {
+      logger.warn(
+        `NEW user ${session.user.username}(${session.user.id}) redirected to complete onboarding`,
+      );
+      redirect("/create");
+    }
 
-  return session;
-};
+    if (session.user.role === "INACTIVE") {
+      logger.warn(
+        `INACTIVE user ${session.user.username}(${session.user.id}) redirected to reset page`,
+      );
+      redirect("/reset");
+    }
+
+    return session;
+  };
 
 /**
  * Redirects users who are NOT new (for onboarding pages)
@@ -148,6 +159,31 @@ export const redirectIfNotNewUser = async (
   if (session.user.role !== "NEW") {
     logger.warn(
       `Non-new user ${session.user.username}(${session.user.id}) redirected from create page`,
+    );
+    redirect(redirectTo);
+  }
+
+  return session;
+};
+
+/**
+ * Redirects users who are NOT inactive (for reset page)
+ * @param redirectTo - The path to redirect to (default: /)
+ * @returns Session data if user is inactive, or redirects
+ */
+export const redirectIfNotInactiveUser = async (
+  redirectTo: string = "/",
+): Promise<BackendSessionResponse> => {
+  const session = await getSessionFromBackend();
+
+  if (!session?.user) {
+    logger.warn("Unauthenticated user redirected to sign-up");
+    redirect(`/signup`);
+  }
+
+  if (session.user.role !== "INACTIVE") {
+    logger.warn(
+      `Non-inactive user ${session.user.username}(${session.user.id}) redirected from reset page`,
     );
     redirect(redirectTo);
   }
@@ -203,6 +239,13 @@ export const redirectIfWrongUserIdOrNotActiveUser = async (
     redirect("/create");
   }
 
+  if (session.user.role === "INACTIVE") {
+    logger.warn(
+      `INACTIVE user ${session.user.username}(${session.user.id}) redirected to reset page`,
+    );
+    redirect("/reset");
+  }
+
   return session;
 };
 
@@ -230,6 +273,13 @@ export const redirectIfWrongUsernameOrNotActiveUser = async (
       `NEW user ${session.user.username}(${session.user.id}) redirected to complete onboarding`,
     );
     redirect("/create");
+  }
+
+  if (session.user.role === "INACTIVE") {
+    logger.warn(
+      `INACTIVE user ${session.user.username}(${session.user.id}) redirected to reset page`,
+    );
+    redirect("/reset");
   }
 
   return session;

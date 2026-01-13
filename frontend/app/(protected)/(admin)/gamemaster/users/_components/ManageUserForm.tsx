@@ -192,8 +192,12 @@ function ManageUserForm(user: {
           sx={{ width: 130 }}
           label="Role"
         >
-          {/* Users should be reset instead of manually being set to NEW */}
+          {/* Users are only NEW when they first sign up */}
           <MenuItem value={"NEW"} disabled>
+            NEW
+          </MenuItem>
+          {/* Users should be reset instead of manually being set to NEW */}
+          <MenuItem value={"INACTIVE"} disabled>
             NEW
           </MenuItem>
           <MenuItem value={"USER"}>USER</MenuItem>
@@ -220,7 +224,7 @@ function ManageUserForm(user: {
           dialogContent={
             "(DANGERZONE) Are you sure you want to reset this user? This will force the user to re-enter their information and choose class/school class again. The user will also require a secret key and lose all their abilities/passives. Gemstones are refunded. Gold, shopitems, badges, and arenatokens are kept as is."
           }
-          agreeText="(DANGER) Reset user to NEW"
+          agreeText="(DANGER) Reset user to INACTIVE"
           disagreeText="Cancel"
           buttonVariant="contained"
           dialogFunction={handleResetUser}

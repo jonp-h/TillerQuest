@@ -89,10 +89,6 @@ app.use(
   ) => {
     // Business logic errors (400 Bad Request)
     if (err instanceof ErrorMessage) {
-      logger.info("Business logic error", {
-        path: req.path,
-        error: err.message,
-      });
       res.status(400).json({
         success: false,
         error: err.message,

@@ -47,8 +47,7 @@ export const adminResetUser = [
       await db.user.update({
         where: { id: user.id },
         data: {
-          // TODO: change to INACTIVE
-          role: "NEW",
+          role: "INACTIVE",
           hp: 40,
           hpMax: 40,
           mana: Math.min(user.mana, 40),

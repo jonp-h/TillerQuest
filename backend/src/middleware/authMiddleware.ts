@@ -9,14 +9,10 @@ export const requireAuth = async (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log("Validating query:", req.path);
-
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
-
-    console.log("recieved auth request");
 
     if (!session?.user) {
       logger.warn(
@@ -49,7 +45,7 @@ export const requireAuth = async (
 };
 
 /**
- * Validates that authenticated user is not in NEW role (account fully activated)
+ * Validates that authenticated user is not in NEW or INACTIVE role (account fully activated)
  *
  * Depends on: requireAuth (must be chained after)
  *
@@ -73,9 +69,9 @@ export const requireActiveUser = async (
     return;
   }
 
-  if (req.session.user.role === "NEW") {
+  if (req.session.user.role === "NEW" || req.session.user.role === "INACTIVE") {
     logger.warn(
-      `NEW user ${req.session.user.id} attempted restricted action at ${req.path}`,
+      `NEW or INACTIVE user ${req.session.user.id} attempted restricted action at ${req.path}`,
       {
         userId: req.session.user.id,
         path: req.path,
@@ -174,6 +170,49 @@ export const requireNewUser = async (
     res.status(403).json({
       error: "You do not have permission to perform this action.",
       code: "NOT_NEW_USER",
+    });
+    return;
+  }
+
+  next();
+};
+
+/**
+ * Validates that authenticated user has INACTIVE role (for resetting onboarding)
+ *
+ * Depends on: requireAuth (must be chained after)
+ *
+ * @example
+ * router.post('/reset/complete', requireAuth, requireInactiveUser, completeOnboardingController)
+ */
+export const requireInactiveUser = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.session?.user) {
+    logger.error(
+      "requireNewUser called without session - check middleware order",
+    );
+    res.status(500).json({
+      error: "Internal server error",
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  if (req.session.user.role !== "INACTIVE") {
+    logger.warn(
+      `Non-INACTIVE user ${req.session.user.id} attempted inactive-user-only action at ${req.path}`,
+      {
+        userId: req.session.user.id,
+        role: req.session.user.role,
+        path: req.path,
+      },
+    );
+    res.status(403).json({
+      error: "You do not have permission to perform this action.",
+      code: "NOT_INACTIVE_USER",
     });
     return;
   }
@@ -387,9 +426,9 @@ export const requireUserIdAndActive = (paramName: string = "userId") => {
       }
 
       // Step 3: Validate active user
-      if (session.user.role === "NEW") {
+      if (session.user.role === "NEW" || session.user.role === "INACTIVE") {
         logger.warn(
-          `NEW user ${session.user.id} attempted restricted action at ${req.path}`,
+          `NEW or INACTIVE user ${session.user.id} attempted restricted action at ${req.path}`,
         );
         res.status(403).json({
           error: "Please complete your account setup to perform this action.",
@@ -472,9 +511,9 @@ export const requireUsernameAndActive = (paramName: string = "username") => {
         return;
       }
 
-      if (session.user.role === "NEW") {
+      if (session.user.role === "NEW" || session.user.role === "INACTIVE") {
         logger.warn(
-          `NEW user ${session.user.id} attempted restricted action at ${req.path}`,
+          `NEW or INACTIVE user ${session.user.id} attempted restricted action at ${req.path}`,
         );
         res.status(403).json({
           error: "Please complete your account setup to perform this action.",
@@ -564,6 +603,91 @@ export const requireUserIdAndNew = (paramName: string = "userId") => {
         res.status(403).json({
           error: "You do not have permission to perform this action.",
           code: "NOT_NEW_USER",
+        });
+        return;
+      }
+
+      next();
+    } catch (error) {
+      logger.error("Auth middleware error:", error);
+      res.status(500).json({
+        error: "Authentication error",
+        timestamp: new Date().toISOString(),
+      });
+    }
+  };
+};
+
+/**
+ * Combined middleware: requireAuth + requireInactiveUser + requireUserId
+ * For onboarding endpoints that require user ID validation
+ *
+ * @param paramName - The route parameter name containing the user ID (default: 'userId')
+ *
+ * @example
+ * router.post('/reset/:userId/class', requireUserIdAndInactive(), selectClassController)
+ */
+export const requireUserIdAndInactive = (paramName: string = "userId") => {
+  return async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+      });
+
+      if (!session?.user) {
+        logger.warn(
+          `Unauthenticated access attempt to ${req.path} from IP ${req.ip}`,
+        );
+        res.status(401).json({
+          error: "Authentication required",
+          code: "UNAUTHENTICATED",
+        });
+        return;
+      }
+
+      req.session = session;
+
+      const targetUserId = req.params[paramName];
+
+      if (!targetUserId || typeof targetUserId !== "string") {
+        logger.warn("Invalid or missing user ID parameter", {
+          paramName,
+          path: req.path,
+        });
+        res.status(400).json({
+          error: `Invalid request parameter ${paramName}`,
+          code: "INVALID_PARAMETER",
+        });
+        return;
+      }
+
+      if (session.user.id !== targetUserId) {
+        logger.warn(
+          `User ${session.user.id} attempted to access user ${targetUserId}'s resource`,
+          {
+            sessionUserId: session.user.id,
+            targetUserId,
+            path: req.path,
+          },
+        );
+        res.status(403).json({
+          error: "You do not have permission to access this resource.",
+          code: "FORBIDDEN",
+        });
+        return;
+      }
+
+      if (session.user.role !== "INACTIVE") {
+        logger.warn(
+          `Non-INACTIVE user ${session.user.id} attempted INACTIVE-user-only action at ${req.path}`,
+        );
+        res.status(403).json({
+          error: "You do not have permission to perform this action.",
+          code: "NOT_INACTIVE_USER",
         });
         return;
       }

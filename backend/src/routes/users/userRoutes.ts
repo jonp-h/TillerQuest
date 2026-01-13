@@ -23,6 +23,8 @@ import { getGuildByUserId } from "./getGuildByUserId.js";
 import { voteToStartNextBattle } from "./voteToStartNextGuildBattle.js";
 import { getGuildEnemiesByUserId } from "./getGuildEnemiesByUserId.js";
 import { getUserLeaderboards } from "./getUserLeaderboards.js";
+import { resetUser } from "./resetUser.js";
+import { getInactiveUser } from "./getInactiveUser.js";
 
 const router = express.Router();
 
@@ -32,12 +34,14 @@ router.get("/users/leaderboards", getUserLeaderboards);
 router.get("/users/valhalla", getValhallaUsers);
 
 router.get("/users/:userId/new", getNewUser);
+router.get("/users/:userId/inactive", getInactiveUser);
 // Get user by ID (with query param for data type)
 router.get("/users/:userId", getBaseUser);
 router.get("/users/username/:username/profile", getUserProfile);
 
 // Update/create user profile (account setup)
 router.put("/users/:userId", updateUser);
+router.put("/users/:userId/reset", resetUser);
 
 router.get("/users/:userId/last-mana", getLastMana);
 router.post("/users/:userId/daily-mana", getDailyMana);

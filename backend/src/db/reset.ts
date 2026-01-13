@@ -2,6 +2,7 @@ import { SchoolClass } from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
 import { resetUserTurns } from "cronjobs.js";
+import { PrismaClient } from "@prisma/client";
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
@@ -10,9 +11,9 @@ async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  1 - normal reset. Set all users to the NEW role. Only Gemstones, passives, abilities, and guilds are reset.
-  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role or reset guilds.
-  3 - single normal reset. Reset a single user
+  1 - normal reset. Set all users to the INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
+  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set INACTIVE role or reset guilds.
+  3 - single normal reset. Reset a single user to INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
   4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
   6 - reset user turns. Reset the turns for all users to their passives' turn value
@@ -168,7 +169,7 @@ async function resetUsers() {
       });
     });
     console.info(
-      "All users have been set to NEW. Gemstones, classes, passives, abilities and guilds have been reset.",
+      "All users have been set to INACTIVE. Gemstones, classes, passives, abilities and guilds have been reset.",
     );
   } catch (error) {
     console.error("Error: ", error);
@@ -197,7 +198,7 @@ async function normalResetUserHandler(
   await db.user.update({
     where: { id: user.id },
     data: {
-      role: "NEW",
+      role: "INACTIVE",
       hp: 40,
       hpMax: 40,
       mana: Math.min(user.mana, 40),
@@ -395,7 +396,7 @@ async function deleteNonConsentingVG2Users() {
         where: {
           AND: [
             { archiveConsent: false },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -410,7 +411,7 @@ async function deleteNonConsentingVG2Users() {
         where: {
           AND: [
             { archiveConsent: true },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -429,7 +430,7 @@ async function deleteNonConsentingVG2Users() {
         where: {
           AND: [
             { archiveConsent: true },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
