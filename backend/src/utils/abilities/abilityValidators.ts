@@ -1,9 +1,9 @@
 import { logger } from "lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
 import { getUserPassiveEffect } from "./getUserPassiveEffect.js";
-import { $Enums } from "lib/db.js";
 import { gemstonesOnLevelUp } from "gameSettings.js";
 import { addLog } from "../logs/addLog.js";
+import { Class } from "@tillerquest/prisma/browser";
 
 export const healingValidator = async (
   db: PrismaTransaction,
@@ -118,7 +118,7 @@ export const damageValidator = async (
   targetUserId: string,
   targetUserHp: number,
   damage: number,
-  targetUserClass: $Enums.Class | null,
+  targetUserClass: Class | null,
   healthTreshold: number = 0,
 ) => {
   try {
