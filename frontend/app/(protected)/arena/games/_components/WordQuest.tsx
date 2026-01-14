@@ -134,7 +134,8 @@ function WordQuest({
       setIsDragging(false);
       setDragStartIndex(null);
     }
-  }, [gameId, setScore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId]);
 
   // Helper function to find all indices that belong to found words
   const getFoundWordIndices = (): Set<number> => {

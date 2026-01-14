@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import MainContainer from "@/components/MainContainer";
 import { Typography } from "@mui/material";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";

@@ -10,7 +10,7 @@ import {
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { SchoolClass } from "@tillerquest/prisma/browser";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import DialogButton from "@/components/DialogButton";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -69,25 +69,24 @@ function GuildForm({
 
   const router = useRouter();
 
-  // Update the guild leader options when guild members change
-  useEffect(() => {
-    if (
-      selectedGuildLeader &&
-      !selectedUsers.some((user) => user === selectedGuildLeader)
-    ) {
-      // If the current leader is no longer in the guild members, clear the selection
-      setSelectedGuildLeader(null);
-    }
-    if (
-      selectedNextGuildLeader &&
-      !selectedUsers.some((user) => user === selectedNextGuildLeader)
-    ) {
-      // If the current next leader is no longer in the guild members, clear the selection
-      setSelectedNextGuildLeader(null);
-    }
-  }, [selectedUsers, selectedGuildLeader, selectedNextGuildLeader]);
-
   const handleChange = async () => {
+    // Validate and clear leaders if they're not in the selected users
+    let validGuildLeader = selectedGuildLeader;
+    let validNextGuildLeader = selectedNextGuildLeader;
+
+    if (
+      validGuildLeader &&
+      !selectedUsers.some((user) => user === validGuildLeader)
+    ) {
+      validGuildLeader = null;
+    }
+    if (
+      validNextGuildLeader &&
+      !selectedUsers.some((user) => user === validNextGuildLeader)
+    ) {
+      validNextGuildLeader = null;
+    }
+
     // Only send data that has actually changed
     const changes: {
       userIds?: string[];
@@ -105,13 +104,13 @@ function GuildForm({
     }
 
     // Check if guild leader changed
-    if (selectedGuildLeader !== guildLeader) {
-      changes.guildLeaderId = selectedGuildLeader;
+    if (validGuildLeader !== guildLeader) {
+      changes.guildLeaderId = validGuildLeader;
     }
 
     // Check if next guild leader changed
-    if (selectedNextGuildLeader !== nextGuildLeader) {
-      changes.nextGuildLeaderId = selectedNextGuildLeader;
+    if (validNextGuildLeader !== nextGuildLeader) {
+      changes.nextGuildLeaderId = validNextGuildLeader;
     }
 
     // Check if archived status changed

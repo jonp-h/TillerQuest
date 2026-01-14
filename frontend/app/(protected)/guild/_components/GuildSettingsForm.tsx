@@ -321,10 +321,16 @@ function ProfileSettingsForm({
                     width={200}
                     height={200}
                   />
-                  <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                    {selectedFile?.name} (
-                    {(selectedFile?.size! / 1024).toFixed(2)} KB)
-                  </Typography>
+                  {selectedFile?.size && (
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      sx={{ mt: 1 }}
+                    >
+                      {selectedFile.name} (
+                      {(selectedFile.size / 1024).toFixed(2)} KB)
+                    </Typography>
+                  )}
                 </Box>
               )}
 

@@ -2,7 +2,7 @@
 import { Button, Typography } from "@mui/material";
 import { Ability } from "@tillerquest/prisma/browser";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
@@ -37,8 +37,9 @@ export default function AbilityForm({
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const guildMembersWithoutUser =
-    guildMembers?.filter((member) => member.id !== user.id) || [];
+  const guildMembersWithoutUser = useMemo(() => {
+    return guildMembers.filter((member) => member.id !== user.id);
+  }, [guildMembers, user.id]);
 
   const isDead = user.hp === 0;
 
@@ -80,7 +81,7 @@ export default function AbilityForm({
     }, 500);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, []);
+  }, [ability.target, guildMembersWithoutUser, guildMembers, user.id]);
 
   // ---------------- UI helpers ----------------
 

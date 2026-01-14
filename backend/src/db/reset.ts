@@ -2,10 +2,9 @@ import { SchoolClass } from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
 import { resetUserTurns } from "cronjobs.js";
-import { PrismaClient } from "@prisma/client";
+import { db } from "lib/db.js";
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
 
 async function main() {
   console.log(`
@@ -105,7 +104,7 @@ async function main() {
         process.stdin.once("data", async (confirmation) => {
           if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Resetting user turns...");
-            await resetUserTurns(prisma);
+            await resetUserTurns(db);
           } else {
             console.log("Operation canceled.");
           }
@@ -118,7 +117,7 @@ async function main() {
 
 async function resetUsers() {
   try {
-    await prisma.$transaction(async (tx) => {
+    await db.$transaction(async (tx) => {
       const users = await tx.user.findMany({
         select: {
           id: true,
@@ -178,7 +177,7 @@ async function resetUsers() {
 
 // local helper function to reset a single user
 async function normalResetUserHandler(
-  db: PrismaTransaction,
+  tx: PrismaTransaction,
   user: {
     id: string;
     mana: number;
@@ -195,7 +194,7 @@ async function normalResetUserHandler(
     totalGemstoneCost += ability.ability.gemstoneCost;
   }
 
-  await db.user.update({
+  await tx.user.update({
     where: { id: user.id },
     data: {
       role: "INACTIVE",
@@ -245,7 +244,7 @@ async function normalResetUserHandler(
 
 async function resetUsersAndShopItems() {
   try {
-    await prisma.$transaction(async (tx) => {
+    await db.$transaction(async (tx) => {
       const users = await tx.user.findMany({
         select: {
           id: true,
@@ -283,7 +282,7 @@ async function resetUsersAndShopItems() {
 
 // local helper function to reset a single user
 async function softResetUserHandler(
-  db: PrismaTransaction,
+  tx: PrismaTransaction,
   user: {
     id: string;
     hp: number;
@@ -309,7 +308,7 @@ async function softResetUserHandler(
     goldFromShopItems += shopItem.price;
   }
 
-  await db.user.update({
+  await tx.user.update({
     where: { id: user.id },
     data: {
       // role: "NEW",
@@ -358,7 +357,7 @@ async function softResetUserHandler(
 
 async function resetSingleUser(username: string) {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { username: username },
       select: {
         id: true,
@@ -381,7 +380,7 @@ async function resetSingleUser(username: string) {
       return;
     }
 
-    await normalResetUserHandler(prisma, user);
+    await normalResetUserHandler(db, user);
 
     console.info(`User with username "${username}" has been reset.`);
   } catch (error) {
@@ -391,7 +390,7 @@ async function resetSingleUser(username: string) {
 
 async function deleteNonConsentingVG2Users() {
   try {
-    await prisma.$transaction(async (tx) => {
+    await db.$transaction(async (tx) => {
       await tx.user.deleteMany({
         where: {
           AND: [
@@ -479,7 +478,7 @@ async function deleteNonConsentingVG2Users() {
 
 async function deleteAnalytics() {
   try {
-    await prisma.$transaction(async (tx) => {
+    await db.$transaction(async (tx) => {
       await tx.analytics.deleteMany({});
     });
     console.info("All analytics data has been deleted.");
@@ -489,11 +488,7 @@ async function deleteAnalytics() {
 }
 
 // Run the main function and handle any errors
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

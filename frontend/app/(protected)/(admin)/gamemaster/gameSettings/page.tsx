@@ -7,7 +7,7 @@ import { ApplicationSettings } from "@tillerquest/prisma/browser";
 import ErrorAlert from "@/components/ErrorAlert";
 
 async function GameSettings() {
-  const session = await redirectIfNotAdmin();
+  await redirectIfNotAdmin();
   const applicationSettings =
     await secureGet<ApplicationSettings[]>(`/admin/settings`);
 
@@ -40,7 +40,7 @@ async function GameSettings() {
         <List sx={style}>
           {applicationSettings.data.map((setting) => (
             <ListItem key={setting.key} sx={{ padding: 2 }}>
-              <GameSettingsForm userId={session.user.id} setting={setting} />
+              <GameSettingsForm setting={setting} />
             </ListItem>
           ))}
         </List>

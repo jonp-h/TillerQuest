@@ -6,6 +6,7 @@ export type UserResponse = Prisma.UserGetPayload<{
     name: true;
     username: true;
     lastname: true;
+    role: true;
     hp: true;
     mana: true;
     xp: true;
@@ -13,6 +14,6 @@ export type UserResponse = Prisma.UserGetPayload<{
     level: true;
     class: true;
     guildName: true;
-    schooldClass: true;
+    schoolClass: true;
   };
 }>;

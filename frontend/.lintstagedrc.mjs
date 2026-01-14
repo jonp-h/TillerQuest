@@ -11,6 +11,8 @@
 
 // export default lintStagedConfig;
 
-export default {
+const lintStagedConfig = {
   "**/*.{js,jsx,ts,tsx}": ["eslint --cache --fix", "prettier --write"],
 };
+
+export default lintStagedConfig;

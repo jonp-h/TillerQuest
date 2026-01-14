@@ -67,6 +67,7 @@ export const adminGetUsers = [
             hp: true,
             mana: true,
             xp: true,
+            role: true,
             gold: true,
             level: true,
             class: true,
@@ -75,7 +76,6 @@ export const adminGetUsers = [
           };
           whereClause = {
             role: {
-              //TODO: INACTIVE required?
               notIn: ["NEW", "ARCHIVED"],
             },
           };

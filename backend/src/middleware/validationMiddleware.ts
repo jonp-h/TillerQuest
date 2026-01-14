@@ -46,7 +46,6 @@ export const validateParams = <T extends z.ZodType>(schema: T) => {
       const result = schema.safeParse(req.params);
 
       if (!result.success) {
-        console.log("Caught error in validateQuery:", result);
         throw new ErrorMessage(
           prettifyError(result.error) || "Invalid parameters",
         );

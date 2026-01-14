@@ -1,6 +1,3 @@
-// "use client";
-import { logger } from "./logger";
-
 /**
  * Standard API response from backend
  */

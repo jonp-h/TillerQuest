@@ -14,8 +14,6 @@ export default async function ResurrectPage() {
     "/admin/users?fields=dead",
   );
 
-  console.log("Dead users:", deadUsers);
-
   if (!deadUsers.ok) {
     return (
       <MainContainer>

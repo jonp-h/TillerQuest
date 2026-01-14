@@ -1,7 +1,7 @@
 // import { Prisma, PrismaClient } from "@prisma/client";
 // import { DefaultArgs } from "@prisma/client/runtime/library";
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@tillerquest/prisma";
 
 // export type PrismaTransaction = Omit<
 //   PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,

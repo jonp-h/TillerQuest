@@ -2,7 +2,6 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Tooltip, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
 import { GuildWithMemberClasses } from "./types";
 import { Class } from "@tillerquest/prisma/browser";
 

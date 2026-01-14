@@ -14,10 +14,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 function GameSettingsForm({
-  userId,
   setting,
 }: {
-  userId: string;
   setting: {
     createdAt: Date;
     updatedAt: Date;

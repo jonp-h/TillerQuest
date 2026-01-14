@@ -1,6 +1,5 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { User } from "@tillerquest/prisma/browser";
 import { useState } from "react";
 import Link from "next/link";
 import { UserResponse } from "./types";
@@ -10,7 +9,8 @@ const columns: GridColDef[] = [
   {
     field: "username",
     headerName: "Username",
-    cellClassName: "text-green-300",
+    cellClassName: (params) =>
+      params.row.role === "INACTIVE" ? "text-amber-300" : "text-green-300",
     width: 160,
   },
   { field: "lastname", headerName: "Last name", width: 160 },

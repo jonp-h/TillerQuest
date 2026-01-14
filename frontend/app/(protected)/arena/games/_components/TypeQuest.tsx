@@ -1,4 +1,3 @@
-import { securePost } from "@/lib/secureFetch";
 import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";

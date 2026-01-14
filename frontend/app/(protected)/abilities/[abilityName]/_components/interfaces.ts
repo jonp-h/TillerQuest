@@ -1,4 +1,4 @@
-import { Ability, Prisma, Rarity } from "@tillerquest/prisma/browser";
+import { Ability, Rarity } from "@tillerquest/prisma/browser";
 
 export interface GuildMember {
   title: string | null;
