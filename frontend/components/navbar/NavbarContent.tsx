@@ -11,11 +11,15 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
-import { IconButton } from "@mui/material";
+import { Badge, IconButton } from "@mui/material";
 import { AutoAwesome, Castle, Groups } from "@mui/icons-material";
 import { signIn, signOut, useSession } from "@/lib/auth-client";
 
-export default function NavbarContent() {
+export default function NavbarContent({
+  scheduledWishesCount,
+}: {
+  scheduledWishesCount: number;
+}) {
   const session = useSession();
   const pathname = usePathname();
   const frontendUrl =
@@ -43,6 +47,7 @@ export default function NavbarContent() {
       name: "Wishing Well",
       href: "/wishing-well",
       icon: <AutoAwesome />,
+      badgeCount: scheduledWishesCount,
     },
     {
       name: "Shop",
@@ -111,24 +116,31 @@ export default function NavbarContent() {
         {session.data?.user
           ? links.map((link) => (
               <Link href={link.href} key={link.name}>
-                <Button
-                  variant={pathname === link.href ? "outlined" : "text"}
-                  color={pathname === link.href ? "secondary" : "tqwhite"}
-                  startIcon={link.icon}
-                  sx={{
-                    display: { xs: "none", md: "none", lg: "flex" },
-                    textWrap: "nowrap",
-                  }}
+                <Badge
+                  badgeContent={link.badgeCount}
+                  color="error"
+                  max={99}
+                  invisible={!link.badgeCount || link.badgeCount === 0}
                 >
-                  {link.name}
-                </Button>
-                <IconButton
-                  sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-                  color={pathname === link.href ? "secondary" : "tqwhite"}
-                  size="large"
-                >
-                  {link.icon}
-                </IconButton>
+                  <Button
+                    variant={pathname === link.href ? "outlined" : "text"}
+                    color={pathname === link.href ? "secondary" : "tqwhite"}
+                    startIcon={link.icon}
+                    sx={{
+                      display: { xs: "none", md: "none", lg: "flex" },
+                      textWrap: "nowrap",
+                    }}
+                  >
+                    {link.name}
+                  </Button>
+                  <IconButton
+                    sx={{ display: { xs: "block", md: "block", lg: "none" } }}
+                    color={pathname === link.href ? "secondary" : "tqwhite"}
+                    size="large"
+                  >
+                    {link.icon}
+                  </IconButton>
+                </Badge>
               </Link>
             ))
           : null}

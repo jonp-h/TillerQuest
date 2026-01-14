@@ -78,7 +78,7 @@ function WishCard({ userId, wish }: { userId: string; wish: WishWithVotes }) {
     >
       {wish.scheduled && (
         <div className="absolute top-0 right-0 z-10">
-          <div className="w-0 h-0 border-l-[80px] border-l-transparent border-t-[80px] border-t-purple-600 relative">
+          <div className="w-0 h-0 border-l-[80px] border-l-transparent border-t-[80px] border-t-red-700 relative">
             <span className="absolute -top-13 -right-9 rotate-45 text-white text-xs font-bold whitespace-nowrap transform -translate-x-1/2 -translate-y-1/2">
               Scheduled
             </span>

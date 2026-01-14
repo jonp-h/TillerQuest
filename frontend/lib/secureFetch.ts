@@ -15,6 +15,10 @@ interface ApiResponse<T = unknown> {
 interface SecureFetchOptions extends Omit<RequestInit, "headers"> {
   timeout?: number;
   enableLogging?: boolean;
+  next?: {
+    revalidate?: number | false;
+    tags?: string[];
+  };
 }
 
 type SecureFetchResult<T = unknown> =

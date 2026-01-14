@@ -13,7 +13,7 @@ export const getWishes = [
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const wishes = await db.wish.findMany({
-        orderBy: { value: "desc" },
+        orderBy: [{ scheduled: "asc" }, { value: "desc" }],
         select: {
           id: true,
           name: true,
