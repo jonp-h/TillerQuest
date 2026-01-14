@@ -133,12 +133,12 @@ export const adminReasonSchema = z.object({
 });
 
 export const userIdParamSchema = z.object({
-  userId: z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
+  userId: z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"),
 });
 
 export const userIdListSchema = z.object({
   userIds: z.array(
-    z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
+    z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"),
   ),
 });
 

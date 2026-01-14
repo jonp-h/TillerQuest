@@ -10,9 +10,6 @@ export const auth = betterAuth({
   }),
   trustedOrigins: [process.env.FRONTEND_URL as string],
   advanced: {
-    defaultCookieAttributes: {
-      sameSite: "none",
-    },
     useSecureCookies: process.env.NODE_ENV === "production",
     cookiePrefix: "tillerquest",
     crossSubDomainCookies: {
