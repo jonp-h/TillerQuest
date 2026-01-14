@@ -22,7 +22,7 @@ function GuildAvatar({
       sx={sx}
       src={
         guild.icon
-          ? `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/static/guilds/${guild.icon}`
+          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/static/guilds/${guild.icon}`
           : undefined
       }
     >

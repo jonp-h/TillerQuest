@@ -1,7 +1,7 @@
 import { logger } from "./logger.js";
 
 const webhookUrl = process.env.WEBHOOK_URL;
-// const websiteUrl = process.env.WEBSITE_URL || "http://localhost:3000";
+// const websiteUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
 export const sendDiscordMessage = async (
   author: string,

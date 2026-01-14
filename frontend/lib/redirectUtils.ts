@@ -36,7 +36,7 @@ async function getSessionFromBackend(): Promise<BackendSessionResponse | null> {
 
     // TODO: ensure security of fetch
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth/get-session`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/get-session`,
       {
         credentials: "include",
         cache: "no-store",

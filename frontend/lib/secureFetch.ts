@@ -37,12 +37,10 @@ type SecureFetchResult<T = unknown> =
  * Validates URL for SSRF prevention
  */
 function validateUrl(url: string): void {
-  const allowedBaseUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
+  const allowedBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   if (!allowedBaseUrl) {
-    throw new Error(
-      "NEXT_PUBLIC_BETTER_AUTH_URL environment variable is not set",
-    );
+    throw new Error("NEXT_PUBLIC_BACKEND_URL environment variable is not set");
   }
 
   // Build full URL if relative path
@@ -140,10 +138,10 @@ async function secureFetch<T = unknown>(
 
   try {
     // Build full URL if relative
-    const baseUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     if (!baseUrl) {
       throw new Error(
-        "NEXT_PUBLIC_BETTER_AUTH_URL environment variable is not set",
+        "NEXT_PUBLIC_BACKEND_URL environment variable is not set",
       );
     }
 
