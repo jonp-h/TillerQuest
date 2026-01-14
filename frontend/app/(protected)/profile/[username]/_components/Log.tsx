@@ -1,3 +1,4 @@
+import ErrorAlert from "@/components/ErrorAlert";
 import { secureGet } from "@/lib/secureFetch";
 import {
   Divider,
@@ -13,7 +14,7 @@ import { Fragment } from "react";
 async function Log(userID: { userId: string }) {
   const userLogs = await secureGet<LogType[]>(`/logs/${userID.userId}`);
   if (!userLogs.ok) {
-    throw new Error("Failed to fetch user logs");
+    return <ErrorAlert message={userLogs.error} />;
   }
 
   const style = {
