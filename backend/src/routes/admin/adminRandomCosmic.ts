@@ -12,7 +12,7 @@ export const adminRandomCosmic = [
       // const now = new Date();
       // const today = now.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
-      const result = await db.$transaction(async (tx) => {
+      await db.$transaction(async (tx) => {
         await tx.cosmicEvent.updateMany({
           where: {
             recommended: true,

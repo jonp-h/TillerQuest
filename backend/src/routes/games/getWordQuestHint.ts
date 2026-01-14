@@ -54,6 +54,7 @@ export const getWordQuestHint = [
       const currentHintPenalties = metadata?.hintPenalties || 0;
 
       const wordObj = words.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (w: any) => w.word.toLowerCase() === word.toLowerCase(),
       );
 

@@ -13,7 +13,7 @@ async function main() {
   1 - normal reset. Set all users to the INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
   2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set INACTIVE role or reset guilds.
   3 - single normal reset. Reset a single user to INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
-  4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
+  4 - delete non-consenting VG2 users and archive guilds/users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
   6 - reset user turns. Reset the turns for all users to their passives' turn value
   `);
@@ -311,7 +311,7 @@ async function softResetUserHandler(
   await tx.user.update({
     where: { id: user.id },
     data: {
-      // role: "NEW",
+      // role: "NEW", // Do not change role in soft reset
       hp: Math.min(user.hp, 40),
       hpMax: 40,
       mana: Math.min(user.mana, 40),

@@ -28,8 +28,7 @@ export const getActiveUsersBySchoolGrade = async (
           in: classList,
         },
         role: {
-          // FIXME: add new role
-          notIn: ["NEW", "ARCHIVED"],
+          notIn: ["NEW", "ARCHIVED"], // only get active users. (inactive, admins, users)
         },
       },
       select: {

@@ -85,7 +85,8 @@ app.use(
     err: Error,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    next: express.NextFunction, // required to identify as error handler
   ) => {
     // Business logic errors (400 Bad Request)
     if (err instanceof ErrorMessage) {

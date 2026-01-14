@@ -5,7 +5,6 @@ import {
   requireActiveUser,
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import z from "zod";
 import {
   validateBody,
   validateParams,

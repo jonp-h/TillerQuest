@@ -11,7 +11,7 @@ interface User {
   manaMax: number; // maximum mana points
   level: number; // user level
   guildName: string; // name of the guild the user belongs to
-  role: "NEW" | "USER" | "ADMIN" | "ARCHIVED";
+  role: "NEW" | "USER" | "ADMIN" | "ARCHIVED" | "INACTIVE";
   class?: "Druid" | "Barbarian" | "Warlock" | "Wizard";
   schoolClass?:
     | "Class_1IM1"
@@ -70,7 +70,7 @@ const users: User[] = [
     manaMax: 50,
     level: 8,
     guildName: "Game Masters",
-    role: "USER",
+    role: "INACTIVE",
     class: "Warlock",
   },
   {
@@ -154,7 +154,7 @@ const users: User[] = [
     level: 9,
     guildName: "Game Masters",
     schoolClass: "Class_1IM4",
-    role: "USER",
+    role: "INACTIVE",
     class: "Wizard",
   },
   {
@@ -256,7 +256,7 @@ const users: User[] = [
     level: 6,
     guildName: "Game Masters",
     schoolClass: "Class_2IT1",
-    role: "USER",
+    role: "INACTIVE",
     class: "Barbarian",
   },
   {

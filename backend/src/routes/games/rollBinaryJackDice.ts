@@ -42,6 +42,7 @@ export const rollBinaryJackDice = [
       }
 
       // Get game metadata and validate dice choice
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let metadata: any = game.metadata || {};
       if (typeof metadata === "string") {
         try {

@@ -2,9 +2,8 @@ import {
   $Enums,
   AbilityType,
   Class,
-  PrismaClient,
   SchoolClass,
-} from "@prisma/client";
+} from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import users from "./users.js";
 import abilities from "./abilities.js";
@@ -16,9 +15,7 @@ import enemies from "./enemies.js";
 import applicationSettings from "./applicationSettings.js";
 import wordQuestWords from "./wordQuestWords.js";
 import wishes from "./wishes.js";
-
-// Initialize Prisma Client
-const db = new PrismaClient();
+import { db } from "lib/db.js";
 
 async function main() {
   const rl = readline.createInterface({

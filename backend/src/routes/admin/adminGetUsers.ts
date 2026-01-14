@@ -18,8 +18,8 @@ export const adminGetUsers = [
     try {
       const fields = req.query.fields as string | undefined;
 
-      let select: any;
-      let whereClause: any;
+      let select;
+      let whereClause: object | undefined;
 
       switch (fields) {
         case "basic":
@@ -76,7 +76,7 @@ export const adminGetUsers = [
           };
           whereClause = {
             role: {
-              notIn: ["NEW", "ARCHIVED"],
+              notIn: ["NEW", "ARCHIVED"], // only get active users. (inactive, admins, users)
             },
           };
           break;

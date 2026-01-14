@@ -51,6 +51,7 @@ export const startBinaryJackRound = [
       );
 
       // Store the available choices in game metadata
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let metadata: any = game.metadata || {};
       if (typeof metadata === "string") {
         try {

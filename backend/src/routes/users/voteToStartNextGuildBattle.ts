@@ -4,10 +4,7 @@ import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
-import {
-  validateBody,
-  validateParams,
-} from "middleware/validationMiddleware.js";
+import { validateBody } from "middleware/validationMiddleware.js";
 import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 
 interface VoteToStartNextBattleRequest extends AuthenticatedRequest {

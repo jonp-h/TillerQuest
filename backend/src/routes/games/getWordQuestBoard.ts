@@ -58,7 +58,7 @@ export const getWordQuestBoard = [
             success: true,
             data: {
               board: boardArray,
-              words: metadata.words.map((w: any) => w.word),
+              words: metadata.words.map((w: { word: string }) => w.word),
               foundWords: metadata.foundWords || [],
               score: currentGame?.score || 0,
               hintPenalties: metadata.hintPenalties || 0,

@@ -5,13 +5,7 @@ import {
   requireAuth,
 } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
-import {
-  validateBody,
-  validateParams,
-} from "middleware/validationMiddleware.js";
-import { guildNameParamSchema } from "utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import z from "zod";
 import { uploadImage } from "utils/guilds/imageUpload.js";
 import multer from "multer";
 
@@ -42,7 +36,6 @@ export const uploadGuildImage = [
   upload.single("image"),
   async (req: UploadGuildImageRequest, res: Response) => {
     try {
-      const guildName = req.params.guildName;
       const userId = req.session!.user.id;
 
       if (!req.file) {

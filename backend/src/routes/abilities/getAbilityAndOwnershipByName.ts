@@ -6,7 +6,6 @@ import {
   requireActiveUser,
 } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { ErrorMessage } from "../../lib/error.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { abilityNameSchema } from "utils/validators/validationUtils.js";
 

@@ -18,9 +18,9 @@ const entityMap = {
 };
 
 export function escapeHtml(string: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return String(string).replace(/[&<>"'`=\/]/g, function (s: any) {
-    // @ts-expect-error - TS doesn't know entityMap
+  // eslint-disable-next-line no-useless-escape
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    // @ts-expect-error - TS doesn't like dynamic key access here
     return entityMap[s];
   });
 }

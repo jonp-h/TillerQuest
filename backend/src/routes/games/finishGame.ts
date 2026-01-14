@@ -43,6 +43,7 @@ export const finishGame = [
 
         // Handle BinaryJack wagering system
         if (game.game === "BinaryJack") {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let metadata: any = game.metadata || {};
           if (typeof metadata === "string") {
             try {

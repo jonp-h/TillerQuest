@@ -196,9 +196,9 @@ function ManageUserForm(user: {
           <MenuItem value={"NEW"} disabled>
             NEW
           </MenuItem>
-          {/* Users should be reset instead of manually being set to NEW */}
+          {/* Users should be reset instead of manually being set to INACTIVE */}
           <MenuItem value={"INACTIVE"} disabled>
-            NEW
+            INACTIVE
           </MenuItem>
           <MenuItem value={"USER"}>USER</MenuItem>
           <MenuItem value={"ARCHIVED"}>ARCHIVED</MenuItem>

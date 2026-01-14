@@ -32,6 +32,7 @@ export const validateQuery = <T extends z.ZodType>(schema: T) => {
         );
       }
       // Attach validated data to request
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (req as any).validatedQuery = result.data;
       next();
     } catch (error) {
@@ -52,6 +53,7 @@ export const validateParams = <T extends z.ZodType>(schema: T) => {
       }
 
       // Attach validated data to request
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       req.params = result.data as any;
       next();
     } catch (error) {

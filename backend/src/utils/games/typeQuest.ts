@@ -7,6 +7,7 @@ export const updateTypeQuestGame = async (
   db: PrismaTransaction,
   userId: string,
   score: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata: Record<string, any>,
   game: Game,
   charIndex: number,

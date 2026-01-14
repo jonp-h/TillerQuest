@@ -5,11 +5,13 @@ export const updateWordQuestGame = async (
   db: PrismaTransaction,
   userId: string,
   score: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata: Record<string, any>,
   game: Game,
   data: number[],
 ) => {
   // Use the game's existing metadata, not the empty metadata parameter
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let metadataObj: any = game.metadata;
   if (typeof metadataObj === "string") {
     try {
