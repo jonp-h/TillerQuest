@@ -31,6 +31,14 @@ const app = express();
 // If behind a proxy (e.g., Cloudflare, Nginx), trust the first proxy
 app.set("trust proxy", 1);
 
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, // The frontend's origin
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  }),
+);
+
 // ------------------ BETTER AUTH HANDLER ------------------------
 app.all("/api/auth/{*any}", toNodeHandler(auth));
 
@@ -63,14 +71,6 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL, // The frontend's origin
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  }),
-);
 
 // ---------------------- ROUTES ------------------------------
 // Public API routes with API key authentication
