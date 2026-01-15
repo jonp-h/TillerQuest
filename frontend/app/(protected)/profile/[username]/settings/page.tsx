@@ -17,6 +17,7 @@ async function ProfileSettingsPage({
   const user = await secureGet<UserSettings>(`/users/${username}/settings`);
 
   if (!user.ok) {
+    console.error("Error when loading profile settings page: " + user.error);
     notFound();
   }
 

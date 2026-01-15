@@ -12,7 +12,7 @@ import { ErrorMessage } from "../../lib/error.js";
 
 const giveManaSchema = z.object({
   userIds: z.array(
-    z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"),
+    z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"),
   ),
   value: z.number(),
   notify: z.boolean(),

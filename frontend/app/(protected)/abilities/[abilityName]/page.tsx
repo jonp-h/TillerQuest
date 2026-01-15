@@ -36,7 +36,11 @@ export default async function AbilityNamePage({
   );
 
   if (!ability.ok) {
-    return notFound();
+    return (
+      <MainContainer>
+        <ErrorAlert message={ability.error || "Ability not found."} />
+      </MainContainer>
+    );
   }
 
   const user = await secureGet<BaseUser>(`/users/${session.user.id}`);

@@ -107,7 +107,7 @@ function TypeQuest({
     }
     const response = await securePostClient<string>(`/games/${gameId}/start`);
     if (!response.ok) {
-      toast.error("Failed to start the game.");
+      toast.error(response.error);
       return;
     }
     // Fetch a new paragraph until it's different from the current one
@@ -117,7 +117,7 @@ function TypeQuest({
         "/games/typequest/text",
       );
       if (!text.ok) {
-        toast.error("Failed to fetch text.");
+        toast.error(text.error);
         return;
       }
       newParagraph = text.data.text;

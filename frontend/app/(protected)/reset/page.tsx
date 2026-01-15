@@ -11,7 +11,7 @@ export default async function ResetPage() {
   );
   if (!user.ok) {
     return ErrorAlert({
-      message: "Failed to load user data for reset page.",
+      message: user.error || "Failed to load user data.",
     });
   }
 

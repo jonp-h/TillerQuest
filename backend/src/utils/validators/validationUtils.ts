@@ -133,11 +133,13 @@ export const adminReasonSchema = z.object({
 });
 
 export const userIdParamSchema = z.object({
+  // Supports both CUID v1 (25 chars) and CUID v2 (32 chars)
   userId: z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"),
 });
 
 export const userIdListSchema = z.object({
   userIds: z.array(
+    // Supports both CUID v1 (25 chars) and CUID v2 (32 chars)
     z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"),
   ),
 });

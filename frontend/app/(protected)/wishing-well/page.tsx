@@ -4,6 +4,7 @@ import WishCard from "./_components/WishCard";
 import { Typography } from "@mui/material";
 import { secureGet } from "@/lib/secureFetch";
 import { WishWithVotes } from "@/app/(protected)/wishing-well/_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function WishingWellPage() {
   const session = await redirectIfNotActiveUser();
@@ -17,7 +18,11 @@ async function WishingWellPage() {
   // Critical data failure - throw error to trigger error.tsx boundary
   // This shows user a friendly error page via ErrorPage component
   if (!wishes.ok) {
-    throw new Error(wishes.error);
+    return (
+      <MainContainer>
+        <ErrorAlert message={wishes.error || "Failed to load wishes."} />
+      </MainContainer>
+    );
   }
 
   return (

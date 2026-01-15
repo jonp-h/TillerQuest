@@ -8,6 +8,7 @@ import RarityModal from "./_components/RarityModal";
 import { secureGet } from "@/lib/secureFetch";
 import { ShopItem } from "@tillerquest/prisma/browser";
 import { UserInventory } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function Shop() {
   const session = await redirectIfNotActiveUser();
@@ -23,7 +24,11 @@ async function Shop() {
     `/users/${session.user.id}/inventory`,
   );
   if (!user.ok) {
-    return notFound();
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "User not found."} />
+      </MainContainer>
+    );
   }
 
   if (!shopBadges.ok) {

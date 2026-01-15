@@ -203,7 +203,7 @@ function WordQuest({
     );
 
     if (!gameData.ok) {
-      toast.error("Failed to initialize the game.");
+      toast.error(gameData.error || "Failed to load game board.");
       return;
     }
 

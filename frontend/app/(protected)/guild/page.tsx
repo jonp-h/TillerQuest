@@ -17,11 +17,13 @@ async function GuildSettingsPage() {
     await secureGet<GuildLeaderboardType>(`/guilds/leaderboard`);
 
   if (!guild.ok) {
-    notFound();
+    return ErrorAlert({ message: guild.error || "Failed to load guild data." });
   }
 
   if (!topGuilds.ok) {
-    return ErrorAlert({ message: "Failed to load guild leaderboard." });
+    return ErrorAlert({
+      message: topGuilds.error || "Failed to load guild leaderboard.",
+    });
   }
 
   return (

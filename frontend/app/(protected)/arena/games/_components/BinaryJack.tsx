@@ -200,7 +200,8 @@ function BinaryJack({
         `/games/${gameId}/binaryjack/rounds`,
       );
       if (!roundData.ok) {
-        throw new Error(roundData.error);
+        toast.error(roundData.error);
+        return;
       }
       setAvailableDice(roundData.data.availableDice);
       setAvailableOperations(roundData.data.availableOperations);

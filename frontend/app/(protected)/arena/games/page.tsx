@@ -7,6 +7,7 @@ import { Access } from "@tillerquest/prisma/browser";
 import ErrorPage from "@/components/ErrorPage";
 import { secureGet } from "@/lib/secureFetch";
 import { GameUser } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function Games() {
   const session = await redirectIfNotActiveUser();
@@ -18,7 +19,11 @@ async function Games() {
   const user = await secureGet<GameUser>(`/users/${session.user.id}/game`);
 
   if (!user.ok) {
-    return notFound();
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "User not found."} />
+      </MainContainer>
+    );
   }
 
   if (!user.data.access.includes(Access.Arena)) {

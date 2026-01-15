@@ -11,7 +11,9 @@ async function ValhallaPage() {
   const renownedPlayers = await secureGet<UserLeaderboard[]>("/users/valhalla");
 
   if (!renownedPlayers.ok) {
-    return ErrorAlert({ message: "Failed to load Valhalla players." });
+    return ErrorAlert({
+      message: renownedPlayers.error || "Failed to load Valhalla players.",
+    });
   }
 
   return (

@@ -43,6 +43,7 @@ export default async function ProfilePage({
     `/users/username/${username}/profile`,
   );
   if (!user.ok) {
+    console.error("Error when loading user profile page: " + user.error);
     notFound();
   }
 

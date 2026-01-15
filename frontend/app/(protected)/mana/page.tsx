@@ -1,11 +1,11 @@
 import MainContainer from "@/components/MainContainer";
 import { Paper, Typography } from "@mui/material";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import { secureGet } from "@/lib/secureFetch";
 import { LastMana } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function ManaPage() {
   const session = await redirectIfNotActiveUser();
@@ -17,7 +17,11 @@ export default async function ManaPage() {
   const user = await secureGet<LastMana>(`/users/${session.user.id}/last-mana`);
 
   if (!user.ok) {
-    notFound();
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "Failed to load user data."} />
+      </MainContainer>
+    );
   }
 
   const currentDate = new Date();

@@ -38,15 +38,15 @@ export const updateGuildSchema = z.object({
     )
     .optional(),
   userIds: z
-    .array(z.string().regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format"))
+    .array(z.string().regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format"))
     .optional(),
   guildLeaderId: z
     .string()
-    .regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format")
+    .regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format")
     .optional(),
   nextGuildLeaderId: z
     .string()
-    .regex(/^[a-zA-Z0-9]{32}$/, "Invalid user ID format")
+    .regex(/^[a-zA-Z0-9]{25,32}$/, "Invalid user ID format")
     .optional(),
   archived: z.boolean().optional(),
 });
