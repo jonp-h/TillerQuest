@@ -330,7 +330,7 @@ export default async function ProfilePage({
           </Typography>
         )}
       </Paper>
-      <Log userId={session.user.id} />
+      <Log userId={user.data.id} />
     </MainContainer>
   );
 }
