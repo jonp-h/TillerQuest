@@ -22,6 +22,7 @@ import api_key_leaderboardRoutes from "./routes/api_key_leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
 import { requireAuth } from "middleware/authMiddleware.js";
+import { standardUserRateLimit } from "middleware/rateLimitMiddleware.js";
 import routes from "routes/routes.js";
 import { ErrorMessage } from "lib/error.js";
 import { join } from "path";
@@ -64,20 +65,39 @@ app.use(
 // or only apply it to routes that don't interact with Better Auth
 app.use(express.json({ limit: "100kb" })); // Default: JSON body to 100kb to prevent DOS
 
-// Rate limiting to prevent abuse and DoS attacks
-const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 1000, // limit each IP to 100 requests per windowMs
-});
+// Basic rate limiting for authentication mutations (sign-in, sign-up, password reset)
+// This prevents brute force attacks. Session validation endpoints are exempt.
+// const authRateLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // 100 requests per 15 minutes per IP (for auth mutations)
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: "Too many authentication attempts, please try again later",
+//   skip: (req) => {
+//     // Skip rate limiting for session validation (called on every page load)
+//     const path = req.path.toLowerCase();
+//     return (
+//       path.includes("/get-session") ||
+//       path.includes("/session") ||
+//       path.includes("/list-sessions")
+//     );
+//   },
+// });
 
-app.use(limiter);
+// app.use("/api/auth", authRateLimiter);
+
+const apiKeyRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 10 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 
 // ---------------------- ROUTES ------------------------------
 // Public API routes with API key authentication
-app.use("/api/public/v1", api_key_leaderboardRoutes);
+app.use("/api/public/v1", apiKeyRateLimiter, api_key_leaderboardRoutes);
 
-// Protected API routes - require user authentication
-app.use("/api/v1", requireAuth, routes);
+// Protected API routes - require user authentication + per-user rate limiting
+// Per-user limiting handles classroom scenario (100 users on same IP)
+app.use("/api/v1", requireAuth, standardUserRateLimit, routes);
 
 // Global error handler - catches errors from middleware
 app.use(

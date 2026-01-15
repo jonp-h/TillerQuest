@@ -45,10 +45,11 @@ export const auth = betterAuth({
   },
   rateLimit: {
     enabled: true,
-    max: 100, // 100 requests
-    window: 10 * 60 * 5, // 5 minutes
-    storage: "memory",
-    modelName: "RateLimit",
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    maxRequests: 100, // Max 100 requests per window per IP
+    customRules: {
+      "/get-session": false, // Disable rate limiting for session checks
+    },
   },
   // TODO: ensure session token does not constantly refresh
   // session: {
