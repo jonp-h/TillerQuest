@@ -81,7 +81,8 @@ export default function AbilityForm({
     }, 500);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, [ability.target, guildMembersWithoutUser, guildMembers, user.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // ---------------- UI helpers ----------------
 

@@ -9,7 +9,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { notFound } from "next/navigation";
 import AbilityForm from "./_components/AbilityForm";
 import Image from "next/image";
 import { Diamond, Favorite, WaterDrop } from "@mui/icons-material";

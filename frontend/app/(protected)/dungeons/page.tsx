@@ -9,10 +9,6 @@ import { Ability, GuildEnemy } from "@tillerquest/prisma/browser";
 async function DungeonPage() {
   const session = await redirectIfNotActiveUser();
 
-  if (!session?.user.id) {
-    throw new Error("User error");
-  }
-
   const dungeonAbilities = await secureGet<Ability[]>(
     `/users/${session.user.id}/abilities/dungeon`,
   );

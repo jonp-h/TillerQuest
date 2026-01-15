@@ -37,7 +37,7 @@ export const getUserDungeonAbilities = [
 
       res.json({
         success: true,
-        data: userDungeonAbilities,
+        data: userDungeonAbilities.map((ua) => ua.ability),
       });
     } catch (error) {
       logger.error("Failed to get user dungeon abilities: " + error);

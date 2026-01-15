@@ -172,6 +172,20 @@ async function secureFetchClient<T = unknown>(
     try {
       responseData = JSON.parse(responseText);
     } catch (parseError) {
+      // Handle rate limiting with user-friendly message
+      if (response.status === 429) {
+        console.warn("[Client Fetch] Rate limit exceeded", {
+          url: fullUrl,
+          status: response.status,
+        });
+        return {
+          ok: false,
+          status: response.status,
+          error: "Too many requests. Please wait a moment and try again.",
+        };
+      }
+
+      // Log technical details for other parse errors
       console.error("[Client Fetch] Failed to parse JSON response", {
         url: fullUrl,
         stack: parseError instanceof Error ? parseError.stack : undefined,
@@ -392,6 +406,20 @@ export async function secureUploadClient<T = unknown>(
     try {
       responseData = JSON.parse(responseText);
     } catch (parseError) {
+      // Handle rate limiting with user-friendly message
+      if (response.status === 429) {
+        console.warn("[Client Upload] Rate limit exceeded", {
+          url: fullUrl,
+          status: response.status,
+        });
+        return {
+          ok: false,
+          status: response.status,
+          error: "Too many requests. Please wait a moment and try again.",
+        };
+      }
+
+      // Log technical details for other parse errors
       console.error("[Client Upload] Failed to parse JSON response", {
         url: fullUrl,
         stack: parseError instanceof Error ? parseError.stack : undefined,
@@ -404,7 +432,7 @@ export async function secureUploadClient<T = unknown>(
       return {
         ok: false,
         status: response.status,
-        error: `Invalid response format from server: ${responseText.substring(0, 200)}`,
+        error: "Server returned an unexpected response. Please try again.",
       };
     }
 

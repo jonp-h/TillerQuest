@@ -192,6 +192,20 @@ async function secureFetch<T = unknown>(
     try {
       responseData = JSON.parse(responseText);
     } catch (parseError) {
+      // Handle rate limiting with user-friendly message
+      if (response.status === 429) {
+        logger.warn("Rate limit exceeded", {
+          url: fullUrl,
+          status: response.status,
+        });
+        return {
+          ok: false,
+          status: response.status,
+          error: "Too many requests. Please wait a moment and try again.",
+        };
+      }
+
+      // Log technical details for other parse errors
       logger.error("Failed to parse JSON response:", {
         url: fullUrl,
         stack: parseError instanceof Error ? parseError.stack : undefined,

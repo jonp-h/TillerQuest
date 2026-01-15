@@ -26,7 +26,7 @@ export const getUserTurns = [
 
       res.json({
         success: true,
-        data: { turns: turns?.turns || 0 },
+        data: turns?.turns || 0,
       });
     } catch (error) {
       logger.error("Error fetching user turns: " + error);

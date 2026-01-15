@@ -1,5 +1,4 @@
 import MainContainer from "@/components/MainContainer";
-import { notFound } from "next/navigation";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import GuildSettingsForm from "./_components/GuildSettingsForm";
 import GuildLeaderboard from "./_components/GuildLeaderboard";

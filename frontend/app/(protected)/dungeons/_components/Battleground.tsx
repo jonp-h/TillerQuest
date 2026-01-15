@@ -68,15 +68,19 @@ function Battleground({
     if (ability.target === "All") {
       // update the UI to show the selected enemies visually
       setSelectedEnemies(enemyIds);
-      result = await securePostClient<AbilityResponse>(`/abilities/use`, {
-        abilityName: ability.name,
-        targetIds: enemyIds,
-      });
+      result = await securePostClient<AbilityResponse>(
+        `/abilities/${ability.name}/use`,
+        {
+          userIds: enemyIds,
+        },
+      );
     } else {
-      result = await securePostClient<AbilityResponse>(`/abilities/use`, {
-        abilityName: ability.name,
-        targetIds: selectedEnemies,
-      });
+      result = await securePostClient<AbilityResponse>(
+        `/abilities/${ability.name}/use`,
+        {
+          userIds: selectedEnemies,
+        },
+      );
     }
 
     if (result.ok) {
@@ -157,8 +161,8 @@ function Battleground({
       </div>
       <div className="flex flex-col justify-center p-2">
         <div className="text-center text-white">
-          {abilities.some((ability) => ability.isDungeon) ? (
-            userTurns ? (
+          {abilities.length > 0 ? (
+            userTurns > 0 ? (
               <div>
                 <Typography>You have {userTurns} turns left</Typography>
                 <AbilityGrid
