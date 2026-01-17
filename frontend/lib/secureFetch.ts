@@ -257,8 +257,11 @@ async function secureFetch<T = unknown>(
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
 
+    logger.error(`Secure fetch to URL: ${fullUrl}`);
+
     logger.error("Secure fetch error", {
       url: fullUrl,
+      stack: error instanceof Error ? error.stack : undefined,
       error: errorMessage,
       duration: Date.now() - startTime,
     });

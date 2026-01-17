@@ -141,6 +141,7 @@ async function secureFetchClient<T = unknown>(
     if (url.startsWith("/")) {
       fullUrl = `${baseUrl}${"/api/v1"}${url}`;
     }
+    console.log(`Secure fetch to URL: ${fullUrl}`);
 
     // Validate URL (SSRF prevention)
     validateUrl(fullUrl);

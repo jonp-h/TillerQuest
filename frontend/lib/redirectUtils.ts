@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { logger } from "./logger";
 import { cookies } from "next/headers";
 
-type BackendSessionResponse = {
+export type BackendSessionResponse = {
   session: {
     id: string;
     userId: string;
@@ -29,7 +29,7 @@ type BackendSessionResponse = {
  * Fetches session from backend with proper cookie forwarding for server components
  * @returns Session and user data from the backend, or null if not authenticated
  */
-async function getSessionFromBackend(): Promise<BackendSessionResponse | null> {
+export async function getSessionFromBackend(): Promise<BackendSessionResponse | null> {
   try {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
@@ -50,7 +50,7 @@ async function getSessionFromBackend(): Promise<BackendSessionResponse | null> {
     if (response.ok) {
       const data = await response.json();
 
-      return data.user ? data : null;
+      return data?.user ? data : null;
     }
 
     return null;
