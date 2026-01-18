@@ -1,9 +1,6 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   validateBody,
@@ -38,7 +35,6 @@ interface UseAbilityRequest extends AuthenticatedRequest {
  * - Depending on the type of ability, the appropriate function is called to handle the ability usage.
  */
 export const useAbility = [
-  requireAuth,
   requireActiveUser,
   validateParams(abilityNameSchema),
   validateBody(userIdListSchema),

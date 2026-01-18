@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
 import {
@@ -19,7 +16,6 @@ import {
 const BINARY_JACK_MAX_TURNS = 6;
 
 export const applyBinaryOperation = [
-  requireAuth,
   requireActiveUser,
   validateParams(gameIdParamSchema),
   validateBody(applyBinaryOperationSchema),

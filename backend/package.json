@@ -13,7 +13,6 @@
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "gen": "tsx src/db/generate.ts",
-    "generate": "tsx src/db/generate.ts",
     "reset": "tsx src/db/reset.ts"
   },
   "dependencies": {

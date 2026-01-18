@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireUserIdAndNew,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndNew } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { checkNewUserSecret } from "utils/validators/secretValidation.js";
 import {
@@ -34,7 +31,6 @@ interface UserUpdateRequest extends AuthenticatedRequest {
 }
 
 export const updateUser = [
-  requireAuth,
   requireUserIdAndNew(),
   validateParams(userIdParamSchema),
   validateBody(updateUserSchema),

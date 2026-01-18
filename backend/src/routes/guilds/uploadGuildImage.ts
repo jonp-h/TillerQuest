@@ -1,9 +1,6 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { uploadImage } from "utils/guilds/imageUpload.js";
@@ -31,7 +28,6 @@ interface UploadGuildImageRequest extends AuthenticatedRequest {
 }
 
 export const uploadGuildImage = [
-  requireAuth,
   requireActiveUser,
   upload.single("image"),
   async (req: UploadGuildImageRequest, res: Response) => {

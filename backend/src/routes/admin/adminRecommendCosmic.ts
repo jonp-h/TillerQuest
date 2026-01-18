@@ -1,13 +1,12 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { cosmicNameSchema } from "utils/validators/validationUtils.js";
 
 export const adminRecommendCosmic = [
-  requireAuth,
   requireAdmin,
   validateParams(cosmicNameSchema),
   async (req: AuthenticatedRequest, res: Response) => {

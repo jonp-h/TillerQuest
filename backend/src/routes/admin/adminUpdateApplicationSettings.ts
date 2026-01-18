@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateBody } from "../../middleware/validationMiddleware.js";
 import { updateApplicationSettingSchema } from "utils/validators/validationUtils.js";
@@ -14,7 +14,6 @@ interface UpdateApplicationSettingsRequest extends AuthenticatedRequest {
 }
 
 export const adminUpdateApplicationSettings = [
-  requireAuth,
   requireAdmin,
   validateBody(updateApplicationSettingSchema),
   async (req: UpdateApplicationSettingsRequest, res: Response) => {

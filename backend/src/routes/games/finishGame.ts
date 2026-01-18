@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import z from "zod";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { ErrorMessage } from "lib/error.js";
@@ -19,7 +16,6 @@ export const finishGameSchema = z.object({
 });
 
 export const finishGame = [
-  requireAuth,
   requireActiveUser,
   validateParams(gameIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {

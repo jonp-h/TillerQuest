@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import z from "zod";
 import { validateBody } from "../../middleware/validationMiddleware.js";
@@ -29,7 +29,6 @@ interface DamageUsersRequest extends AuthenticatedRequest {
 }
 
 export const adminDamageUsers = [
-  requireAuth,
   requireAdmin,
   validateBody(damageUsersSchema),
   async (req: DamageUsersRequest, res: Response) => {

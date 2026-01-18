@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { db } from "lib/db.js";
 import { join } from "path";
@@ -11,7 +11,6 @@ import { createHash } from "crypto";
 const QUARANTINE_DIR = join(process.cwd(), "uploads", "quarantine");
 
 export const adminGetPendingImages = [
-  requireAuth,
   requireAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {

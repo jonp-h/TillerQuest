@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateQuery } from "middleware/validationMiddleware.js";
 import z from "zod";
@@ -22,7 +22,6 @@ import z from "zod";
  * @returns Array of abilities sorted by balance score (most OP first)
  */
 export const getAbilityBalanceReport = [
-  requireAuth,
   requireAdmin,
   validateQuery(
     z.object({ days: z.coerce.number().min(1).max(90).optional() }),

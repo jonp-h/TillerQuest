@@ -1,9 +1,6 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import {
   getVg1Leaderboard,
@@ -11,7 +8,6 @@ import {
 } from "utils/users/getLeaderboards.js";
 
 export const getUserLeaderboards = [
-  requireAuth,
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {

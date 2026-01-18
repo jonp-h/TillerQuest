@@ -1,15 +1,11 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { db } from "lib/db.js";
 
 // get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
 export const getGuildLeaderboard = [
-  requireAuth,
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {

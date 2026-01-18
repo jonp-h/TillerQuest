@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireUsernameAndActive,
-} from "../../middleware/authMiddleware.js";
+import { requireUsernameAndActive } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import { validateBody } from "middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
@@ -25,7 +22,6 @@ interface UserUpdateSettingsRequest extends AuthenticatedRequest {
 }
 
 export const updateUserSettings = [
-  requireAuth,
   requireUsernameAndActive(),
   validateBody(updateUserSettingsSchema),
   async (req: UserUpdateSettingsRequest, res: Response) => {

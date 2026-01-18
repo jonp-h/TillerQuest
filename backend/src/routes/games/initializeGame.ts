@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { validateBody } from "middleware/validationMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
@@ -12,7 +9,6 @@ import { gameNameSchema } from "utils/validators/validationUtils.js";
 import { Access } from "@tillerquest/prisma/browser";
 
 export const initializeGame = [
-  requireAuth,
   requireActiveUser,
   validateBody(gameNameSchema),
   async (req: AuthenticatedRequest, res: Response) => {

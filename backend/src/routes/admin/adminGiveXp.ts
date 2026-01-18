@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import z from "zod";
 import { validateBody } from "../../middleware/validationMiddleware.js";
@@ -28,7 +28,6 @@ interface GiveXpRequest extends AuthenticatedRequest {
 }
 
 export const adminGiveXp = [
-  requireAuth,
   requireAdmin,
   validateBody(giveXpSchema),
   async (req: GiveXpRequest, res: Response) => {

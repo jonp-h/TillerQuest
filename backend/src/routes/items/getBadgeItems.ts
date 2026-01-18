@@ -1,14 +1,10 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getBadgeItems = [
-  requireAuth,
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {

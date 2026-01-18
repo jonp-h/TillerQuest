@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAdmin, requireAuth } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import {
   validateBody,
@@ -52,7 +52,6 @@ export const updateGuildSchema = z.object({
 });
 
 export const adminUpdateGuild = [
-  requireAuth,
   requireAdmin,
   validateParams(guildNameParamSchema),
   validateBody(updateGuildSchema),

@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { validateQuery } from "middleware/validationMiddleware.js";
 import { schoolClassSchema } from "utils/validators/validationUtils.js";
@@ -9,7 +8,6 @@ import { SchoolClass } from "@tillerquest/prisma/browser";
 
 // get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
 export const getClassGuildsAndMemberClasses = [
-  requireAuth,
   validateQuery(schoolClassSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {

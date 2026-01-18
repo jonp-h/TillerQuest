@@ -1,16 +1,12 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { db } from "lib/db.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { userIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const getUserLog = [
-  requireAuth,
   requireActiveUser,
   validateParams(userIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {

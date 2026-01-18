@@ -1,11 +1,10 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getTotalUserCount = [
-  requireAuth,
   requireAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {

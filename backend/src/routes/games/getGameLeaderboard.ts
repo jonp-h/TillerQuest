@@ -1,16 +1,12 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { gameNameSchema } from "utils/validators/validationUtils.js";
 
 export const getGameLeaderboard = [
-  requireAuth,
   requireActiveUser,
   validateParams(gameNameSchema),
   async (req: AuthenticatedRequest, res: Response) => {

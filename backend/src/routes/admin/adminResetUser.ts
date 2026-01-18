@@ -1,14 +1,13 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireAdmin } from "../../middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "lib/error.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { userIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const adminResetUser = [
-  requireAuth,
   requireAdmin,
   validateParams(userIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {

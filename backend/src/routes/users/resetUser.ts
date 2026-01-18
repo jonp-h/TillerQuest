@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireUserIdAndInactive,
-} from "../../middleware/authMiddleware.js";
+import { requireUserIdAndInactive } from "../../middleware/authMiddleware.js";
 import { ErrorMessage } from "lib/error.js";
 import {
   validateBody,
@@ -58,7 +55,6 @@ const resetUserSchema = z.object({
 });
 
 export const resetUser = [
-  requireAuth,
   requireUserIdAndInactive(),
   validateParams(userIdParamSchema),
   validateBody(resetUserSchema),

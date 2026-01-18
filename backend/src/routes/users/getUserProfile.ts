@@ -1,16 +1,12 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { usernameParamSchema } from "utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getUserProfile = [
-  requireAuth,
   requireActiveUser,
   validateParams(usernameParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {

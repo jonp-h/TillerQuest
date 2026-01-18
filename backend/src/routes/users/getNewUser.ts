@@ -1,13 +1,12 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireUserId } from "../../middleware/authMiddleware.js";
+import { requireUserId } from "../../middleware/authMiddleware.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { userIdParamSchema } from "utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
 export const getNewUser = [
-  requireAuth,
   requireUserId(),
   validateParams(userIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {

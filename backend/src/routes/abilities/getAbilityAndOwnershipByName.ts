@@ -1,10 +1,7 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireAuth,
-  requireActiveUser,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateParams } from "middleware/validationMiddleware.js";
 import { abilityNameSchema } from "utils/validators/validationUtils.js";
@@ -16,7 +13,6 @@ interface GetAbilityByNameRequest extends AuthenticatedRequest {
 }
 
 export const getAbilityAndOwnershipByName = [
-  requireAuth,
   requireActiveUser,
   validateParams(abilityNameSchema),
   async (req: GetAbilityByNameRequest, res: Response) => {

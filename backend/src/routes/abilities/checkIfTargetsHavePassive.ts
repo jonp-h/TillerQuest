@@ -1,16 +1,12 @@
 import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import {
-  requireActiveUser,
-  requireAuth,
-} from "../../middleware/authMiddleware.js";
+import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { validateBody } from "middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { userIdListSchema } from "utils/validators/validationUtils.js";
 
 export const checkIfTargetsHavePassive = [
-  requireAuth,
   requireActiveUser,
   validateBody(userIdListSchema),
   async (req: AuthenticatedRequest, res: Response) => {

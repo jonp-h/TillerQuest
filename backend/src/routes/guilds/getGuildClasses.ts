@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
-import { requireAuth, requireUserId } from "../../middleware/authMiddleware.js";
+import { requireUserId } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { guildClasses } from "utils/guilds/guildValidators.js";
 import { validateParams } from "middleware/validationMiddleware.js";
@@ -8,9 +8,8 @@ import { idParamSchema } from "utils/validators/validationUtils.js";
 
 // get guild member count of all guilds, excluding the current user in the count and only returning guilds that are not archived
 export const getGuildClasses = [
-  requireAuth,
   requireUserId(),
-  validateParams(idParamSchema),
+  validateParams(idParamSchema()),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const guildId = Number(req.params.guildId);
