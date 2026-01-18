@@ -1,7 +1,6 @@
 import MainContainer from "@/components/MainContainer";
-import { getDeadUserCount } from "@/data/user/getUser";
-import { getPendingImageUploadsCount } from "@/data/admin/imageReview";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
 import {
   AutoAwesome,
   BarChart,
@@ -20,8 +19,13 @@ import Link from "next/link";
 
 export default async function GameMasterPage() {
   await redirectIfNotAdmin();
-  const deadUsers = await getDeadUserCount();
-  const pendingUploads = await getPendingImageUploadsCount();
+  const deadUsers = await secureGet<number>("/admin/users/count/dead").then(
+    (res) => (res.ok ? res.data : 0),
+  );
+  // TODO: fix
+  const pendingUploads = await secureGet<number>(
+    "/admin/images/pending/count",
+  ).then((res) => (res.ok ? res.data : 0));
 
   return (
     <MainContainer>
@@ -117,9 +121,9 @@ export default async function GameMasterPage() {
               Log
             </Button>
           </Link>
-          <Link href="/gamemaster/systemMessages">
+          <Link href="/gamemaster/notifications">
             <Button color="info" variant="contained" startIcon={<Message />}>
-              System messages
+              System Notifications
             </Button>
           </Link>
           <Link href="/gamemaster/analytics">

@@ -1,12 +1,24 @@
 import MainContainer from "@/components/MainContainer";
-import { adminGetDungeonInfo } from "@/data/admin/adminUserInteractions";
 import { List, ListItem, Typography } from "@mui/material";
 import DungeonsForm from "./_components/DungeonsForm";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import { DungeonInfo } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function Dungeons() {
   await redirectIfNotAdmin();
-  const dungeonInfo = await adminGetDungeonInfo();
+  const dungeonInfo = await secureGet<DungeonInfo[]>(`/admin/dungeons`);
+
+  if (!dungeonInfo.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert
+          message={dungeonInfo.error || "Failed to load dungeon information."}
+        />
+      </MainContainer>
+    );
+  }
 
   const style = {
     p: 0,
@@ -28,7 +40,7 @@ async function Dungeons() {
       </Typography>
       <div className="flex justify-center mt-2">
         <List sx={style}>
-          {dungeonInfo?.map((dungeonInfo) => (
+          {dungeonInfo.data.map((dungeonInfo) => (
             <ListItem key={dungeonInfo.name} sx={{ padding: 2 }}>
               <DungeonsForm dungeonInfo={dungeonInfo} />
             </ListItem>

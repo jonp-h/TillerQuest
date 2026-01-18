@@ -1,12 +1,20 @@
 import MainContainer from "@/components/MainContainer";
-import { getValhallaUsers } from "@/data/user/getUser";
 import Leaderboard from "../_components/Leaderboard";
 import { Typography } from "@mui/material";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import ErrorAlert from "@/components/ErrorAlert";
+import { UserLeaderboard } from "../_components/types";
 
 async function ValhallaPage() {
   await redirectIfNotActiveUser();
-  const renownedPlayers = await getValhallaUsers();
+  const renownedPlayers = await secureGet<UserLeaderboard[]>("/users/valhalla");
+
+  if (!renownedPlayers.ok) {
+    return ErrorAlert({
+      message: renownedPlayers.error || "Failed to load Valhalla players.",
+    });
+  }
 
   return (
     <MainContainer>
@@ -21,7 +29,10 @@ async function ValhallaPage() {
           Valhalla
         </Typography>
         <div className="flex flex-col mt-10 max-w-2/3 gap-3 justify-center xl:flex-row">
-          <Leaderboard title={"Players of Legend"} users={renownedPlayers} />
+          <Leaderboard
+            title={"Players of Legend"}
+            users={renownedPlayers.data}
+          />
         </div>
         <div className="w-1/3">
           <Typography variant="body2" color="textSecondary" align="center">

@@ -1,10 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import {
-  adminResetSingleUser,
-  adminUpdateUser,
-  updateRole,
-} from "@/data/admin/adminUserInteractions";
+import { securePatchClient, securePostClient } from "@/lib/secureFetchClient";
 import {
   TextField,
   Button,
@@ -15,7 +11,7 @@ import {
   Typography,
   Autocomplete,
 } from "@mui/material";
-import { UserRole, $Enums } from "@prisma/client";
+import { UserRole, $Enums } from "@tillerquest/prisma/browser";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -57,35 +53,38 @@ function ManageUserForm(user: {
       name !== user.name ||
       username !== user.username ||
       lastname !== user.lastname ||
+      special.join(" ") !== user.special.join(" ") ||
       access.join(" ") !== user.access.join(" ")
     ) {
-      const result = await adminUpdateUser(
-        user.id,
-        special,
-        access,
-        name,
-        username,
-        lastname,
+      const result = await securePatchClient<string>(
+        `/admin/users/${user.id}`,
+        {
+          name: name !== user.name ? name : undefined,
+          username: username !== user.username ? username : undefined,
+          lastname: lastname !== user.lastname ? lastname : undefined,
+          special:
+            special.join(" ") !== user.special.join(" ") ? special : undefined,
+          access:
+            access.join(" ") !== user.access.join(" ") ? access : undefined,
+        },
       );
 
-      if (result.success) {
-        toast.success(result.data);
-      } else {
-        toast.error(result.error);
-      }
-    } else {
-      const result = await adminUpdateUser(user.id, special);
-
-      if (result.success) {
+      if (result.ok) {
         toast.success(result.data);
       } else {
         toast.error(result.error);
       }
     }
-    if (role !== user.role) {
-      const result = await updateRole(user.id, role);
 
-      if (result.success) {
+    if (role !== user.role) {
+      const result = await securePatchClient<string>(
+        `/admin/users/${user.id}/role`,
+        {
+          role,
+        },
+      );
+
+      if (result.ok) {
         toast.success(result.data);
       } else {
         toast.error(result.error);
@@ -94,10 +93,13 @@ function ManageUserForm(user: {
 
     router.refresh();
   };
-  const handleResetUser = async () => {
-    const result = await adminResetSingleUser(user.id);
 
-    if (result.success) {
+  const handleResetUser = async () => {
+    const result = await securePostClient<string>(
+      `/admin/users/${user.id}/reset`,
+    );
+
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -190,9 +192,13 @@ function ManageUserForm(user: {
           sx={{ width: 130 }}
           label="Role"
         >
-          {/* Users should be reset instead of manually being set to NEW */}
+          {/* Users are only NEW when they first sign up */}
           <MenuItem value={"NEW"} disabled>
             NEW
+          </MenuItem>
+          {/* Users should be reset instead of manually being set to INACTIVE */}
+          <MenuItem value={"INACTIVE"} disabled>
+            INACTIVE
           </MenuItem>
           <MenuItem value={"USER"}>USER</MenuItem>
           <MenuItem value={"ARCHIVED"}>ARCHIVED</MenuItem>
@@ -218,7 +224,7 @@ function ManageUserForm(user: {
           dialogContent={
             "(DANGERZONE) Are you sure you want to reset this user? This will force the user to re-enter their information and choose class/school class again. The user will also require a secret key and lose all their abilities/passives. Gemstones are refunded. Gold, shopitems, badges, and arenatokens are kept as is."
           }
-          agreeText="(DANGER) Reset user to NEW"
+          agreeText="(DANGER) Reset user to INACTIVE"
           disagreeText="Cancel"
           buttonVariant="contained"
           dialogFunction={handleResetUser}

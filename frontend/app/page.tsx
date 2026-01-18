@@ -1,9 +1,9 @@
-import { redirectIfNewUser } from "@/lib/redirectUtils";
+import { redirectIfNewOrInactiveUser } from "@/lib/redirectUtils";
 import { Typography } from "@mui/material";
 import Image from "next/image";
 
 export default async function Home() {
-  await redirectIfNewUser();
+  await redirectIfNewOrInactiveUser();
 
   return (
     <main className="relative bg-radial from-tqblue via-transparent to-transparent w-screen min-h-screen overflow-hidden">

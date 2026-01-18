@@ -1,15 +1,16 @@
 "use client";
-import {
-  rollBinaryJackDice,
-  applyBinaryOperation,
-  initializeBinaryJackGame,
-  startBinaryJackRound,
-} from "@/data/games/game";
 import { diceSettings } from "@/lib/diceSettings";
+import { securePostClient } from "@/lib/secureFetchClient";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { Button, Divider, Input, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import {
+  BinaryJackInitialResponse,
+  BinaryJackRoundResponse,
+  BinaryOperationResponse,
+  DiceRollResponse,
+} from "./types";
 
 // Game configuration constants
 const MAX_TURNS = 6; // Change this value to adjust maximum rounds/turns
@@ -87,11 +88,19 @@ function BinaryJack({
 
     try {
       // Initialize the BinaryJack game with stake only - target is generated server-side
-      const result = await initializeBinaryJackGame(gameId, stake);
+      const result = await securePostClient<BinaryJackInitialResponse>(
+        `/games/${gameId}/binaryjack/initialize`,
+        { stake },
+      );
 
-      setCurrentValue(result.currentValue);
-      setTurnsRemaining(result.turnsRemaining);
-      setTargetNumber(result.targetNumber); // Set from server response
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      setCurrentValue(result.data.currentValue);
+      setTurnsRemaining(result.data.turnsRemaining);
+      setTargetNumber(result.data.targetNumber); // Set from server response
       setGameStarted(true);
 
       if (!diceBox) {
@@ -107,13 +116,13 @@ function BinaryJack({
       }
 
       toast.success(
-        `Game started! Target: ${result.targetNumber} (${result.targetNumber.toString(2).padStart(5, "0")})`,
+        `Game started! Target: ${result.data.targetNumber} (${result.data.targetNumber.toString(2).padStart(5, "0")})`,
       );
 
       // Start the first round
       await startNewRound();
     } catch (error) {
-      toast.error("Failed to start game. Please try again.");
+      toast.error("Failed to start the game. Please try again.");
       console.error("Error starting game:", error);
     }
   };
@@ -121,54 +130,61 @@ function BinaryJack({
   const handleRollDice = async () => {
     if (!gameId) return;
 
-    const result = await rollBinaryJackDice(gameId, selectedDie);
+    const result = await securePostClient<DiceRollResponse>(
+      `/games/${gameId}/binaryjack/roll`,
+      {
+        dice: selectedDie,
+      },
+    );
 
-    if (result.diceRoll && diceBox) {
+    if (result.ok && diceBox) {
       setCurrentlyRolling(true);
       diceBox
-        .roll(`${selectedDie}@${result.diceRoll}`)
+        .roll(`${selectedDie}@${result.data.diceRoll}`)
         .then(() => {
-          setRolledValue(result.rolledValue);
+          setRolledValue(result.data.rolledValue);
         })
         .finally(() => {
           setCurrentlyRolling(false);
         });
+    } else if (!result.ok) {
+      toast.error(result.error);
+    } else {
+      toast.error("DiceBox not initialized. Please try again.");
     }
   };
 
   const handleApplyOperation = async () => {
     if (!gameId || !selectedOperation || rolledValue === null) return;
 
-    try {
-      const result = await applyBinaryOperation(
-        gameId,
-        selectedOperation,
-        currentValue,
-        rolledValue,
-      );
+    const result = await securePostClient<BinaryOperationResponse>(
+      `/games/${gameId}/binaryjack/operate`,
+      { operation: selectedOperation },
+    );
 
-      setCurrentValue(result.newValue);
-      setTurnsRemaining(result.turnsRemaining);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
 
-      // Reset for next round
-      setRolledValue(null);
-      setSelectedOperation("");
+    setCurrentValue(result.data.newValue);
+    setTurnsRemaining(result.data.turnsRemaining);
 
-      // Check if game should end
-      if (result.hitTarget) {
-        setGameStarted(false);
-        handleFinishGame();
-      } else if (result.turnsRemaining <= 0) {
-        toast.info("Game over - no turns remaining");
-        setGameStarted(false);
-        handleFinishGame();
-      } else {
-        // Start new round with new dice/operation choices
-        await startNewRound();
-      }
-    } catch (error) {
-      toast.error("Failed to apply operation. Please try again.");
-      console.error("Error applying operation:", error);
+    // Reset for next round
+    setRolledValue(null);
+    setSelectedOperation("");
+
+    // Check if game should end
+    if (result.data.hitTarget) {
+      setGameStarted(false);
+      handleFinishGame();
+    } else if (result.data.turnsRemaining <= 0) {
+      toast.info("Game over - no turns remaining");
+      setGameStarted(false);
+      handleFinishGame();
+    } else {
+      // Start new round with new dice/operation choices
+      await startNewRound();
     }
   };
 
@@ -180,12 +196,18 @@ function BinaryJack({
     }
 
     try {
-      const roundData = await startBinaryJackRound(gameId);
-      setAvailableDice(roundData.availableDice);
-      setAvailableOperations(roundData.availableOperations);
+      const roundData = await securePostClient<BinaryJackRoundResponse>(
+        `/games/${gameId}/binaryjack/rounds`,
+      );
+      if (!roundData.ok) {
+        toast.error(roundData.error);
+        return;
+      }
+      setAvailableDice(roundData.data.availableDice);
+      setAvailableOperations(roundData.data.availableOperations);
 
       // Reset round state
-      setSelectedDie(roundData.availableDice[0]); // Default to first available die
+      setSelectedDie(roundData.data.availableDice[0]); // Default to first available die
       setRolledValue(null);
       setSelectedOperation("");
     } catch (error) {

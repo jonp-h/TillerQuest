@@ -16,55 +16,121 @@ import {
   triggerGuildEnemyDamage,
   weeklyGuildReset,
 } from "./cronjobs.js";
-// import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
-// import { auth } from "./auth.js";
-// import authRoutes from "./routes/auth.js";
-import leaderboardRoutes from "./routes/leaderboard.js";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./auth.js";
+import api_key_leaderboardRoutes from "./routes/api_key_leaderboard.js";
 import rateLimit from "express-rate-limit";
 import { logger } from "lib/logger.js";
+import { requireAuth } from "middleware/authMiddleware.js";
+import { standardUserRateLimit } from "middleware/rateLimitMiddleware.js";
+import routes from "routes/routes.js";
+import { ErrorMessage } from "lib/error.js";
+import { join } from "path";
 
 const app = express();
 
+// If behind a proxy (e.g., Cloudflare, Nginx), trust the first proxy
 app.set("trust proxy", 1);
-
-// ------ Uncomment the following line to enable Better Auth authentication ------
-// app.use("/auth", authRoutes);
-
-// app.all("/api/auth/{*any}", toNodeHandler(auth));
-
-// ----------------------------------------------------------------------------
-
-// Mount express json middleware after Better Auth handler
-// or only apply it to routes that don't interact with Better Auth
-app.use(express.json());
-
-// Rate limiting to prevent abuse and DoS attacks
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-
-app.use(limiter);
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // The frontend's origin
-    methods: ["GET"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: process.env.FRONTEND_URL, // The frontend's origin
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], //  Allowed HTTP methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );
 
-// app.use("/api/me", async (req, res) => {
-//   const session = await auth.api.getSession({
-//     headers: fromNodeHeaders(req.headers),
-//   });
-//   res.json(session);
-//   return;
+// ------------------ BETTER AUTH HANDLER ------------------------
+app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+// ------------------ STATIC FILES (BEFORE CORS/AUTH) ------------------------
+
+// Serve approved guild images publicly
+app.use(
+  "/static/guilds",
+  express.static(join(process.cwd(), "static", "guilds"), {
+    maxAge: "1y", // Cache for 1 year
+    immutable: true,
+    setHeaders: (res) => {
+      // OWASP: Security headers for static files
+      res.set({
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'none'",
+      });
+    },
+  }),
+);
+
+// Mount express json middleware after Better Auth handler
+// or only apply it to routes that don't interact with Better Auth
+app.use(express.json({ limit: "100kb" })); // Default: JSON body to 100kb to prevent DOS
+
+// Basic rate limiting for authentication mutations (sign-in, sign-up, password reset)
+// This prevents brute force attacks. Session validation endpoints are exempt.
+// const authRateLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // 100 requests per 15 minutes per IP (for auth mutations)
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: "Too many authentication attempts, please try again later",
+//   skip: (req) => {
+//     // Skip rate limiting for session validation (called on every page load)
+//     const path = req.path.toLowerCase();
+//     return (
+//       path.includes("/get-session") ||
+//       path.includes("/session") ||
+//       path.includes("/list-sessions")
+//     );
+//   },
 // });
 
-app.use("/api", leaderboardRoutes);
+// app.use("/api/auth", authRateLimiter);
 
-// const server = http.createServer(app);
+const apiKeyRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 10 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+
+// ---------------------- ROUTES ------------------------------
+// Public API routes with API key authentication
+app.use("/api/public/v1", apiKeyRateLimiter, api_key_leaderboardRoutes);
+
+// Protected API routes - require user authentication + per-user rate limiting
+// Per-user limiting handles classroom scenario (100 users on same IP)
+app.use("/api/v1", requireAuth, standardUserRateLimit, routes);
+
+// Global error handler - catches errors from middleware
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    next: express.NextFunction, // required to identify as error handler
+  ) => {
+    // Business logic errors (400 Bad Request)
+    if (err instanceof ErrorMessage) {
+      res.status(400).json({
+        success: false,
+        error: err.message,
+      });
+      return;
+    }
+
+    // Unknown errors (500 Internal Server Error)
+    logger.error("Unhandled error", {
+      error: err.message,
+      stack: err.stack,
+      path: req.path,
+    });
+
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      timestamp: new Date().toISOString(),
+    });
+  },
+);
 
 // ---------------------- CRONJOBS ------------------------------
 
@@ -74,12 +140,12 @@ cron.schedule(
   async () => {
     const now = new Date();
     try {
-      await db.$transaction(async (db) => {
-        await removePassivesWithIncreasedValues(db, now);
+      await db.$transaction(async (tx) => {
+        await removePassivesWithIncreasedValues(tx, now);
 
-        await removePassivesWithDecreasedValues(db, now);
+        await removePassivesWithDecreasedValues(tx, now);
 
-        await removeExpiredPassives(db, now);
+        await removeExpiredPassives(tx, now);
       });
       console.log("Expired passives removed");
     } catch (error) {
@@ -96,8 +162,8 @@ cron.schedule(
   "20 11 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await activateCosmicEvent(db);
+      await db.$transaction(async (tx) => {
+        await activateCosmicEvent(tx);
       });
 
       console.log("Triggered cosmic event");
@@ -115,8 +181,8 @@ cron.schedule(
   "00 16 * * 1-5",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await triggerGuildEnemyDamage(db);
+      await db.$transaction(async (tx) => {
+        await triggerGuildEnemyDamage(tx);
       });
       console.log("Enemy damage triggered.");
     } catch (error) {
@@ -133,8 +199,8 @@ cron.schedule(
   "58 23 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await sessionCleanup(db);
+      await db.$transaction(async (tx) => {
+        await sessionCleanup(tx);
       });
       console.log("Cleared expired sessions.");
     } catch (error) {
@@ -151,8 +217,8 @@ cron.schedule(
   "59 23 * * 0",
   async () => {
     try {
-      db.$transaction(async (db) => {
-        await resetGameHighscores(db);
+      db.$transaction(async (tx) => {
+        await resetGameHighscores(tx);
       });
       console.log("Game highscore rewards granted, and leaderboard reset.");
     } catch (error) {
@@ -169,8 +235,8 @@ cron.schedule(
   "00 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await removeCosmicPassivesAndAbilities(db);
+      await db.$transaction(async (tx) => {
+        await removeCosmicPassivesAndAbilities(tx);
       });
 
       const twoWeeksAgo = new Date();
@@ -200,8 +266,8 @@ cron.schedule(
   "01 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await randomCosmic(db);
+      await db.$transaction(async (tx) => {
+        await randomCosmic(tx);
       });
       console.log("Generated random cosmic event");
     } catch (error) {
@@ -218,8 +284,8 @@ cron.schedule(
   "02 00 * * 0",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await weeklyGuildReset(db);
+      await db.$transaction(async (tx) => {
+        await weeklyGuildReset(tx);
       });
       console.log("Weekly guild reset completed");
     } catch (error) {
@@ -236,8 +302,8 @@ cron.schedule(
   "03 0 * * 1-5",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await resetUserTurns(db);
+      await db.$transaction(async (tx) => {
+        await resetUserTurns(tx);
       });
       console.log("Reset user turns.");
     } catch (error) {
@@ -272,8 +338,8 @@ cron.schedule(
   "05 00 * * *",
   async () => {
     try {
-      await db.$transaction(async (db) => {
-        await removeOldLogs(db);
+      await db.$transaction(async (tx) => {
+        await removeOldLogs(tx);
       });
 
       console.log("Removed old logs.");

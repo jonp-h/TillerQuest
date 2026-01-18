@@ -1,6 +1,6 @@
 import { Button, Paper, Tooltip, Typography } from "@mui/material";
 import { AbilityGridProps } from "./interfaces";
-import { Ability } from "@prisma/client";
+import { Ability } from "@tillerquest/prisma/browser";
 import Image from "next/image";
 
 function AbilityGrid({ abilities, onAbilityRoll, disabled }: AbilityGridProps) {

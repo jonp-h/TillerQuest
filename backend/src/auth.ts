@@ -2,16 +2,20 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 import { db } from "./lib/db.js";
-import { $Enums } from "@prisma/client";
+import { Class, UserRole } from "@tillerquest/prisma/browser";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
-  // should be automatically set to true in production
+  trustedOrigins: [process.env.FRONTEND_URL as string],
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: process.env.NODE_ENV === "production",
     cookiePrefix: "tillerquest",
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: process.env.COOKIE_DOMAIN || undefined,
+    },
   },
   user: {
     additionalFields: {
@@ -27,7 +31,7 @@ export const auth = betterAuth({
         input: false,
         default: "NEW",
         description: "Your role in the game, used to determine permissions.",
-        enum: ["NEW", "USER", "ADMIN", "ARCHIVED"],
+        enum: UserRole,
       },
       class: {
         type: "string",
@@ -35,16 +39,17 @@ export const auth = betterAuth({
         input: false,
         default: "DRUID",
         description: "Your class in the game, used to determine abilities.",
-        enum: $Enums.Class,
+        enum: Class,
       },
     },
   },
   rateLimit: {
     enabled: true,
-    max: 100, // 100 requests
-    window: 10 * 60 * 5, // 5 minutes
-    storage: "memory",
-    modelName: "RateLimit",
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    maxRequests: 100, // Max 100 requests per window per IP
+    customRules: {
+      "/get-session": false, // Disable rate limiting for session checks
+    },
   },
   // TODO: ensure session token does not constantly refresh
   // session: {

@@ -1,10 +1,11 @@
 import MainContainer from "@/components/MainContainer";
-import { getLastMana } from "@/data/user/getUser";
 import { Paper, Typography } from "@mui/material";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import ManaForm from "./_components/ManaForm";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import { LastMana } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function ManaPage() {
   const session = await redirectIfNotActiveUser();
@@ -13,10 +14,14 @@ export default async function ManaPage() {
     return null;
   }
 
-  const user = await getLastMana(session.user.id);
+  const user = await secureGet<LastMana>(`/users/${session.user.id}/last-mana`);
 
-  if (!user) {
-    notFound();
+  if (!user.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "Failed to load user data."} />
+      </MainContainer>
+    );
   }
 
   const currentDate = new Date();
@@ -52,7 +57,11 @@ export default async function ManaPage() {
         <Typography variant="h5" component={"h2"} align="center">
           You attempt to attune to the magic around you
         </Typography>
-        <ManaForm user={user} currentDate={currentDate} isWeekend={isWeekend} />
+        <ManaForm
+          user={user.data}
+          currentDate={currentDate}
+          isWeekend={isWeekend}
+        />
       </Paper>
     </MainContainer>
   );

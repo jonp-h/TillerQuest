@@ -8,14 +8,14 @@ import {
   RootAbilities,
   UserAbilities,
 } from "./interfaces";
-import { $Enums } from "@prisma/client";
+import { Class } from "@tillerquest/prisma/browser";
 
 export default function AbilityTree({
   userClass,
   rootAbilities,
   userAbilities,
 }: {
-  userClass: $Enums.Class;
+  userClass: Class;
   rootAbilities: RootAbilities | null;
   userAbilities: UserAbilities[] | null;
 }) {
@@ -52,9 +52,8 @@ export default function AbilityTree({
   const [dimensions, translate, containerRef] = useCenteredTree({ x: 0, y: 0 });
 
   const userIsNotClass = !(
-    Object.values($Enums.Class).includes(
-      rootAbilities?.category as $Enums.Class,
-    ) && userClass != (rootAbilities?.category as $Enums.Class)
+    Object.values(Class).includes(rootAbilities?.category as Class) &&
+    userClass != (rootAbilities?.category as Class)
   );
 
   return (

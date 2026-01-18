@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@tillerquest/prisma/browser";
 import { RawNodeDatum } from "react-d3-tree";
 
 export interface RootAbilities {

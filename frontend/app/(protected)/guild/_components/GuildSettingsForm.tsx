@@ -7,56 +7,24 @@ import {
   Tooltip,
   Box,
   Alert,
-  Avatar,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import DialogButton from "@/components/DialogButton";
-import { $Enums } from "@prisma/client";
 import MiniatureProfile from "@/components/MiniatureProfile";
-import { validateGuildNameUpdate } from "@/data/validators/guildUpdateValidation";
-import { updateGuildname } from "@/data/guilds/updateGuilds";
-import {
-  startGuildBattle,
-  voteToStartNextBattle,
-} from "@/data/dungeons/dungeon";
 import { CloudUpload, HourglassEmpty } from "@mui/icons-material";
-import { uploadGuildImage } from "@/data/guilds/imageUpload";
 import Image from "next/image";
+import { GuildSettings } from "./types";
+import { securePostClient, secureUploadClient } from "@/lib/secureFetchClient";
+import GuildAvatar from "@/components/GuildAvatar";
 
 function ProfileSettingsForm({
   userId,
   guild,
 }: {
   userId: string;
-  guild: {
-    name: string;
-    icon: string | null;
-    schoolClass: $Enums.SchoolClass | null;
-    level: number;
-    guildLeader: string | null;
-    nextGuildLeader: string | null;
-    nextBattleVotes: string[];
-    enemies: {
-      name: string;
-      health: number;
-    }[];
-    members: {
-      id: string;
-      username: string | null;
-      title: string | null;
-      titleRarity: $Enums.Rarity | null;
-      image: string | null;
-      hp: number;
-      hpMax: number;
-      mana: number;
-      manaMax: number;
-    }[];
-    imageUploads: {
-      id: string;
-    }[];
-  };
+  guild: GuildSettings;
 }) {
   const [name, setName] = useState(guild.name);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -72,22 +40,15 @@ function ProfileSettingsForm({
 
   const handleUpdate = async () => {
     setLoading(true);
-    // FIXME: remove frontend validation to remove server action
-    const validatedData = await validateGuildNameUpdate(userId, name);
 
-    if (!validatedData.success) {
-      toast.error(validatedData.error);
-      setLoading(false);
-      return;
-    }
-
-    const result = await updateGuildname(
-      userId,
-      guild.name,
-      validatedData.data,
+    const result = await securePostClient<string>(
+      `/guilds/${guild.name}/name`,
+      {
+        newName: name,
+      },
     );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -100,9 +61,11 @@ function ProfileSettingsForm({
   const handleStartBattle = async () => {
     setLoading(true);
 
-    const result = await startGuildBattle(userId);
+    const result = await securePostClient<string>(
+      `/guilds/${guild.name}/battles`,
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -115,9 +78,14 @@ function ProfileSettingsForm({
   const vote = async () => {
     setLoading(true);
 
-    const result = await voteToStartNextBattle(userId);
+    const result = await securePostClient<string>(
+      `/users/${userId}/guild/battles/vote`,
+      {
+        guildName: guild.name,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -168,28 +136,40 @@ function ProfileSettingsForm({
 
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("image", selectedFile);
+    try {
+      const formData = new FormData();
+      formData.append("image", selectedFile);
 
-    const result = await uploadGuildImage(userId, guild.name, formData);
+      const result = await secureUploadClient<string>(
+        `/guilds/images`,
+        formData,
+      );
 
-    if (result.success) {
-      toast.success(result.data);
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      // Reset file input
-      const fileInput = document.getElementById(
-        "guild-image-upload",
-      ) as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = "";
+      if (result.ok) {
+        toast.success(result.data);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        // Reset file input
+        const fileInput = document.getElementById(
+          "guild-image-upload",
+        ) as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = "";
+        }
+        router.refresh();
+      } else {
+        toast.error(result.error);
       }
-    } else {
-      toast.error(result.error);
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload image. Please try again.",
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-    router.refresh();
   };
 
   const handleClearSelection = () => {
@@ -216,19 +196,7 @@ function ProfileSettingsForm({
         className="flex flex-col mt-10 p-10 gap-5 w-full mx-auto items-center"
       >
         {/* Current Guild Logo */}
-        <Avatar
-          variant="rounded"
-          sx={{
-            width: 150,
-            height: 150,
-            fontSize: "2rem",
-            fontWeight: "bold",
-            bgcolor: "purple.900",
-          }}
-          src={"/guilds/" + guild.icon || undefined}
-        >
-          {guild.name.charAt(0).toUpperCase()}
-        </Avatar>
+        <GuildAvatar guild={{ name: guild.name, icon: guild.icon }} />
 
         <Typography variant="h2" align="center">
           {guild.name}
@@ -353,10 +321,16 @@ function ProfileSettingsForm({
                     width={200}
                     height={200}
                   />
-                  <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                    {selectedFile?.name} (
-                    {(selectedFile?.size! / 1024).toFixed(2)} KB)
-                  </Typography>
+                  {selectedFile?.size && (
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      sx={{ mt: 1 }}
+                    >
+                      {selectedFile.name} (
+                      {(selectedFile.size / 1024).toFixed(2)} KB)
+                    </Typography>
+                  )}
                 </Box>
               )}
 

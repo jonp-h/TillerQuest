@@ -1,4 +1,5 @@
-import { getLogsByUserId } from "@/data/log/getLog";
+import ErrorAlert from "@/components/ErrorAlert";
+import { secureGet } from "@/lib/secureFetch";
 import {
   Divider,
   List,
@@ -7,10 +8,14 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { Log as LogType } from "@tillerquest/prisma/browser";
 import { Fragment } from "react";
 
 async function Log(userID: { userId: string }) {
-  const userLogs = await getLogsByUserId(userID.userId);
+  const userLogs = await secureGet<LogType[]>(`/logs/${userID.userId}`);
+  if (!userLogs.ok) {
+    return <ErrorAlert message={userLogs.error} />;
+  }
 
   const style = {
     p: 0,
@@ -33,7 +38,7 @@ async function Log(userID: { userId: string }) {
         Log
       </Typography>
       <List sx={style}>
-        {userLogs?.map((row) => {
+        {userLogs.data.map((row) => {
           return (
             <Fragment key={row.id}>
               <ListItem

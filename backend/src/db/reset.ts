@@ -1,19 +1,19 @@
-import { PrismaClient, SchoolClass } from "@prisma/client";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
 import { resetUserTurns } from "cronjobs.js";
+import { db } from "lib/db.js";
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
 
 async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  1 - normal reset. Set all users to the NEW role. Only Gemstones, passives, abilities, and guilds are reset.
-  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set NEW role or reset guilds.
-  3 - single normal reset. Reset a single user
-  4 - delete non-consenting VG2 users. Reset all VG2 users who has not consented to archiving
+  1 - normal reset. Set all users to the INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
+  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set INACTIVE role or reset guilds.
+  3 - single normal reset. Reset a single user to INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
+  4 - delete non-consenting VG2 users and archive guilds/users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
   6 - reset user turns. Reset the turns for all users to their passives' turn value
   `);
@@ -104,7 +104,7 @@ async function main() {
         process.stdin.once("data", async (confirmation) => {
           if (confirmation.toString().trim().toLowerCase() === "yes") {
             console.log("Resetting user turns...");
-            await resetUserTurns(prisma);
+            await resetUserTurns(db);
           } else {
             console.log("Operation canceled.");
           }
@@ -117,8 +117,8 @@ async function main() {
 
 async function resetUsers() {
   try {
-    await prisma.$transaction(async (db) => {
-      const users = await db.user.findMany({
+    await db.$transaction(async (tx) => {
+      const users = await tx.user.findMany({
         select: {
           id: true,
           mana: true,
@@ -141,12 +141,12 @@ async function resetUsers() {
       });
 
       for (const user of users) {
-        await normalResetUserHandler(db, user);
+        await normalResetUserHandler(tx, user);
       }
 
       // Remove and recreate guilds
       // First delete GuildEnemy records to avoid foreign key constraint violations
-      await db.guildEnemy.deleteMany({
+      await tx.guildEnemy.deleteMany({
         where: {
           guild: {
             archived: false,
@@ -154,12 +154,12 @@ async function resetUsers() {
         },
       });
 
-      await db.guild.deleteMany({
+      await tx.guild.deleteMany({
         where: {
           archived: false,
         },
       });
-      await db.guild.createMany({
+      await tx.guild.createMany({
         data: guilds.map((g) => ({
           name: g.name,
           schoolClass: g.schoolClass as SchoolClass,
@@ -168,7 +168,7 @@ async function resetUsers() {
       });
     });
     console.info(
-      "All users have been set to NEW. Gemstones, classes, passives, abilities and guilds have been reset.",
+      "All users have been set to INACTIVE. Gemstones, classes, passives, abilities and guilds have been reset.",
     );
   } catch (error) {
     console.error("Error: ", error);
@@ -177,7 +177,7 @@ async function resetUsers() {
 
 // local helper function to reset a single user
 async function normalResetUserHandler(
-  db: PrismaTransaction,
+  tx: PrismaTransaction,
   user: {
     id: string;
     mana: number;
@@ -194,10 +194,10 @@ async function normalResetUserHandler(
     totalGemstoneCost += ability.ability.gemstoneCost;
   }
 
-  await db.user.update({
+  await tx.user.update({
     where: { id: user.id },
     data: {
-      role: "NEW",
+      role: "INACTIVE",
       hp: 40,
       hpMax: 40,
       mana: Math.min(user.mana, 40),
@@ -244,8 +244,8 @@ async function normalResetUserHandler(
 
 async function resetUsersAndShopItems() {
   try {
-    await prisma.$transaction(async (db) => {
-      const users = await db.user.findMany({
+    await db.$transaction(async (tx) => {
+      const users = await tx.user.findMany({
         select: {
           id: true,
           mana: true,
@@ -269,7 +269,7 @@ async function resetUsersAndShopItems() {
       });
 
       for (const user of users) {
-        await softResetUserHandler(db, user);
+        await softResetUserHandler(tx, user);
       }
     });
     console.info(
@@ -282,7 +282,7 @@ async function resetUsersAndShopItems() {
 
 // local helper function to reset a single user
 async function softResetUserHandler(
-  db: PrismaTransaction,
+  tx: PrismaTransaction,
   user: {
     id: string;
     hp: number;
@@ -308,10 +308,10 @@ async function softResetUserHandler(
     goldFromShopItems += shopItem.price;
   }
 
-  await db.user.update({
+  await tx.user.update({
     where: { id: user.id },
     data: {
-      // role: "NEW",
+      // role: "NEW", // Do not change role in soft reset
       hp: Math.min(user.hp, 40),
       hpMax: 40,
       mana: Math.min(user.mana, 40),
@@ -357,7 +357,7 @@ async function softResetUserHandler(
 
 async function resetSingleUser(username: string) {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { username: username },
       select: {
         id: true,
@@ -380,7 +380,7 @@ async function resetSingleUser(username: string) {
       return;
     }
 
-    await normalResetUserHandler(prisma, user);
+    await normalResetUserHandler(db, user);
 
     console.info(`User with username "${username}" has been reset.`);
   } catch (error) {
@@ -390,12 +390,12 @@ async function resetSingleUser(username: string) {
 
 async function deleteNonConsentingVG2Users() {
   try {
-    await prisma.$transaction(async (db) => {
-      await db.user.deleteMany({
+    await db.$transaction(async (tx) => {
+      await tx.user.deleteMany({
         where: {
           AND: [
             { archiveConsent: false },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -406,11 +406,11 @@ async function deleteNonConsentingVG2Users() {
       });
 
       // Find consenting users and their guilds
-      const consentingUsers = await db.user.findMany({
+      const consentingUsers = await tx.user.findMany({
         where: {
           AND: [
             { archiveConsent: true },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -425,11 +425,11 @@ async function deleteNonConsentingVG2Users() {
       });
 
       // Archive the users
-      await db.user.updateMany({
+      await tx.user.updateMany({
         where: {
           AND: [
             { archiveConsent: true },
-            { role: "USER" },
+            { role: { in: ["USER", "INACTIVE"] } },
             {
               schoolClass: {
                 in: ["Class_2IT1", "Class_2IT2", "Class_2IT3", "Class_2MP1"],
@@ -452,7 +452,7 @@ async function deleteNonConsentingVG2Users() {
         ),
       ];
       if (guildNames.length > 0) {
-        await db.guild.updateMany({
+        await tx.guild.updateMany({
           where: {
             name: { in: guildNames },
           },
@@ -462,7 +462,7 @@ async function deleteNonConsentingVG2Users() {
         });
       }
 
-      await db.user.deleteMany({
+      await tx.user.deleteMany({
         where: {
           role: "NEW",
         },
@@ -478,8 +478,8 @@ async function deleteNonConsentingVG2Users() {
 
 async function deleteAnalytics() {
   try {
-    await prisma.$transaction(async (db) => {
-      await db.analytics.deleteMany({});
+    await db.$transaction(async (tx) => {
+      await tx.analytics.deleteMany({});
     });
     console.info("All analytics data has been deleted.");
   } catch (error) {
@@ -488,11 +488,7 @@ async function deleteAnalytics() {
 }
 
 // Run the main function and handle any errors
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

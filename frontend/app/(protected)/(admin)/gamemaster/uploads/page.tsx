@@ -1,12 +1,26 @@
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import MainContainer from "@/components/MainContainer";
 import { Typography, List, ListItem } from "@mui/material";
-import { adminGetPendingImageUploads } from "@/data/admin/imageReview";
 import ImageReviewForm from "./_components/UploadReviewForm";
+import { secureGet } from "@/lib/secureFetch";
+import { UploadReviewFormProps } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function ImageReviewPage() {
   await redirectIfNotAdmin();
-  const pendingUploads = await adminGetPendingImageUploads();
+  const pendingUploads = await secureGet<UploadReviewFormProps[]>(
+    "/admin/images/pending",
+  );
+
+  if (!pendingUploads.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert
+          message={pendingUploads.error || "Failed to load pending uploads"}
+        />
+      </MainContainer>
+    );
+  }
 
   const style = {
     p: 0,
@@ -32,7 +46,7 @@ export default async function ImageReviewPage() {
         Review and approve/reject pending guild image uploads
       </Typography>
 
-      {pendingUploads.length === 0 ? (
+      {pendingUploads.data.length === 0 ? (
         <Typography
           variant="h6"
           align="center"
@@ -44,7 +58,7 @@ export default async function ImageReviewPage() {
       ) : (
         <div className="flex justify-center mt-4">
           <List sx={style}>
-            {pendingUploads.map((upload) => (
+            {pendingUploads.data.map((upload) => (
               <ListItem key={upload.id} sx={{ padding: 2 }}>
                 <ImageReviewForm upload={upload} />
               </ListItem>

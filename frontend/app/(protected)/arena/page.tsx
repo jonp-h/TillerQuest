@@ -1,17 +1,16 @@
 import MainContainer from "@/components/MainContainer";
 import Leaderboard from "./_components/Leaderboard";
-import { getVg1Leaderboard, getVg2Leaderboard } from "@/data/user/getUser";
-import { getDeadUsers } from "@/data/user/getUser";
 import Image from "next/image";
 import { Button, Typography } from "@mui/material";
 import Link from "next/link";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import { DeadUser, Leaderboards } from "./_components/types";
 
 async function ArenaPage() {
   await redirectIfNotActiveUser();
-  const usersVg1 = await getVg1Leaderboard();
-  const usersVg2 = await getVg2Leaderboard();
-  const deadUsers = await getDeadUsers();
+  const leaderboards = await secureGet<Leaderboards>("/users/leaderboards");
+  const deadUsers = await secureGet<DeadUser[]>("/users/dead");
 
   return (
     <MainContainer>
@@ -52,13 +51,13 @@ async function ArenaPage() {
             </Button>
           </Link>
         </div>
-        {deadUsers.length > 0 && (
+        {deadUsers.ok && deadUsers.data.length > 0 && (
           <>
             <Typography variant="h2" sx={{ marginY: 5 }} color="error">
               The dead
             </Typography>
             <div className="bg-red-900/50 lg:w-1/2 p-5 rounded-lg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {deadUsers.map((user) => (
+              {deadUsers.data.map((user) => (
                 <Link key={user.id} href={"/profile/" + user.username}>
                   <div className="flex flex-col items-center">
                     <div
@@ -69,12 +68,8 @@ async function ArenaPage() {
                       <Image
                         className="rounded-full"
                         draggable="false"
-                        src={
-                          user.hp !== 0
-                            ? "/classes/" + user.image + ".png"
-                            : "/classes/Grave.png"
-                        }
-                        alt={user.username || "Guild user"}
+                        src={"/classes/Grave.png"}
+                        alt={user.username}
                         width={100}
                         height={100}
                       />
@@ -91,8 +86,12 @@ async function ArenaPage() {
           </>
         )}
         <div className="flex flex-col mt-10 max-w-2/3 gap-5 justify-center xl:flex-row">
-          <Leaderboard title={"Top 10 VG1"} users={usersVg1} />
-          <Leaderboard title={"Top 10 VG2"} users={usersVg2} />
+          {leaderboards.ok && (
+            <>
+              <Leaderboard title={"Top 10 VG1"} users={leaderboards.data.vg1} />
+              <Leaderboard title={"Top 10 VG2"} users={leaderboards.data.vg2} />
+            </>
+          )}
         </div>
       </div>
     </MainContainer>

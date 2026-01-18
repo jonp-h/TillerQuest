@@ -1,6 +1,6 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
-import { adminUpdateApplicationSettings } from "@/data/admin/gameSettings";
+import { securePatchClient } from "@/lib/secureFetchClient";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   FormControl,
@@ -14,10 +14,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 function GameSettingsForm({
-  userId,
   setting,
 }: {
-  userId: string;
   setting: {
     createdAt: Date;
     updatedAt: Date;
@@ -32,12 +30,12 @@ function GameSettingsForm({
   const router = useRouter();
 
   const handleChange = async () => {
-    const result = await adminUpdateApplicationSettings(userId, {
+    const result = await securePatchClient<string>(`/admin/settings`, {
       key: setting.key,
       value,
     });
 
-    if (result.success) {
+    if (result.ok) {
       toast.success(result.data);
     } else {
       toast.error(result.error);
@@ -50,7 +48,9 @@ function GameSettingsForm({
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex justify-between gap-5 items-center w-full">
-        <Typography variant="h6">{setting.key}:</Typography>
+        <Typography variant="h6">
+          {setting.key.replaceAll("_", " ")}:
+        </Typography>
         <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
           <OutlinedInput
             type={showPassword ? "text" : "password"}

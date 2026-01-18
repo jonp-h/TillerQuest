@@ -2,19 +2,38 @@
   "name": "tillerquest",
   "version": "1.0.0",
   "description": "Tillerquest",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "generated/prisma"
+  ],
   "scripts": {
+    "postinstall": "prisma generate",
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run dev\"",
+    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run start\""
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
+    "@types/node": "^25.0.3",
+    "@types/pg": "^8.16.0",
     "commitlint": "^20.2.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "prisma": "^7.2.0"
   }
 }

@@ -2,11 +2,38 @@ import MainContainer from "@/components/MainContainer";
 import { List, ListItem, Typography } from "@mui/material";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import WishingWellForm from "./_components/WishingWellForm";
-import { adminGetWishes } from "@/data/admin/wishingWell";
+import { secureGet } from "@/lib/secureFetch";
+import ErrorAlert from "@/components/ErrorAlert";
+import { Prisma } from "@tillerquest/prisma/browser";
+import { DateToString } from "@/types/dateToString";
+
+type WishReponse = Prisma.WishGetPayload<{
+  include: {
+    wishVotes: {
+      select: {
+        amount: true;
+        user: {
+          select: {
+            name: true;
+            lastname: true;
+          };
+        };
+      };
+    };
+  };
+}>[];
 
 async function WishingWell() {
   await redirectIfNotAdmin();
-  const wishes = await adminGetWishes();
+  const wishes = await secureGet<DateToString<WishReponse>>("/admin/wishes");
+
+  if (!wishes.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={wishes.error || "Failed to load wishes."} />
+      </MainContainer>
+    );
+  }
 
   const style = {
     p: 0,
@@ -25,7 +52,7 @@ async function WishingWell() {
       </Typography>
       <div className="flex justify-center mt-2">
         <List sx={style}>
-          {wishes?.map((wish) => (
+          {wishes.data.map((wish) => (
             <ListItem key={wish.id} sx={{ padding: 2 }}>
               <WishingWellForm wish={wish} />
             </ListItem>

@@ -11,36 +11,93 @@ import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
-import { IconButton } from "@mui/material";
+import { Badge, IconButton } from "@mui/material";
 import { AutoAwesome, Castle, Groups } from "@mui/icons-material";
-import { signIn, signOut, useSession } from "@/lib/auth-client";
+import { signIn, signOut } from "@/lib/auth-client";
+import { BackendSessionResponse } from "@/lib/redirectUtils";
 
-export default function NavbarContent() {
-  const session = useSession();
+export default function NavbarContent({
+  scheduledWishesCount,
+  session,
+}: {
+  scheduledWishesCount: number;
+  session: BackendSessionResponse | null;
+}) {
   const pathname = usePathname();
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-  if (!session) {
+  const handleSignIn = () => {
+    signIn.social({ provider: "github", callbackURL: frontendUrl });
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/";
+  };
+
+  // Unauthenticated navbar
+  if (!session?.user) {
     return (
       <div className="flex items-center justify-between w-full">
         <Link href="/">
-          <div className="flex items-center gap-5">
-            <Image
-              src="TillerQuestLogoHorizontal.svg"
-              alt="TillerQuest"
-              width={300}
-              height={150}
-            />
-          </div>
+          <Image
+            src="/TillerQuestLogoHorizontal.svg"
+            alt="TillerQuest"
+            width={300}
+            height={150}
+          />
         </Link>
+        <div className="flex justify-end gap-2 md:gap-8">
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<LoginIcon />}
+            sx={{ display: { xs: "none", lg: "flex" } }}
+            onClick={handleSignIn}
+          >
+            Sign in
+          </Button>
+          <IconButton
+            sx={{ display: { xs: "flex", lg: "none" } }}
+            color="primary"
+            size="large"
+            onClick={handleSignIn}
+            aria-label="Sign in"
+          >
+            <LoginIcon />
+          </IconButton>
+
+          <Link href="/signup">
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<PersonAddIcon />}
+              sx={{ display: { xs: "none", lg: "flex" } }}
+            >
+              Sign up
+            </Button>
+            <IconButton
+              sx={{ display: { xs: "flex", lg: "none" } }}
+              color="primary"
+              size="large"
+              aria-label="Sign up"
+            >
+              <PersonAddIcon />
+            </IconButton>
+          </Link>
+        </div>
       </div>
     );
   }
 
+  // Build navigation links for authenticated users
   const links = [
     {
       name: "Wishing Well",
       href: "/wishing-well",
       icon: <AutoAwesome />,
+      badgeCount: scheduledWishesCount,
     },
     {
       name: "Shop",
@@ -68,137 +125,94 @@ export default function NavbarContent() {
       icon: <BoltIcon />,
     },
     {
-      name: session.data?.user ? session.data.user.username : "Profile",
-      href: "/profile/" + (session.data?.user?.username || ""),
+      name: session.user.username,
+      href: `/profile/${session.user.username}`,
       icon: <AccountCircleIcon />,
     },
   ];
 
-  if (session.data?.user?.role === "ADMIN") {
+  // Add admin link if user is admin
+  if (session.user.role === "ADMIN") {
     links.unshift({
       name: "Game Master",
       href: "/gamemaster",
       icon: <CasinoIcon />,
+      badgeCount: undefined,
     });
   }
 
+  // Authenticated navbar
   return (
     <>
       <Link href="/">
         <div className="flex px-2 items-center">
-          <div className="hidden md:flex">
-            <Image
-              src="/TillerQuestLogoHorizontal.svg"
-              alt="TillerQuest"
-              width={300}
-              height={150}
-            />
-          </div>
-          <div className="flex md:hidden">
-            <Image
-              src="/TQCircle.svg"
-              alt="TillerQuest"
-              width={70}
-              height={70}
-            />
-          </div>
+          <Image
+            src="/TillerQuestLogoHorizontal.svg"
+            alt="TillerQuest"
+            width={300}
+            height={150}
+            className="hidden md:block"
+          />
+          <Image
+            src="/TQCircle.svg"
+            alt="TillerQuest"
+            width={70}
+            height={70}
+            className="block md:hidden"
+          />
         </div>
       </Link>
-      {/* On smaller screens only show icons */}
-      <div className="flex justify-end gap-2 md:gap-8  w-full">
-        {session.data?.user
-          ? links.map((link) => (
-              <Link href={link.href} key={link.name}>
-                <Button
-                  variant={pathname === link.href ? "outlined" : "text"}
-                  color={pathname === link.href ? "secondary" : "tqwhite"}
-                  startIcon={link.icon}
-                  sx={{
-                    display: { xs: "none", md: "none", lg: "flex" },
-                    textWrap: "nowrap",
-                  }}
-                >
-                  {link.name}
-                </Button>
-                <IconButton
-                  sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-                  color={pathname === link.href ? "secondary" : "tqwhite"}
-                  size="large"
-                >
-                  {link.icon}
-                </IconButton>
-              </Link>
-            ))
-          : null}
-        {session.data?.user ? (
-          <>
-            <Button
-              className="whitespace-nowrap"
-              variant="outlined"
-              color="tqwhite"
-              startIcon={<LogoutIcon />}
-              sx={{ display: { xs: "none", md: "none", lg: "flex" } }}
-              onClick={() => signOut()}
+
+      <div className="flex justify-end gap-2 md:gap-8 w-full">
+        {links.map((link) => (
+          <Link href={link.href} key={link.href}>
+            <Badge
+              badgeContent={link.badgeCount}
+              color="error"
+              max={99}
+              invisible={!link.badgeCount}
             >
-              Sign out
-            </Button>
-            <IconButton
-              sx={{ display: { xs: "block", md: "block", lg: "none" } }}
-              color="tqwhite"
-              size="large"
-              onClick={() => signOut()}
-            >
-              <LogoutIcon />
-            </IconButton>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<LoginIcon />}
-              sx={{
-                display: { xs: "none", md: "none", lg: "flex" },
-              }}
-              onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
-              }
-            >
-              Sign in
-            </Button>
-            <IconButton
-              sx={{
-                display: { xs: "flex", md: "flex", lg: "none" },
-              }}
-              color="primary"
-              size="large"
-              onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
-              }
-            >
-              <LoginIcon />
-            </IconButton>
-            <Link href={"/signup"}>
               <Button
-                variant="contained"
-                color="primary"
-                startIcon={<PersonAddIcon />}
+                variant={pathname === link.href ? "outlined" : "text"}
+                color={pathname === link.href ? "secondary" : "tqwhite"}
+                startIcon={link.icon}
                 sx={{
-                  display: { xs: "none", md: "none", lg: "flex" },
+                  display: { xs: "none", lg: "flex" },
+                  textWrap: "nowrap",
                 }}
               >
-                Sign up
+                {link.name}
               </Button>
               <IconButton
-                sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}
-                color="primary"
+                sx={{ display: { xs: "block", lg: "none" } }}
+                color={pathname === link.href ? "secondary" : "tqwhite"}
                 size="large"
+                aria-label={link.name}
               >
-                <PersonAddIcon />
+                {link.icon}
               </IconButton>
-            </Link>
-          </>
-        )}
+            </Badge>
+          </Link>
+        ))}
+
+        <Button
+          variant="outlined"
+          color="tqwhite"
+          startIcon={<LogoutIcon />}
+          sx={{ display: { xs: "none", lg: "flex" }, whiteSpace: "nowrap" }}
+          onClick={handleSignOut}
+        >
+          Sign out
+        </Button>
+        <IconButton
+          sx={{ display: { xs: "block", lg: "none" } }}
+          color="tqwhite"
+          size="large"
+          onClick={handleSignOut}
+          aria-label="Sign out"
+        >
+          <LogoutIcon />
+        </IconButton>
       </div>
     </>
   );

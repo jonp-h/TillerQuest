@@ -1,15 +1,16 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { User } from "@prisma/client";
 import { useState } from "react";
 import Link from "next/link";
+import { UserResponse } from "./types";
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "First name", width: 160 },
   {
     field: "username",
     headerName: "Username",
-    cellClassName: "text-green-300",
+    cellClassName: (params) =>
+      params.row.role === "INACTIVE" ? "text-amber-300" : "text-green-300",
     width: 160,
   },
   { field: "lastname", headerName: "Last name", width: 160 },
@@ -20,6 +21,7 @@ const columns: GridColDef[] = [
   },
   { field: "mana", headerName: "MP", cellClassName: "text-blue-400" },
   { field: "xp", headerName: "XP", cellClassName: "text-orange-400" },
+  { field: "gold", headerName: "Gold", cellClassName: "text-yellow-400" },
   { field: "level", headerName: "Level", cellClassName: "text-green-300" },
   { field: "class", headerName: "Class", cellClassName: "text-purple-400" },
   {
@@ -61,8 +63,8 @@ export default function NewUserList({
   users,
   setSelectedUsers,
 }: {
-  users: User[];
-  setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  users: UserResponse[];
+  setSelectedUsers: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>({
@@ -73,9 +75,8 @@ export default function NewUserList({
   const handleSelectionChange = (
     newRowSelectionModel: GridRowSelectionModel,
   ) => {
-    console.log(newRowSelectionModel);
     setRowSelectionModel(newRowSelectionModel);
-    let selectedUsers: User[] = [];
+    let selectedUsers: UserResponse[] = [];
 
     // Update the selected users based on the selection model
     if (newRowSelectionModel.type === "include") {
@@ -87,7 +88,7 @@ export default function NewUserList({
         (user) => !newRowSelectionModel.ids.has(user.id),
       );
     }
-    setSelectedUsers(selectedUsers);
+    setSelectedUsers(selectedUsers.map((user) => user.id));
   };
 
   return (

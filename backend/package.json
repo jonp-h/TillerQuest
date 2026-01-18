@@ -3,30 +3,39 @@
   "version": "0.1.0",
   "main": "index.js",
   "type": "module",
+  "prisma": {
+    "schema": "../prisma/schema.prisma"
+  },
   "scripts": {
     "start": "nodemon",
     "lint": "eslint . --ext .js,.ts, --fix",
     "lint:check": "eslint . --ext .js,.ts,",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "gen": "prisma generate && tsx src/db/generate.ts",
-    "generate": "prisma generate && tsx src/db/generate.ts",
-    "reset": "prisma generate && tsx src/db/reset.ts"
+    "gen": "tsx src/db/generate.ts",
+    "reset": "tsx src/db/reset.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.13.0",
-    "better-auth": "^1.4.5",
+    "@dice-roller/rpg-dice-roller": "^5.5.1",
+    "@prisma/client": "^7.2.0",
+    "@tillerquest/prisma": "*",
+    "better-auth": "^1.4.9",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
+    "file-type": "^21.3.0",
+    "multer": "^2.0.2",
     "node-cron": "^4.2.1",
     "nodemon": "^3.1.11",
-    "winston": "^3.18.3"
+    "sharp": "^0.34.5",
+    "winston": "^3.18.3",
+    "zod": "^4.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.10.1",
     "@types/node-cron": "^3.0.11",
     "eslint": "^9.39.1",

@@ -1,4 +1,4 @@
-import { Ability } from "@prisma/client";
+import { Ability } from "@tillerquest/prisma/browser";
 
 export interface AbilityGridProps {
   abilities: Ability[];

@@ -1,27 +1,14 @@
 "use client";
-import { Typography, Paper, Box, Avatar, Chip } from "@mui/material";
-import { $Enums } from "@prisma/client";
+import { Typography, Paper, Box, Chip } from "@mui/material";
+import { $Enums } from "@tillerquest/prisma/browser";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SchoolIcon from "@mui/icons-material/School";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import Link from "next/link";
+import { GuildLeaderboardType } from "./types";
+import GuildAvatar from "@/components/GuildAvatar";
 
-function GuildLeaderboard({
-  guilds,
-}: {
-  guilds: {
-    name: string;
-    schoolClass: $Enums.SchoolClass | null;
-    level: number;
-    icon: string | null;
-    guildLeader: string | null;
-    members: {
-      id: string;
-      username: string | null;
-      xp: number;
-    }[];
-  }[];
-}) {
+function GuildLeaderboard({ guilds }: { guilds: GuildLeaderboardType }) {
   // Sort guilds by level in descending order
   const sortedGuilds = [...guilds].sort((a, b) => b.level - a.level);
 
@@ -104,18 +91,15 @@ function GuildLeaderboard({
                     {getRankIcon(position)}
                   </Box>
                   {/* Guild Icon */}
-                  <Avatar
-                    variant="rounded"
+                  <GuildAvatar
+                    guild={{ name: guild.name, icon: guild.icon }}
                     sx={{
-                      width: 56,
-                      height: 56,
+                      width: 72,
+                      height: 72,
                       fontSize: "1.5rem",
                       fontWeight: "bold",
                     }}
-                    src={guild.icon ? `/guilds/${guild.icon}` : undefined}
-                  >
-                    {guild.name.charAt(0).toUpperCase()}
-                  </Avatar>
+                  />
 
                   {/* Guild Info */}
                   <Box className="flex flex-col gap-1">
@@ -170,10 +154,12 @@ function GuildLeaderboard({
                     <Box className="flex flex-wrap gap-2">
                       {guild.members
                         .sort((a, b) => {
-                          // Sort guild leader first, then by XP
+                          // Sort guild leader first, then by username
                           if (guild.guildLeader === a.id) return -1;
                           if (guild.guildLeader === b.id) return 1;
-                          return b.xp - a.xp;
+                          return (a.username || "").localeCompare(
+                            b.username || "",
+                          );
                         })
                         .map((member) => (
                           <Link

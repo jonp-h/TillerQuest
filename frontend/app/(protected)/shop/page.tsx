@@ -1,16 +1,14 @@
 import MainContainer from "@/components/MainContainer";
 import ShopCard from "./_components/ShopCard";
-import {
-  getShopBadges,
-  getShopObjects,
-  getShopTitles,
-} from "@/data/shop/items";
-import { getUserInventory } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import { Circle, HelpOutline } from "@mui/icons-material";
 import { Tooltip, Typography } from "@mui/material";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityModal from "./_components/RarityModal";
+import { secureGet } from "@/lib/secureFetch";
+import { ShopItem } from "@tillerquest/prisma/browser";
+import { UserInventory } from "./_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function Shop() {
   const session = await redirectIfNotActiveUser();
@@ -19,12 +17,28 @@ async function Shop() {
     return notFound();
   }
 
-  const shopBadges = await getShopBadges();
-  const shopTitles = await getShopTitles();
-  const shopObjects = await getShopObjects();
-  const user = await getUserInventory(session.user.id);
-  if (!user) {
-    return notFound();
+  const shopBadges = await secureGet<ShopItem[]>("/items/badges");
+  const shopTitles = await secureGet<ShopItem[]>("/items/titles");
+  const shopObjects = await secureGet<ShopItem[]>("/items/objects");
+  const user = await secureGet<UserInventory>(
+    `/users/${session.user.id}/inventory`,
+  );
+  if (!user.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={user.error || "User not found."} />
+      </MainContainer>
+    );
+  }
+
+  if (!shopBadges.ok) {
+    throw new Error(shopBadges.error);
+  }
+  if (!shopTitles.ok) {
+    throw new Error(shopTitles.error);
+  }
+  if (!shopObjects.ok) {
+    throw new Error(shopObjects.error);
   }
 
   return (
@@ -49,10 +63,10 @@ async function Shop() {
         in certain IRL events to unlock{" "}
         <Tooltip
           title={
-            user.special.length === 0
+            user.data.special.length === 0
               ? "You have no special statuses. Ask a gamemaster for more information."
               : "You have the following special statuses: " +
-                user.special.join(", ") +
+                user.data.special.join(", ") +
                 ". Ask a gamemaster for more information."
           }
         >
@@ -68,26 +82,26 @@ async function Shop() {
         sx={{ marginTop: 3 }}
         align="center"
       >
-        You have {user.gold} <Circle htmlColor="gold" /> gold
+        You have {user.data.gold} <Circle htmlColor="gold" /> gold
       </Typography>
       <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Badges
         </Typography>
-        {shopBadges?.map((item) => (
-          <ShopCard key={item.name} user={user} item={item} />
+        {shopBadges.data.map((item) => (
+          <ShopCard key={item.name} user={user.data} item={item} />
         ))}
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Titles
         </Typography>
-        {shopTitles?.map((item) => (
-          <ShopCard key={item.name} user={user} item={item} />
+        {shopTitles.data.map((item) => (
+          <ShopCard key={item.name} user={user.data} item={item} />
         ))}
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Objects
         </Typography>
-        {shopObjects?.map((item) => (
-          <ShopCard key={item.name} user={user} item={item} />
+        {shopObjects.data.map((item) => (
+          <ShopCard key={item.name} user={user.data} item={item} />
         ))}
       </div>
     </MainContainer>

@@ -6,6 +6,10 @@ import { Box, Button, Link, Paper, Typography } from "@mui/material";
 
 export default function SignUpPage() {
   // TODO: consider redirecting if logged in
+
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+
   return (
     <MainContainer>
       <div className="flex justify-center lg:pt-10">
@@ -23,7 +27,10 @@ export default function SignUpPage() {
                 margin: "auto",
               }}
               onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
+                signIn.social({
+                  provider: "github",
+                  callbackURL: frontendUrl,
+                })
               }
             />
           </div>
@@ -66,7 +73,10 @@ export default function SignUpPage() {
             <Button
               variant="contained"
               onClick={() =>
-                signIn.social({ provider: "github", callbackURL: "/" })
+                signIn.social({
+                  provider: "github",
+                  callbackURL: frontendUrl,
+                })
               }
             >
               Sign up

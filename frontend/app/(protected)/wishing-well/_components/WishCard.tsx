@@ -16,47 +16,49 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { voteForWish } from "@/data/wish/wish";
 import { Circle } from "@mui/icons-material";
+import { securePostClient } from "@/lib/secureFetchClient";
+import { WishWithVotes } from "./types";
 
-function WishCard({
-  userId,
-  wish,
-}: {
-  userId: string;
-  wish: {
-    name: string;
-    id: number;
-    image: string | null;
-    description: string | null;
-    value: number;
-    scheduled: Date | null;
-    wishVotes: {
-      user: {
-        username: string | null;
-      };
-      amount: number;
-      anonymous: boolean;
-    }[];
-  };
-}) {
+function WishCard({ userId, wish }: { userId: string; wish: WishWithVotes }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
   const [anonymous, setAnonymous] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
   const handleWish = async (amount: number) => {
-    const result = await voteForWish(wish.id, userId, amount, anonymous);
-
-    if (result.success) {
-      toast.success(result.data);
-    } else {
-      toast.error(result.error);
+    // Client-side validation for better UX
+    if (amount <= 0) {
+      toast.error("Amount must be greater than 0");
+      return;
     }
 
-    setOpen(false);
-    router.refresh();
+    if (amount > 10000) {
+      toast.error("Amount must not exceed 10,000 gold");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const result = await securePostClient<string>(`/wishes/${userId}/vote`, {
+      wishId: wish.id,
+      amount: amount,
+      anonymous: anonymous,
+    });
+
+    setIsSubmitting(false);
+
+    if (result.ok) {
+      toast.success(result.data);
+      setOpen(false);
+      setAmount(0);
+      router.refresh();
+    } else {
+      // Backend provides specific error messages
+      toast.error(result.error);
+    }
   };
 
   return (
@@ -76,7 +78,7 @@ function WishCard({
     >
       {wish.scheduled && (
         <div className="absolute top-0 right-0 z-10">
-          <div className="w-0 h-0 border-l-[80px] border-l-transparent border-t-[80px] border-t-purple-600 relative">
+          <div className="w-0 h-0 border-l-[80px] border-l-transparent border-t-[80px] border-t-red-700 relative">
             <span className="absolute -top-13 -right-9 rotate-45 text-white text-xs font-bold whitespace-nowrap transform -translate-x-1/2 -translate-y-1/2">
               Scheduled
             </span>
@@ -131,7 +133,7 @@ function WishCard({
           </Typography>
           {wish.scheduled && (
             <Typography variant="h6" align="center" color="secondary">
-              Scheduled for {wish.scheduled.toLocaleDateString()}
+              Scheduled for {new Date(wish.scheduled).toLocaleDateString()}
             </Typography>
           )}
           <Typography variant="h6" align="center">
@@ -153,13 +155,19 @@ function WishCard({
             <Input
               placeholder="Enter amount"
               type="number"
-              inputProps={{ min: 1 }}
+              inputProps={{ min: 1, max: 10000 }}
+              value={amount || ""}
               onChange={(e) => {
                 setAmount(Number(e.target.value));
               }}
+              disabled={isSubmitting}
             />
-            <Button variant="contained" onClick={() => handleWish(amount)}>
-              Throw gold
+            <Button
+              variant="contained"
+              onClick={() => handleWish(amount)}
+              disabled={isSubmitting || amount <= 0}
+            >
+              {isSubmitting ? "Throwing..." : "Throw gold"}
             </Button>
           </div>
 

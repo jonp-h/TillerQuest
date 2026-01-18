@@ -6,23 +6,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { User } from "@prisma/client";
 import { useState, useTransition } from "react";
-import {
-  damageUsers,
-  giveArenatokenToUsers,
-  giveGoldToUsers,
-  giveManaToUsers,
-  giveXpToUsers,
-  healUsers,
-} from "@/data/admin/adminPowers";
 import { useRouter } from "next/navigation";
 import UserList from "./UserList";
 import Checkbox from "@mui/material/Checkbox";
 import { toast } from "react-toastify";
+import { UserResponse } from "./types";
+import { securePostClient } from "@/lib/secureFetchClient";
 
-export default function ListControls({ users }: { users: User[] }) {
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+export default function ListControls({ users }: { users: UserResponse[] }) {
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [value, setValue] = useState<number>(3);
   const [isPending, startTransition] = useTransition();
   const [notify, setNotify] = useState<boolean>(false);
@@ -49,15 +42,18 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for healing");
             return;
           }
-          const healResult = await healUsers(
-            selectedUsers,
+          const healResult = await securePostClient<{
+            message: string;
+            result: string[];
+          }>("/admin/powers/heal", {
+            userIds: selectedUsers,
             value,
             notify,
             reasonString,
-          );
+          });
 
-          if (healResult.success) {
-            toast.success(healResult.data);
+          if (healResult.ok) {
+            toast.success(healResult.data.message);
           } else {
             toast.error(healResult.error);
           }
@@ -68,15 +64,18 @@ export default function ListControls({ users }: { users: User[] }) {
             toast.error("Negative values are not allowed for damage");
             return;
           }
-          const damageResult = await damageUsers(
-            selectedUsers,
+          const damageResult = await securePostClient<{
+            message: string;
+            result: string[];
+          }>("/admin/powers/damage", {
+            userIds: selectedUsers,
             value,
             notify,
             reasonString,
-          );
+          });
 
-          if (damageResult.success) {
-            toast.success(damageResult.data);
+          if (damageResult.ok) {
+            toast.success(damageResult.data.message);
           } else {
             toast.error(damageResult.error);
           }
@@ -84,14 +83,17 @@ export default function ListControls({ users }: { users: User[] }) {
           break;
         case "xp":
           if (value < 0) {
-            const negativeXpResult = await giveXpToUsers(
-              selectedUsers,
+            const negativeXpResult = await securePostClient<{
+              message: string;
+              result: string[];
+            }>("/admin/powers/give-xp", {
+              userIds: selectedUsers,
               value,
               notify,
               reasonString,
-            );
+            });
 
-            if (negativeXpResult.success) {
+            if (negativeXpResult.ok) {
               toast.success("XP removed successfully");
             } else {
               toast.error(negativeXpResult.error);
@@ -102,60 +104,72 @@ export default function ListControls({ users }: { users: User[] }) {
               { autoClose: false },
             );
           } else {
-            const xpResult = await giveXpToUsers(
-              selectedUsers,
+            const xpResult = await securePostClient<{
+              message: string;
+              result: string[];
+            }>("/admin/powers/give-xp", {
+              userIds: selectedUsers,
               value,
               notify,
               reasonString,
-            );
+            });
 
-            if (xpResult.success) {
-              toast.success(xpResult.data);
+            if (xpResult.ok) {
+              toast.success(xpResult.data.message);
             } else {
               toast.error(xpResult.error);
             }
           }
           break;
         case "mana":
-          const manaResult = await giveManaToUsers(
-            selectedUsers,
+          const manaResult = await securePostClient<{
+            message: string;
+            result: string[];
+          }>("/admin/powers/give-mana", {
+            userIds: selectedUsers,
             value,
             notify,
             reasonString,
-          );
+          });
 
-          if (manaResult.success) {
-            toast.success(manaResult.data);
+          if (manaResult.ok) {
+            toast.success(manaResult.data.message);
           } else {
             toast.error(manaResult.error);
           }
 
           break;
         case "arenatoken":
-          const arenaResult = await giveArenatokenToUsers(
-            selectedUsers,
+          const arenaResult = await securePostClient<{
+            message: string;
+            result: string[];
+          }>("/admin/powers/give-arenatokens", {
+            userIds: selectedUsers,
             value,
             notify,
             reasonString,
-          );
+          });
 
-          if (arenaResult.success) {
-            toast.success(arenaResult.data);
+          if (arenaResult.ok) {
+            toast.success(arenaResult.data.message);
           } else {
             toast.error(arenaResult.error);
           }
 
           break;
         case "gold":
-          const goldResult = await giveGoldToUsers(
-            selectedUsers,
+          const goldResult = await securePostClient<{
+            message: string;
+            result: string[];
+          }>("/admin/powers/give-gold", {
+            userIds: selectedUsers,
             value,
             notify,
             reasonString,
-          );
+          });
 
-          if (goldResult.success) {
-            toast.success(goldResult.data);
+          if (goldResult.ok) {
+            toast.success(goldResult.data.message);
           } else {
             toast.error(goldResult.error);
           }

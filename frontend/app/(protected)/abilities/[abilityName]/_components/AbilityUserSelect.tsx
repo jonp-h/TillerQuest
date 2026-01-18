@@ -1,5 +1,5 @@
 "use client";
-import { AbilityTarget } from "@prisma/client";
+import { AbilityTarget } from "@tillerquest/prisma/browser";
 import MiniatureProfile from "@/components/MiniatureProfile";
 import { GuildMember } from "./interfaces";
 import { BaseUser } from "@/types/users";

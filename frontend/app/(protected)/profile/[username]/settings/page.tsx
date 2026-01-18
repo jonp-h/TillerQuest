@@ -1,8 +1,9 @@
 import MainContainer from "@/components/MainContainer";
-import { getUserSettingsByUsername } from "@/data/user/getUser";
 import { notFound } from "next/navigation";
 import ProfileSettingsForm from "./_components/ProfileSettingsForm";
 import { redirectIfWrongUsernameOrNotActiveUser } from "@/lib/redirectUtils";
+import { secureGet } from "@/lib/secureFetch";
+import { UserSettings } from "./_components/types";
 
 async function ProfileSettingsPage({
   params,
@@ -13,15 +14,16 @@ async function ProfileSettingsPage({
 
   await redirectIfWrongUsernameOrNotActiveUser(username);
 
-  const user = await getUserSettingsByUsername(username);
+  const user = await secureGet<UserSettings>(`/users/${username}/settings`);
 
-  if (!user) {
+  if (!user.ok) {
+    console.error("Error when loading profile settings page: " + user.error);
     notFound();
   }
 
   return (
     <MainContainer>
-      <ProfileSettingsForm user={user} />
+      <ProfileSettingsForm user={user.data} />
     </MainContainer>
   );
 }

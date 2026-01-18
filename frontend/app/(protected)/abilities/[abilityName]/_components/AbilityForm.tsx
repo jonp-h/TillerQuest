@@ -1,16 +1,16 @@
 "use client";
-import { buyAbility } from "@/data/abilities/transaction/purchaseAbility";
-import { selectAbility } from "@/data/abilities/abilityUsage/useAbility";
 import { Button, Typography } from "@mui/material";
-import { Ability } from "@prisma/client";
+import { Ability } from "@tillerquest/prisma/browser";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { diceSettings } from "@/lib/diceSettings";
-import { GuildMember } from "./interfaces";
+import { GuildMember, PurchaseAbilityResponse } from "./interfaces";
 import { BaseUser } from "@/types/users";
+import { securePostClient } from "@/lib/secureFetchClient";
+import { AbilityResponse } from "@/types/apiResponse";
 
 interface AbilityFormProps {
   ability: Ability;
@@ -37,8 +37,9 @@ export default function AbilityForm({
   const [diceBox, setDiceBox] = useState<DiceBox | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const guildMembersWithoutUser =
-    guildMembers?.filter((member) => member.id !== user.id) || [];
+  const guildMembersWithoutUser = useMemo(() => {
+    return guildMembers.filter((member) => member.id !== user.id);
+  }, [guildMembers, user.id]);
 
   const isDead = user.hp === 0;
 
@@ -80,7 +81,8 @@ export default function AbilityForm({
     }, 500);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // ---------------- UI helpers ----------------
 
@@ -137,9 +139,14 @@ export default function AbilityForm({
       // });
     }
 
-    const result = await selectAbility(user.id, selectedUsers, ability.name);
+    const result = await securePostClient<AbilityResponse>(
+      `/abilities/${ability.name}/use`,
+      {
+        userIds: selectedUsers,
+      },
+    );
 
-    if (result.success) {
+    if (result.ok) {
       if (diceBox && result.data.diceRoll) {
         diceBox
           .roll(`${ability.diceNotation}@${result.data.diceRoll}`)
@@ -189,10 +196,15 @@ export default function AbilityForm({
       return;
     }
 
-    const result = await buyAbility(user.id, ability.name);
+    const result = await securePostClient<PurchaseAbilityResponse>(
+      `/users/${user.id}/abilities`,
+      {
+        abilityName: ability.name,
+      },
+    );
 
-    if (result.success) {
-      toast.success(result.data);
+    if (result.ok) {
+      toast.success(result.data.message);
     } else {
       toast.error(result.error);
     }

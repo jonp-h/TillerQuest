@@ -1,17 +1,29 @@
 import MainContainer from "@/components/MainContainer";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import WishCard from "./_components/WishCard";
-import { getWishes } from "@/data/wish/wish";
 import { Typography } from "@mui/material";
+import { secureGet } from "@/lib/secureFetch";
+import { WishWithVotes } from "@/app/(protected)/wishing-well/_components/types";
+import ErrorAlert from "@/components/ErrorAlert";
 
 async function WishingWellPage() {
   const session = await redirectIfNotActiveUser();
 
   if (!session?.user.id) {
-    throw new Error("User error");
+    throw new Error("Authentication required");
   }
 
-  const wishes = await getWishes();
+  const wishes = await secureGet<WishWithVotes[]>("/wishes");
+
+  // Critical data failure - throw error to trigger error.tsx boundary
+  // This shows user a friendly error page via ErrorPage component
+  if (!wishes.ok) {
+    return (
+      <MainContainer>
+        <ErrorAlert message={wishes.error || "Failed to load wishes."} />
+      </MainContainer>
+    );
+  }
 
   return (
     <MainContainer>
@@ -50,7 +62,7 @@ async function WishingWellPage() {
             </Typography>
           </div>
           <div className="grid grid-cols-4 gap-4 my-8">
-            {wishes.map((wish) => (
+            {wishes.data.map((wish) => (
               <WishCard key={wish.id} userId={session.user.id} wish={wish} />
             ))}
           </div>
