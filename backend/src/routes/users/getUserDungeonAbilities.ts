@@ -28,12 +28,20 @@ export const getUserDungeonAbilities = [
         },
         select: {
           ability: true,
+          user: {
+            select: {
+              diceColorset: true,
+            },
+          },
         },
       });
 
       res.json({
         success: true,
-        data: userDungeonAbilities.map((ua) => ua.ability),
+        data: {
+          abilities: userDungeonAbilities.map((ua) => ua.ability),
+          diceColorset: userDungeonAbilities[0]?.user.diceColorset || null,
+        },
       });
     } catch (error) {
       logger.error("Failed to get user dungeon abilities: " + error);

@@ -12,7 +12,7 @@ import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";
 import BinaryJack from "./BinaryJack";
 import { securePostClient } from "@/lib/secureFetchClient";
-import { FinishGameResponse, StartGameResponse } from "./types";
+import { FinishGameResponse, GameUser, StartGameResponse } from "./types";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -55,16 +55,7 @@ function a11yProps(gameName: string) {
   };
 }
 
-function GameTabs({
-  user,
-}: {
-  user: {
-    id: string;
-    arenaTokens: number;
-    access: $Enums.Access[];
-    gold: number;
-  };
-}) {
+function GameTabs({ user }: { user: GameUser }) {
   const [tab, setTab] = useState<string>("TypeQuest");
   const [score, setScore] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
@@ -254,6 +245,7 @@ function GameTabs({
             gameEnabled={gameEnabled}
             setGameEnabled={setGameEnabled}
             handleFinishGame={handleFinishGame}
+            diceColorset={user.diceColorset}
             gameId={gameId}
             userGold={user.gold} // Pass user's gold to BinaryJack
           />

@@ -17,6 +17,7 @@ export const getGameUser = [
         select: {
           id: true,
           arenaTokens: true,
+          diceColorset: true,
           access: true,
           gold: true,
         },

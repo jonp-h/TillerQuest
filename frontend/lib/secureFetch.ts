@@ -56,6 +56,7 @@ function validateUrl(url: string): void {
       process.env.NODE_ENV === "production" &&
       parsedUrl.protocol !== "https:"
     ) {
+      console.warn(`Insecure request blocked to URL: ${fullUrl}`);
       throw new Error("Only HTTPS requests are allowed in production");
     }
 

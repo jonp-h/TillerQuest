@@ -151,6 +151,7 @@ enum ShopItemType {
   Title
   Badge
   Object
+  DiceColorset
 }
 
 enum UploadStatus {
@@ -179,13 +180,15 @@ model User {
   manaMax  Int      @default(40)
   lastMana DateTime @default(now()) // Last time user received mana in ISO 8601 date-time format.
 
-  gemstones   Int        @default(1) // TODO: consider setting to 2 for new users
-  gold        Int        @default(0)
-  arenaTokens Int        @default(0)
-  special     String[] // notes and other information
-  access      Access[] // m-n relation to access.
-  inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
-  games       Game[] // m-n relation to games. A user can have many games
+  gemstones   Int @default(1) // TODO: consider setting to 2 for new users
+  gold        Int @default(0)
+  arenaTokens Int @default(0)
+
+  diceColorset String?
+  special      String[] // notes and other information
+  access       Access[] // m-n relation to access.
+  inventory    ShopItem[] // m-n relation to shop items. A user can own many shop items
+  games        Game[] // m-n relation to games. A user can have many games
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 

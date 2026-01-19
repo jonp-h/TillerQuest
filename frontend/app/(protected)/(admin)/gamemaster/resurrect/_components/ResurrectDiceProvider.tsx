@@ -1,5 +1,5 @@
 "use client";
-import { diceSettings } from "@/lib/diceSettings";
+import { colorsets, diceSettings } from "@/lib/diceSettings";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -27,6 +27,11 @@ export default function ResurrectDiceProvider({
     const timer = setTimeout(async () => {
       try {
         const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+        newDiceBox.updateConfig({
+          theme_customColorset: {
+            ...colorsets["necrotic"],
+          },
+        });
         await newDiceBox.initialize();
         setDiceBox(newDiceBox);
         setIsReady(true);

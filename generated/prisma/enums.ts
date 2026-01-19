@@ -166,7 +166,8 @@ export type Rarity = (typeof Rarity)[keyof typeof Rarity]
 export const ShopItemType = {
   Title: 'Title',
   Badge: 'Badge',
-  Object: 'Object'
+  Object: 'Object',
+  DiceColorset: 'DiceColorset'
 } as const
 
 export type ShopItemType = (typeof ShopItemType)[keyof typeof ShopItemType]

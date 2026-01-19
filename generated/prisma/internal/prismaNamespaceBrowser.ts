@@ -112,6 +112,7 @@ export const UserScalarFieldEnum = {
   gemstones: 'gemstones',
   gold: 'gold',
   arenaTokens: 'arenaTokens',
+  diceColorset: 'diceColorset',
   special: 'special',
   access: 'access',
   guildName: 'guildName',

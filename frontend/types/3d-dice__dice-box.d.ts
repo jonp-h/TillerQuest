@@ -1,3 +1,42 @@
+type texture =
+  | "cloudy"
+  | "cloudy_2"
+  | "fire"
+  | "marble"
+  | "water"
+  | "ice"
+  | "paper"
+  | "speckles"
+  | "glitter"
+  | "glitter_2"
+  | "stars"
+  | "stainedglass"
+  | "wood"
+  | "metal"
+  | "leopard"
+  | "tiger"
+  | "cheetah"
+  | "dragon"
+  | "lizard"
+  | "astral"
+  | "bronze01"
+  | "bronze02"
+  | "bronze03"
+  | "bronze03a"
+  | "bronze03b"
+  | "bronze04"
+  | "skulls"
+  | "bird"
+  | "none";
+
+interface diceColorset {
+  foreground: string | string[];
+  background: string | string[];
+  edge?: string | string[];
+  outline?: string | string[];
+  texture?: texture | texture[];
+}
+
 interface DiceSettings {
   framerate?: number; // 1 / 60
   sounds?: boolean;
@@ -7,39 +46,13 @@ interface DiceSettings {
   shadows?: boolean;
   theme_surface?: string;
   assetPath?: string;
-  theme_customColorset?: // | (typeof colorsets)[keyof typeof colorsets]
-  {
+  theme_customColorset?: {
+    // | (typeof colorsets)[keyof typeof colorsets]
     background?: string | string[];
-    foreground?: string;
-    outline?: string;
-    texture?:
-      | "cloudy"
-      | "cloudy_2"
-      | "fire"
-      | "marble"
-      | "water"
-      | "ice"
-      | "paper"
-      | "speckles"
-      | "glitter"
-      | "glitter_2"
-      | "stars"
-      | "stainedglass"
-      | "wood"
-      | "metal"
-      | "leopard"
-      | "tiger"
-      | "cheetah"
-      | "dragon"
-      | "lizard"
-      | "astral"
-      | "bronze01"
-      | "bronze02"
-      | "bronze03"
-      | "bronze03a"
-      | "bronze03b"
-      | "bronze04"
-      | "none";
+    foreground?: string | string[];
+    edge?: string | string[];
+    outline?: string | string[];
+    texture?: texture | texture[];
     material?: "metal" | "glass" | "plastic" | "wood";
   };
   light_intensity?: number;
