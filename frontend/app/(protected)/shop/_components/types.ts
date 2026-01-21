@@ -5,6 +5,8 @@ export type UserInventory = Prisma.UserGetPayload<{
     id: true;
     title: true;
     class: true;
+    diceColorset: true;
+    gemstones: true;
     gold: true;
     level: true;
     inventory: true;

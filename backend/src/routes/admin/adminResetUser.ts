@@ -19,6 +19,14 @@ export const adminResetUser = [
         select: {
           id: true,
           mana: true,
+          inventory: {
+            where: {
+              currency: "GEMSTONES",
+            },
+            select: {
+              price: true,
+            },
+          },
           abilities: {
             select: {
               id: true,
@@ -39,8 +47,14 @@ export const adminResetUser = [
       // ------- The following can be made into a function ------
 
       let totalGemstoneCost = 0;
+      // Calculate total gemstone cost of owned abilities
       for (const ability of user.abilities) {
         totalGemstoneCost += ability.ability.gemstoneCost;
+      }
+
+      // Calculate total gemstone cost of owned shop items
+      for (const shopItem of user.inventory) {
+        totalGemstoneCost += shopItem.price;
       }
 
       await db.user.update({

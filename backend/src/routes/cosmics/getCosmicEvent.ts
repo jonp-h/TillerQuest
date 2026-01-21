@@ -33,9 +33,9 @@ export const getCosmicEvent = [
       });
 
       if (!cosmic) {
-        res.status(404).json({
-          success: false,
-          error: "No cosmic event found",
+        res.json({
+          success: true,
+          data: null,
         });
         return;
       }

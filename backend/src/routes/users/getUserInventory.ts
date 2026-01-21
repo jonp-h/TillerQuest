@@ -20,6 +20,8 @@ export const getUserInventory = [
           title: true,
           class: true,
           gold: true,
+          diceColorset: true,
+          gemstones: true,
           level: true,
           inventory: true,
           special: true,

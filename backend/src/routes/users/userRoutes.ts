@@ -60,7 +60,7 @@ router.get("/users/:userId/turns", getUserTurns);
 
 router.get("/users/:userId/inventory", getUserInventory);
 router.post("/users/:userId/inventory", purchaseItem);
-router.patch("/users/:userId/equipment", equipItem);
+router.patch("/users/:userId/equip", equipItem);
 
 // User ability routes
 router.get("/users/:userId/abilities", getUserAbilities);

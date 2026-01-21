@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import AbilityUserSelect from "./AbilityUserSelect";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
-import { diceSettings } from "@/lib/diceSettings";
+import { diceSettings, colorsets } from "@/lib/diceSettings";
 import { GuildMember, PurchaseAbilityResponse } from "./interfaces";
 import { BaseUser } from "@/types/users";
 import { securePostClient } from "@/lib/secureFetchClient";
@@ -50,6 +50,12 @@ export default function AbilityForm({
   const initializeDiceBox = async () => {
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+      user.diceColorset &&
+        newDiceBox.updateConfig({
+          theme_customColorset: {
+            ...colorsets[user.diceColorset],
+          },
+        });
       await newDiceBox.initialize();
       setDiceBox(newDiceBox);
     } catch (error) {

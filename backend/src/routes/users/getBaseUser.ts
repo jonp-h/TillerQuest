@@ -20,6 +20,7 @@ export const getBaseUser = [
           titleRarity: true,
           username: true,
           image: true,
+          diceColorset: true,
           gemstones: true,
           mana: true,
           manaMax: true,

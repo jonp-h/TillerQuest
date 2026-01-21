@@ -24,8 +24,6 @@ export const applyBinaryOperation = [
       const gameId = req.params.gameId;
       const { operation } = req.body;
 
-      console.log("Applying operation:", operation);
-
       const game = await db.game.findUnique({
         where: {
           id: gameId,
@@ -56,8 +54,6 @@ export const applyBinaryOperation = [
       if (targetNumber === undefined) {
         throw new ErrorMessage("Game not properly initialized");
       }
-
-      console.log("metadata", metadata);
 
       // validate if diceValue exists in metadata
       if (rolledValue === undefined || rolledValue === null) {

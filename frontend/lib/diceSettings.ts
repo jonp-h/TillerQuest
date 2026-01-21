@@ -1,71 +1,128 @@
-export const oldDiceSettings = {
-  container: "#dice-canvas", // required
-  assetPath: "/assets/", // required
-  themeColor: "#581c87",
-  scale: 6,
-  gravity: 0.5,
-  restitution: 0.3,
-  settleTimeout: 6000,
+// export const oldDiceSettings = {
+//   container: "#dice-canvas", // required
+//   assetPath: "/assets/", // required
+//   themeColor: "#581c87",
+//   scale: 6,
+//   gravity: 0.5,
+//   restitution: 0.3,
+//   settleTimeout: 6000,
+// };
+
+export const diceSettings: DiceSettings = {
+  framerate: 1 / 60, // 60fps
+  sounds: false,
+  color_spotlight: "#ffffff",
+  shadows: true,
+  theme_customColorset: {
+    background: "#ffffff",
+    foreground: "#000000",
+    outline: "black",
+    texture: "none",
+    material: "plastic",
+    edge: "black",
+  },
+  assetPath: "/assets/",
+  light_intensity: 0.7,
+  gravity_multiplier: 200,
+  baseScale: 150,
+  strength: 2, // toss strength of dice
 };
 
-export const colorsets = {
-  coin_default: {
-    name: "Gold Coin",
-    description: "Gold Dragonhead Coin",
-    category: "Other",
-    foreground: "#f6c928",
-    background: "#f6c928",
-    outline: "none",
-    texture: "metal",
+export const colorsets: { [key: string]: diceColorset } = {
+  Default: {
+    background: "#ffffff",
+    foreground: "#000000",
+    outline: "black",
+    texture: "none",
+    edge: "black",
   },
-  coin_silver: {
-    name: "Silver Coin",
-    description: "Gold Dragonhead Coin",
-    category: "Other",
-    foreground: "#f6c928",
-    background: "#f6c928",
-    outline: "none",
-    texture: "metal",
+  // blue
+  Wizard: {
+    foreground: "#70C8FF",
+    background: "#003366",
+    outline: "black",
+    texture: "marble",
+    edge: "#0055AA",
   },
-  radiant: {
-    name: "Radiant",
-    category: "Damage Types",
-    foreground: "#F9B333",
-    background: "#FFFFFF",
-    outline: "",
+  Warlock: {
+    foreground: "#FF5959",
+    background: "#900000",
+    outline: "black",
+    texture: "marble",
+    edge: "#CE3900",
+  },
+  // orange black
+  Barbarian: {
+    foreground: "#ffffff",
+    background: "#331900",
+    outline: "black",
+    texture: "fire",
+  },
+  Fighter: {
+    foreground: "#ffffff",
+    background: "#421407",
+    outline: "black",
+    texture: "wood",
+  },
+  Druid: {
+    foreground: "#FFCC40",
+    background: "#003300",
+    outline: "black",
+    texture: "metal",
+    edge: "#007700",
+  },
+  Bard: {
+    foreground: ["#ffffff", "#000000"],
+    background: ["#cc0000", "#ffffff"],
+    outline: "black",
     texture: "paper",
-    description: "Radiant",
+    edge: "black",
   },
-  fire: {
-    name: "Fire",
-    category: "Damage Types",
+  Black_Sun: {
+    foreground: "#FFCC40",
+    background: "#000000",
+    outline: "black",
+    texture: "metal",
+    edge: "#FF7B00",
+  },
+  Coin: {
+    foreground: "#f6e27f",
+    background: "#f6c928",
+    // edge: "#b8860b",
+    // outline: "#ffffff",
+    texture: "metal",
+  },
+  Silver: {
+    foreground: "#c0c0c0",
+    background: "#ffffff",
+    outline: "none",
+    texture: "metal",
+  },
+  Hollow: {
+    foreground: "#ffffff",
+    background: "#ffffff",
+    outline: "black",
+    texture: "stars",
+  },
+  Fire: {
     foreground: "#f8d84f",
     background: ["#f8d84f", "#f9b02d", "#f43c04", "#910200", "#4c1009"],
     outline: "black",
     texture: "fire",
-    description: "Fire",
   },
-  ice: {
-    name: "Ice",
-    category: "Damage Types",
+  Ice: {
     foreground: "#60E9FF",
     background: ["#214fa3", "#3c6ac1", "#253f70", "#0b56e2", "#09317a"],
     outline: "black",
     texture: "ice",
-    description: "Ice",
   },
-  poison: {
-    name: "Poison",
-    category: "Damage Types",
+  Poison: {
     foreground: "#D6A8FF",
     background: ["#313866", "#504099", "#66409e", "#934fc3", "#c949fc"],
     outline: "black",
     texture: "cloudy",
-    description: "Poison",
   },
-  acid: {
-    name: "Acid",
-    category: "Damage Types",
+  Acid: {
     foreground: "#A9FF70",
     background: [
       "#a6ff00",
@@ -77,47 +134,32 @@ export const colorsets = {
     ],
     outline: "black",
     texture: "marble",
-    description: "Acid",
   },
-  thunder: {
-    name: "Thunder",
-    category: "Damage Types",
+  Thunder: {
     foreground: "#FFC500",
     background: "#7D7D7D",
     outline: "black",
     texture: "cloudy",
-    description: "Thunder",
   },
-  lightning: {
-    name: "Lightning",
-    category: "Damage Types",
+  Lightning: {
     foreground: "#FFC500",
     background: ["#f17105", "#f3ca40", "#eddea4", "#df9a57", "#dea54b"],
     outline: "#7D7D7D",
     texture: "ice",
-    description: "Lightning",
   },
-  air: {
-    name: "Air",
-    category: "Damage Types",
+  Ghost: {
     foreground: "#ffffff",
     background: ["#d0e5ea", "#c3dee5", "#a4ccd6", "#8dafb7", "#80a4ad"],
     outline: "black",
     texture: "cloudy",
-    description: "Air",
   },
-  water: {
-    name: "Water",
-    category: "Damage Types",
+  Water: {
     foreground: "#60E9FF",
     background: ["#87b8c4", "#77a6b2", "#6b98a3", "#5b8691", "#4b757f"],
     outline: "black",
     texture: "water",
-    description: "Water",
   },
-  earth: {
-    name: "Earth",
-    category: "Damage Types",
+  Earth: {
     foreground: "#6C9943",
     background: [
       "#346804",
@@ -131,20 +173,14 @@ export const colorsets = {
     ],
     outline: "black",
     texture: "speckles",
-    description: "Earth",
   },
-  force: {
-    name: "Force",
-    category: "Damage Types",
+  Force: {
     foreground: "white",
     background: ["#FF97FF", "#FF68FF", "#C651C6"],
     outline: "#570000",
     texture: "stars",
-    description: "Force",
   },
-  psychic: {
-    name: "Psychic",
-    category: "Damage Types",
+  Psychic: {
     foreground: "#D6A8FF",
     background: [
       "#313866",
@@ -156,75 +192,50 @@ export const colorsets = {
     ],
     outline: "black",
     texture: "speckles",
-    description: "Psychic",
   },
-  necrotic: {
-    name: "Necrotic",
-    category: "Damage Types",
+  Necrotic: {
     foreground: "#ffffff",
     background: "#6F0000",
     outline: "black",
     texture: "skulls",
-    description: "Necrotic",
   },
-  pinkdreams: {
-    name: "Pink Dreams",
-    category: "Custom Sets",
+  Pink_Dreams: {
     foreground: "white",
     background: ["#ff007c", "#df73ff", "#f400a1", "#df00ff", "#ff33cc"],
     outline: "#570000",
     texture: "skulls",
-    description: "Pink Dreams, for Ethan",
   },
-  inspired: {
-    name: "Inspired",
-    category: "Custom Sets",
-    foreground: "#FFD800",
+  Inspired: {
+    foreground: "#4C4C3E",
     background: "#C4C4B6",
-    outline: "#8E8E86",
-    texture: "none",
-    description: "Inspired, for Austin",
+    outline: "#ffffff",
+    texture: "bronze03b",
   },
-  bloodmoon: {
-    name: "Blood Moon",
-    category: "Custom Sets",
+  Bloodmoon: {
     foreground: "#CDB800",
     background: "#6F0000",
     outline: "black",
     texture: "marble",
-    description: "Blood Moon, for Jared",
   },
-  starynight: {
-    name: "Stary Night",
-    category: "Custom Sets",
-    foreground: "#4F708F",
+  Starry_Night: {
+    foreground: "#ffffff",
     background: ["#091636", "#233660", "#4F708F", "#8597AD", "#E2E2E2"],
-    outline: "white",
+    outline: "black",
     texture: "speckles",
-    description: "Stary Night, for Mai",
   },
-  glitterparty: {
-    name: "Glitter Party",
-    category: "Custom Sets",
+  Glitterparty: {
     foreground: "white",
     background: ["#FFB5F5", "#7FC9FF", "#A17FFF"],
     outline: "none",
     texture: "glitter",
-    description: "Glitter Party, for Austin",
   },
-  astralsea: {
-    name: "Astral Sea",
-    category: "Custom Sets",
+  Astral_Sea: {
     foreground: "#565656",
     background: "white",
     outline: "none",
     texture: "astral",
-    description: "The Astral Sea, for Austin",
   },
-  bronze: {
-    name: "Thylean Bronze",
-    description: "Thylean Bronze by @SpencerThayer",
-    category: "Custom Sets",
+  Bronze: {
     foreground: ["#FF9159", "#FFB066", "#FFBF59", "#FFD059"],
     background: ["#705206", "#7A4E06", "#643100", "#7A2D06"],
     outline: ["#3D2D03", "#472D04", "#301700", "#471A04"],
@@ -238,9 +249,7 @@ export const colorsets = {
       "bronze04",
     ],
   },
-  dragons: {
-    name: "Here be Dragons",
-    category: "Custom Sets",
+  Dragons: {
     foreground: "#FFFFFF",
     // 			[ red,       black,     blue,      green      white      gold,      silver,    bronze,    copper     brass
     background: [
@@ -257,11 +266,8 @@ export const colorsets = {
     ],
     outline: "black",
     texture: ["dragon", "lizard"],
-    description: "Here be Dragons",
   },
-  birdup: {
-    name: "Bird Up",
-    category: "Custom Sets",
+  Birdup: {
     foreground: "#FFFFFF",
     background: [
       "#F11602",
@@ -276,20 +282,14 @@ export const colorsets = {
     ],
     outline: "black",
     texture: "bird",
-    description: "Bird Up!",
   },
-  tigerking: {
-    name: "Tiger King",
-    category: "Other",
+  Tiger_King: {
     foreground: "#ffffff",
     background: "#FFCC40",
     outline: "black",
     texture: ["leopard", "tiger", "cheetah"],
-    description: "Leopard Print",
   },
-  rainbow: {
-    name: "Rainblow",
-    category: "Colors",
+  Rainbow: {
     foreground: [
       "#FF5959",
       "#FFA74F",
@@ -309,44 +309,24 @@ export const colorsets = {
       "#A500A5",
     ],
     outline: "black",
-    texture: "none",
-    description: "Rainblow",
+    texture: "metal",
   },
-  black: {
-    name: "Black",
-    category: "Colors",
+  Kuro: {
     foreground: "#ffffff",
     background: "#000000",
     outline: "black",
-    texture: "none",
-    description: "Black",
+    texture: "ice",
   },
-  white: {
-    name: "White",
-    category: "Colors",
+  Shiro: {
     foreground: "#000000",
     background: "#FFFFFF",
     outline: "#FFFFFF",
-    texture: "none",
-    description: "White",
+    texture: "ice",
   },
-};
-
-export const diceSettings: DiceSettings = {
-  framerate: 1 / 60, // 60fps
-  sounds: false,
-  color_spotlight: "#ffffff",
-  shadows: true,
-  theme_customColorset: {
-    background: "#581c87",
-    foreground: "#ffffff",
-    outline: "black",
-    texture: "marble",
-    material: "plastic",
+  Primordial: {
+    foreground: "#000000",
+    background: ["#FFFFFF"],
+    outline: "#ffffff",
+    texture: "skulls",
   },
-  assetPath: "/assets/",
-  light_intensity: 0.7,
-  gravity_multiplier: 200,
-  baseScale: 150,
-  strength: 2, // toss strength of dice
 };

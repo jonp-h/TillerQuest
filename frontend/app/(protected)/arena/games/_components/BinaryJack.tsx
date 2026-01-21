@@ -1,5 +1,5 @@
 "use client";
-import { diceSettings } from "@/lib/diceSettings";
+import { colorsets, diceSettings } from "@/lib/diceSettings";
 import { securePostClient } from "@/lib/secureFetchClient";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { Button, Divider, Input, Paper } from "@mui/material";
@@ -19,12 +19,14 @@ function BinaryJack({
   gameEnabled,
   setGameEnabled,
   handleFinishGame,
+  diceColorset,
   gameId,
   userGold,
 }: {
   gameEnabled: boolean;
   setGameEnabled: (enabled: boolean) => void;
   handleFinishGame: () => void;
+  diceColorset: string | null;
   gameId: string | null;
   userGold: number;
 }) {
@@ -46,6 +48,12 @@ function BinaryJack({
   const initializeDiceBox = async () => {
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+      diceColorset &&
+        newDiceBox.updateConfig({
+          theme_customColorset: {
+            ...colorsets[diceColorset],
+          },
+        });
       await newDiceBox.initialize();
       setDiceBox(newDiceBox);
     } catch (error) {

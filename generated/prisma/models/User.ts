@@ -73,6 +73,7 @@ export type UserMinAggregateOutputType = {
   gemstones: number | null
   gold: number | null
   arenaTokens: number | null
+  diceColorset: string | null
   guildName: string | null
   role: $Enums.UserRole | null
   publicHighscore: boolean | null
@@ -104,6 +105,7 @@ export type UserMaxAggregateOutputType = {
   gemstones: number | null
   gold: number | null
   arenaTokens: number | null
+  diceColorset: string | null
   guildName: string | null
   role: $Enums.UserRole | null
   publicHighscore: boolean | null
@@ -135,6 +137,7 @@ export type UserCountAggregateOutputType = {
   gemstones: number
   gold: number
   arenaTokens: number
+  diceColorset: number
   special: number
   access: number
   guildName: number
@@ -196,6 +199,7 @@ export type UserMinAggregateInputType = {
   gemstones?: true
   gold?: true
   arenaTokens?: true
+  diceColorset?: true
   guildName?: true
   role?: true
   publicHighscore?: true
@@ -227,6 +231,7 @@ export type UserMaxAggregateInputType = {
   gemstones?: true
   gold?: true
   arenaTokens?: true
+  diceColorset?: true
   guildName?: true
   role?: true
   publicHighscore?: true
@@ -258,6 +263,7 @@ export type UserCountAggregateInputType = {
   gemstones?: true
   gold?: true
   arenaTokens?: true
+  diceColorset?: true
   special?: true
   access?: true
   guildName?: true
@@ -378,6 +384,7 @@ export type UserGroupByOutputType = {
   gemstones: number
   gold: number
   arenaTokens: number
+  diceColorset: string | null
   special: string[]
   access: $Enums.Access[]
   guildName: string | null
@@ -434,6 +441,7 @@ export type UserWhereInput = {
   gemstones?: Prisma.IntFilter<"User"> | number
   gold?: Prisma.IntFilter<"User"> | number
   arenaTokens?: Prisma.IntFilter<"User"> | number
+  diceColorset?: Prisma.StringNullableFilter<"User"> | string | null
   special?: Prisma.StringNullableListFilter<"User">
   access?: Prisma.EnumAccessNullableListFilter<"User">
   guildName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -480,6 +488,7 @@ export type UserOrderByWithRelationInput = {
   gemstones?: Prisma.SortOrder
   gold?: Prisma.SortOrder
   arenaTokens?: Prisma.SortOrder
+  diceColorset?: Prisma.SortOrderInput | Prisma.SortOrder
   special?: Prisma.SortOrder
   access?: Prisma.SortOrder
   guildName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -530,6 +539,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   gemstones?: Prisma.IntFilter<"User"> | number
   gold?: Prisma.IntFilter<"User"> | number
   arenaTokens?: Prisma.IntFilter<"User"> | number
+  diceColorset?: Prisma.StringNullableFilter<"User"> | string | null
   special?: Prisma.StringNullableListFilter<"User">
   access?: Prisma.EnumAccessNullableListFilter<"User">
   guildName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -575,6 +585,7 @@ export type UserOrderByWithAggregationInput = {
   gemstones?: Prisma.SortOrder
   gold?: Prisma.SortOrder
   arenaTokens?: Prisma.SortOrder
+  diceColorset?: Prisma.SortOrderInput | Prisma.SortOrder
   special?: Prisma.SortOrder
   access?: Prisma.SortOrder
   guildName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -616,6 +627,7 @@ export type UserScalarWhereWithAggregatesInput = {
   gemstones?: Prisma.IntWithAggregatesFilter<"User"> | number
   gold?: Prisma.IntWithAggregatesFilter<"User"> | number
   arenaTokens?: Prisma.IntWithAggregatesFilter<"User"> | number
+  diceColorset?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   special?: Prisma.StringNullableListFilter<"User">
   access?: Prisma.EnumAccessNullableListFilter<"User">
   guildName?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -649,6 +661,7 @@ export type UserCreateInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -694,6 +707,7 @@ export type UserUncheckedCreateInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -739,6 +753,7 @@ export type UserUpdateInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -784,6 +799,7 @@ export type UserUncheckedUpdateInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -829,6 +845,7 @@ export type UserCreateManyInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -862,6 +879,7 @@ export type UserUpdateManyMutationInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -894,6 +912,7 @@ export type UserUncheckedUpdateManyInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -943,6 +962,7 @@ export type UserCountOrderByAggregateInput = {
   gemstones?: Prisma.SortOrder
   gold?: Prisma.SortOrder
   arenaTokens?: Prisma.SortOrder
+  diceColorset?: Prisma.SortOrder
   special?: Prisma.SortOrder
   access?: Prisma.SortOrder
   guildName?: Prisma.SortOrder
@@ -989,6 +1009,7 @@ export type UserMaxOrderByAggregateInput = {
   gemstones?: Prisma.SortOrder
   gold?: Prisma.SortOrder
   arenaTokens?: Prisma.SortOrder
+  diceColorset?: Prisma.SortOrder
   guildName?: Prisma.SortOrder
   role?: Prisma.SortOrder
   publicHighscore?: Prisma.SortOrder
@@ -1020,6 +1041,7 @@ export type UserMinOrderByAggregateInput = {
   gemstones?: Prisma.SortOrder
   gold?: Prisma.SortOrder
   arenaTokens?: Prisma.SortOrder
+  diceColorset?: Prisma.SortOrder
   guildName?: Prisma.SortOrder
   role?: Prisma.SortOrder
   publicHighscore?: Prisma.SortOrder
@@ -1406,6 +1428,7 @@ export type UserCreateWithoutGuildInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -1450,6 +1473,7 @@ export type UserUncheckedCreateWithoutGuildInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -1523,6 +1547,7 @@ export type UserScalarWhereInput = {
   gemstones?: Prisma.IntFilter<"User"> | number
   gold?: Prisma.IntFilter<"User"> | number
   arenaTokens?: Prisma.IntFilter<"User"> | number
+  diceColorset?: Prisma.StringNullableFilter<"User"> | string | null
   special?: Prisma.StringNullableListFilter<"User">
   access?: Prisma.EnumAccessNullableListFilter<"User">
   guildName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1556,6 +1581,7 @@ export type UserCreateWithoutImageUploadsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -1600,6 +1626,7 @@ export type UserUncheckedCreateWithoutImageUploadsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -1649,6 +1676,7 @@ export type UserCreateWithoutImageReviewsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -1693,6 +1721,7 @@ export type UserUncheckedCreateWithoutImageReviewsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -1753,6 +1782,7 @@ export type UserUpdateWithoutImageUploadsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1797,6 +1827,7 @@ export type UserUncheckedUpdateWithoutImageUploadsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1852,6 +1883,7 @@ export type UserUpdateWithoutImageReviewsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1896,6 +1928,7 @@ export type UserUncheckedUpdateWithoutImageReviewsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1940,6 +1973,7 @@ export type UserCreateWithoutAbilitiesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -1984,6 +2018,7 @@ export type UserUncheckedCreateWithoutAbilitiesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2044,6 +2079,7 @@ export type UserUpdateWithoutAbilitiesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2088,6 +2124,7 @@ export type UserUncheckedUpdateWithoutAbilitiesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2132,6 +2169,7 @@ export type UserCreateWithoutPassivesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2176,6 +2214,7 @@ export type UserUncheckedCreateWithoutPassivesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2236,6 +2275,7 @@ export type UserUpdateWithoutPassivesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2280,6 +2320,7 @@ export type UserUncheckedUpdateWithoutPassivesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2324,6 +2365,7 @@ export type UserCreateWithoutInventoryInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2368,6 +2410,7 @@ export type UserUncheckedCreateWithoutInventoryInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2433,6 +2476,7 @@ export type UserCreateWithoutWishVotesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2477,6 +2521,7 @@ export type UserUncheckedCreateWithoutWishVotesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2537,6 +2582,7 @@ export type UserUpdateWithoutWishVotesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2581,6 +2627,7 @@ export type UserUncheckedUpdateWithoutWishVotesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2625,6 +2672,7 @@ export type UserCreateWithoutLogsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2669,6 +2717,7 @@ export type UserUncheckedCreateWithoutLogsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2729,6 +2778,7 @@ export type UserUpdateWithoutLogsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2773,6 +2823,7 @@ export type UserUncheckedUpdateWithoutLogsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2817,6 +2868,7 @@ export type UserCreateWithoutReadMessagesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2861,6 +2913,7 @@ export type UserUncheckedCreateWithoutReadMessagesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -2926,6 +2979,7 @@ export type UserCreateWithoutGamesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -2970,6 +3024,7 @@ export type UserUncheckedCreateWithoutGamesInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -3030,6 +3085,7 @@ export type UserUpdateWithoutGamesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3074,6 +3130,7 @@ export type UserUncheckedUpdateWithoutGamesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3118,6 +3175,7 @@ export type UserCreateWithoutAnalyticsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -3162,6 +3220,7 @@ export type UserUncheckedCreateWithoutAnalyticsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -3222,6 +3281,7 @@ export type UserUpdateWithoutAnalyticsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3266,6 +3326,7 @@ export type UserUncheckedUpdateWithoutAnalyticsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3310,6 +3371,7 @@ export type UserCreateWithoutAccountsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -3354,6 +3416,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -3414,6 +3477,7 @@ export type UserUpdateWithoutAccountsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3458,6 +3522,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3502,6 +3567,7 @@ export type UserCreateWithoutSessionsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -3546,6 +3612,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   guildName?: string | null
@@ -3606,6 +3673,7 @@ export type UserUpdateWithoutSessionsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3650,6 +3718,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3694,6 +3763,7 @@ export type UserCreateManyGuildInput = {
   gemstones?: number
   gold?: number
   arenaTokens?: number
+  diceColorset?: string | null
   special?: Prisma.UserCreatespecialInput | string[]
   access?: Prisma.UserCreateaccessInput | $Enums.Access[]
   role?: $Enums.UserRole
@@ -3726,6 +3796,7 @@ export type UserUpdateWithoutGuildInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3770,6 +3841,7 @@ export type UserUncheckedUpdateWithoutGuildInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3814,6 +3886,7 @@ export type UserUncheckedUpdateManyWithoutGuildInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3846,6 +3919,7 @@ export type UserUpdateWithoutInventoryInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -3890,6 +3964,7 @@ export type UserUncheckedUpdateWithoutInventoryInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3934,6 +4009,7 @@ export type UserUncheckedUpdateManyWithoutInventoryInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3967,6 +4043,7 @@ export type UserUpdateWithoutReadMessagesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -4011,6 +4088,7 @@ export type UserUncheckedUpdateWithoutReadMessagesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4055,6 +4133,7 @@ export type UserUncheckedUpdateManyWithoutReadMessagesInput = {
   gemstones?: Prisma.IntFieldUpdateOperationsInput | number
   gold?: Prisma.IntFieldUpdateOperationsInput | number
   arenaTokens?: Prisma.IntFieldUpdateOperationsInput | number
+  diceColorset?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   special?: Prisma.UserUpdatespecialInput | string[]
   access?: Prisma.UserUpdateaccessInput | $Enums.Access[]
   guildName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4218,6 +4297,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   gemstones?: boolean
   gold?: boolean
   arenaTokens?: boolean
+  diceColorset?: boolean
   special?: boolean
   access?: boolean
   guildName?: boolean
@@ -4265,6 +4345,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   gemstones?: boolean
   gold?: boolean
   arenaTokens?: boolean
+  diceColorset?: boolean
   special?: boolean
   access?: boolean
   guildName?: boolean
@@ -4299,6 +4380,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   gemstones?: boolean
   gold?: boolean
   arenaTokens?: boolean
+  diceColorset?: boolean
   special?: boolean
   access?: boolean
   guildName?: boolean
@@ -4333,6 +4415,7 @@ export type UserSelectScalar = {
   gemstones?: boolean
   gold?: boolean
   arenaTokens?: boolean
+  diceColorset?: boolean
   special?: boolean
   access?: boolean
   guildName?: boolean
@@ -4345,7 +4428,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "username" | "lastname" | "title" | "titleRarity" | "schoolClass" | "class" | "image" | "turns" | "level" | "xp" | "hp" | "hpMax" | "mana" | "manaMax" | "lastMana" | "gemstones" | "gold" | "arenaTokens" | "special" | "access" | "guildName" | "role" | "publicHighscore" | "archiveConsent" | "email" | "emailVerified" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "username" | "lastname" | "title" | "titleRarity" | "schoolClass" | "class" | "image" | "turns" | "level" | "xp" | "hp" | "hpMax" | "mana" | "manaMax" | "lastMana" | "gemstones" | "gold" | "arenaTokens" | "diceColorset" | "special" | "access" | "guildName" | "role" | "publicHighscore" | "archiveConsent" | "email" | "emailVerified" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventory?: boolean | Prisma.User$inventoryArgs<ExtArgs>
   games?: boolean | Prisma.User$gamesArgs<ExtArgs>
@@ -4407,6 +4490,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     gemstones: number
     gold: number
     arenaTokens: number
+    diceColorset: string | null
     special: string[]
     access: $Enums.Access[]
     guildName: string | null
@@ -4873,6 +4957,7 @@ export interface UserFieldRefs {
   readonly gemstones: Prisma.FieldRef<"User", 'Int'>
   readonly gold: Prisma.FieldRef<"User", 'Int'>
   readonly arenaTokens: Prisma.FieldRef<"User", 'Int'>
+  readonly diceColorset: Prisma.FieldRef<"User", 'String'>
   readonly special: Prisma.FieldRef<"User", 'String[]'>
   readonly access: Prisma.FieldRef<"User", 'Access[]'>
   readonly guildName: Prisma.FieldRef<"User", 'String'>

@@ -355,6 +355,13 @@ export type EnumAbilityTypeNullableWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumAbilityTypeNullableFilter<$PrismaModel>
 }
 
+export type EnumShopItemCurrencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShopItemCurrency | Prisma.EnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel> | $Enums.ShopItemCurrency
+}
+
 export type EnumRarityFilter<$PrismaModel = never> = {
   equals?: $Enums.Rarity | Prisma.EnumRarityFieldRefInput<$PrismaModel>
   in?: $Enums.Rarity[] | Prisma.ListEnumRarityFieldRefInput<$PrismaModel>
@@ -367,6 +374,16 @@ export type EnumShopItemTypeFilter<$PrismaModel = never> = {
   in?: $Enums.ShopItemType[] | Prisma.ListEnumShopItemTypeFieldRefInput<$PrismaModel>
   notIn?: $Enums.ShopItemType[] | Prisma.ListEnumShopItemTypeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumShopItemTypeFilter<$PrismaModel> | $Enums.ShopItemType
+}
+
+export type EnumShopItemCurrencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShopItemCurrency | Prisma.EnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShopItemCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.ShopItemCurrency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel>
 }
 
 export type EnumRarityWithAggregatesFilter<$PrismaModel = never> = {
@@ -811,6 +828,13 @@ export type NestedEnumAbilityTypeNullableWithAggregatesFilter<$PrismaModel = nev
   _max?: Prisma.NestedEnumAbilityTypeNullableFilter<$PrismaModel>
 }
 
+export type NestedEnumShopItemCurrencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShopItemCurrency | Prisma.EnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel> | $Enums.ShopItemCurrency
+}
+
 export type NestedEnumRarityFilter<$PrismaModel = never> = {
   equals?: $Enums.Rarity | Prisma.EnumRarityFieldRefInput<$PrismaModel>
   in?: $Enums.Rarity[] | Prisma.ListEnumRarityFieldRefInput<$PrismaModel>
@@ -823,6 +847,16 @@ export type NestedEnumShopItemTypeFilter<$PrismaModel = never> = {
   in?: $Enums.ShopItemType[] | Prisma.ListEnumShopItemTypeFieldRefInput<$PrismaModel>
   notIn?: $Enums.ShopItemType[] | Prisma.ListEnumShopItemTypeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumShopItemTypeFilter<$PrismaModel> | $Enums.ShopItemType
+}
+
+export type NestedEnumShopItemCurrencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShopItemCurrency | Prisma.EnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShopItemCurrency[] | Prisma.ListEnumShopItemCurrencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShopItemCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.ShopItemCurrency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShopItemCurrencyFilter<$PrismaModel>
 }
 
 export type NestedEnumRarityWithAggregatesFilter<$PrismaModel = never> = {

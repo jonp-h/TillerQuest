@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { diceSettings } from "@/lib/diceSettings";
+import { colorsets, diceSettings } from "@/lib/diceSettings";
 import { toast } from "react-toastify";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import EnemyComponent from "./EnemyComponent";
@@ -18,11 +18,13 @@ function Battleground({
   abilities,
   enemies,
   userTurns,
+  diceColorset,
 }: AbilityGridProps & {
   abilities: Ability[];
   userId: string;
   enemies: GuildEnemy[];
   userTurns: number;
+  diceColorset: string | null;
 }) {
   const [diceBox, setDiceBox] = useState<DiceBox>();
   const [selectedEnemies, setSelectedEnemies] = useState<string[]>([]);
@@ -35,6 +37,12 @@ function Battleground({
   const initializeDiceBox = async () => {
     try {
       const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
+      diceColorset &&
+        newDiceBox.updateConfig({
+          theme_customColorset: {
+            ...colorsets[diceColorset],
+          },
+        });
       await newDiceBox.initialize();
       setDiceBox(newDiceBox);
     } catch (error) {
@@ -113,6 +121,7 @@ function Battleground({
         }}
         className="m-auto flex justify-evenly"
       >
+        {diceColorset}
         {enemies && enemies.length > 0 ? (
           enemies.every((enemy) => enemy.health <= 0) ? (
             <div className="absolute z-10 flex flex-col text-center gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">

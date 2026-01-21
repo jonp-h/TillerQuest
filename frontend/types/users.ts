@@ -36,6 +36,7 @@ export interface BaseUser {
   titleRarity: $Enums.Rarity | null;
   class: $Enums.Class | null;
   image: string | null;
+  diceColorset: string | null;
   hp: number;
   hpMax: number;
   mana: number;
