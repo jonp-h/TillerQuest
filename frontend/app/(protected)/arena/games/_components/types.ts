@@ -4,6 +4,7 @@ export type GameUser = Prisma.UserGetPayload<{
   select: {
     id: true;
     arenaTokens: true;
+    diceColorset: true;
     access: true;
     gold: true;
   };

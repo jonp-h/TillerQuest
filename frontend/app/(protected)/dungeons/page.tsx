@@ -6,10 +6,15 @@ import { Typography } from "@mui/material";
 import { secureGet } from "@/lib/secureFetch";
 import { Ability, GuildEnemy } from "@tillerquest/prisma/browser";
 
+interface AbilityResponse {
+  abilities: Ability[];
+  diceColorset: string | null;
+}
+
 async function DungeonPage() {
   const session = await redirectIfNotActiveUser();
 
-  const dungeonAbilities = await secureGet<Ability[]>(
+  const dungeonAbilitiesAndDiceColorset = await secureGet<AbilityResponse>(
     `/users/${session.user.id}/abilities/dungeon`,
   );
 
@@ -30,10 +35,19 @@ async function DungeonPage() {
       </Typography>{" "}
       {enemies ? (
         <Battleground
-          abilities={dungeonAbilities.ok ? dungeonAbilities.data : []}
+          abilities={
+            dungeonAbilitiesAndDiceColorset.ok
+              ? dungeonAbilitiesAndDiceColorset.data.abilities
+              : []
+          }
           userId={session.user.id}
           enemies={enemies.ok ? enemies.data : []}
           userTurns={userTurns.ok ? userTurns.data : 0}
+          diceColorset={
+            dungeonAbilitiesAndDiceColorset.ok
+              ? dungeonAbilitiesAndDiceColorset.data.diceColorset
+              : null
+          }
         />
       ) : (
         <Typography

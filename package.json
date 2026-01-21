@@ -14,7 +14,8 @@
     "commitlint": "commitlint --edit",
     "prepare": "husky",
     "dev": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run dev\"",
-    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run start\""
+    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run start\"",
+    "gen": "cd backend && npm run gen"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",

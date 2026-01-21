@@ -166,10 +166,19 @@ export type Rarity = (typeof Rarity)[keyof typeof Rarity]
 export const ShopItemType = {
   Title: 'Title',
   Badge: 'Badge',
-  Object: 'Object'
+  Object: 'Object',
+  DiceColorset: 'DiceColorset'
 } as const
 
 export type ShopItemType = (typeof ShopItemType)[keyof typeof ShopItemType]
+
+
+export const ShopItemCurrency = {
+  GOLD: 'GOLD',
+  GEMSTONES: 'GEMSTONES'
+} as const
+
+export type ShopItemCurrency = (typeof ShopItemCurrency)[keyof typeof ShopItemCurrency]
 
 
 export const UploadStatus = {

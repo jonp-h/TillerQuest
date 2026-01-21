@@ -151,6 +151,12 @@ enum ShopItemType {
   Title
   Badge
   Object
+  DiceColorset
+}
+
+enum ShopItemCurrency {
+  GOLD
+  GEMSTONES
 }
 
 enum UploadStatus {
@@ -179,13 +185,15 @@ model User {
   manaMax  Int      @default(40)
   lastMana DateTime @default(now()) // Last time user received mana in ISO 8601 date-time format.
 
-  gemstones   Int        @default(1) // TODO: consider setting to 2 for new users
-  gold        Int        @default(0)
-  arenaTokens Int        @default(0)
-  special     String[] // notes and other information
-  access      Access[] // m-n relation to access.
-  inventory   ShopItem[] // m-n relation to shop items. A user can own many shop items
-  games       Game[] // m-n relation to games. A user can have many games
+  gemstones   Int @default(1) // TODO: consider setting to 2 for new users
+  gold        Int @default(0)
+  arenaTokens Int @default(0)
+
+  diceColorset String?
+  special      String[] // notes and other information
+  access       Access[] // m-n relation to access.
+  inventory    ShopItem[] // m-n relation to shop items. A user can own many shop items
+  games        Game[] // m-n relation to games. A user can have many games
 
   abilities UserAbility[] // m-n relation to abilities. A user can have many abilities
 
@@ -376,17 +384,19 @@ model CosmicEvent {
 }
 
 model ShopItem {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  description String?
-  icon        String?
-  price       Int
-  rarity      Rarity       @default(Common)
-  type        ShopItemType
-  levelReq    Int?
-  classReq    Class?
-  specialReq  String?
-  users       User[] // m-n relation to users. An item can be owned by many users
+  id                Int              @id @default(autoincrement())
+  name              String           @unique
+  description       String?
+  icon              String?
+  price             Int
+  currency          ShopItemCurrency @default(GOLD)
+  rarity            Rarity           @default(Common)
+  type              ShopItemType
+  levelReq          Int?
+  classReq          Class?
+  specialReq        String?
+  gemstonesSpentReq Int? // Total gemstones spent required to purchase the item
+  users             User[] // m-n relation to users. An item can be owned by many users
 
   @@index([name])
   @@index([type])

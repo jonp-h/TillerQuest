@@ -1,7 +1,7 @@
 import MainContainer from "@/components/MainContainer";
 import ShopCard from "./_components/ShopCard";
 import { notFound } from "next/navigation";
-import { Circle, HelpOutline } from "@mui/icons-material";
+import { Circle, Diamond, HelpOutline } from "@mui/icons-material";
 import { Tooltip, Typography } from "@mui/material";
 import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 import RarityModal from "./_components/RarityModal";
@@ -19,6 +19,7 @@ async function Shop() {
 
   const shopBadges = await secureGet<ShopItem[]>("/items/badges");
   const shopTitles = await secureGet<ShopItem[]>("/items/titles");
+  const shopDices = await secureGet<ShopItem[]>("/items/dices");
   const shopObjects = await secureGet<ShopItem[]>("/items/objects");
   const user = await secureGet<UserInventory>(
     `/users/${session.user.id}/inventory`,
@@ -29,16 +30,6 @@ async function Shop() {
         <ErrorAlert message={user.error || "User not found."} />
       </MainContainer>
     );
-  }
-
-  if (!shopBadges.ok) {
-    throw new Error(shopBadges.error);
-  }
-  if (!shopTitles.ok) {
-    throw new Error(shopTitles.error);
-  }
-  if (!shopObjects.ok) {
-    throw new Error(shopObjects.error);
   }
 
   return (
@@ -82,27 +73,42 @@ async function Shop() {
         sx={{ marginTop: 3 }}
         align="center"
       >
-        You have {user.data.gold} <Circle htmlColor="gold" /> gold
+        You have {user.data.gold} <Circle htmlColor="gold" /> gold and{" "}
+        {user.data.gemstones} <Diamond htmlColor="gemstones" /> gemstones.
       </Typography>
       <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Badges
         </Typography>
-        {shopBadges.data.map((item) => (
-          <ShopCard key={item.name} user={user.data} item={item} />
-        ))}
+        {shopBadges.ok &&
+          shopBadges.data &&
+          shopBadges.data.map((item) => (
+            <ShopCard key={item.name} user={user.data} item={item} />
+          ))}
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Titles
         </Typography>
-        {shopTitles.data.map((item) => (
-          <ShopCard key={item.name} user={user.data} item={item} />
-        ))}
+        {shopTitles.ok &&
+          shopTitles.data &&
+          shopTitles.data.map((item) => (
+            <ShopCard key={item.name} user={user.data} item={item} />
+          ))}
+        <Typography variant="h4" className="col-span-3 text-center mb-4">
+          Dice Sets
+        </Typography>
+        {shopDices.ok &&
+          shopDices.data &&
+          shopDices.data.map((item) => (
+            <ShopCard key={item.name} user={user.data} item={item} />
+          ))}
         <Typography variant="h4" className="col-span-3 text-center mb-4">
           Objects
         </Typography>
-        {shopObjects.data.map((item) => (
-          <ShopCard key={item.name} user={user.data} item={item} />
-        ))}
+        {shopObjects.ok &&
+          shopObjects.data &&
+          shopObjects.data.map((item) => (
+            <ShopCard key={item.name} user={user.data} item={item} />
+          ))}
       </div>
     </MainContainer>
   );

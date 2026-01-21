@@ -60,7 +60,7 @@ export default async function InformationBox({
           </Link>
         </Paper>
       )}
-      {cosmic.ok && (
+      {cosmic.ok && cosmic.data && (
         <Paper
           elevation={4}
           className="m-3 p-5 flex flex-col gap-5 text-center justify-center"

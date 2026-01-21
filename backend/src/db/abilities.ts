@@ -16,7 +16,7 @@ interface Ability {
     | "Dungeon"
     | "Cosmic";
   type: // Abilities
-  | "Heal"
+    | "Heal"
     | "XP"
     | "Mana"
     | "Swap"
@@ -1293,16 +1293,16 @@ const bard: Ability[] = [
     duration: 7200, // 5 days
     icon: "Song-of-Inspiration.png",
     gemstoneCost: 4,
-    manaCost: 5,
+    manaCost: 6,
     healthCost: null,
     xpGiven: 480,
     diceNotation: null,
     value: 1,
     parentAbility: "Inspiration",
   },
-  // Base: 480 XP / 5 Mana = 96
-  // Duration penalty: -75% = 24
-  // Final: 24 efficiency
+  // Base: 480 XP / 6 Mana = 80
+  // Duration penalty: -75% = 20
+  // Final: 20 efficiency
   {
     id: 92,
     name: "Vicious-Mockery",
