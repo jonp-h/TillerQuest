@@ -22,8 +22,6 @@ function NotificationBox({ message, userId }: NotificationProps) {
       { messageId: message.id },
     );
 
-    console.log(JSON.stringify(result));
-
     if (result.ok) {
       toast.success(result.data);
     } else {

@@ -398,6 +398,9 @@ model ShopItem {
   gemstonesSpentReq Int? // Total gemstones spent required to purchase the item
   users             User[] // m-n relation to users. An item can be owned by many users
 
+  Quest   Quest?
+  questId Int?
+
   @@index([name])
   @@index([type])
 }
@@ -447,6 +450,18 @@ model Notification {
   createdAt DateTime @default(now())
 
   readers User[] @relation("ReadNotifications")
+}
+
+model Quest {
+  id           Int       @id @default(autoincrement())
+  name         String    @unique
+  description  String?
+  rewardXp     Int?
+  rewardGold   Int?
+  rewardItem   ShopItem? @relation(fields: [rewardItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rewardItemId Int?      @unique
+  questGiver   String
+  createdAt    DateTime  @default(now())
 }
 
 model Game {

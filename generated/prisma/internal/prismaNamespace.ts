@@ -398,6 +398,7 @@ export const ModelName = {
   WishVote: 'WishVote',
   Log: 'Log',
   Notification: 'Notification',
+  Quest: 'Quest',
   Game: 'Game',
   TypeQuestText: 'TypeQuestText',
   WordQuestWord: 'WordQuestWord',
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "guild" | "imageUpload" | "ability" | "enemy" | "guildEnemy" | "userAbility" | "userPassive" | "cosmicEvent" | "shopItem" | "wish" | "wishVote" | "log" | "notification" | "game" | "typeQuestText" | "wordQuestWord" | "analytics" | "account" | "session" | "applicationSettings" | "verification"
+    modelProps: "user" | "guild" | "imageUpload" | "ability" | "enemy" | "guildEnemy" | "userAbility" | "userPassive" | "cosmicEvent" | "shopItem" | "wish" | "wishVote" | "log" | "notification" | "quest" | "game" | "typeQuestText" | "wordQuestWord" | "analytics" | "account" | "session" | "applicationSettings" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1461,6 +1462,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Quest: {
+      payload: Prisma.$QuestPayload<ExtArgs>
+      fields: Prisma.QuestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.QuestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.QuestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        findFirst: {
+          args: Prisma.QuestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.QuestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        findMany: {
+          args: Prisma.QuestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>[]
+        }
+        create: {
+          args: Prisma.QuestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        createMany: {
+          args: Prisma.QuestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.QuestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>[]
+        }
+        delete: {
+          args: Prisma.QuestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        update: {
+          args: Prisma.QuestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        deleteMany: {
+          args: Prisma.QuestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.QuestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.QuestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>[]
+        }
+        upsert: {
+          args: Prisma.QuestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestPayload>
+        }
+        aggregate: {
+          args: Prisma.QuestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQuest>
+        }
+        groupBy: {
+          args: Prisma.QuestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.QuestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuestCountAggregateOutputType> | number
+        }
+      }
+    }
     Game: {
       payload: Prisma.$GamePayload<ExtArgs>
       fields: Prisma.GameFieldRefs
@@ -2270,7 +2345,8 @@ export const ShopItemScalarFieldEnum = {
   levelReq: 'levelReq',
   classReq: 'classReq',
   specialReq: 'specialReq',
-  gemstonesSpentReq: 'gemstonesSpentReq'
+  gemstonesSpentReq: 'gemstonesSpentReq',
+  questId: 'questId'
 } as const
 
 export type ShopItemScalarFieldEnum = (typeof ShopItemScalarFieldEnum)[keyof typeof ShopItemScalarFieldEnum]
@@ -2321,6 +2397,21 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const QuestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  rewardXp: 'rewardXp',
+  rewardGold: 'rewardGold',
+  rewardItemId: 'rewardItemId',
+  questGiver: 'questGiver',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuestScalarFieldEnum = (typeof QuestScalarFieldEnum)[keyof typeof QuestScalarFieldEnum]
 
 
 export const GameScalarFieldEnum = {
@@ -2837,6 +2928,7 @@ export type GlobalOmitConfig = {
   wishVote?: Prisma.WishVoteOmit
   log?: Prisma.LogOmit
   notification?: Prisma.NotificationOmit
+  quest?: Prisma.QuestOmit
   game?: Prisma.GameOmit
   typeQuestText?: Prisma.TypeQuestTextOmit
   wordQuestWord?: Prisma.WordQuestWordOmit

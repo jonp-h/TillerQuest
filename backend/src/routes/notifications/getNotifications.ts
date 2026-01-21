@@ -2,12 +2,12 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
-import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
+import { requireUserId } from "../../middleware/authMiddleware.js";
 import { validateParams } from "../../middleware/validationMiddleware.js";
 import { userIdParamSchema } from "utils/validators/validationUtils.js";
 
 export const getNotifications = [
-  requireUserIdAndActive(),
+  requireUserId(),
   validateParams(userIdParamSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {

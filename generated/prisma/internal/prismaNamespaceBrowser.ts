@@ -65,6 +65,7 @@ export const ModelName = {
   WishVote: 'WishVote',
   Log: 'Log',
   Notification: 'Notification',
+  Quest: 'Quest',
   Game: 'Game',
   TypeQuestText: 'TypeQuestText',
   WordQuestWord: 'WordQuestWord',
@@ -269,7 +270,8 @@ export const ShopItemScalarFieldEnum = {
   levelReq: 'levelReq',
   classReq: 'classReq',
   specialReq: 'specialReq',
-  gemstonesSpentReq: 'gemstonesSpentReq'
+  gemstonesSpentReq: 'gemstonesSpentReq',
+  questId: 'questId'
 } as const
 
 export type ShopItemScalarFieldEnum = (typeof ShopItemScalarFieldEnum)[keyof typeof ShopItemScalarFieldEnum]
@@ -320,6 +322,21 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const QuestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  rewardXp: 'rewardXp',
+  rewardGold: 'rewardGold',
+  rewardItemId: 'rewardItemId',
+  questGiver: 'questGiver',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuestScalarFieldEnum = (typeof QuestScalarFieldEnum)[keyof typeof QuestScalarFieldEnum]
 
 
 export const GameScalarFieldEnum = {

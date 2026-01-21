@@ -9,6 +9,7 @@ import itemRoutes from "./items/itemRoutes.js";
 import notificationRoutes from "./notifications/notificationRoutes.js";
 import logsRoutes from "./logsRoute/logRoutes.js";
 import cosmicRoutes from "./cosmics/cosmicRoutes.js";
+import questRoutes from "./quests/questRoutes.js";
 
 const routes = express.Router();
 
@@ -22,6 +23,7 @@ routes.use(itemRoutes);
 routes.use(gameRoutes);
 routes.use(guildRoutes);
 routes.use(abilityRoutes);
+routes.use(questRoutes);
 routes.use(adminRoutes);
 
 export default routes;
