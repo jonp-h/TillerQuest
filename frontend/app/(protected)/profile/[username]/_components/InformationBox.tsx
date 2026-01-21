@@ -4,7 +4,7 @@ import Link from "next/link";
 import { JSX } from "react";
 import { secureGet } from "@/lib/secureFetch";
 import { CosmicEvent, Notification } from "@tillerquest/prisma/browser";
-import NotificationBox from "./Notification";
+import NotificationBox from "../../../../../components/Notification";
 import ErrorAlert from "@/components/ErrorAlert";
 
 export default async function InformationBox({
