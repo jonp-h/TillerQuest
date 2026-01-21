@@ -462,7 +462,6 @@ model Quest {
   rewardItemId Int?      @unique
   questGiver   String
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
 }
 
 model Game {
