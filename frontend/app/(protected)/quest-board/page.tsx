@@ -6,12 +6,23 @@ import { Quest } from "@tillerquest/prisma/browser";
 import QuestCard from "./_components/QuestCard";
 
 async function QuestBoardPage() {
-  const quests = await secureGet<Quest[]>("/api/quests");
+  const quests = await secureGet<Quest[]>("/quests");
 
   if (!quests.ok) {
     return (
       <MainContainer>
         <ErrorAlert message={quests.error} />
+      </MainContainer>
+    );
+  }
+
+  if (quests.data.length === 0) {
+    return (
+      <MainContainer>
+        <Typography variant="h1">Quest Board</Typography>
+        <Typography variant="body1" className="mt-4">
+          No quests available at the moment. Please check back later!
+        </Typography>
       </MainContainer>
     );
   }

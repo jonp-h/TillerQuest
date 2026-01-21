@@ -13,7 +13,7 @@ function QuestCard({ quest }: { quest: Quest }) {
       <Typography variant="body2">
         Reward Item ID: {quest.rewardItemId ?? "None"}
       </Typography>
-      <Typography variant="body2">Questgiver: {quest.questgiver}</Typography>
+      <Typography variant="body2">Questgiver: {quest.questGiver}</Typography>
     </div>
   );
 }

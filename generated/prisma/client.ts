@@ -110,6 +110,11 @@ export type Log = Prisma.LogModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model Quest
+ * 
+ */
+export type Quest = Prisma.QuestModel
+/**
  * Model Game
  * 
  */

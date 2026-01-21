@@ -12,7 +12,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { Badge, IconButton } from "@mui/material";
-import { AutoAwesome, Castle, Groups } from "@mui/icons-material";
+import { Announcement, AutoAwesome, Castle, Groups } from "@mui/icons-material";
 import { signIn, signOut } from "@/lib/auth-client";
 import { BackendSessionResponse } from "@/lib/redirectUtils";
 
@@ -98,6 +98,11 @@ export default function NavbarContent({
       href: "/wishing-well",
       icon: <AutoAwesome />,
       badgeCount: scheduledWishesCount,
+    },
+    {
+      name: "Quest Board",
+      href: "/quest-board",
+      icon: <Announcement />,
     },
     {
       name: "Shop",

@@ -31,6 +31,7 @@ export type ShopItemAvgAggregateOutputType = {
   price: number | null
   levelReq: number | null
   gemstonesSpentReq: number | null
+  questId: number | null
 }
 
 export type ShopItemSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type ShopItemSumAggregateOutputType = {
   price: number | null
   levelReq: number | null
   gemstonesSpentReq: number | null
+  questId: number | null
 }
 
 export type ShopItemMinAggregateOutputType = {
@@ -53,6 +55,7 @@ export type ShopItemMinAggregateOutputType = {
   classReq: $Enums.Class | null
   specialReq: string | null
   gemstonesSpentReq: number | null
+  questId: number | null
 }
 
 export type ShopItemMaxAggregateOutputType = {
@@ -68,6 +71,7 @@ export type ShopItemMaxAggregateOutputType = {
   classReq: $Enums.Class | null
   specialReq: string | null
   gemstonesSpentReq: number | null
+  questId: number | null
 }
 
 export type ShopItemCountAggregateOutputType = {
@@ -83,6 +87,7 @@ export type ShopItemCountAggregateOutputType = {
   classReq: number
   specialReq: number
   gemstonesSpentReq: number
+  questId: number
   _all: number
 }
 
@@ -92,6 +97,7 @@ export type ShopItemAvgAggregateInputType = {
   price?: true
   levelReq?: true
   gemstonesSpentReq?: true
+  questId?: true
 }
 
 export type ShopItemSumAggregateInputType = {
@@ -99,6 +105,7 @@ export type ShopItemSumAggregateInputType = {
   price?: true
   levelReq?: true
   gemstonesSpentReq?: true
+  questId?: true
 }
 
 export type ShopItemMinAggregateInputType = {
@@ -114,6 +121,7 @@ export type ShopItemMinAggregateInputType = {
   classReq?: true
   specialReq?: true
   gemstonesSpentReq?: true
+  questId?: true
 }
 
 export type ShopItemMaxAggregateInputType = {
@@ -129,6 +137,7 @@ export type ShopItemMaxAggregateInputType = {
   classReq?: true
   specialReq?: true
   gemstonesSpentReq?: true
+  questId?: true
 }
 
 export type ShopItemCountAggregateInputType = {
@@ -144,6 +153,7 @@ export type ShopItemCountAggregateInputType = {
   classReq?: true
   specialReq?: true
   gemstonesSpentReq?: true
+  questId?: true
   _all?: true
 }
 
@@ -246,6 +256,7 @@ export type ShopItemGroupByOutputType = {
   classReq: $Enums.Class | null
   specialReq: string | null
   gemstonesSpentReq: number | null
+  questId: number | null
   _count: ShopItemCountAggregateOutputType | null
   _avg: ShopItemAvgAggregateOutputType | null
   _sum: ShopItemSumAggregateOutputType | null
@@ -284,7 +295,9 @@ export type ShopItemWhereInput = {
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
+  questId?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   users?: Prisma.UserListRelationFilter
+  Quest?: Prisma.XOR<Prisma.QuestNullableScalarRelationFilter, Prisma.QuestWhereInput> | null
 }
 
 export type ShopItemOrderByWithRelationInput = {
@@ -300,7 +313,9 @@ export type ShopItemOrderByWithRelationInput = {
   classReq?: Prisma.SortOrderInput | Prisma.SortOrder
   specialReq?: Prisma.SortOrderInput | Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrderInput | Prisma.SortOrder
+  questId?: Prisma.SortOrderInput | Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
+  Quest?: Prisma.QuestOrderByWithRelationInput
 }
 
 export type ShopItemWhereUniqueInput = Prisma.AtLeast<{
@@ -319,7 +334,9 @@ export type ShopItemWhereUniqueInput = Prisma.AtLeast<{
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
+  questId?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   users?: Prisma.UserListRelationFilter
+  Quest?: Prisma.XOR<Prisma.QuestNullableScalarRelationFilter, Prisma.QuestWhereInput> | null
 }, "id" | "name">
 
 export type ShopItemOrderByWithAggregationInput = {
@@ -335,6 +352,7 @@ export type ShopItemOrderByWithAggregationInput = {
   classReq?: Prisma.SortOrderInput | Prisma.SortOrder
   specialReq?: Prisma.SortOrderInput | Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrderInput | Prisma.SortOrder
+  questId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ShopItemCountOrderByAggregateInput
   _avg?: Prisma.ShopItemAvgOrderByAggregateInput
   _max?: Prisma.ShopItemMaxOrderByAggregateInput
@@ -358,6 +376,7 @@ export type ShopItemScalarWhereWithAggregatesInput = {
   classReq?: Prisma.EnumClassNullableWithAggregatesFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableWithAggregatesFilter<"ShopItem"> | string | null
   gemstonesSpentReq?: Prisma.IntNullableWithAggregatesFilter<"ShopItem"> | number | null
+  questId?: Prisma.IntNullableWithAggregatesFilter<"ShopItem"> | number | null
 }
 
 export type ShopItemCreateInput = {
@@ -372,7 +391,9 @@ export type ShopItemCreateInput = {
   classReq?: $Enums.Class | null
   specialReq?: string | null
   gemstonesSpentReq?: number | null
+  questId?: number | null
   users?: Prisma.UserCreateNestedManyWithoutInventoryInput
+  Quest?: Prisma.QuestCreateNestedOneWithoutRewardItemInput
 }
 
 export type ShopItemUncheckedCreateInput = {
@@ -388,7 +409,9 @@ export type ShopItemUncheckedCreateInput = {
   classReq?: $Enums.Class | null
   specialReq?: string | null
   gemstonesSpentReq?: number | null
+  questId?: number | null
   users?: Prisma.UserUncheckedCreateNestedManyWithoutInventoryInput
+  Quest?: Prisma.QuestUncheckedCreateNestedOneWithoutRewardItemInput
 }
 
 export type ShopItemUpdateInput = {
@@ -403,7 +426,9 @@ export type ShopItemUpdateInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   users?: Prisma.UserUpdateManyWithoutInventoryNestedInput
+  Quest?: Prisma.QuestUpdateOneWithoutRewardItemNestedInput
 }
 
 export type ShopItemUncheckedUpdateInput = {
@@ -419,7 +444,9 @@ export type ShopItemUncheckedUpdateInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   users?: Prisma.UserUncheckedUpdateManyWithoutInventoryNestedInput
+  Quest?: Prisma.QuestUncheckedUpdateOneWithoutRewardItemNestedInput
 }
 
 export type ShopItemCreateManyInput = {
@@ -435,6 +462,7 @@ export type ShopItemCreateManyInput = {
   classReq?: $Enums.Class | null
   specialReq?: string | null
   gemstonesSpentReq?: number | null
+  questId?: number | null
 }
 
 export type ShopItemUpdateManyMutationInput = {
@@ -449,6 +477,7 @@ export type ShopItemUpdateManyMutationInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemUncheckedUpdateManyInput = {
@@ -464,6 +493,7 @@ export type ShopItemUncheckedUpdateManyInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemListRelationFilter = {
@@ -489,6 +519,7 @@ export type ShopItemCountOrderByAggregateInput = {
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrder
+  questId?: Prisma.SortOrder
 }
 
 export type ShopItemAvgOrderByAggregateInput = {
@@ -496,6 +527,7 @@ export type ShopItemAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrder
+  questId?: Prisma.SortOrder
 }
 
 export type ShopItemMaxOrderByAggregateInput = {
@@ -511,6 +543,7 @@ export type ShopItemMaxOrderByAggregateInput = {
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrder
+  questId?: Prisma.SortOrder
 }
 
 export type ShopItemMinOrderByAggregateInput = {
@@ -526,6 +559,7 @@ export type ShopItemMinOrderByAggregateInput = {
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrder
+  questId?: Prisma.SortOrder
 }
 
 export type ShopItemSumOrderByAggregateInput = {
@@ -533,6 +567,12 @@ export type ShopItemSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
   gemstonesSpentReq?: Prisma.SortOrder
+  questId?: Prisma.SortOrder
+}
+
+export type ShopItemNullableScalarRelationFilter = {
+  is?: Prisma.ShopItemWhereInput | null
+  isNot?: Prisma.ShopItemWhereInput | null
 }
 
 export type ShopItemCreateNestedManyWithoutUsersInput = {
@@ -585,6 +625,22 @@ export type EnumShopItemTypeFieldUpdateOperationsInput = {
   set?: $Enums.ShopItemType
 }
 
+export type ShopItemCreateNestedOneWithoutQuestInput = {
+  create?: Prisma.XOR<Prisma.ShopItemCreateWithoutQuestInput, Prisma.ShopItemUncheckedCreateWithoutQuestInput>
+  connectOrCreate?: Prisma.ShopItemCreateOrConnectWithoutQuestInput
+  connect?: Prisma.ShopItemWhereUniqueInput
+}
+
+export type ShopItemUpdateOneWithoutQuestNestedInput = {
+  create?: Prisma.XOR<Prisma.ShopItemCreateWithoutQuestInput, Prisma.ShopItemUncheckedCreateWithoutQuestInput>
+  connectOrCreate?: Prisma.ShopItemCreateOrConnectWithoutQuestInput
+  upsert?: Prisma.ShopItemUpsertWithoutQuestInput
+  disconnect?: Prisma.ShopItemWhereInput | boolean
+  delete?: Prisma.ShopItemWhereInput | boolean
+  connect?: Prisma.ShopItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShopItemUpdateToOneWithWhereWithoutQuestInput, Prisma.ShopItemUpdateWithoutQuestInput>, Prisma.ShopItemUncheckedUpdateWithoutQuestInput>
+}
+
 export type ShopItemCreateWithoutUsersInput = {
   name: string
   description?: string | null
@@ -597,6 +653,8 @@ export type ShopItemCreateWithoutUsersInput = {
   classReq?: $Enums.Class | null
   specialReq?: string | null
   gemstonesSpentReq?: number | null
+  questId?: number | null
+  Quest?: Prisma.QuestCreateNestedOneWithoutRewardItemInput
 }
 
 export type ShopItemUncheckedCreateWithoutUsersInput = {
@@ -612,6 +670,8 @@ export type ShopItemUncheckedCreateWithoutUsersInput = {
   classReq?: $Enums.Class | null
   specialReq?: string | null
   gemstonesSpentReq?: number | null
+  questId?: number | null
+  Quest?: Prisma.QuestUncheckedCreateNestedOneWithoutRewardItemInput
 }
 
 export type ShopItemCreateOrConnectWithoutUsersInput = {
@@ -651,6 +711,89 @@ export type ShopItemScalarWhereInput = {
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
+  questId?: Prisma.IntNullableFilter<"ShopItem"> | number | null
+}
+
+export type ShopItemCreateWithoutQuestInput = {
+  name: string
+  description?: string | null
+  icon?: string | null
+  price: number
+  currency?: $Enums.ShopItemCurrency
+  rarity?: $Enums.Rarity
+  type: $Enums.ShopItemType
+  levelReq?: number | null
+  classReq?: $Enums.Class | null
+  specialReq?: string | null
+  gemstonesSpentReq?: number | null
+  questId?: number | null
+  users?: Prisma.UserCreateNestedManyWithoutInventoryInput
+}
+
+export type ShopItemUncheckedCreateWithoutQuestInput = {
+  id?: number
+  name: string
+  description?: string | null
+  icon?: string | null
+  price: number
+  currency?: $Enums.ShopItemCurrency
+  rarity?: $Enums.Rarity
+  type: $Enums.ShopItemType
+  levelReq?: number | null
+  classReq?: $Enums.Class | null
+  specialReq?: string | null
+  gemstonesSpentReq?: number | null
+  questId?: number | null
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutInventoryInput
+}
+
+export type ShopItemCreateOrConnectWithoutQuestInput = {
+  where: Prisma.ShopItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShopItemCreateWithoutQuestInput, Prisma.ShopItemUncheckedCreateWithoutQuestInput>
+}
+
+export type ShopItemUpsertWithoutQuestInput = {
+  update: Prisma.XOR<Prisma.ShopItemUpdateWithoutQuestInput, Prisma.ShopItemUncheckedUpdateWithoutQuestInput>
+  create: Prisma.XOR<Prisma.ShopItemCreateWithoutQuestInput, Prisma.ShopItemUncheckedCreateWithoutQuestInput>
+  where?: Prisma.ShopItemWhereInput
+}
+
+export type ShopItemUpdateToOneWithWhereWithoutQuestInput = {
+  where?: Prisma.ShopItemWhereInput
+  data: Prisma.XOR<Prisma.ShopItemUpdateWithoutQuestInput, Prisma.ShopItemUncheckedUpdateWithoutQuestInput>
+}
+
+export type ShopItemUpdateWithoutQuestInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
+  levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
+  specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  users?: Prisma.UserUpdateManyWithoutInventoryNestedInput
+}
+
+export type ShopItemUncheckedUpdateWithoutQuestInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
+  levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
+  specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  users?: Prisma.UserUncheckedUpdateManyWithoutInventoryNestedInput
 }
 
 export type ShopItemUpdateWithoutUsersInput = {
@@ -665,6 +808,8 @@ export type ShopItemUpdateWithoutUsersInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  Quest?: Prisma.QuestUpdateOneWithoutRewardItemNestedInput
 }
 
 export type ShopItemUncheckedUpdateWithoutUsersInput = {
@@ -680,6 +825,8 @@ export type ShopItemUncheckedUpdateWithoutUsersInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  Quest?: Prisma.QuestUncheckedUpdateOneWithoutRewardItemNestedInput
 }
 
 export type ShopItemUncheckedUpdateManyWithoutUsersInput = {
@@ -695,6 +842,7 @@ export type ShopItemUncheckedUpdateManyWithoutUsersInput = {
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  questId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -741,7 +889,9 @@ export type ShopItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   classReq?: boolean
   specialReq?: boolean
   gemstonesSpentReq?: boolean
+  questId?: boolean
   users?: boolean | Prisma.ShopItem$usersArgs<ExtArgs>
+  Quest?: boolean | Prisma.ShopItem$QuestArgs<ExtArgs>
   _count?: boolean | Prisma.ShopItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shopItem"]>
 
@@ -758,6 +908,7 @@ export type ShopItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   classReq?: boolean
   specialReq?: boolean
   gemstonesSpentReq?: boolean
+  questId?: boolean
 }, ExtArgs["result"]["shopItem"]>
 
 export type ShopItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -773,6 +924,7 @@ export type ShopItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   classReq?: boolean
   specialReq?: boolean
   gemstonesSpentReq?: boolean
+  questId?: boolean
 }, ExtArgs["result"]["shopItem"]>
 
 export type ShopItemSelectScalar = {
@@ -788,11 +940,13 @@ export type ShopItemSelectScalar = {
   classReq?: boolean
   specialReq?: boolean
   gemstonesSpentReq?: boolean
+  questId?: boolean
 }
 
-export type ShopItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "icon" | "price" | "currency" | "rarity" | "type" | "levelReq" | "classReq" | "specialReq" | "gemstonesSpentReq", ExtArgs["result"]["shopItem"]>
+export type ShopItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "icon" | "price" | "currency" | "rarity" | "type" | "levelReq" | "classReq" | "specialReq" | "gemstonesSpentReq" | "questId", ExtArgs["result"]["shopItem"]>
 export type ShopItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.ShopItem$usersArgs<ExtArgs>
+  Quest?: boolean | Prisma.ShopItem$QuestArgs<ExtArgs>
   _count?: boolean | Prisma.ShopItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ShopItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -802,6 +956,7 @@ export type $ShopItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "ShopItem"
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
+    Quest: Prisma.$QuestPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -816,6 +971,7 @@ export type $ShopItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     classReq: $Enums.Class | null
     specialReq: string | null
     gemstonesSpentReq: number | null
+    questId: number | null
   }, ExtArgs["result"]["shopItem"]>
   composites: {}
 }
@@ -1211,6 +1367,7 @@ readonly fields: ShopItemFieldRefs;
 export interface Prisma__ShopItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.ShopItem$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShopItem$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Quest<T extends Prisma.ShopItem$QuestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShopItem$QuestArgs<ExtArgs>>): Prisma.Prisma__QuestClient<runtime.Types.Result.GetResult<Prisma.$QuestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1252,6 +1409,7 @@ export interface ShopItemFieldRefs {
   readonly classReq: Prisma.FieldRef<"ShopItem", 'Class'>
   readonly specialReq: Prisma.FieldRef<"ShopItem", 'String'>
   readonly gemstonesSpentReq: Prisma.FieldRef<"ShopItem", 'Int'>
+  readonly questId: Prisma.FieldRef<"ShopItem", 'Int'>
 }
     
 
@@ -1661,6 +1819,25 @@ export type ShopItem$usersArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
+}
+
+/**
+ * ShopItem.Quest
+ */
+export type ShopItem$QuestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Quest
+   */
+  select?: Prisma.QuestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Quest
+   */
+  omit?: Prisma.QuestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuestInclude<ExtArgs> | null
+  where?: Prisma.QuestWhereInput
 }
 
 /**
