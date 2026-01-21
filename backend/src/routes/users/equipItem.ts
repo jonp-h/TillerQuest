@@ -25,7 +25,7 @@ export const equipItem = [
 
       const user = await db.user.findUnique({
         where: { id: userId },
-        select: { title: true, inventory: true },
+        select: { title: true, inventory: true, diceColorset: true },
       });
 
       if (!user) {
@@ -46,13 +46,53 @@ export const equipItem = [
         throw new ErrorMessage("You don't own this item");
       }
 
-      await db.user.update({
-        where: { id: userId },
-        data: {
-          title: item.name,
-          titleRarity: item.rarity,
-        },
-      });
+      switch (item.type) {
+        case "Title":
+          if (user.title === item.name) {
+            throw new ErrorMessage("This title is already equipped");
+          }
+          await db.user.update({
+            where: { id: userId },
+            data: {
+              title: item.name,
+              titleRarity: item.rarity,
+            },
+          });
+          break;
+
+        // Badges can also be equipped as titles
+        case "Badge":
+          if (user.title === item.name) {
+            throw new ErrorMessage(
+              "This badge is already equipped as your title",
+            );
+          }
+          await db.user.update({
+            where: { id: userId },
+            data: {
+              title: item.name,
+              titleRarity: item.rarity,
+            },
+          });
+          break;
+
+        case "DiceColorset":
+          if (user.diceColorset === item.name) {
+            throw new ErrorMessage("This dice colorset is already equipped");
+          }
+          await db.user.update({
+            where: { id: userId },
+            data: {
+              diceColorset: item.name,
+            },
+          });
+          break;
+
+        default:
+          throw new ErrorMessage(
+            "This item type cannot be equipped: " + item.type,
+          );
+      }
 
       res.json({
         success: true,

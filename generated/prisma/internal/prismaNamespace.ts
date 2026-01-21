@@ -2264,11 +2264,13 @@ export const ShopItemScalarFieldEnum = {
   description: 'description',
   icon: 'icon',
   price: 'price',
+  currency: 'currency',
   rarity: 'rarity',
   type: 'type',
   levelReq: 'levelReq',
   classReq: 'classReq',
-  specialReq: 'specialReq'
+  specialReq: 'specialReq',
+  gemstonesSpentReq: 'gemstonesSpentReq'
 } as const
 
 export type ShopItemScalarFieldEnum = (typeof ShopItemScalarFieldEnum)[keyof typeof ShopItemScalarFieldEnum]
@@ -2654,6 +2656,20 @@ export type EnumAbilityTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'AbilityTarget[]'
  */
 export type ListEnumAbilityTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AbilityTarget[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ShopItemCurrency'
+ */
+export type EnumShopItemCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShopItemCurrency'>
+    
+
+
+/**
+ * Reference to a field of type 'ShopItemCurrency[]'
+ */
+export type ListEnumShopItemCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShopItemCurrency[]'>
     
 
 

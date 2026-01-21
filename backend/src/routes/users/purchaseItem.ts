@@ -33,6 +33,7 @@ export const purchaseItem = [
         where: { id: userId },
         select: {
           gold: true,
+          gemstones: true,
           inventory: true,
           class: true,
           level: true,
@@ -50,6 +51,12 @@ export const purchaseItem = [
 
       if (!item) {
         throw new Error("Didn't find item when purchasing with id " + itemId);
+      }
+
+      if (
+        user.inventory.some((inventoryItem) => inventoryItem.id === item.id)
+      ) {
+        throw new ErrorMessage("You already own this item");
       }
 
       if (user.gold < item.price) {
@@ -70,6 +77,44 @@ export const purchaseItem = [
         }
       }
 
+      // -------- Purchase with GEMSTONES --------
+      if (item.currency === "GEMSTONES") {
+        if (item.gemstonesSpentReq) {
+          let gemStonesSpent = 0;
+          user.inventory.forEach((inventoryItem) => {
+            if (inventoryItem.currency === "GEMSTONES") {
+              gemStonesSpent += inventoryItem.price;
+            }
+          });
+
+          if (gemStonesSpent < item.gemstonesSpentReq) {
+            throw new ErrorMessage(
+              `You need to have spent at least ${item.gemstonesSpentReq.toLocaleString()} gemstones in the shop to buy this item`,
+            );
+          }
+        }
+
+        if (user.gemstones < item.price) {
+          throw new ErrorMessage("Not enough gemstones");
+        }
+
+        await db.user.update({
+          where: { id: userId },
+          data: {
+            gemstones: user.gemstones - item.price,
+            inventory: {
+              connect: { id: itemId },
+            },
+          },
+        });
+        res.json({
+          success: true,
+          data: "Successfully bought " + item.name,
+        });
+        return;
+      }
+
+      // -------- Purchase with GOLD --------
       await db.user.update({
         where: { id: userId },
         data: {

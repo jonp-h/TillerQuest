@@ -30,12 +30,14 @@ export type ShopItemAvgAggregateOutputType = {
   id: number | null
   price: number | null
   levelReq: number | null
+  gemstonesSpentReq: number | null
 }
 
 export type ShopItemSumAggregateOutputType = {
   id: number | null
   price: number | null
   levelReq: number | null
+  gemstonesSpentReq: number | null
 }
 
 export type ShopItemMinAggregateOutputType = {
@@ -44,11 +46,13 @@ export type ShopItemMinAggregateOutputType = {
   description: string | null
   icon: string | null
   price: number | null
+  currency: $Enums.ShopItemCurrency | null
   rarity: $Enums.Rarity | null
   type: $Enums.ShopItemType | null
   levelReq: number | null
   classReq: $Enums.Class | null
   specialReq: string | null
+  gemstonesSpentReq: number | null
 }
 
 export type ShopItemMaxAggregateOutputType = {
@@ -57,11 +61,13 @@ export type ShopItemMaxAggregateOutputType = {
   description: string | null
   icon: string | null
   price: number | null
+  currency: $Enums.ShopItemCurrency | null
   rarity: $Enums.Rarity | null
   type: $Enums.ShopItemType | null
   levelReq: number | null
   classReq: $Enums.Class | null
   specialReq: string | null
+  gemstonesSpentReq: number | null
 }
 
 export type ShopItemCountAggregateOutputType = {
@@ -70,11 +76,13 @@ export type ShopItemCountAggregateOutputType = {
   description: number
   icon: number
   price: number
+  currency: number
   rarity: number
   type: number
   levelReq: number
   classReq: number
   specialReq: number
+  gemstonesSpentReq: number
   _all: number
 }
 
@@ -83,12 +91,14 @@ export type ShopItemAvgAggregateInputType = {
   id?: true
   price?: true
   levelReq?: true
+  gemstonesSpentReq?: true
 }
 
 export type ShopItemSumAggregateInputType = {
   id?: true
   price?: true
   levelReq?: true
+  gemstonesSpentReq?: true
 }
 
 export type ShopItemMinAggregateInputType = {
@@ -97,11 +107,13 @@ export type ShopItemMinAggregateInputType = {
   description?: true
   icon?: true
   price?: true
+  currency?: true
   rarity?: true
   type?: true
   levelReq?: true
   classReq?: true
   specialReq?: true
+  gemstonesSpentReq?: true
 }
 
 export type ShopItemMaxAggregateInputType = {
@@ -110,11 +122,13 @@ export type ShopItemMaxAggregateInputType = {
   description?: true
   icon?: true
   price?: true
+  currency?: true
   rarity?: true
   type?: true
   levelReq?: true
   classReq?: true
   specialReq?: true
+  gemstonesSpentReq?: true
 }
 
 export type ShopItemCountAggregateInputType = {
@@ -123,11 +137,13 @@ export type ShopItemCountAggregateInputType = {
   description?: true
   icon?: true
   price?: true
+  currency?: true
   rarity?: true
   type?: true
   levelReq?: true
   classReq?: true
   specialReq?: true
+  gemstonesSpentReq?: true
   _all?: true
 }
 
@@ -223,11 +239,13 @@ export type ShopItemGroupByOutputType = {
   description: string | null
   icon: string | null
   price: number
+  currency: $Enums.ShopItemCurrency
   rarity: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq: number | null
   classReq: $Enums.Class | null
   specialReq: string | null
+  gemstonesSpentReq: number | null
   _count: ShopItemCountAggregateOutputType | null
   _avg: ShopItemAvgAggregateOutputType | null
   _sum: ShopItemSumAggregateOutputType | null
@@ -259,11 +277,13 @@ export type ShopItemWhereInput = {
   description?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   icon?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   price?: Prisma.IntFilter<"ShopItem"> | number
+  currency?: Prisma.EnumShopItemCurrencyFilter<"ShopItem"> | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFilter<"ShopItem"> | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFilter<"ShopItem"> | $Enums.ShopItemType
   levelReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
+  gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   users?: Prisma.UserListRelationFilter
 }
 
@@ -273,11 +293,13 @@ export type ShopItemOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
   type?: Prisma.SortOrder
   levelReq?: Prisma.SortOrderInput | Prisma.SortOrder
   classReq?: Prisma.SortOrderInput | Prisma.SortOrder
   specialReq?: Prisma.SortOrderInput | Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrderInput | Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
 }
 
@@ -290,11 +312,13 @@ export type ShopItemWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   icon?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   price?: Prisma.IntFilter<"ShopItem"> | number
+  currency?: Prisma.EnumShopItemCurrencyFilter<"ShopItem"> | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFilter<"ShopItem"> | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFilter<"ShopItem"> | $Enums.ShopItemType
   levelReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
+  gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   users?: Prisma.UserListRelationFilter
 }, "id" | "name">
 
@@ -304,11 +328,13 @@ export type ShopItemOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
   type?: Prisma.SortOrder
   levelReq?: Prisma.SortOrderInput | Prisma.SortOrder
   classReq?: Prisma.SortOrderInput | Prisma.SortOrder
   specialReq?: Prisma.SortOrderInput | Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ShopItemCountOrderByAggregateInput
   _avg?: Prisma.ShopItemAvgOrderByAggregateInput
   _max?: Prisma.ShopItemMaxOrderByAggregateInput
@@ -325,11 +351,13 @@ export type ShopItemScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"ShopItem"> | string | null
   icon?: Prisma.StringNullableWithAggregatesFilter<"ShopItem"> | string | null
   price?: Prisma.IntWithAggregatesFilter<"ShopItem"> | number
+  currency?: Prisma.EnumShopItemCurrencyWithAggregatesFilter<"ShopItem"> | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityWithAggregatesFilter<"ShopItem"> | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeWithAggregatesFilter<"ShopItem"> | $Enums.ShopItemType
   levelReq?: Prisma.IntNullableWithAggregatesFilter<"ShopItem"> | number | null
   classReq?: Prisma.EnumClassNullableWithAggregatesFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableWithAggregatesFilter<"ShopItem"> | string | null
+  gemstonesSpentReq?: Prisma.IntNullableWithAggregatesFilter<"ShopItem"> | number | null
 }
 
 export type ShopItemCreateInput = {
@@ -337,11 +365,13 @@ export type ShopItemCreateInput = {
   description?: string | null
   icon?: string | null
   price: number
+  currency?: $Enums.ShopItemCurrency
   rarity?: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq?: number | null
   classReq?: $Enums.Class | null
   specialReq?: string | null
+  gemstonesSpentReq?: number | null
   users?: Prisma.UserCreateNestedManyWithoutInventoryInput
 }
 
@@ -351,11 +381,13 @@ export type ShopItemUncheckedCreateInput = {
   description?: string | null
   icon?: string | null
   price: number
+  currency?: $Enums.ShopItemCurrency
   rarity?: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq?: number | null
   classReq?: $Enums.Class | null
   specialReq?: string | null
+  gemstonesSpentReq?: number | null
   users?: Prisma.UserUncheckedCreateNestedManyWithoutInventoryInput
 }
 
@@ -364,11 +396,13 @@ export type ShopItemUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   users?: Prisma.UserUpdateManyWithoutInventoryNestedInput
 }
 
@@ -378,11 +412,13 @@ export type ShopItemUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   users?: Prisma.UserUncheckedUpdateManyWithoutInventoryNestedInput
 }
 
@@ -392,11 +428,13 @@ export type ShopItemCreateManyInput = {
   description?: string | null
   icon?: string | null
   price: number
+  currency?: $Enums.ShopItemCurrency
   rarity?: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq?: number | null
   classReq?: $Enums.Class | null
   specialReq?: string | null
+  gemstonesSpentReq?: number | null
 }
 
 export type ShopItemUpdateManyMutationInput = {
@@ -404,11 +442,13 @@ export type ShopItemUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemUncheckedUpdateManyInput = {
@@ -417,11 +457,13 @@ export type ShopItemUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemListRelationFilter = {
@@ -440,17 +482,20 @@ export type ShopItemCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
   type?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrder
 }
 
 export type ShopItemAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   price?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrder
 }
 
 export type ShopItemMaxOrderByAggregateInput = {
@@ -459,11 +504,13 @@ export type ShopItemMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
   type?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrder
 }
 
 export type ShopItemMinOrderByAggregateInput = {
@@ -472,17 +519,20 @@ export type ShopItemMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
   type?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
   classReq?: Prisma.SortOrder
   specialReq?: Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrder
 }
 
 export type ShopItemSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   price?: Prisma.SortOrder
   levelReq?: Prisma.SortOrder
+  gemstonesSpentReq?: Prisma.SortOrder
 }
 
 export type ShopItemCreateNestedManyWithoutUsersInput = {
@@ -523,6 +573,10 @@ export type ShopItemUncheckedUpdateManyWithoutUsersNestedInput = {
   deleteMany?: Prisma.ShopItemScalarWhereInput | Prisma.ShopItemScalarWhereInput[]
 }
 
+export type EnumShopItemCurrencyFieldUpdateOperationsInput = {
+  set?: $Enums.ShopItemCurrency
+}
+
 export type EnumRarityFieldUpdateOperationsInput = {
   set?: $Enums.Rarity
 }
@@ -536,11 +590,13 @@ export type ShopItemCreateWithoutUsersInput = {
   description?: string | null
   icon?: string | null
   price: number
+  currency?: $Enums.ShopItemCurrency
   rarity?: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq?: number | null
   classReq?: $Enums.Class | null
   specialReq?: string | null
+  gemstonesSpentReq?: number | null
 }
 
 export type ShopItemUncheckedCreateWithoutUsersInput = {
@@ -549,11 +605,13 @@ export type ShopItemUncheckedCreateWithoutUsersInput = {
   description?: string | null
   icon?: string | null
   price: number
+  currency?: $Enums.ShopItemCurrency
   rarity?: $Enums.Rarity
   type: $Enums.ShopItemType
   levelReq?: number | null
   classReq?: $Enums.Class | null
   specialReq?: string | null
+  gemstonesSpentReq?: number | null
 }
 
 export type ShopItemCreateOrConnectWithoutUsersInput = {
@@ -586,11 +644,13 @@ export type ShopItemScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   icon?: Prisma.StringNullableFilter<"ShopItem"> | string | null
   price?: Prisma.IntFilter<"ShopItem"> | number
+  currency?: Prisma.EnumShopItemCurrencyFilter<"ShopItem"> | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFilter<"ShopItem"> | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFilter<"ShopItem"> | $Enums.ShopItemType
   levelReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
   classReq?: Prisma.EnumClassNullableFilter<"ShopItem"> | $Enums.Class | null
   specialReq?: Prisma.StringNullableFilter<"ShopItem"> | string | null
+  gemstonesSpentReq?: Prisma.IntNullableFilter<"ShopItem"> | number | null
 }
 
 export type ShopItemUpdateWithoutUsersInput = {
@@ -598,11 +658,13 @@ export type ShopItemUpdateWithoutUsersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemUncheckedUpdateWithoutUsersInput = {
@@ -611,11 +673,13 @@ export type ShopItemUncheckedUpdateWithoutUsersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ShopItemUncheckedUpdateManyWithoutUsersInput = {
@@ -624,11 +688,13 @@ export type ShopItemUncheckedUpdateManyWithoutUsersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.EnumShopItemCurrencyFieldUpdateOperationsInput | $Enums.ShopItemCurrency
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   type?: Prisma.EnumShopItemTypeFieldUpdateOperationsInput | $Enums.ShopItemType
   levelReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   classReq?: Prisma.NullableEnumClassFieldUpdateOperationsInput | $Enums.Class | null
   specialReq?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gemstonesSpentReq?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -668,11 +734,13 @@ export type ShopItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   description?: boolean
   icon?: boolean
   price?: boolean
+  currency?: boolean
   rarity?: boolean
   type?: boolean
   levelReq?: boolean
   classReq?: boolean
   specialReq?: boolean
+  gemstonesSpentReq?: boolean
   users?: boolean | Prisma.ShopItem$usersArgs<ExtArgs>
   _count?: boolean | Prisma.ShopItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shopItem"]>
@@ -683,11 +751,13 @@ export type ShopItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   description?: boolean
   icon?: boolean
   price?: boolean
+  currency?: boolean
   rarity?: boolean
   type?: boolean
   levelReq?: boolean
   classReq?: boolean
   specialReq?: boolean
+  gemstonesSpentReq?: boolean
 }, ExtArgs["result"]["shopItem"]>
 
 export type ShopItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -696,11 +766,13 @@ export type ShopItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   description?: boolean
   icon?: boolean
   price?: boolean
+  currency?: boolean
   rarity?: boolean
   type?: boolean
   levelReq?: boolean
   classReq?: boolean
   specialReq?: boolean
+  gemstonesSpentReq?: boolean
 }, ExtArgs["result"]["shopItem"]>
 
 export type ShopItemSelectScalar = {
@@ -709,14 +781,16 @@ export type ShopItemSelectScalar = {
   description?: boolean
   icon?: boolean
   price?: boolean
+  currency?: boolean
   rarity?: boolean
   type?: boolean
   levelReq?: boolean
   classReq?: boolean
   specialReq?: boolean
+  gemstonesSpentReq?: boolean
 }
 
-export type ShopItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "icon" | "price" | "rarity" | "type" | "levelReq" | "classReq" | "specialReq", ExtArgs["result"]["shopItem"]>
+export type ShopItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "icon" | "price" | "currency" | "rarity" | "type" | "levelReq" | "classReq" | "specialReq" | "gemstonesSpentReq", ExtArgs["result"]["shopItem"]>
 export type ShopItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.ShopItem$usersArgs<ExtArgs>
   _count?: boolean | Prisma.ShopItemCountOutputTypeDefaultArgs<ExtArgs>
@@ -735,11 +809,13 @@ export type $ShopItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     description: string | null
     icon: string | null
     price: number
+    currency: $Enums.ShopItemCurrency
     rarity: $Enums.Rarity
     type: $Enums.ShopItemType
     levelReq: number | null
     classReq: $Enums.Class | null
     specialReq: string | null
+    gemstonesSpentReq: number | null
   }, ExtArgs["result"]["shopItem"]>
   composites: {}
 }
@@ -1169,11 +1245,13 @@ export interface ShopItemFieldRefs {
   readonly description: Prisma.FieldRef<"ShopItem", 'String'>
   readonly icon: Prisma.FieldRef<"ShopItem", 'String'>
   readonly price: Prisma.FieldRef<"ShopItem", 'Int'>
+  readonly currency: Prisma.FieldRef<"ShopItem", 'ShopItemCurrency'>
   readonly rarity: Prisma.FieldRef<"ShopItem", 'Rarity'>
   readonly type: Prisma.FieldRef<"ShopItem", 'ShopItemType'>
   readonly levelReq: Prisma.FieldRef<"ShopItem", 'Int'>
   readonly classReq: Prisma.FieldRef<"ShopItem", 'Class'>
   readonly specialReq: Prisma.FieldRef<"ShopItem", 'String'>
+  readonly gemstonesSpentReq: Prisma.FieldRef<"ShopItem", 'Int'>
 }
     
 

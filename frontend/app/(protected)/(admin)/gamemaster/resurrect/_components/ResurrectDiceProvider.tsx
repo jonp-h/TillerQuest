@@ -29,7 +29,7 @@ export default function ResurrectDiceProvider({
         const newDiceBox = new DiceBox("#dice-canvas", diceSettings);
         newDiceBox.updateConfig({
           theme_customColorset: {
-            ...colorsets["necrotic"],
+            ...colorsets["Necrotic"],
           },
         });
         await newDiceBox.initialize();

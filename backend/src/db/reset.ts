@@ -122,6 +122,14 @@ async function resetUsers() {
         select: {
           id: true,
           mana: true,
+          inventory: {
+            where: {
+              currency: "GEMSTONES",
+            },
+            select: {
+              price: true,
+            },
+          },
           abilities: {
             select: {
               id: true,
@@ -181,6 +189,9 @@ async function normalResetUserHandler(
   user: {
     id: string;
     mana: number;
+    inventory: {
+      price: number;
+    }[];
     abilities: {
       ability: {
         gemstoneCost: number;
@@ -190,8 +201,14 @@ async function normalResetUserHandler(
   },
 ) {
   let totalGemstoneCost = 0;
+  // Calculate total gemstone cost of owned abilities
   for (const ability of user.abilities) {
     totalGemstoneCost += ability.ability.gemstoneCost;
+  }
+
+  // Calculate total gemstone cost of owned shop items
+  for (const shopItem of user.inventory) {
+    totalGemstoneCost += shopItem.price;
   }
 
   await tx.user.update({
@@ -362,6 +379,14 @@ async function resetSingleUser(username: string) {
       select: {
         id: true,
         mana: true,
+        inventory: {
+          where: {
+            currency: "GEMSTONES",
+          },
+          select: {
+            price: true,
+          },
+        },
         abilities: {
           select: {
             id: true,

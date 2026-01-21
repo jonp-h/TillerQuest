@@ -154,6 +154,11 @@ enum ShopItemType {
   DiceColorset
 }
 
+enum ShopItemCurrency {
+  GOLD
+  GEMSTONES
+}
+
 enum UploadStatus {
   PENDING
   APPROVED
@@ -379,17 +384,19 @@ model CosmicEvent {
 }
 
 model ShopItem {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  description String?
-  icon        String?
-  price       Int
-  rarity      Rarity       @default(Common)
-  type        ShopItemType
-  levelReq    Int?
-  classReq    Class?
-  specialReq  String?
-  users       User[] // m-n relation to users. An item can be owned by many users
+  id                Int              @id @default(autoincrement())
+  name              String           @unique
+  description       String?
+  icon              String?
+  price             Int
+  currency          ShopItemCurrency @default(GOLD)
+  rarity            Rarity           @default(Common)
+  type              ShopItemType
+  levelReq          Int?
+  classReq          Class?
+  specialReq        String?
+  gemstonesSpentReq Int? // Total gemstones spent required to purchase the item
+  users             User[] // m-n relation to users. An item can be owned by many users
 
   @@index([name])
   @@index([type])

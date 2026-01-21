@@ -1,8 +1,8 @@
 "use client";
 import DialogButton from "@/components/DialogButton";
 import RarityText from "@/components/RarityText";
-import { securePostClient } from "@/lib/secureFetchClient";
-import { Circle } from "@mui/icons-material";
+import { securePatchClient, securePostClient } from "@/lib/secureFetchClient";
+import { Circle, Diamond } from "@mui/icons-material";
 import { Button, Paper, Typography } from "@mui/material";
 import { Class, ShopItem } from "@tillerquest/prisma/browser";
 import Image from "next/image";
@@ -16,7 +16,9 @@ function ShopCard({
   user: {
     id: string;
     level: number;
+    gemstones: number;
     title: string | null;
+    diceColorset: string | null;
     class: Class | null;
     inventory: ShopItem[];
     special: string[];
@@ -43,7 +45,7 @@ function ShopCard({
   };
 
   const handleEquip = async (itemId: number) => {
-    const result = await securePostClient<string>(`/users/${user.id}/equip`, {
+    const result = await securePatchClient<string>(`/users/${user.id}/equip`, {
       itemId: itemId,
     });
 
@@ -73,7 +75,7 @@ function ShopCard({
       )}
       <div className="flex flex-col items-center gap-2">
         <RarityText width="1/2" className="text-3xl" rarity={item.rarity}>
-          {item.name}
+          {item.name.replaceAll("_", " ")}
         </RarityText>
         {item.specialReq && (
           <Typography
@@ -105,25 +107,53 @@ function ShopCard({
             {"Level requirement: " + item.levelReq}
           </Typography>
         )}
+        {item.gemstonesSpentReq && (
+          <Typography
+            variant="body1"
+            sx={{ marginTop: 1 }}
+            color={
+              user.inventory.reduce((acc, inventoryItem) => {
+                if (inventoryItem.currency === "GEMSTONES") {
+                  return acc + inventoryItem.price;
+                }
+                return acc;
+              }, 0) >= item.gemstonesSpentReq
+                ? "info"
+                : "error"
+            }
+          >
+            {"Spend at least " +
+              item.gemstonesSpentReq.toLocaleString() +
+              " gemstones in the shop to buy this item"}
+          </Typography>
+        )}
         {user.inventory.some(
           (inventoryItem) => inventoryItem.id === item.id,
         ) ? (
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={user.title === item.name}
-            onClick={() => {
-              handleEquip(item.id);
-            }}
-          >
-            {user.title === item.name ? "Equipped" : "Equip title"}
-          </Button>
+          item.type !== "Object" && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={
+                user.title === item.name || user.diceColorset === item.name
+              }
+              onClick={() => {
+                handleEquip(item.id);
+              }}
+            >
+              {user.title === item.name ? "Equipped" : "Equip " + item.type}
+            </Button>
+          )
         ) : (
           <DialogButton
             buttonText={
-              <Typography variant="body1" className="text-xl" color="gold">
-                Buy for {item.price}
-                <Circle />
+              <Typography
+                variant="body1"
+                className="text-xl"
+                color={item.currency === "GOLD" ? "gold" : "gemstones"}
+              >
+                Buy for {item.price.toLocaleString()}
+                {item.currency === "GOLD" ? <Circle /> : <Diamond />}
               </Typography>
             }
             dialogTitle={`Buy ${item.name}`}
@@ -131,8 +161,12 @@ function ShopCard({
               <Typography variant="body1" component={"span"}>
                 Are you sure you want to buy the {item.type.toLowerCase()}{" "}
                 {item.name} for{" "}
-                <Typography color="gold" component="span">
-                  {item.price} <Circle />
+                <Typography
+                  color={item.currency === "GOLD" ? "gold" : "gemstones"}
+                  component="span"
+                >
+                  {item.price.toLocaleString()}
+                  {item.currency === "GOLD" ? <Circle /> : <Diamond />}
                 </Typography>
                 ?
               </Typography>

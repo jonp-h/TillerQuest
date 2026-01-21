@@ -263,11 +263,13 @@ export const ShopItemScalarFieldEnum = {
   description: 'description',
   icon: 'icon',
   price: 'price',
+  currency: 'currency',
   rarity: 'rarity',
   type: 'type',
   levelReq: 'levelReq',
   classReq: 'classReq',
-  specialReq: 'specialReq'
+  specialReq: 'specialReq',
+  gemstonesSpentReq: 'gemstonesSpentReq'
 } as const
 
 export type ShopItemScalarFieldEnum = (typeof ShopItemScalarFieldEnum)[keyof typeof ShopItemScalarFieldEnum]

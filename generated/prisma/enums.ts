@@ -173,6 +173,14 @@ export const ShopItemType = {
 export type ShopItemType = (typeof ShopItemType)[keyof typeof ShopItemType]
 
 
+export const ShopItemCurrency = {
+  GOLD: 'GOLD',
+  GEMSTONES: 'GEMSTONES'
+} as const
+
+export type ShopItemCurrency = (typeof ShopItemCurrency)[keyof typeof ShopItemCurrency]
+
+
 export const UploadStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',

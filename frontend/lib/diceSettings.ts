@@ -29,44 +29,100 @@ export const diceSettings: DiceSettings = {
 };
 
 export const colorsets: { [key: string]: diceColorset } = {
-  coin_default: {
+  Default: {
+    background: "#ffffff",
+    foreground: "#000000",
+    outline: "black",
+    texture: "none",
+    edge: "black",
+  },
+  // blue
+  Wizard: {
+    foreground: "#70C8FF",
+    background: "#003366",
+    outline: "black",
+    texture: "marble",
+    edge: "#0055AA",
+  },
+  Warlock: {
+    foreground: "#FF5959",
+    background: "#900000",
+    outline: "black",
+    texture: "marble",
+    edge: "#CE3900",
+  },
+  // orange black
+  Barbarian: {
+    foreground: "#ffffff",
+    background: "#331900",
+    outline: "black",
+    texture: "fire",
+  },
+  Fighter: {
+    foreground: "#ffffff",
+    background: "#421407",
+    outline: "black",
+    texture: "wood",
+  },
+  Druid: {
+    foreground: "#FFCC40",
+    background: "#003300",
+    outline: "black",
+    texture: "metal",
+    edge: "#007700",
+  },
+  Bard: {
+    foreground: ["#ffffff", "#000000"],
+    background: ["#cc0000", "#ffffff"],
+    outline: "black",
+    texture: "paper",
+    edge: "black",
+  },
+  Black_Sun: {
+    foreground: "#FFCC40",
+    background: "#000000",
+    outline: "black",
+    texture: "metal",
+    edge: "#FF7B00",
+  },
+  Coin: {
     foreground: "#f6e27f",
     background: "#f6c928",
     // edge: "#b8860b",
     // outline: "#ffffff",
     texture: "metal",
   },
-  coin_silver: {
+  Silver: {
     foreground: "#c0c0c0",
     background: "#ffffff",
     outline: "none",
     texture: "metal",
   },
-  radiant: {
-    foreground: "#F9B333",
-    background: "#FFFFFF",
-    outline: "",
-    texture: "paper",
+  Hollow: {
+    foreground: "#ffffff",
+    background: "#ffffff",
+    outline: "black",
+    texture: "stars",
   },
-  fire: {
+  Fire: {
     foreground: "#f8d84f",
     background: ["#f8d84f", "#f9b02d", "#f43c04", "#910200", "#4c1009"],
     outline: "black",
     texture: "fire",
   },
-  ice: {
+  Ice: {
     foreground: "#60E9FF",
     background: ["#214fa3", "#3c6ac1", "#253f70", "#0b56e2", "#09317a"],
     outline: "black",
     texture: "ice",
   },
-  poison: {
+  Poison: {
     foreground: "#D6A8FF",
     background: ["#313866", "#504099", "#66409e", "#934fc3", "#c949fc"],
     outline: "black",
     texture: "cloudy",
   },
-  acid: {
+  Acid: {
     foreground: "#A9FF70",
     background: [
       "#a6ff00",
@@ -79,31 +135,31 @@ export const colorsets: { [key: string]: diceColorset } = {
     outline: "black",
     texture: "marble",
   },
-  thunder: {
+  Thunder: {
     foreground: "#FFC500",
     background: "#7D7D7D",
     outline: "black",
     texture: "cloudy",
   },
-  lightning: {
+  Lightning: {
     foreground: "#FFC500",
     background: ["#f17105", "#f3ca40", "#eddea4", "#df9a57", "#dea54b"],
     outline: "#7D7D7D",
     texture: "ice",
   },
-  air: {
+  Ghost: {
     foreground: "#ffffff",
     background: ["#d0e5ea", "#c3dee5", "#a4ccd6", "#8dafb7", "#80a4ad"],
     outline: "black",
     texture: "cloudy",
   },
-  water: {
+  Water: {
     foreground: "#60E9FF",
     background: ["#87b8c4", "#77a6b2", "#6b98a3", "#5b8691", "#4b757f"],
     outline: "black",
     texture: "water",
   },
-  earth: {
+  Earth: {
     foreground: "#6C9943",
     background: [
       "#346804",
@@ -118,13 +174,13 @@ export const colorsets: { [key: string]: diceColorset } = {
     outline: "black",
     texture: "speckles",
   },
-  force: {
+  Force: {
     foreground: "white",
     background: ["#FF97FF", "#FF68FF", "#C651C6"],
     outline: "#570000",
     texture: "stars",
   },
-  psychic: {
+  Psychic: {
     foreground: "#D6A8FF",
     background: [
       "#313866",
@@ -137,49 +193,49 @@ export const colorsets: { [key: string]: diceColorset } = {
     outline: "black",
     texture: "speckles",
   },
-  necrotic: {
+  Necrotic: {
     foreground: "#ffffff",
     background: "#6F0000",
     outline: "black",
     texture: "skulls",
   },
-  pinkdreams: {
+  Pink_Dreams: {
     foreground: "white",
     background: ["#ff007c", "#df73ff", "#f400a1", "#df00ff", "#ff33cc"],
     outline: "#570000",
     texture: "skulls",
   },
-  inspired: {
-    foreground: "#FFD800",
+  Inspired: {
+    foreground: "#4C4C3E",
     background: "#C4C4B6",
-    outline: "#8E8E86",
-    texture: "none",
+    outline: "#ffffff",
+    texture: "bronze03b",
   },
-  bloodmoon: {
+  Bloodmoon: {
     foreground: "#CDB800",
     background: "#6F0000",
     outline: "black",
     texture: "marble",
   },
-  starynight: {
-    foreground: "#4F708F",
+  Starry_Night: {
+    foreground: "#ffffff",
     background: ["#091636", "#233660", "#4F708F", "#8597AD", "#E2E2E2"],
-    outline: "white",
+    outline: "black",
     texture: "speckles",
   },
-  glitterparty: {
+  Glitterparty: {
     foreground: "white",
     background: ["#FFB5F5", "#7FC9FF", "#A17FFF"],
     outline: "none",
     texture: "glitter",
   },
-  astralsea: {
+  Astral_Sea: {
     foreground: "#565656",
     background: "white",
     outline: "none",
     texture: "astral",
   },
-  bronze: {
+  Bronze: {
     foreground: ["#FF9159", "#FFB066", "#FFBF59", "#FFD059"],
     background: ["#705206", "#7A4E06", "#643100", "#7A2D06"],
     outline: ["#3D2D03", "#472D04", "#301700", "#471A04"],
@@ -193,7 +249,7 @@ export const colorsets: { [key: string]: diceColorset } = {
       "bronze04",
     ],
   },
-  dragons: {
+  Dragons: {
     foreground: "#FFFFFF",
     // 			[ red,       black,     blue,      green      white      gold,      silver,    bronze,    copper     brass
     background: [
@@ -211,7 +267,7 @@ export const colorsets: { [key: string]: diceColorset } = {
     outline: "black",
     texture: ["dragon", "lizard"],
   },
-  birdup: {
+  Birdup: {
     foreground: "#FFFFFF",
     background: [
       "#F11602",
@@ -227,13 +283,13 @@ export const colorsets: { [key: string]: diceColorset } = {
     outline: "black",
     texture: "bird",
   },
-  tigerking: {
+  Tiger_King: {
     foreground: "#ffffff",
     background: "#FFCC40",
     outline: "black",
     texture: ["leopard", "tiger", "cheetah"],
   },
-  rainbow: {
+  Rainbow: {
     foreground: [
       "#FF5959",
       "#FFA74F",
@@ -253,24 +309,24 @@ export const colorsets: { [key: string]: diceColorset } = {
       "#A500A5",
     ],
     outline: "black",
-    texture: "none",
+    texture: "metal",
   },
-  black: {
+  Kuro: {
     foreground: "#ffffff",
     background: "#000000",
     outline: "black",
-    texture: "none",
+    texture: "ice",
   },
-  white: {
+  Shiro: {
     foreground: "#000000",
     background: "#FFFFFF",
     outline: "#FFFFFF",
-    texture: "none",
+    texture: "ice",
   },
-  test: {
-    foreground: "#FFFFFF",
-    background: ["#F11602"],
-    outline: "black",
-    texture: "marble",
+  Primordial: {
+    foreground: "#000000",
+    background: ["#FFFFFF"],
+    outline: "#ffffff",
+    texture: "skulls",
   },
 };
