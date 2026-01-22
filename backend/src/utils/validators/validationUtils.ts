@@ -46,9 +46,9 @@ export const updateUserSchema = z.object({
     .regex(/^[A-Za-zŽžÀ-ÿ\s'-]+$/, "Lastname may only contain letters"),
   playerClass: z.enum(Class, "Invalid class"),
   guildId: z.number().positive("Guild ID must be a positive number"),
-  image: z.string().min(1),
+  image: z.string().min(1, "Class is required"),
   schoolClass: z.enum(SchoolClass, "Invalid school class"),
-  publicHighscore: z.boolean(),
+  publicHighscore: z.boolean("Public highscore must be a boolean"),
   secret: z.string().min(1, "Secret is required"),
 });
 
@@ -66,7 +66,7 @@ export const updateUserSettingsSchema = z.object({
 });
 
 export const updateUserRoleSchema = z.object({
-  role: z.enum(UserRole),
+  role: z.enum(UserRole, "Invalid user role"),
 });
 
 export const adminUpdateUserSchema = z.object({
@@ -78,8 +78,14 @@ export const adminUpdateUserSchema = z.object({
 });
 
 export const updateApplicationSettingSchema = z.object({
-  key: z.string().min(1).max(100),
-  value: z.string().min(1).max(1000),
+  key: z
+    .string()
+    .min(1, "Key is required")
+    .max(100, "Key must be below 100 characters"),
+  value: z
+    .string()
+    .min(1, "Value is required")
+    .max(1000, "Value must be below 1000 characters"),
 });
 
 export const guildNameParamSchema = z.object({
@@ -98,22 +104,30 @@ export const schoolClassSchema = z.object({
 });
 
 export const selectCosmicSchema = z.object({
-  grade: z.enum(["vg1", "vg2"]),
+  grade: z.enum(["vg1", "vg2"], "Invalid grade"),
   notify: z.boolean(),
 });
 
 export const cosmicNameSchema = z.object({
-  cosmicName: z.string().min(1).max(40),
+  cosmicName: z
+    .string()
+    .min(1, "Cosmic name is required")
+    .max(40, "Cosmic name must be below 40 characters"),
 });
 
 export const scheduleWishSchema = z.object({
   scheduledDate: z.coerce
     .date()
-    .min(new Date(), "Schedule date must be in the future"),
+    .refine((date) => date >= new Date(new Date().setHours(0, 0, 0, 0)), {
+      message: "Schedule date cannot be in the past",
+    }),
 });
 
 export const abilityNameSchema = z.object({
-  abilityName: z.string().min(1).max(100),
+  abilityName: z
+    .string()
+    .min(1, "Ability name is required")
+    .max(100, "Ability name must be below 100 characters"),
 });
 
 export const resurrectUserSchema = z.object({
@@ -145,7 +159,10 @@ export const userIdListSchema = z.object({
 });
 
 export const usernameParamSchema = z.object({
-  username: z.string().min(3).max(20),
+  username: z
+    .string()
+    .min(3, "Username must be above 3 characters")
+    .max(20, "Username must be below 20 characters"),
 });
 
 export const voteForWishSchema = z.object({
@@ -163,13 +180,14 @@ export const purchaseItemSchema = z.object({
 });
 
 export const purchaseAbilitySchema = z.object({
-  abilityName: z.string().min(1).max(100),
+  abilityName: z.string().min(1, "Ability name is required").max(100),
 });
 
 export const equipItemSchema = z.object({
   itemId: z.number().int().positive("Id must be greater than zero"),
 });
 
+// FIXME: unused?
 export const checkIfUserOwnsAbilitySchema = z.object({
   userId: z.cuid(),
   abilityName: z.string().min(1, "Ability name is required"),
@@ -177,7 +195,10 @@ export const checkIfUserOwnsAbilitySchema = z.object({
 
 export const idParamSchema = (idName = "id") =>
   z.object({
-    [idName]: z.coerce.number("ID must be a number").int().positive(),
+    [idName]: z.coerce
+      .number("ID must be a number")
+      .int()
+      .positive("ID must be a positive integer"),
   });
 
 export const updateGameSchema = z.object({
@@ -186,7 +207,7 @@ export const updateGameSchema = z.object({
 });
 
 export const gameIdParamSchema = z.object({
-  gameId: z.cuid(),
+  gameId: z.cuid("Invalid game ID format"),
 });
 
 export const gameNameSchema = z.object({
@@ -197,19 +218,22 @@ export const gameNameSchema = z.object({
 });
 
 export const initializeBinaryJackSchema = z.object({
-  stake: z.number().int().positive(),
+  stake: z.number().int().positive("Stake must be a positive integer"),
 });
 
 export const wordQuestHintSchema = z.object({
-  word: z.string().min(1),
+  word: z.string().min(1, "Word is required"),
 });
 
 export const applyBinaryOperationSchema = z.object({
-  operation: z.enum(["AND", "OR", "XOR", "NAND", "NOR", "XNOR"]),
+  operation: z.enum(
+    ["AND", "OR", "XOR", "NAND", "NOR", "XNOR"],
+    "Invalid operation",
+  ),
 });
 
 export const questSchema = z.object({
-  name: z.string().min(1).max(255),
+  name: z.string().min(1, "Name cannot be empty").max(255),
   description: z.string().optional(),
   rewardXp: z.number().optional(),
   rewardItemId: z.number().optional(),
