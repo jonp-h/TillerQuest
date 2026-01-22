@@ -9,7 +9,11 @@ export default async function Navbar() {
   let scheduledWishesCount = 0;
 
   // Only fetch if user is authenticated
-  if (session?.user) {
+  if (
+    session?.user &&
+    session.user.role !== "NEW" &&
+    session.user.role !== "INACTIVE"
+  ) {
     const scheduledWishes = await secureGet<number>(`/wishes/scheduled/count`, {
       cache: "force-cache",
       next: {
