@@ -19,7 +19,7 @@ export default async function Home() {
       <div className="w-screen flex justify-center text-center">
         <div className="mt-48 flex flex-col gap-30 items-center text-6xl">
           <Image
-            src="TillerQuestLogoVertical.svg"
+            src="/TillerQuestLogoVertical.svg"
             alt="TillerQuest"
             width={500}
             height={500}

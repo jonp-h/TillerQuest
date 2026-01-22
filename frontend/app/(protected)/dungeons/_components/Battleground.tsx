@@ -121,7 +121,6 @@ function Battleground({
         }}
         className="m-auto flex justify-evenly"
       >
-        {diceColorset}
         {enemies && enemies.length > 0 ? (
           enemies.every((enemy) => enemy.health <= 0) ? (
             <div className="absolute z-10 flex flex-col text-center gap-1 bg-black/20 p-2 rounded-xl backdrop-blur-sm">

@@ -2,6 +2,7 @@ import MainContainer from "@/components/MainContainer";
 import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { secureGet } from "@/lib/secureFetch";
 import {
+  Announcement,
   AutoAwesome,
   BarChart,
   Bolt,
@@ -109,6 +110,15 @@ export default async function GameMasterPage() {
               startIcon={<AutoAwesome />}
             >
               Wishing well
+            </Button>
+          </Link>
+          <Link href="/gamemaster/quests">
+            <Button
+              color="secondary"
+              variant="contained"
+              startIcon={<Announcement />}
+            >
+              Quest board
             </Button>
           </Link>
         </div>

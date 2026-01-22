@@ -47,6 +47,9 @@ import { requireAdmin } from "middleware/authMiddleware.js";
 import { adminReviewImage } from "./adminReviewImage.js";
 import { adminGetPendingImages } from "./adminGetPendingImages.js";
 import { adminPendingImagesCount } from "./adminPendingImagesCount.js";
+import { adminCreateQuest } from "./adminCreateQuest.js";
+import { adminUpdateQuest } from "./adminUpdateQuest.js";
+import { adminDeleteQuest } from "./adminDeleteQuest.js";
 
 const router = express.Router();
 
@@ -64,6 +67,11 @@ router.post("/admin/images/pending/:uploadId", adminReviewImage);
 router.get("/admin/wishes", adminGetWishes);
 router.patch("/admin/wishes/:wishId/schedule", adminScheduleWish);
 router.post("/admin/wishes/:wishId/reset", adminResetWish);
+
+// Quest management routes
+router.patch("/admin/quests/:questId", adminUpdateQuest);
+router.delete("/admin/quests/:questId", adminDeleteQuest);
+router.post("/admin/quests", adminCreateQuest);
 
 // System notification routes
 router.get("/admin/notifications", adminGetSystemNotifications);

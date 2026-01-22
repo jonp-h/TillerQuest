@@ -207,3 +207,12 @@ export const wordQuestHintSchema = z.object({
 export const applyBinaryOperationSchema = z.object({
   operation: z.enum(["AND", "OR", "XOR", "NAND", "NOR", "XNOR"]),
 });
+
+export const questSchema = z.object({
+  name: z.string().min(1).max(255),
+  description: z.string().optional(),
+  rewardXp: z.number().optional(),
+  rewardItemId: z.number().optional(),
+  rewardGold: z.number().optional(),
+  questGiver: z.string().min(1, "Quest giver cannot be empty").max(255),
+});
