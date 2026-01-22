@@ -2407,8 +2407,7 @@ export const QuestScalarFieldEnum = {
   rewardGold: 'rewardGold',
   rewardItemId: 'rewardItemId',
   questGiver: 'questGiver',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  createdAt: 'createdAt'
 } as const
 
 export type QuestScalarFieldEnum = (typeof QuestScalarFieldEnum)[keyof typeof QuestScalarFieldEnum]

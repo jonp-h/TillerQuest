@@ -49,7 +49,6 @@ export type QuestMinAggregateOutputType = {
   rewardItemId: number | null
   questGiver: string | null
   createdAt: Date | null
-  updatedAt: Date | null
 }
 
 export type QuestMaxAggregateOutputType = {
@@ -61,7 +60,6 @@ export type QuestMaxAggregateOutputType = {
   rewardItemId: number | null
   questGiver: string | null
   createdAt: Date | null
-  updatedAt: Date | null
 }
 
 export type QuestCountAggregateOutputType = {
@@ -73,7 +71,6 @@ export type QuestCountAggregateOutputType = {
   rewardItemId: number
   questGiver: number
   createdAt: number
-  updatedAt: number
   _all: number
 }
 
@@ -101,7 +98,6 @@ export type QuestMinAggregateInputType = {
   rewardItemId?: true
   questGiver?: true
   createdAt?: true
-  updatedAt?: true
 }
 
 export type QuestMaxAggregateInputType = {
@@ -113,7 +109,6 @@ export type QuestMaxAggregateInputType = {
   rewardItemId?: true
   questGiver?: true
   createdAt?: true
-  updatedAt?: true
 }
 
 export type QuestCountAggregateInputType = {
@@ -125,7 +120,6 @@ export type QuestCountAggregateInputType = {
   rewardItemId?: true
   questGiver?: true
   createdAt?: true
-  updatedAt?: true
   _all?: true
 }
 
@@ -224,7 +218,6 @@ export type QuestGroupByOutputType = {
   rewardItemId: number | null
   questGiver: string
   createdAt: Date
-  updatedAt: Date
   _count: QuestCountAggregateOutputType | null
   _avg: QuestAvgAggregateOutputType | null
   _sum: QuestSumAggregateOutputType | null
@@ -259,7 +252,6 @@ export type QuestWhereInput = {
   rewardItemId?: Prisma.IntNullableFilter<"Quest"> | number | null
   questGiver?: Prisma.StringFilter<"Quest"> | string
   createdAt?: Prisma.DateTimeFilter<"Quest"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Quest"> | Date | string
   rewardItem?: Prisma.XOR<Prisma.ShopItemNullableScalarRelationFilter, Prisma.ShopItemWhereInput> | null
 }
 
@@ -272,7 +264,6 @@ export type QuestOrderByWithRelationInput = {
   rewardItemId?: Prisma.SortOrderInput | Prisma.SortOrder
   questGiver?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   rewardItem?: Prisma.ShopItemOrderByWithRelationInput
 }
 
@@ -288,7 +279,6 @@ export type QuestWhereUniqueInput = Prisma.AtLeast<{
   rewardGold?: Prisma.IntNullableFilter<"Quest"> | number | null
   questGiver?: Prisma.StringFilter<"Quest"> | string
   createdAt?: Prisma.DateTimeFilter<"Quest"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Quest"> | Date | string
   rewardItem?: Prisma.XOR<Prisma.ShopItemNullableScalarRelationFilter, Prisma.ShopItemWhereInput> | null
 }, "id" | "name" | "rewardItemId">
 
@@ -301,7 +291,6 @@ export type QuestOrderByWithAggregationInput = {
   rewardItemId?: Prisma.SortOrderInput | Prisma.SortOrder
   questGiver?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   _count?: Prisma.QuestCountOrderByAggregateInput
   _avg?: Prisma.QuestAvgOrderByAggregateInput
   _max?: Prisma.QuestMaxOrderByAggregateInput
@@ -321,7 +310,6 @@ export type QuestScalarWhereWithAggregatesInput = {
   rewardItemId?: Prisma.IntNullableWithAggregatesFilter<"Quest"> | number | null
   questGiver?: Prisma.StringWithAggregatesFilter<"Quest"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Quest"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Quest"> | Date | string
 }
 
 export type QuestCreateInput = {
@@ -331,7 +319,6 @@ export type QuestCreateInput = {
   rewardGold?: number | null
   questGiver: string
   createdAt?: Date | string
-  updatedAt?: Date | string
   rewardItem?: Prisma.ShopItemCreateNestedOneWithoutQuestInput
 }
 
@@ -344,7 +331,6 @@ export type QuestUncheckedCreateInput = {
   rewardItemId?: number | null
   questGiver: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type QuestUpdateInput = {
@@ -354,7 +340,6 @@ export type QuestUpdateInput = {
   rewardGold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rewardItem?: Prisma.ShopItemUpdateOneWithoutQuestNestedInput
 }
 
@@ -367,7 +352,6 @@ export type QuestUncheckedUpdateInput = {
   rewardItemId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type QuestCreateManyInput = {
@@ -379,7 +363,6 @@ export type QuestCreateManyInput = {
   rewardItemId?: number | null
   questGiver: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type QuestUpdateManyMutationInput = {
@@ -389,7 +372,6 @@ export type QuestUpdateManyMutationInput = {
   rewardGold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type QuestUncheckedUpdateManyInput = {
@@ -401,7 +383,6 @@ export type QuestUncheckedUpdateManyInput = {
   rewardItemId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type QuestNullableScalarRelationFilter = {
@@ -418,7 +399,6 @@ export type QuestCountOrderByAggregateInput = {
   rewardItemId?: Prisma.SortOrder
   questGiver?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
 }
 
 export type QuestAvgOrderByAggregateInput = {
@@ -437,7 +417,6 @@ export type QuestMaxOrderByAggregateInput = {
   rewardItemId?: Prisma.SortOrder
   questGiver?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
 }
 
 export type QuestMinOrderByAggregateInput = {
@@ -449,7 +428,6 @@ export type QuestMinOrderByAggregateInput = {
   rewardItemId?: Prisma.SortOrder
   questGiver?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
 }
 
 export type QuestSumOrderByAggregateInput = {
@@ -498,7 +476,6 @@ export type QuestCreateWithoutRewardItemInput = {
   rewardGold?: number | null
   questGiver: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type QuestUncheckedCreateWithoutRewardItemInput = {
@@ -509,7 +486,6 @@ export type QuestUncheckedCreateWithoutRewardItemInput = {
   rewardGold?: number | null
   questGiver: string
   createdAt?: Date | string
-  updatedAt?: Date | string
 }
 
 export type QuestCreateOrConnectWithoutRewardItemInput = {
@@ -535,7 +511,6 @@ export type QuestUpdateWithoutRewardItemInput = {
   rewardGold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type QuestUncheckedUpdateWithoutRewardItemInput = {
@@ -546,7 +521,6 @@ export type QuestUncheckedUpdateWithoutRewardItemInput = {
   rewardGold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   questGiver?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -560,7 +534,6 @@ export type QuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   rewardItemId?: boolean
   questGiver?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
   rewardItem?: boolean | Prisma.Quest$rewardItemArgs<ExtArgs>
 }, ExtArgs["result"]["quest"]>
 
@@ -573,7 +546,6 @@ export type QuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   rewardItemId?: boolean
   questGiver?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
   rewardItem?: boolean | Prisma.Quest$rewardItemArgs<ExtArgs>
 }, ExtArgs["result"]["quest"]>
 
@@ -586,7 +558,6 @@ export type QuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   rewardItemId?: boolean
   questGiver?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
   rewardItem?: boolean | Prisma.Quest$rewardItemArgs<ExtArgs>
 }, ExtArgs["result"]["quest"]>
 
@@ -599,10 +570,9 @@ export type QuestSelectScalar = {
   rewardItemId?: boolean
   questGiver?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
 }
 
-export type QuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "rewardXp" | "rewardGold" | "rewardItemId" | "questGiver" | "createdAt" | "updatedAt", ExtArgs["result"]["quest"]>
+export type QuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "rewardXp" | "rewardGold" | "rewardItemId" | "questGiver" | "createdAt", ExtArgs["result"]["quest"]>
 export type QuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rewardItem?: boolean | Prisma.Quest$rewardItemArgs<ExtArgs>
 }
@@ -627,7 +597,6 @@ export type $QuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     rewardItemId: number | null
     questGiver: string
     createdAt: Date
-    updatedAt: Date
   }, ExtArgs["result"]["quest"]>
   composites: {}
 }
@@ -1060,7 +1029,6 @@ export interface QuestFieldRefs {
   readonly rewardItemId: Prisma.FieldRef<"Quest", 'Int'>
   readonly questGiver: Prisma.FieldRef<"Quest", 'String'>
   readonly createdAt: Prisma.FieldRef<"Quest", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Quest", 'DateTime'>
 }
     
 

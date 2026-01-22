@@ -22,7 +22,7 @@ export const diceSettings: DiceSettings = {
     edge: "black",
   },
   assetPath: "/assets/",
-  light_intensity: 0.7,
+  light_intensity: 0.9,
   gravity_multiplier: 200,
   baseScale: 150,
   strength: 2, // toss strength of dice
