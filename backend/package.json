@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@dice-roller/rpg-dice-roller": "^5.5.1",
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^7.3.0",
     "@tillerquest/prisma": "*",
     "better-auth": "^1.4.9",
     "cors": "^2.8.5",
@@ -42,7 +42,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
     "prettier": "^3.7.4",
-    "prisma": "^6.13.0",
+    "prisma": "^7.3.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1"

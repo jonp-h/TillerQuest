@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^7.3.0",
     "dotenv": "^17.2.3",
     "pg": "^8.16.3"
   },
@@ -35,9 +35,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
-    "prisma": "^7.2.0"
-  },
-  "overrides": {
-    "hono": "^4.11.4"
+    "prisma": "^7.3.0"
   }
 }
