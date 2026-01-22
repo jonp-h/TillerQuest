@@ -12,7 +12,13 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { Badge, IconButton } from "@mui/material";
-import { Announcement, AutoAwesome, Castle, Groups } from "@mui/icons-material";
+import {
+  Announcement,
+  AutoAwesome,
+  Castle,
+  Groups,
+  Work,
+} from "@mui/icons-material";
 import { signIn, signOut } from "@/lib/auth-client";
 import { BackendSessionResponse } from "@/lib/redirectUtils";
 
@@ -26,6 +32,8 @@ export default function NavbarContent({
   const pathname = usePathname();
   const frontendUrl =
     process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+
+  const workUrl = process.env.NEXT_PUBLIC_WORK_URL || null;
 
   const handleSignIn = () => {
     signIn.social({ provider: "github", callbackURL: frontendUrl });
@@ -61,7 +69,7 @@ export default function NavbarContent({
           <IconButton
             sx={{ display: { xs: "flex", lg: "none" } }}
             color="primary"
-            size="large"
+            size="medium"
             onClick={handleSignIn}
             aria-label="Sign in"
           >
@@ -80,7 +88,7 @@ export default function NavbarContent({
             <IconButton
               sx={{ display: { xs: "flex", lg: "none" } }}
               color="primary"
-              size="large"
+              size="medium"
               aria-label="Sign up"
             >
               <PersonAddIcon />
@@ -136,6 +144,15 @@ export default function NavbarContent({
     },
   ];
 
+  // Add work link if WORK_URL is set the environment variables
+  if (workUrl) {
+    links.unshift({
+      name: "Work",
+      href: workUrl,
+      icon: <Work />,
+    });
+  }
+
   // Add admin link if user is admin
   if (session.user.role === "ADMIN") {
     links.unshift({
@@ -154,7 +171,7 @@ export default function NavbarContent({
           <Image
             src="/TillerQuestLogoHorizontal.svg"
             alt="TillerQuest"
-            width={300}
+            width={250}
             height={150}
             className="hidden md:block"
           />
@@ -168,9 +185,13 @@ export default function NavbarContent({
         </div>
       </Link>
 
-      <div className="flex justify-end gap-2 md:gap-8 w-full">
+      <div className="flex justify-end gap-2 md:gap-4 w-full">
         {links.map((link) => (
-          <Link href={link.href} key={link.href}>
+          <Link
+            href={link.href}
+            key={link.href}
+            target={link.href.startsWith("http") ? "_blank" : undefined}
+          >
             <Badge
               badgeContent={link.badgeCount}
               color="error"
@@ -182,6 +203,7 @@ export default function NavbarContent({
                 color={pathname === link.href ? "secondary" : "tqwhite"}
                 startIcon={link.icon}
                 sx={{
+                  fontSize: 13,
                   display: { xs: "none", lg: "flex" },
                   textWrap: "nowrap",
                 }}
@@ -191,7 +213,7 @@ export default function NavbarContent({
               <IconButton
                 sx={{ display: { xs: "block", lg: "none" } }}
                 color={pathname === link.href ? "secondary" : "tqwhite"}
-                size="large"
+                size="medium"
                 aria-label={link.name}
               >
                 {link.icon}
@@ -204,7 +226,11 @@ export default function NavbarContent({
           variant="outlined"
           color="tqwhite"
           startIcon={<LogoutIcon />}
-          sx={{ display: { xs: "none", lg: "flex" }, whiteSpace: "nowrap" }}
+          sx={{
+            display: { xs: "none", lg: "flex" },
+            fontSize: 13,
+            whiteSpace: "nowrap",
+          }}
           onClick={handleSignOut}
         >
           Sign out
@@ -212,7 +238,7 @@ export default function NavbarContent({
         <IconButton
           sx={{ display: { xs: "block", lg: "none" } }}
           color="tqwhite"
-          size="large"
+          size="medium"
           onClick={handleSignOut}
           aria-label="Sign out"
         >

@@ -4,8 +4,10 @@ import { secureGet } from "@/lib/secureFetch";
 import { Typography } from "@mui/material";
 import { Quest } from "@tillerquest/prisma/browser";
 import QuestCard from "./_components/QuestCard";
+import { redirectIfNotActiveUser } from "@/lib/redirectUtils";
 
 async function QuestBoardPage() {
+  await redirectIfNotActiveUser();
   const quests = await secureGet<Quest[]>("/quests");
 
   if (!quests.ok) {
