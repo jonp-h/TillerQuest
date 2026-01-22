@@ -136,7 +136,7 @@ export const strictUserRateLimit = userRateLimit({
  */
 export const standardUserRateLimit = userRateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  maxRequests: 200, // 200 requests per 5 minutes per user
+  maxRequests: 250, // 250 requests per 5 minutes per user
   // 40 req/min or ~1.5 sec between requests with some burst capacity
 });
 

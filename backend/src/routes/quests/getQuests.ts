@@ -9,7 +9,7 @@ export const getQuests = [
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const quests = await db.quest.findMany({
-        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        orderBy: [{ createdAt: "desc" }],
       });
 
       res.json({ success: true, data: quests });
