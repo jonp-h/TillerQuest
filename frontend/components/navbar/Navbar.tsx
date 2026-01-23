@@ -17,7 +17,7 @@ export default async function Navbar() {
     const scheduledWishes = await secureGet<number>(`/wishes/scheduled/count`, {
       cache: "force-cache",
       next: {
-        revalidate: 43200, // 12 hours
+        revalidate: 21600, // 6 hours
         tags: ["scheduled-wishes-count"],
       },
     });
