@@ -234,9 +234,9 @@ export const applyBinaryOperationSchema = z.object({
 
 export const questSchema = z.object({
   name: z.string().min(1, "Name cannot be empty").max(255),
-  description: z.string().optional(),
-  rewardXp: z.number().optional(),
-  rewardItemId: z.number().nullable().optional(),
-  rewardGold: z.number().optional(),
+  description: z.string().nullable().optional(),
+  rewardXp: z.coerce.number().nullable().optional(),
+  rewardItemId: z.coerce.number().nullable().optional(),
+  rewardGold: z.coerce.number().nullable().optional(),
   questGiver: z.string().min(1, "Quest giver cannot be empty").max(255),
 });
