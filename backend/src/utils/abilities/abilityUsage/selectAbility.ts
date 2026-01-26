@@ -170,7 +170,8 @@ export const selectAbility = async (
           return await activatePassive(tx, castingUser, targetIds, ability);
 
         case "Trickery":
-          if (ability.name === "Evade") {
+          // TODO: add evade category/tree
+          if (ability.name === "Evade" || ability.name === "Devilish-Deal") {
             return await useEvadeAbility(tx, castingUser, ability);
           } else if (ability.name === "Twist-of-Fate") {
             return await useTwistOfFateAbility(tx, castingUser, ability);

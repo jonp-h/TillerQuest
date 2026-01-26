@@ -1,4 +1,4 @@
-import { Ability, User } from "lib/db.js";
+import { Ability, User } from "@tillerquest/prisma/browser";
 import { logger } from "../../../lib/logger.js";
 import { PrismaTransaction } from "types/prismaTransaction.js";
 import { ApiResponse } from "../../../types/apiResponse.js";
