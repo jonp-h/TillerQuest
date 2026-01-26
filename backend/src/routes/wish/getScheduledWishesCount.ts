@@ -8,8 +8,12 @@ export const getScheduledWishesCount = [
   requireActiveUser,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
+      // Get start of today (midnight) to include all wishes scheduled for today and future
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
       const wishes = await db.wish.count({
-        where: { scheduled: { gt: new Date() } },
+        where: { scheduled: { gte: startOfToday } },
       });
 
       res.json({ success: true, data: wishes });
