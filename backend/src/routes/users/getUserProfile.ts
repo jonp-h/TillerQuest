@@ -75,7 +75,7 @@ export const getUserProfile = [
               ability: {
                 userPassives: {
                   none: {
-                    userId: username,
+                    userId: req.session?.user.id,
                   },
                 },
               },
