@@ -12,11 +12,15 @@ function QuestForm({ quest }: { quest: Quest }) {
   const [description, setDescription] = useState<string | null>(
     quest.description,
   );
-  const [rewardXp, setRewardXp] = useState<number | null>(quest.rewardXp);
-  const [rewardItemId, setRewardItemId] = useState<number | null>(
-    quest.rewardItemId,
+  const [rewardXp, setRewardXp] = useState<string>(
+    quest.rewardXp?.toString() ?? "",
   );
-  const [rewardGold, setRewardGold] = useState<number | null>(quest.rewardGold);
+  const [rewardItemId, setRewardItemId] = useState<string>(
+    quest.rewardItemId?.toString() ?? "",
+  );
+  const [rewardGold, setRewardGold] = useState<string>(
+    quest.rewardGold?.toString() ?? "",
+  );
   const [questGiver, setQuestGiver] = useState<string | null>(quest.questGiver);
 
   const router = useRouter();
@@ -32,9 +36,9 @@ function QuestForm({ quest }: { quest: Quest }) {
       {
         name,
         description,
-        rewardXp,
-        rewardItemId,
-        rewardGold,
+        rewardXp: rewardXp === "" ? null : rewardXp,
+        rewardItemId: rewardItemId === "" ? null : rewardItemId,
+        rewardGold: rewardGold === "" ? null : rewardGold,
         questGiver,
       },
     );
@@ -82,26 +86,23 @@ function QuestForm({ quest }: { quest: Quest }) {
       <TextField
         variant="standard"
         label="Reward XP"
-        type="number"
         sx={{ marginX: 1, width: "10%" }}
-        value={rewardXp ?? ""}
-        onChange={(e) => setRewardXp(Number(e.target.value))}
+        value={rewardXp}
+        onChange={(e) => setRewardXp(e.target.value)}
       />
       <TextField
         variant="standard"
         label="Reward Item ID"
-        type="number"
         sx={{ marginX: 1, width: "10%" }}
-        value={rewardItemId ?? ""}
-        onChange={(e) => setRewardItemId(Number(e.target.value))}
+        value={rewardItemId}
+        onChange={(e) => setRewardItemId(e.target.value)}
       />
       <TextField
         variant="standard"
         label="Reward Gold"
-        type="number"
         sx={{ marginX: 1, width: "10%" }}
-        value={rewardGold ?? ""}
-        onChange={(e) => setRewardGold(Number(e.target.value))}
+        value={rewardGold}
+        onChange={(e) => setRewardGold(e.target.value)}
       />
       <TextField
         variant="standard"

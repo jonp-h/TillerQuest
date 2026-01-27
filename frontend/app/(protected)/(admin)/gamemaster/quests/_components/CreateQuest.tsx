@@ -9,9 +9,9 @@ import { toast } from "react-toastify";
 function CreateQuest() {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [rewardXp, setRewardXp] = useState<number>(0);
+  const [rewardXp, setRewardXp] = useState<string>("");
   const [rewardItemId, setRewardItemId] = useState<string>("");
-  const [rewardGold, setRewardGold] = useState<number>(0);
+  const [rewardGold, setRewardGold] = useState<string>("");
   const [questGiver, setQuestGiver] = useState<string>("");
 
   const router = useRouter();
@@ -41,9 +41,9 @@ function CreateQuest() {
     // Reset form after successful creation
     setName("");
     setDescription("");
-    setRewardXp(0);
+    setRewardXp("");
     setRewardItemId("");
-    setRewardGold(0);
+    setRewardGold("");
     setQuestGiver("");
     router.refresh();
   };
@@ -72,7 +72,7 @@ function CreateQuest() {
         label="Reward XP"
         sx={{ marginX: 1, width: "10%" }}
         value={rewardXp}
-        onChange={(e) => setRewardXp(Number(e.target.value))}
+        onChange={(e) => setRewardXp(e.target.value)}
         placeholder="Enter new quest reward XP..."
       />
       <TextField
@@ -88,7 +88,7 @@ function CreateQuest() {
         label="Reward Gold"
         sx={{ marginX: 1, width: "10%" }}
         value={rewardGold}
-        onChange={(e) => setRewardGold(Number(e.target.value))}
+        onChange={(e) => setRewardGold(e.target.value)}
         placeholder="Enter new quest reward gold..."
       />
       <TextField

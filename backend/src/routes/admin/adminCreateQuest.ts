@@ -36,11 +36,11 @@ export const adminCreateQuest = [
         data: {
           name,
           description: description || "",
-          rewardXp: rewardXp || 0,
+          rewardXp: rewardXp || null,
           rewardItem: rewardItemId
             ? { connect: { id: rewardItemId } }
             : undefined,
-          rewardGold: rewardGold || 0,
+          rewardGold: rewardGold || null,
           questGiver,
         },
       });
