@@ -49,7 +49,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
             userIds: selectedUsers,
             value,
             notify,
-            reasonString,
+            reason: reasonString,
           });
 
           if (healResult.ok) {
@@ -71,7 +71,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
             userIds: selectedUsers,
             value,
             notify,
-            reasonString,
+            reason: reasonString,
           });
 
           if (damageResult.ok) {
@@ -90,7 +90,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
               userIds: selectedUsers,
               value,
               notify,
-              reasonString,
+              reason: reasonString,
             });
 
             if (negativeXpResult.ok) {
@@ -111,7 +111,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
               userIds: selectedUsers,
               value,
               notify,
-              reasonString,
+              reason: reasonString,
             });
 
             if (xpResult.ok) {
@@ -129,7 +129,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
             userIds: selectedUsers,
             value,
             notify,
-            reasonString,
+            reason: reasonString,
           });
 
           if (manaResult.ok) {
@@ -147,7 +147,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
             userIds: selectedUsers,
             value,
             notify,
-            reasonString,
+            reason: reasonString,
           });
 
           if (arenaResult.ok) {
@@ -165,7 +165,7 @@ export default function ListControls({ users }: { users: UserResponse[] }) {
             userIds: selectedUsers,
             value,
             notify,
-            reasonString,
+            reason: reasonString,
           });
 
           if (goldResult.ok) {
