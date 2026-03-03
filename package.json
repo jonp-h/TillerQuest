@@ -36,5 +36,9 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "prisma": "^7.3.0"
+  },
+  "overrides": {
+    "hono": "^4.12.4",
+    "lodash": "^4.17.23"
   }
 }
