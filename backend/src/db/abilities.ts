@@ -1711,7 +1711,7 @@ const arena: Ability[] = [
     type: "Access",
     target: "Self",
     description:
-      "Gain access to Tillerio. Compete with your schoolmates as bookworms in a digital replica of the school. Requires a standalone app.",
+      "Gain access to Tillerio. Compete with your schoolmates as worms in a digital replica of the school. Requires a standalone app.",
     duration: null,
     icon: "Game.png",
     gemstoneCost: 2,

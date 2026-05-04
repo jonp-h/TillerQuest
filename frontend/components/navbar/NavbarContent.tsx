@@ -37,7 +37,7 @@ export default function NavbarContent({
 
   const workUrl = process.env.NEXT_PUBLIC_WORK_URL || null;
 
-  // countdown in hours or minutes until next scheduled app event
+  // countdown in hours until next scheduled app event
   let nextAppEventCountdown = "";
   if (scheduledAppEventsDate) {
     const now = new Date();
