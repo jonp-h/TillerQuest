@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.3.0
- * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
+ * Prisma Client JS version: 7.4.2
+ * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.3.0",
-  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
+  client: "7.4.2",
+  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
 }
 
 /**
@@ -400,13 +400,15 @@ export const ModelName = {
   Notification: 'Notification',
   Quest: 'Quest',
   Game: 'Game',
+  App: 'App',
   TypeQuestText: 'TypeQuestText',
   WordQuestWord: 'WordQuestWord',
   Analytics: 'Analytics',
   Account: 'Account',
   Session: 'Session',
-  ApplicationSettings: 'ApplicationSettings',
-  Verification: 'Verification'
+  TillerQuestSettings: 'TillerQuestSettings',
+  Verification: 'Verification',
+  DeviceCode: 'DeviceCode'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -422,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "guild" | "imageUpload" | "ability" | "enemy" | "guildEnemy" | "userAbility" | "userPassive" | "cosmicEvent" | "shopItem" | "wish" | "wishVote" | "log" | "notification" | "quest" | "game" | "typeQuestText" | "wordQuestWord" | "analytics" | "account" | "session" | "applicationSettings" | "verification"
+    modelProps: "user" | "guild" | "imageUpload" | "ability" | "enemy" | "guildEnemy" | "userAbility" | "userPassive" | "cosmicEvent" | "shopItem" | "wish" | "wishVote" | "log" | "notification" | "quest" | "game" | "app" | "typeQuestText" | "wordQuestWord" | "analytics" | "account" | "session" | "tillerQuestSettings" | "verification" | "deviceCode"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1610,6 +1612,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    App: {
+      payload: Prisma.$AppPayload<ExtArgs>
+      fields: Prisma.AppFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AppFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AppFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        findFirst: {
+          args: Prisma.AppFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AppFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        findMany: {
+          args: Prisma.AppFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>[]
+        }
+        create: {
+          args: Prisma.AppCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        createMany: {
+          args: Prisma.AppCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AppCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>[]
+        }
+        delete: {
+          args: Prisma.AppDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        update: {
+          args: Prisma.AppUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        deleteMany: {
+          args: Prisma.AppDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AppUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AppUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>[]
+        }
+        upsert: {
+          args: Prisma.AppUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppPayload>
+        }
+        aggregate: {
+          args: Prisma.AppAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApp>
+        }
+        groupBy: {
+          args: Prisma.AppGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AppCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppCountAggregateOutputType> | number
+        }
+      }
+    }
     TypeQuestText: {
       payload: Prisma.$TypeQuestTextPayload<ExtArgs>
       fields: Prisma.TypeQuestTextFieldRefs
@@ -1980,77 +2056,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ApplicationSettings: {
-      payload: Prisma.$ApplicationSettingsPayload<ExtArgs>
-      fields: Prisma.ApplicationSettingsFieldRefs
+    TillerQuestSettings: {
+      payload: Prisma.$TillerQuestSettingsPayload<ExtArgs>
+      fields: Prisma.TillerQuestSettingsFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.ApplicationSettingsFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload> | null
+          args: Prisma.TillerQuestSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.ApplicationSettingsFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         findFirst: {
-          args: Prisma.ApplicationSettingsFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload> | null
+          args: Prisma.TillerQuestSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.ApplicationSettingsFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         findMany: {
-          args: Prisma.ApplicationSettingsFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>[]
+          args: Prisma.TillerQuestSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>[]
         }
         create: {
-          args: Prisma.ApplicationSettingsCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         createMany: {
-          args: Prisma.ApplicationSettingsCreateManyArgs<ExtArgs>
+          args: Prisma.TillerQuestSettingsCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.ApplicationSettingsCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>[]
+          args: Prisma.TillerQuestSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>[]
         }
         delete: {
-          args: Prisma.ApplicationSettingsDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         update: {
-          args: Prisma.ApplicationSettingsUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         deleteMany: {
-          args: Prisma.ApplicationSettingsDeleteManyArgs<ExtArgs>
+          args: Prisma.TillerQuestSettingsDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.ApplicationSettingsUpdateManyArgs<ExtArgs>
+          args: Prisma.TillerQuestSettingsUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.ApplicationSettingsUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>[]
+          args: Prisma.TillerQuestSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>[]
         }
         upsert: {
-          args: Prisma.ApplicationSettingsUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicationSettingsPayload>
+          args: Prisma.TillerQuestSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TillerQuestSettingsPayload>
         }
         aggregate: {
-          args: Prisma.ApplicationSettingsAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateApplicationSettings>
+          args: Prisma.TillerQuestSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTillerQuestSettings>
         }
         groupBy: {
-          args: Prisma.ApplicationSettingsGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApplicationSettingsGroupByOutputType>[]
+          args: Prisma.TillerQuestSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TillerQuestSettingsGroupByOutputType>[]
         }
         count: {
-          args: Prisma.ApplicationSettingsCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApplicationSettingsCountAggregateOutputType> | number
+          args: Prisma.TillerQuestSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TillerQuestSettingsCountAggregateOutputType> | number
         }
       }
     }
@@ -2125,6 +2201,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.VerificationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.VerificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    DeviceCode: {
+      payload: Prisma.$DeviceCodePayload<ExtArgs>
+      fields: Prisma.DeviceCodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DeviceCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DeviceCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        findFirst: {
+          args: Prisma.DeviceCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DeviceCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        findMany: {
+          args: Prisma.DeviceCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>[]
+        }
+        create: {
+          args: Prisma.DeviceCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        createMany: {
+          args: Prisma.DeviceCodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DeviceCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>[]
+        }
+        delete: {
+          args: Prisma.DeviceCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        update: {
+          args: Prisma.DeviceCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        deleteMany: {
+          args: Prisma.DeviceCodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DeviceCodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DeviceCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>[]
+        }
+        upsert: {
+          args: Prisma.DeviceCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeviceCodePayload>
+        }
+        aggregate: {
+          args: Prisma.DeviceCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeviceCode>
+        }
+        groupBy: {
+          args: Prisma.DeviceCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeviceCodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DeviceCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeviceCodeCountAggregateOutputType> | number
         }
       }
     }
@@ -2428,6 +2578,18 @@ export const GameScalarFieldEnum = {
 export type GameScalarFieldEnum = (typeof GameScalarFieldEnum)[keyof typeof GameScalarFieldEnum]
 
 
+export const AppScalarFieldEnum = {
+  name: 'name',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  scheduled: 'scheduled',
+  scheduleInfoText: 'scheduleInfoText',
+  downloadUrl: 'downloadUrl'
+} as const
+
+export type AppScalarFieldEnum = (typeof AppScalarFieldEnum)[keyof typeof AppScalarFieldEnum]
+
+
 export const TypeQuestTextScalarFieldEnum = {
   id: 'id',
   text: 'text'
@@ -2504,7 +2666,7 @@ export const SessionScalarFieldEnum = {
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
-export const ApplicationSettingsScalarFieldEnum = {
+export const TillerQuestSettingsScalarFieldEnum = {
   key: 'key',
   value: 'value',
   description: 'description',
@@ -2512,7 +2674,7 @@ export const ApplicationSettingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type ApplicationSettingsScalarFieldEnum = (typeof ApplicationSettingsScalarFieldEnum)[keyof typeof ApplicationSettingsScalarFieldEnum]
+export type TillerQuestSettingsScalarFieldEnum = (typeof TillerQuestSettingsScalarFieldEnum)[keyof typeof TillerQuestSettingsScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {
@@ -2525,6 +2687,22 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const DeviceCodeScalarFieldEnum = {
+  id: 'id',
+  deviceCode: 'deviceCode',
+  userCode: 'userCode',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  lastPolledAt: 'lastPolledAt',
+  pollingInterval: 'pollingInterval',
+  clientId: 'clientId',
+  scope: 'scope'
+} as const
+
+export type DeviceCodeScalarFieldEnum = (typeof DeviceCodeScalarFieldEnum)[keyof typeof DeviceCodeScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2929,13 +3107,15 @@ export type GlobalOmitConfig = {
   notification?: Prisma.NotificationOmit
   quest?: Prisma.QuestOmit
   game?: Prisma.GameOmit
+  app?: Prisma.AppOmit
   typeQuestText?: Prisma.TypeQuestTextOmit
   wordQuestWord?: Prisma.WordQuestWordOmit
   analytics?: Prisma.AnalyticsOmit
   account?: Prisma.AccountOmit
   session?: Prisma.SessionOmit
-  applicationSettings?: Prisma.ApplicationSettingsOmit
+  tillerQuestSettings?: Prisma.TillerQuestSettingsOmit
   verification?: Prisma.VerificationOmit
+  deviceCode?: Prisma.DeviceCodeOmit
 }
 
 /* Types for Logging */

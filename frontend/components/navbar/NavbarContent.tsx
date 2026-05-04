@@ -24,9 +24,11 @@ import { BackendSessionResponse } from "@/lib/redirectUtils";
 
 export default function NavbarContent({
   scheduledWishesCount,
+  scheduledAppEventsCount: scheduledAppEventsDate,
   session,
 }: {
   scheduledWishesCount: number;
+  scheduledAppEventsCount: Date | null;
   session: BackendSessionResponse | null;
 }) {
   const pathname = usePathname();
@@ -34,6 +36,24 @@ export default function NavbarContent({
     process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
   const workUrl = process.env.NEXT_PUBLIC_WORK_URL || null;
+
+  // countdown in hours until next scheduled app event
+  let nextAppEventCountdown = "";
+  if (scheduledAppEventsDate) {
+    const now = new Date();
+    const eventDate = new Date(scheduledAppEventsDate);
+    const diffInMs = eventDate.getTime() - now.getTime();
+
+    if (diffInMs > 0) {
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+
+      if (diffInHours > 0) {
+        nextAppEventCountdown = `${diffInHours}h`;
+      } else {
+        nextAppEventCountdown = `<1h`;
+      }
+    }
+  }
 
   const handleSignIn = () => {
     signIn.social({ provider: "github", callbackURL: frontendUrl });
@@ -105,7 +125,7 @@ export default function NavbarContent({
       name: "Wishing Well",
       href: "/wishing-well",
       icon: <AutoAwesome />,
-      badgeCount: scheduledWishesCount,
+      badge: scheduledWishesCount,
     },
     {
       name: "Quest Board",
@@ -121,6 +141,7 @@ export default function NavbarContent({
       name: "Arena",
       href: "/arena",
       icon: <StadiumIcon />,
+      badge: nextAppEventCountdown ? nextAppEventCountdown : undefined,
     },
     {
       name: "Guild",
@@ -159,7 +180,7 @@ export default function NavbarContent({
       name: "Game Master",
       href: "/gamemaster",
       icon: <CasinoIcon />,
-      badgeCount: undefined,
+      badge: undefined,
     });
   }
 
@@ -193,10 +214,10 @@ export default function NavbarContent({
             target={link.href.startsWith("http") ? "_blank" : undefined}
           >
             <Badge
-              badgeContent={link.badgeCount}
+              badgeContent={link.badge}
               color="error"
               max={99}
-              invisible={!link.badgeCount}
+              invisible={!link.badge}
             >
               <Button
                 variant={pathname === link.href ? "outlined" : "text"}

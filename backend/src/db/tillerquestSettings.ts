@@ -1,10 +1,10 @@
-interface ApplicationSettings {
+interface TillerQuestSettings {
   key: string;
   value: string; // can be a stringified JSON object if needed
   description: string;
 }
 
-const settings: ApplicationSettings[] = [
+const settings: TillerQuestSettings[] = [
   {
     key: "NEW_USER_SECRET",
     value: "test", // seed value for dev testing. must be changed to a secure random string

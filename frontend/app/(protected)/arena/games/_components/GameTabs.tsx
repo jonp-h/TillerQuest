@@ -1,18 +1,20 @@
 "use client";
 
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab, Typography, Badge } from "@mui/material";
 import { ReactNode, useState } from "react";
 import TypeQuest from "./TypeQuest";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Circle, Stadium } from "@mui/icons-material";
-import { $Enums } from "@tillerquest/prisma/browser";
+import { $Enums, App } from "@tillerquest/prisma/browser";
 import DialogButton from "@/components/DialogButton";
 import ErrorPage from "@/components/ErrorPage";
 import WordQuest from "./WordQuest";
 import BinaryJack from "./BinaryJack";
 import { securePostClient } from "@/lib/secureFetchClient";
 import { FinishGameResponse, GameUser, StartGameResponse } from "./types";
+import AppInfoContainer from "./AppInfoContainer";
+import { DateToString } from "@/types/dateToString";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -55,7 +57,13 @@ function a11yProps(gameName: string) {
   };
 }
 
-function GameTabs({ user }: { user: GameUser }) {
+function GameTabs({
+  user,
+  apps,
+}: {
+  user: GameUser;
+  apps: DateToString<App[]>;
+}) {
   const [tab, setTab] = useState<string>("TypeQuest");
   const [score, setScore] = useState(0);
   const [gameEnabled, setGameEnabled] = useState(false);
@@ -133,6 +141,24 @@ function GameTabs({ user }: { user: GameUser }) {
             {...a11yProps("BinaryJack")}
             value="BinaryJack"
           />
+          {apps.map((app) => (
+            <Tab
+              key={app.name}
+              disabled={gameEnabled}
+              label={
+                <Badge
+                  badgeContent=""
+                  color="error"
+                  invisible={!app.scheduled}
+                  variant="dot"
+                >
+                  {app.name}
+                </Badge>
+              }
+              {...a11yProps(app.name)}
+              value={app.name}
+            />
+          ))}
         </Tabs>
       </Box>
       <div className="text-center mt-5 gap-5">
@@ -251,6 +277,21 @@ function GameTabs({ user }: { user: GameUser }) {
           />
         </div>
       </GameTabPanel>
+      {apps.map((app) => (
+        <GameTabPanel
+          key={app.name}
+          tab={tab}
+          value={app.name}
+          ownsGame={ownsGame}
+        >
+          <div className="flex flex-col justify-center items-center">
+            <Typography variant="h3" component={"h1"}>
+              {app.name}
+            </Typography>
+            <AppInfoContainer app={app} />
+          </div>
+        </GameTabPanel>
+      ))}
     </>
   );
 }

@@ -136,6 +136,7 @@ export const Access = {
   TypeQuest: 'TypeQuest',
   WordQuest: 'WordQuest',
   BinaryJack: 'BinaryJack',
+  Tillerio: 'Tillerio',
   WIP: 'WIP'
 } as const
 

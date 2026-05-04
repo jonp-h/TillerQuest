@@ -10,13 +10,13 @@ import {
 import { ErrorMessage } from "lib/error.js";
 import {
   idParamSchema,
-  scheduleWishSchema,
+  scheduleSchema,
 } from "utils/validators/validationUtils.js";
 
 export const adminScheduleWish = [
   requireAdmin,
   validateParams(idParamSchema("wishId")),
-  validateBody(scheduleWishSchema),
+  validateBody(scheduleSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const wishId = parseInt(req.params.wishId);

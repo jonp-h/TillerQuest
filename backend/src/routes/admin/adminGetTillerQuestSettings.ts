@@ -4,7 +4,7 @@ import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 
-export const adminGetApplicationSettings = [
+export const adminGetTillerQuestSettings = [
   requireAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -18,16 +18,16 @@ export const adminGetApplicationSettings = [
         return;
       }
 
-      const applicationSettings = await db.applicationSettings.findMany({
+      const tillerQuestSettings = await db.tillerQuestSettings.findMany({
         orderBy: { key: "asc" },
       });
 
-      res.json({ success: true, data: applicationSettings });
+      res.json({ success: true, data: tillerQuestSettings });
     } catch (error) {
-      logger.error("Error fetching application settings: " + error);
+      logger.error("Error fetching tiller quest settings: " + error);
       res.status(500).json({
         success: false,
-        error: "Failed to fetch application settings",
+        error: "Failed to fetch tiller quest settings",
         timestamp: new Date().toISOString(),
       });
     }

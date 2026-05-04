@@ -14,13 +14,13 @@ export const getClassGuildsAndMemberClasses = [
       const schoolClass = req.query.schoolClass as string;
       const userId = req.session!.user.id;
 
-      const settings = await db.applicationSettings.findFirst({
+      const settings = await db.tillerQuestSettings.findFirst({
         where: {
           key: "SCHOOL_CLASS_RESTRICTION",
         },
       });
 
-      const classGroups = await db.applicationSettings.findFirst({
+      const classGroups = await db.tillerQuestSettings.findFirst({
         where: {
           key: "SCHOOL_CLASS_GROUPS",
         },
@@ -71,7 +71,7 @@ export const getClassGuildsAndMemberClasses = [
         },
       });
 
-      const guildMaxMembersSetting = await db.applicationSettings.findFirst({
+      const guildMaxMembersSetting = await db.tillerQuestSettings.findFirst({
         where: {
           key: "MAX_GUILD_MEMBERS",
         },

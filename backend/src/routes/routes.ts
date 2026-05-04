@@ -10,6 +10,8 @@ import notificationRoutes from "./notifications/notificationRoutes.js";
 import logsRoutes from "./logsRoute/logRoutes.js";
 import cosmicRoutes from "./cosmics/cosmicRoutes.js";
 import questRoutes from "./quests/questRoutes.js";
+import appRoutes from "./apps/appRoutes.js";
+import scheduledRoutes from "./scheduled/scheduledRoutes.js";
 
 const routes = express.Router();
 
@@ -24,6 +26,8 @@ routes.use(gameRoutes);
 routes.use(guildRoutes);
 routes.use(abilityRoutes);
 routes.use(questRoutes);
+routes.use(appRoutes);
+routes.use(scheduledRoutes);
 routes.use(adminRoutes);
 
 export default routes;

@@ -3,6 +3,7 @@ import { redirectIfNotAdmin } from "@/lib/redirectUtils";
 import { secureGet } from "@/lib/secureFetch";
 import {
   Announcement,
+  Api,
   AutoAwesome,
   BarChart,
   Bolt,
@@ -119,6 +120,11 @@ export default async function GameMasterPage() {
               startIcon={<Announcement />}
             >
               Quest board
+            </Button>
+          </Link>
+          <Link href="/gamemaster/apps">
+            <Button color="secondary" variant="contained" startIcon={<Api />}>
+              Apps
             </Button>
           </Link>
         </div>

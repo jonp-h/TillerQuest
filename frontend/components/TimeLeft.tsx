@@ -1,5 +1,5 @@
 "use client";
-import { Typography } from "@mui/material";
+import { Typography, TypographyOwnProps } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function TimeLeft({
@@ -7,7 +7,7 @@ export default function TimeLeft({
   color = "textPrimary",
 }: {
   endTime: Date;
-  color?: string;
+  color?: TypographyOwnProps["color"];
 }) {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);

@@ -35,7 +35,7 @@ export const validateUserCreation = async (
   }
 
   // validate if the user guild is full. Fallback to 6 if no setting is found
-  const guildSize = await db.applicationSettings.findFirst({
+  const guildSize = await db.tillerQuestSettings.findFirst({
     where: {
       key: "MAX_GUILD_MEMBERS",
     },
@@ -164,7 +164,7 @@ const validateSchoolClassRestrictions = async (
   userSchoolClass: string,
   targetSchoolClass: string,
 ) => {
-  const restrictionSettings = await db.applicationSettings.findFirst({
+  const restrictionSettings = await db.tillerQuestSettings.findFirst({
     where: {
       key: "SCHOOL_CLASS_RESTRICTION",
     },
@@ -180,7 +180,7 @@ const validateSchoolClassRestrictions = async (
       return userSchoolClass === targetSchoolClass;
     }
     case "CLASS_GROUPS": {
-      const group = await db.applicationSettings.findFirst({
+      const group = await db.tillerQuestSettings.findFirst({
         where: {
           key: "SCHOOL_CLASS_GROUPS",
         },

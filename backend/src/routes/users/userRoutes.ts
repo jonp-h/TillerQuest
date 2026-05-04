@@ -25,8 +25,12 @@ import { getGuildEnemiesByUserId } from "./getGuildEnemiesByUserId.js";
 import { getUserLeaderboards } from "./getUserLeaderboards.js";
 import { resetUser } from "./resetUser.js";
 import { getInactiveUser } from "./getInactiveUser.js";
+import { getUser } from "./getUser.js";
 
 const router = express.Router();
+
+// Get current user base profile (for game)
+router.get("/user", getUser);
 
 // Collection endpoints
 router.get("/users/dead", getDeadUsers);
