@@ -67,13 +67,15 @@ export const ModelName = {
   Notification: 'Notification',
   Quest: 'Quest',
   Game: 'Game',
+  App: 'App',
   TypeQuestText: 'TypeQuestText',
   WordQuestWord: 'WordQuestWord',
   Analytics: 'Analytics',
   Account: 'Account',
   Session: 'Session',
-  ApplicationSettings: 'ApplicationSettings',
-  Verification: 'Verification'
+  TillerQuestSettings: 'TillerQuestSettings',
+  Verification: 'Verification',
+  DeviceCode: 'DeviceCode'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -353,6 +355,18 @@ export const GameScalarFieldEnum = {
 export type GameScalarFieldEnum = (typeof GameScalarFieldEnum)[keyof typeof GameScalarFieldEnum]
 
 
+export const AppScalarFieldEnum = {
+  name: 'name',
+  shortDescription: 'shortDescription',
+  description: 'description',
+  scheduled: 'scheduled',
+  scheduleInfoText: 'scheduleInfoText',
+  downloadUrl: 'downloadUrl'
+} as const
+
+export type AppScalarFieldEnum = (typeof AppScalarFieldEnum)[keyof typeof AppScalarFieldEnum]
+
+
 export const TypeQuestTextScalarFieldEnum = {
   id: 'id',
   text: 'text'
@@ -429,7 +443,7 @@ export const SessionScalarFieldEnum = {
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
-export const ApplicationSettingsScalarFieldEnum = {
+export const TillerQuestSettingsScalarFieldEnum = {
   key: 'key',
   value: 'value',
   description: 'description',
@@ -437,7 +451,7 @@ export const ApplicationSettingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type ApplicationSettingsScalarFieldEnum = (typeof ApplicationSettingsScalarFieldEnum)[keyof typeof ApplicationSettingsScalarFieldEnum]
+export type TillerQuestSettingsScalarFieldEnum = (typeof TillerQuestSettingsScalarFieldEnum)[keyof typeof TillerQuestSettingsScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {
@@ -450,6 +464,22 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const DeviceCodeScalarFieldEnum = {
+  id: 'id',
+  deviceCode: 'deviceCode',
+  userCode: 'userCode',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  lastPolledAt: 'lastPolledAt',
+  pollingInterval: 'pollingInterval',
+  clientId: 'clientId',
+  scope: 'scope'
+} as const
+
+export type DeviceCodeScalarFieldEnum = (typeof DeviceCodeScalarFieldEnum)[keyof typeof DeviceCodeScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -5,7 +5,7 @@
  * These routes do not require authentication.
  * @type {string[]}
  */
-export const publicRoutes = ["/", "/signup"];
+export const publicRoutes = ["/", "/signup", "/auth/device-authorization"];
 
 /**
  * Routes that handle login and registration.

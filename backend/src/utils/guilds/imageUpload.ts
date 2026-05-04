@@ -77,7 +77,7 @@ export const uploadImage = async (
     },
   });
 
-  const cooldownHours = await db.applicationSettings.findFirst({
+  const cooldownHours = await db.tillerQuestSettings.findFirst({
     where: {
       key: "GUILD_IMAGE_UPLOAD_COOLDOWN_HOURS",
     },

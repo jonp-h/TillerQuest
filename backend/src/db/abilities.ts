@@ -1704,6 +1704,24 @@ const arena: Ability[] = [
     value: null,
     parentAbility: "TypeQuest",
   },
+  {
+    id: 93,
+    name: "Tillerio",
+    category: "Arena",
+    type: "Access",
+    target: "Self",
+    description:
+      "Gain access to Tillerio. Compete with your schoolmates as bookworms in a digital replica of the school. Requires a standalone app.",
+    duration: null,
+    icon: "Game.png",
+    gemstoneCost: 2,
+    manaCost: null,
+    healthCost: null,
+    xpGiven: null,
+    diceNotation: null,
+    value: null,
+    parentAbility: "TypeQuest",
+  },
 ];
 
 const dungeon: Ability[] = [

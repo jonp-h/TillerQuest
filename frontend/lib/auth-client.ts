@@ -1,5 +1,8 @@
 import { createAuthClient } from "better-auth/react";
-import { inferAdditionalFields } from "better-auth/client/plugins";
+import {
+  inferAdditionalFields,
+  deviceAuthorizationClient,
+} from "better-auth/client/plugins";
 import { Class, UserRole } from "@tillerquest/prisma/browser";
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL, // Optional if the API base URL matches the frontend
@@ -30,6 +33,7 @@ export const authClient = createAuthClient({
         },
       },
     }),
+    deviceAuthorizationClient(),
   ],
 });
 

@@ -4,19 +4,19 @@ import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateBody } from "../../middleware/validationMiddleware.js";
-import { updateApplicationSettingSchema } from "utils/validators/validationUtils.js";
+import { updateTillerQuestSettingSchema } from "utils/validators/validationUtils.js";
 
-interface UpdateApplicationSettingsRequest extends AuthenticatedRequest {
+interface UpdateTillerQuestSettingsRequest extends AuthenticatedRequest {
   body: {
     key: string;
     value: string;
   };
 }
 
-export const adminUpdateApplicationSettings = [
+export const adminUpdateTillerQuestSettings = [
   requireAdmin,
-  validateBody(updateApplicationSettingSchema),
-  async (req: UpdateApplicationSettingsRequest, res: Response) => {
+  validateBody(updateTillerQuestSettingSchema),
+  async (req: UpdateTillerQuestSettingsRequest, res: Response) => {
     try {
       const sessionUserId = req.session!.user.id;
       const { key, value } = req.body;
@@ -29,7 +29,7 @@ export const adminUpdateApplicationSettings = [
         return;
       }
 
-      await db.applicationSettings.update({
+      await db.tillerQuestSettings.update({
         where: {
           key: key,
         },
@@ -40,13 +40,13 @@ export const adminUpdateApplicationSettings = [
 
       res.json({
         success: true,
-        data: `Successfully updated application setting: ${key}`,
+        data: `Successfully updated tiller quest setting: ${key}`,
       });
     } catch (error) {
-      logger.error("Error updating application settings: " + error);
+      logger.error("Error updating tiller quest settings: " + error);
       res.status(500).json({
         success: false,
-        error: "Failed to update application settings",
+        error: "Failed to update tiller quest settings",
         timestamp: new Date().toISOString(),
       });
     }

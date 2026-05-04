@@ -129,6 +129,7 @@ enum Access {
   TypeQuest
   WordQuest
   BinaryJack
+  Tillerio
   WIP
 }
 
@@ -480,6 +481,15 @@ model Game {
   @@index([userId])
 }
 
+model App {
+  name             String    @id
+  shortDescription String
+  description      String?
+  scheduled        DateTime?
+  scheduleInfoText String?
+  downloadUrl      String?
+}
+
 model TypeQuestText {
   id   Int    @id @default(autoincrement())
   text String @unique
@@ -577,7 +587,7 @@ model Session {
   @@index([userId])
 }
 
-model ApplicationSettings {
+model TillerQuestSettings {
   key         String   @id
   value       String
   description String?
@@ -595,3 +605,35 @@ model Verification {
 
   @@map("verification")
 }
+
+model DeviceCode {
+  id              String    @id
+  deviceCode      String
+  userCode        String
+  userId          String?
+  expiresAt       DateTime
+  status          String
+  lastPolledAt    DateTime?
+  pollingInterval Int?
+  clientId        String?
+  scope           String?
+
+  @@map("deviceCode")
+}
+
+// model Table {
+// 	id String @id
+// 	deviceCode String
+// 	userCode String
+// 	user User? @relation(fields: [userId], references: [id])
+// 	userId String?
+// 	clientId String?
+// 	scope String?
+// 	status String
+// 	expiresAt DateTime @db.Timestampz(3)
+// 	lastPolledAt DateTime? @db.Timestampz(3)
+// 	pollingInterval Int?
+// 	createdAt DateTime @db.Timestampz(3)
+// 	updatedAt DateTime @db.Timestampz(3)
+// 	@@map("table")
+// }

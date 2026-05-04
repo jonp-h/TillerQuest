@@ -3,6 +3,8 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 
 import { db } from "./lib/db.js";
 import { Class, UserRole } from "@tillerquest/prisma/browser";
+import { bearer, deviceAuthorization } from "better-auth/plugins";
+import { logger } from "lib/logger.js";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -43,6 +45,24 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    bearer(),
+    deviceAuthorization({
+      expiresIn: "10m", // 10 minutes
+      validateClient: async (clientId) => {
+        const allowedClientIds = (process.env.APP_CLIENT_IDS ?? "")
+          .split(",")
+          .map((id) => id.trim())
+          .filter(Boolean);
+        return allowedClientIds.includes(clientId);
+      },
+      onDeviceAuthRequest: async (clientId) => {
+        logger.info(
+          `Device authorization requested for client ID: ${clientId}`,
+        );
+      },
+    }),
+  ],
   rateLimit: {
     enabled: true,
     windowMs: 10 * 60 * 1000, // 10 minutes

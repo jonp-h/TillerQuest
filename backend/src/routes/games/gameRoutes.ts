@@ -11,6 +11,7 @@ import { initializeBinaryJack } from "./initializeBinaryJack.js";
 import { startBinaryJackRound } from "./startBinaryJackRound.js";
 import { rollBinaryJackDice } from "./rollBinaryJackDice.js";
 import { applyBinaryOperation } from "./applyBinaryOperation.js";
+import { finishTillerioGame } from "./finishTillerioGame.js";
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ const router = express.Router();
 router.post("/games", initializeGame);
 router.post("/games/:gameId/start", startGame);
 router.patch("/games/:gameId", updateGame);
+router.post("/games/tillerio/results", finishTillerioGame);
 router.post("/games/:gameId/finish", finishGame);
 router.get("/games/leaderboard/:gameName", getGameLeaderboard);
 

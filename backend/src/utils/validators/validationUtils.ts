@@ -77,7 +77,7 @@ export const adminUpdateUserSchema = z.object({
   access: z.array(z.enum(Access)).optional(),
 });
 
-export const updateApplicationSettingSchema = z.object({
+export const updateTillerQuestSettingSchema = z.object({
   key: z
     .string()
     .min(1, "Key is required")
@@ -115,12 +115,19 @@ export const cosmicNameSchema = z.object({
     .max(40, "Cosmic name must be below 40 characters"),
 });
 
-export const scheduleWishSchema = z.object({
+export const scheduleSchema = z.object({
   scheduledDate: z.coerce
     .date()
     .refine((date) => date >= new Date(new Date().setHours(0, 0, 0, 0)), {
       message: "Schedule date cannot be in the past",
     }),
+});
+
+export const appNameSchema = z.object({
+  appName: z
+    .string()
+    .min(1, "App name is required")
+    .max(100, "App name must be below 100 characters"),
 });
 
 export const abilityNameSchema = z.object({

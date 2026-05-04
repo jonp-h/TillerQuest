@@ -12,10 +12,11 @@ import shopItems from "./shopItems.js";
 import readline from "readline";
 import typeQuestTexts from "./typeQuestTexts.js";
 import enemies from "./enemies.js";
-import applicationSettings from "./applicationSettings.js";
+import settings from "./tillerquestSettings.js";
 import wordQuestWords from "./wordQuestWords.js";
 import wishes from "./wishes.js";
 import { db } from "lib/db.js";
+import apps from "./apps.js";
 
 async function main() {
   const rl = readline.createInterface({
@@ -38,6 +39,7 @@ async function main() {
   10. Add Game Settings
   11. Add WordQuest Words
   12. Add Wishes
+  13. Add Apps
 
   - UPDATE:
   100. Update player title rarities
@@ -73,13 +75,16 @@ async function main() {
         await addEnemies();
         break;
       case "10":
-        await addApplicationSettings();
+        await addTillerQuestSettings();
         break;
       case "11":
         await addWordQuestWords();
         break;
       case "12":
         await addWishes();
+        break;
+      case "13":
+        await addApps();
         break;
       case "100":
         await updatePlayerTitleRarities();
@@ -210,10 +215,10 @@ async function addEnemies() {
   console.info("Enemies has been added to the database.");
 }
 
-async function addApplicationSettings() {
-  for (const setting of applicationSettings) {
+async function addTillerQuestSettings() {
+  for (const setting of settings) {
     try {
-      await db.applicationSettings.createMany({
+      await db.tillerQuestSettings.createMany({
         data: setting,
         skipDuplicates: true,
       });
@@ -221,7 +226,7 @@ async function addApplicationSettings() {
       console.error("Error adding", setting + ": ", error);
     }
   }
-  console.info("Enemies has been added to the database.");
+  console.info("TillerQuest settings have been added to the database.");
 }
 
 async function addUsers() {
@@ -249,6 +254,21 @@ async function addWishes() {
     }
   }
   console.info("Wishes have been added to the database.");
+}
+
+async function addApps() {
+  for (const app of apps) {
+    try {
+      await db.app.upsert({
+        where: { name: app.name },
+        update: app,
+        create: app,
+      });
+    } catch (error) {
+      console.error("Error adding", app.name + ": ", error);
+    }
+  }
+  console.info("Apps have been added to the database.");
 }
 
 async function updatePlayerTitleRarities() {
@@ -283,9 +303,10 @@ async function addAll() {
   await addTypeQuestTexts();
   await addUsers();
   await addEnemies();
-  await addApplicationSettings();
+  await addTillerQuestSettings();
   await addWordQuestWords();
   await addWishes();
+  await addApps();
 }
 
 async function addAllWithoutUsersAndGuilds() {
@@ -294,9 +315,10 @@ async function addAllWithoutUsersAndGuilds() {
   await addShopItems();
   await addTypeQuestTexts();
   await addEnemies();
-  await addApplicationSettings();
+  await addTillerQuestSettings();
   await addWordQuestWords();
   await addWishes();
+  await addApps();
 }
 
 // Run the main function and handle any errors

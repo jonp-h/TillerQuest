@@ -98,6 +98,11 @@ export type Quest = Prisma.QuestModel
  */
 export type Game = Prisma.GameModel
 /**
+ * Model App
+ * 
+ */
+export type App = Prisma.AppModel
+/**
  * Model TypeQuestText
  * 
  */
@@ -123,12 +128,17 @@ export type Account = Prisma.AccountModel
  */
 export type Session = Prisma.SessionModel
 /**
- * Model ApplicationSettings
+ * Model TillerQuestSettings
  * 
  */
-export type ApplicationSettings = Prisma.ApplicationSettingsModel
+export type TillerQuestSettings = Prisma.TillerQuestSettingsModel
 /**
  * Model Verification
  * 
  */
 export type Verification = Prisma.VerificationModel
+/**
+ * Model DeviceCode
+ * 
+ */
+export type DeviceCode = Prisma.DeviceCodeModel

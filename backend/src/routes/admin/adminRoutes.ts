@@ -19,8 +19,8 @@ import { adminUpdateSystemNotification } from "./adminUpdateSystemNotification.j
 import { adminDeleteSystemNotification } from "./adminDeleteSystemNotification.js";
 import { adminRollDeathSave } from "./adminRollDeathSave.js";
 import { adminResurrectUser } from "./adminResurrectUser.js";
-import { adminGetApplicationSettings } from "./adminGetApplicationSettings.js";
-import { adminUpdateApplicationSettings } from "./adminUpdateApplicationSettings.js";
+import { adminGetTillerQuestSettings } from "./adminGetTillerQuestSettings.js";
+import { adminUpdateTillerQuestSettings } from "./adminUpdateTillerQuestSettings.js";
 import { adminRandomCosmic } from "./adminRandomCosmic.js";
 import { adminSelectCosmic } from "./adminSelectCosmic.js";
 import { adminRecommendCosmic } from "./adminRecommendCosmic.js";
@@ -50,6 +50,9 @@ import { adminPendingImagesCount } from "./adminPendingImagesCount.js";
 import { adminCreateQuest } from "./adminCreateQuest.js";
 import { adminUpdateQuest } from "./adminUpdateQuest.js";
 import { adminDeleteQuest } from "./adminDeleteQuest.js";
+import { adminScheduleApp } from "./adminScheduleApp.js";
+import { adminRemoveSchedule } from "./adminRemoveAppSchedule.js";
+import { adminUpdateApp } from "./adminUpdateApp.js";
 
 const router = express.Router();
 
@@ -68,6 +71,11 @@ router.get("/admin/wishes", adminGetWishes);
 router.patch("/admin/wishes/:wishId/schedule", adminScheduleWish);
 router.post("/admin/wishes/:wishId/reset", adminResetWish);
 
+// App management routes
+router.patch("/admin/apps/:appName", adminUpdateApp);
+router.patch("/admin/apps/:appName/schedule", adminScheduleApp);
+router.post("/admin/apps/:appName/remove-schedule", adminRemoveSchedule);
+
 // Quest management routes
 router.patch("/admin/quests/:questId", adminUpdateQuest);
 router.delete("/admin/quests/:questId", adminDeleteQuest);
@@ -85,8 +93,8 @@ router.post("/admin/users/:userId/resurrect", adminResurrectUser);
 router.delete("/admin/guilds/:guildName/enemies", adminDeleteGuildEnemies);
 
 // Application settings routes
-router.get("/admin/settings", adminGetApplicationSettings);
-router.patch("/admin/settings", adminUpdateApplicationSettings);
+router.get("/admin/settings", adminGetTillerQuestSettings);
+router.patch("/admin/settings", adminUpdateTillerQuestSettings);
 
 // Cosmic event routes
 router.post("/admin/cosmics/random", adminRandomCosmic);

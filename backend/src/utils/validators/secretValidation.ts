@@ -10,7 +10,7 @@ export const checkNewUserSecret = async (id: string, secret: string) => {
     true, // debug log. excluded from global logs
   );
 
-  const existingSecret = await db.applicationSettings.findFirst({
+  const existingSecret = await db.tillerQuestSettings.findFirst({
     where: {
       key: "NEW_USER_SECRET",
       value: secret,

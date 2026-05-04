@@ -1,12 +1,14 @@
 import { secureGet } from "@/lib/secureFetch";
 import NavbarContent from "./NavbarContent";
 import { getSessionFromBackend } from "@/lib/redirectUtils";
+import { DateToString } from "@/types/dateToString";
 
 export default async function Navbar() {
   // Check if user has session before making authenticated requests
   const session = await getSessionFromBackend();
 
   let scheduledWishesCount = 0;
+  let scheduledAppEventsCount: Date | null = null;
 
   // Only fetch if user is authenticated
   if (
@@ -14,14 +16,27 @@ export default async function Navbar() {
     session.user.role !== "NEW" &&
     session.user.role !== "INACTIVE"
   ) {
-    const scheduledWishes = await secureGet<number>(`/wishes/scheduled/count`, {
+    const scheduledEvents = await secureGet<{
+      wishes: number;
+      appEvents: {
+        scheduled: Date | null;
+      };
+    }>(`/scheduled/events`, {
       cache: "force-cache",
       next: {
-        revalidate: 21600, // 6 hours
-        tags: ["scheduled-wishes-count"],
+        revalidate: 1800, // 30 minutes
+        tags: ["scheduled-events"],
       },
     });
-    scheduledWishesCount = scheduledWishes.ok ? scheduledWishes.data : 0;
+
+    scheduledWishesCount = scheduledEvents.ok ? scheduledEvents.data.wishes : 0;
+    if (scheduledEvents.ok && scheduledEvents.data.appEvents?.scheduled) {
+      scheduledAppEventsCount = new Date(
+        scheduledEvents.data.appEvents.scheduled,
+      );
+    } else {
+      scheduledAppEventsCount = null;
+    }
   }
 
   return (
@@ -29,6 +44,7 @@ export default async function Navbar() {
       <NavbarContent
         session={session}
         scheduledWishesCount={scheduledWishesCount}
+        scheduledAppEventsCount={scheduledAppEventsCount}
       />
     </div>
   );
