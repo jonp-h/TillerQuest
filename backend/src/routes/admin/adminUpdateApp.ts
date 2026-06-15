@@ -7,8 +7,8 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
-import { appNameSchema } from "utils/validators/validationUtils.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { appNameSchema } from "../../utils/validators/validationUtils.js";
 import z from "zod";
 
 const appUpdateSchema = z.object({

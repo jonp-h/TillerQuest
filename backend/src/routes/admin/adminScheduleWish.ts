@@ -7,11 +7,11 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import {
   idParamSchema,
   scheduleSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 export const adminScheduleWish = [
   requireAdmin,

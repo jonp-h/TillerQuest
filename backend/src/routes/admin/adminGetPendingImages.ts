@@ -2,7 +2,7 @@ import { Response } from "express";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { db } from "lib/db.js";
+import { db } from "../../lib/db.js";
 import { join } from "path";
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";

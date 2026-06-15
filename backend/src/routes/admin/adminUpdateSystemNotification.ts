@@ -5,7 +5,7 @@ import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import z from "zod";
 import { validateBody } from "../../middleware/validationMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 
 const updateSystemNotificationSchema = z.object({
   title: z.string().min(1).max(255),

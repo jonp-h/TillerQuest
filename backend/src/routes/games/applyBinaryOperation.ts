@@ -11,7 +11,7 @@ import {
 import {
   applyBinaryOperationSchema,
   gameIdParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 const BINARY_JACK_MAX_TURNS = 6;
 

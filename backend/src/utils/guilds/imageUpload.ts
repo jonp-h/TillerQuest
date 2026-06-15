@@ -1,13 +1,13 @@
-import { db } from "lib/db.js";
-import { ErrorMessage } from "lib/error.js";
-import { logger } from "lib/logger.js";
+import { db } from "../../lib/db.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { logger } from "../../lib/logger.js";
 import { join } from "path";
 import { fileTypeFromBuffer } from "file-type";
 import sharp from "sharp";
 import { createHash, randomBytes } from "crypto";
 import { existsSync } from "fs";
 import { writeFile, mkdir } from "fs/promises";
-import { addLog } from "utils/logs/addLog.js";
+import { addLog } from "../../utils/logs/addLog.js";
 
 // Security constants - OWASP recommendations
 const ALLOWED_MIME_TYPES = [

@@ -151,7 +151,7 @@ export type UserAbilityGroupByOutputType = {
   _max: UserAbilityMaxAggregateOutputType | null
 }
 
-type GetUserAbilityGroupByPayload<T extends UserAbilityGroupByArgs> = Prisma.PrismaPromise<
+export type GetUserAbilityGroupByPayload<T extends UserAbilityGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UserAbilityGroupByOutputType, T['by']> &
       {
@@ -1207,6 +1207,11 @@ export type UserAbilityFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` UserAbilities.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of UserAbilities.
+   */
   distinct?: Prisma.UserAbilityScalarFieldEnum | Prisma.UserAbilityScalarFieldEnum[]
 }
 

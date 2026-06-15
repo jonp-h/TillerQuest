@@ -178,7 +178,7 @@ export type EnemyGroupByOutputType = {
   _max: EnemyMaxAggregateOutputType | null
 }
 
-type GetEnemyGroupByPayload<T extends EnemyGroupByArgs> = Prisma.PrismaPromise<
+export type GetEnemyGroupByPayload<T extends EnemyGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<EnemyGroupByOutputType, T['by']> &
       {
@@ -1063,6 +1063,11 @@ export type EnemyFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Enemies.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Enemies.
+   */
   distinct?: Prisma.EnemyScalarFieldEnum | Prisma.EnemyScalarFieldEnum[]
 }
 

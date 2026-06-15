@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "127.0.0.1:${POSTGRES_PORT}:5432" # The 127.0.0.1 makes the container only accessible on the localhost, and blocked on other LAN machines/the internet
     volumes:
       - ./data/postgres:/var/lib/postgresql
 

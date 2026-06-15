@@ -2,7 +2,7 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUsernameAndActive } from "../../middleware/authMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 
 export const getUserSettings = [
   requireUsernameAndActive(),

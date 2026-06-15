@@ -3,12 +3,12 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import z from "zod";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { ErrorMessage } from "lib/error.js";
-import { addLog } from "utils/logs/addLog.js";
-import { goldValidator } from "utils/abilities/abilityValidators.js";
-import { addAnalytics } from "utils/analytics/addAnalytics.js";
-import { validateBody } from "middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { addLog } from "../../utils/logs/addLog.js";
+import { goldValidator } from "../../utils/abilities/abilityValidators.js";
+import { addAnalytics } from "../../utils/analytics/addAnalytics.js";
+import { validateBody } from "../../middleware/validationMiddleware.js";
 
 export const finishTillerioGameSchema = z.object({
   playerList: z.array(

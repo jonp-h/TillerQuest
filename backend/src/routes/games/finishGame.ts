@@ -3,13 +3,13 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import z from "zod";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { ErrorMessage } from "lib/error.js";
-import { addLog } from "utils/logs/addLog.js";
-import { goldValidator } from "utils/abilities/abilityValidators.js";
-import { addAnalytics } from "utils/analytics/addAnalytics.js";
-import { validateParams } from "middleware/validationMiddleware.js";
-import { gameIdParamSchema } from "utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { addLog } from "../../utils/logs/addLog.js";
+import { goldValidator } from "../../utils/abilities/abilityValidators.js";
+import { addAnalytics } from "../../utils/analytics/addAnalytics.js";
+import { validateParams } from "../../middleware/validationMiddleware.js";
+import { gameIdParamSchema } from "../../utils/validators/validationUtils.js";
 
 export const finishGameSchema = z.object({
   gameName: z.enum(["TypeQuest", "WordQuest", "BinaryJack"]),

@@ -203,7 +203,7 @@ export type WishGroupByOutputType = {
   _max: WishMaxAggregateOutputType | null
 }
 
-type GetWishGroupByPayload<T extends WishGroupByArgs> = Prisma.PrismaPromise<
+export type GetWishGroupByPayload<T extends WishGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<WishGroupByOutputType, T['by']> &
       {
@@ -1165,6 +1165,11 @@ export type WishFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Wishes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Wishes.
+   */
   distinct?: Prisma.WishScalarFieldEnum | Prisma.WishScalarFieldEnum[]
 }
 

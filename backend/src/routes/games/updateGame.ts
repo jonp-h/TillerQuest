@@ -2,18 +2,18 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireActiveUser } from "../../middleware/authMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
-import { updateTypeQuestGame } from "utils/games/typeQuest.js";
-import { updateWordQuestGame } from "utils/games/wordQuest.js";
+} from "../../middleware/validationMiddleware.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { updateTypeQuestGame } from "../../utils/games/typeQuest.js";
+import { updateWordQuestGame } from "../../utils/games/wordQuest.js";
 import {
   gameIdParamSchema,
   updateGameSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface UpdateGameRequest extends AuthenticatedRequest {
   body: {

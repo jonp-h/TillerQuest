@@ -8,11 +8,11 @@ import {
   validateParams,
 } from "../../middleware/validationMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { selectAbility } from "utils/abilities/abilityUsage/selectAbility.js";
+import { selectAbility } from "../../utils/abilities/abilityUsage/selectAbility.js";
 import {
   purchaseAbilitySchema,
   userIdParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface PurchaseAbilityProps extends AuthenticatedRequest {
   params: {

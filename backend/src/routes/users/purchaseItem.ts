@@ -6,12 +6,12 @@ import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+} from "../../middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   purchaseItemSchema,
   userIdParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface PurchaseItemRequest extends AuthenticatedRequest {
   body: {

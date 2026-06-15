@@ -4,7 +4,7 @@ import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateBody } from "../../middleware/validationMiddleware.js";
-import { updateTillerQuestSettingSchema } from "utils/validators/validationUtils.js";
+import { updateTillerQuestSettingSchema } from "../../utils/validators/validationUtils.js";
 
 interface UpdateTillerQuestSettingsRequest extends AuthenticatedRequest {
   body: {

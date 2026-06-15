@@ -5,15 +5,15 @@ import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
+} from "../../middleware/validationMiddleware.js";
 import { join } from "path";
-import { db } from "lib/db.js";
+import { db } from "../../lib/db.js";
 import z from "zod";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import { existsSync } from "fs";
 import { mkdir, readFile, rename, unlink } from "fs/promises";
 import { createHash } from "crypto";
-import { addLog } from "utils/logs/addLog.js";
+import { addLog } from "../../utils/logs/addLog.js";
 
 const QUARANTINE_DIR = join(process.cwd(), "uploads", "quarantine");
 const APPROVED_DIR = join(process.cwd(), "static", "guilds");

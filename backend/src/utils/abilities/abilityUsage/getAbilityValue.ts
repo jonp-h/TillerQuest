@@ -1,4 +1,4 @@
-import { Ability } from "lib/db.js";
+import { Ability } from "@tillerquest/prisma/browser";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
 
 /**

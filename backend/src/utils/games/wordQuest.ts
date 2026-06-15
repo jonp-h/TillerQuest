@@ -1,5 +1,5 @@
 import { Game } from "@tillerquest/prisma/browser";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { PrismaTransaction } from "../../types/prismaTransaction.js";
 
 export const updateWordQuestGame = async (
   db: PrismaTransaction,

@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import { logger } from "../lib/logger.js";
 
 // In-memory store for user rate limiting

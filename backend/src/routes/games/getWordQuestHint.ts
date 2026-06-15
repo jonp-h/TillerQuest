@@ -11,7 +11,7 @@ import {
 import {
   gameIdParamSchema,
   wordQuestHintSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface WordQuestHintRequest extends AuthenticatedRequest {
   body: {

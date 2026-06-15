@@ -7,11 +7,11 @@ import {
   validateParams,
 } from "../../middleware/validationMiddleware.js";
 import { ErrorMessage } from "../../lib/error.js";
-import { selectAbility } from "utils/abilities/abilityUsage/selectAbility.js";
+import { selectAbility } from "../../utils/abilities/abilityUsage/selectAbility.js";
 import {
   abilityNameSchema,
   userIdListSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface UseAbilityRequest extends AuthenticatedRequest {
   params: {

@@ -178,7 +178,7 @@ export type WordQuestWordGroupByOutputType = {
   _max: WordQuestWordMaxAggregateOutputType | null
 }
 
-type GetWordQuestWordGroupByPayload<T extends WordQuestWordGroupByArgs> = Prisma.PrismaPromise<
+export type GetWordQuestWordGroupByPayload<T extends WordQuestWordGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<WordQuestWordGroupByOutputType, T['by']> &
       {
@@ -939,6 +939,11 @@ export type WordQuestWordFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` WordQuestWords.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of WordQuestWords.
+   */
   distinct?: Prisma.WordQuestWordScalarFieldEnum | Prisma.WordQuestWordScalarFieldEnum[]
 }
 

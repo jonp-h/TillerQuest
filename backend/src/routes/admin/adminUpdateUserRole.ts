@@ -11,7 +11,7 @@ import { UserRole } from "@tillerquest/prisma/browser";
 import {
   updateUserRoleSchema,
   userIdParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface UpdateUserRoleRequest extends AuthenticatedRequest {
   body: {

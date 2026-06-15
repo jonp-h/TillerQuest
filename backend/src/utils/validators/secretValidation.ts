@@ -1,5 +1,5 @@
-import { addLog } from "utils/logs/addLog.js";
-import { db } from "lib/db.js";
+import { addLog } from "../../utils/logs/addLog.js";
+import { db } from "../../lib/db.js";
 
 export const checkNewUserSecret = async (id: string, secret: string) => {
   await addLog(

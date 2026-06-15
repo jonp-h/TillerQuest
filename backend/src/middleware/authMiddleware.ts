@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 import { auth } from "../auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { logger } from "../lib/logger.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 
 export const requireAuth = async (
   req: AuthenticatedRequest,

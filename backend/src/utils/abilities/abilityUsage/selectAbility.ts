@@ -1,7 +1,7 @@
-import { db } from "lib/db.js";
-import { ErrorMessage } from "lib/error.js";
-import { logger } from "lib/logger.js";
-import { ApiResponse } from "types/apiResponse.js";
+import { db } from "../../../lib/db.js";
+import { ErrorMessage } from "../../../lib/error.js";
+import { logger } from "../../../lib/logger.js";
+import { ApiResponse } from "../../../types/apiResponse.js";
 import { getUserPassiveEffect } from "../getUserPassiveEffect.js";
 import { activatePassive } from "./activatePassive.js";
 import { useAccessAbility } from "./useAccessAbility.js";

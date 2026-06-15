@@ -1,5 +1,5 @@
-import { Ability, User } from "lib/db.js";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { Ability, User } from "@tillerquest/prisma/browser";
+import { PrismaTransaction } from "../../../types/prismaTransaction.js";
 import { addLog } from "../../logs/addLog.js";
 import { experienceAndLevelValidator } from "../abilityValidators.js";
 import { addAnalytics } from "../../analytics/addAnalytics.js";

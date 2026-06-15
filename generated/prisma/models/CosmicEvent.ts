@@ -299,7 +299,7 @@ export type CosmicEventGroupByOutputType = {
   _max: CosmicEventMaxAggregateOutputType | null
 }
 
-type GetCosmicEventGroupByPayload<T extends CosmicEventGroupByArgs> = Prisma.PrismaPromise<
+export type GetCosmicEventGroupByPayload<T extends CosmicEventGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CosmicEventGroupByOutputType, T['by']> &
       {
@@ -1644,6 +1644,11 @@ export type CosmicEventFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` CosmicEvents.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CosmicEvents.
+   */
   distinct?: Prisma.CosmicEventScalarFieldEnum | Prisma.CosmicEventScalarFieldEnum[]
 }
 

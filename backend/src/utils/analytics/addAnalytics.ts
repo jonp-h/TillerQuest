@@ -1,4 +1,4 @@
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { PrismaTransaction } from "../../types/prismaTransaction.js";
 import { logger } from "../../lib/logger.js";
 
 /**

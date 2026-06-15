@@ -1,6 +1,6 @@
-import { $Enums } from "lib/db.js";
-import { logger } from "lib/logger.js";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { $Enums } from "@tillerquest/prisma/browser";
+import { logger } from "../../lib/logger.js";
+import { PrismaTransaction } from "../../types/prismaTransaction.js";
 
 /**
  * Retrieves the passive value for a specific user, based on passive type. Returns all the values added together.

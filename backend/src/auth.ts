@@ -4,7 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "./lib/db.js";
 import { Class, UserRole } from "@tillerquest/prisma/browser";
 import { bearer, deviceAuthorization } from "better-auth/plugins";
-import { logger } from "lib/logger.js";
+import { logger } from "./lib/logger.js";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -49,6 +49,7 @@ export const auth = betterAuth({
     bearer(),
     deviceAuthorization({
       expiresIn: "10m", // 10 minutes
+      schema: {}, //workaround for better-auth bug
       validateClient: async (clientId) => {
         const allowedClientIds = (process.env.APP_CLIENT_IDS ?? "")
           .split(",")

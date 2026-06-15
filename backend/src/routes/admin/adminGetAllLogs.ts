@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { db } from "lib/db.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
+import { db } from "../../lib/db.js";
 
 export const adminGetAllLogs = [
   requireAdmin,

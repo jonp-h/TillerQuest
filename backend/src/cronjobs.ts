@@ -3,7 +3,7 @@ import {
   experienceAndLevelValidator,
   healingValidator,
   manaValidator,
-} from "utils/abilities/abilityValidators.js";
+} from "./utils/abilities/abilityValidators.js";
 import { PrismaTransaction } from "./types/prismaTransaction.js";
 
 export const removePassivesWithIncreasedValues = async (

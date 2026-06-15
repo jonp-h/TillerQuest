@@ -5,11 +5,11 @@ import {
   apiKeyRateLimit,
   securityHeaders,
 } from "../lib/middleware.js";
-import { logger } from "lib/logger.js";
+import { logger } from "../lib/logger.js";
 import {
   getVg1Leaderboard,
   getVg2Leaderboard,
-} from "utils/users/getLeaderboards.js";
+} from "../utils/users/getLeaderboards.js";
 
 const router = express.Router();
 

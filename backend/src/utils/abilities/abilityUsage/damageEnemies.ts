@@ -1,6 +1,6 @@
-import { GuildEnemy } from "lib/db.js";
+import { GuildEnemy } from "@tillerquest/prisma/browser";
 import { logger } from "../../../lib/logger.js";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { PrismaTransaction } from "../../../types/prismaTransaction.js";
 import { experienceAndLevelValidator } from "../abilityValidators.js";
 import { getUserPassiveEffect } from "../getUserPassiveEffect.js";
 import { manaValidator } from "../abilityValidators.js";

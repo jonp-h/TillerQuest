@@ -11,8 +11,8 @@ import {
 import {
   gameIdParamSchema,
   initializeBinaryJackSchema,
-} from "utils/validators/validationUtils.js";
-import { addLog } from "utils/logs/addLog.js";
+} from "../../utils/validators/validationUtils.js";
+import { addLog } from "../../utils/logs/addLog.js";
 
 const BINARY_JACK_MAX_TURNS = 6;
 

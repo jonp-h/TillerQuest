@@ -2,16 +2,16 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireActiveUser } from "../../middleware/authMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
+} from "../../middleware/validationMiddleware.js";
 import {
   escapeHtml,
   guildNameParamSchema,
-} from "utils/validators/validationUtils.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+} from "../../utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import z from "zod";
 
 interface UpdateGuildNameRequest extends AuthenticatedRequest {

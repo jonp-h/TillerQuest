@@ -264,7 +264,7 @@ export type ShopItemGroupByOutputType = {
   _max: ShopItemMaxAggregateOutputType | null
 }
 
-type GetShopItemGroupByPayload<T extends ShopItemGroupByArgs> = Prisma.PrismaPromise<
+export type GetShopItemGroupByPayload<T extends ShopItemGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ShopItemGroupByOutputType, T['by']> &
       {
@@ -1606,6 +1606,11 @@ export type ShopItemFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` ShopItems.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ShopItems.
+   */
   distinct?: Prisma.ShopItemScalarFieldEnum | Prisma.ShopItemScalarFieldEnum[]
 }
 

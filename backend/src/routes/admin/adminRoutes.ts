@@ -43,7 +43,7 @@ import { adminGiveMana } from "./adminGiveMana.js";
 import { adminGiveGold } from "./adminGiveGold.js";
 import { adminGiveXp } from "./adminGiveXp.js";
 import { adminGiveArenaTokens } from "./adminGiveArenaTokens.js";
-import { requireAdmin } from "middleware/authMiddleware.js";
+import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { adminReviewImage } from "./adminReviewImage.js";
 import { adminGetPendingImages } from "./adminGetPendingImages.js";
 import { adminPendingImagesCount } from "./adminPendingImagesCount.js";

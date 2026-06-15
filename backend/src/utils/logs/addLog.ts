@@ -1,5 +1,5 @@
-import { logger } from "lib/logger.js";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { logger } from "../../lib/logger.js";
+import { PrismaTransaction } from "../../types/prismaTransaction.js";
 
 /**
  * Adds a log entry to the database. Required to be available in the edge runtime.

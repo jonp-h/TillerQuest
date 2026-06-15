@@ -158,7 +158,7 @@ export type TillerQuestSettingsGroupByOutputType = {
   _max: TillerQuestSettingsMaxAggregateOutputType | null
 }
 
-type GetTillerQuestSettingsGroupByPayload<T extends TillerQuestSettingsGroupByArgs> = Prisma.PrismaPromise<
+export type GetTillerQuestSettingsGroupByPayload<T extends TillerQuestSettingsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TillerQuestSettingsGroupByOutputType, T['by']> &
       {
@@ -954,6 +954,11 @@ export type TillerQuestSettingsFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` TillerQuestSettings.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TillerQuestSettings.
+   */
   distinct?: Prisma.TillerQuestSettingsScalarFieldEnum | Prisma.TillerQuestSettingsScalarFieldEnum[]
 }
 

@@ -8,11 +8,11 @@ import {
   validateParams,
 } from "../../middleware/validationMiddleware.js";
 import { handleSetCosmic } from "../../utils/cosmics/handleSetCosmic.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import {
   cosmicNameSchema,
   selectCosmicSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 export const adminSelectCosmic = [
   requireAdmin,

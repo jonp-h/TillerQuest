@@ -3,8 +3,8 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { validateParams } from "middleware/validationMiddleware.js";
-import { userIdParamSchema } from "utils/validators/validationUtils.js";
+import { validateParams } from "../../middleware/validationMiddleware.js";
+import { userIdParamSchema } from "../../utils/validators/validationUtils.js";
 
 export const getUserTurns = [
   requireActiveUser,

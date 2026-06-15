@@ -1,10 +1,10 @@
 import { Response } from "express";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserId } from "../../middleware/authMiddleware.js";
-import { validateParams } from "middleware/validationMiddleware.js";
-import { idParamSchema } from "utils/validators/validationUtils.js";
+import { validateParams } from "../../middleware/validationMiddleware.js";
+import { idParamSchema } from "../../utils/validators/validationUtils.js";
 import { validateBody } from "../../middleware/validationMiddleware.js";
 import { userIdParamSchema } from "../../utils/validators/validationUtils.js";
 

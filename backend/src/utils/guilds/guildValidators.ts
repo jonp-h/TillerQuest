@@ -1,5 +1,5 @@
-import { db } from "lib/db.js";
-import { logger } from "lib/logger.js";
+import { db } from "../../lib/db.js";
+import { logger } from "../../lib/logger.js";
 
 // get guild member count, excluding the current user
 export const getGuildmemberCount = async (userId: string, guildId: number) => {

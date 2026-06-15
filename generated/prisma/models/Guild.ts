@@ -220,7 +220,7 @@ export type GuildGroupByOutputType = {
   _max: GuildMaxAggregateOutputType | null
 }
 
-type GetGuildGroupByPayload<T extends GuildGroupByArgs> = Prisma.PrismaPromise<
+export type GetGuildGroupByPayload<T extends GuildGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<GuildGroupByOutputType, T['by']> &
       {
@@ -1616,6 +1616,11 @@ export type GuildFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Guilds.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Guilds.
+   */
   distinct?: Prisma.GuildScalarFieldEnum | Prisma.GuildScalarFieldEnum[]
 }
 

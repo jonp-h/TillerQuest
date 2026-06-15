@@ -2,14 +2,14 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndInactive } from "../../middleware/authMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
-import { validateUserCreation } from "utils/validators/userUpdateValidation.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
-import { userIdParamSchema } from "utils/validators/validationUtils.js";
+} from "../../middleware/validationMiddleware.js";
+import { validateUserCreation } from "../../utils/validators/userUpdateValidation.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
+import { userIdParamSchema } from "../../utils/validators/validationUtils.js";
 import { Class, SchoolClass } from "@tillerquest/prisma/browser";
 import z from "zod";
 

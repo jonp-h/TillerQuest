@@ -4,8 +4,8 @@ import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateBody } from "../../middleware/validationMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
-import { questSchema } from "utils/validators/validationUtils.js";
+import { ErrorMessage } from "../../lib/error.js";
+import { questSchema } from "../../utils/validators/validationUtils.js";
 
 interface CreateQuestRequest extends AuthenticatedRequest {
   body: {

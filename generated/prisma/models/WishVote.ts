@@ -210,7 +210,7 @@ export type WishVoteGroupByOutputType = {
   _max: WishVoteMaxAggregateOutputType | null
 }
 
-type GetWishVoteGroupByPayload<T extends WishVoteGroupByArgs> = Prisma.PrismaPromise<
+export type GetWishVoteGroupByPayload<T extends WishVoteGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<WishVoteGroupByOutputType, T['by']> &
       {
@@ -1380,6 +1380,11 @@ export type WishVoteFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` WishVotes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of WishVotes.
+   */
   distinct?: Prisma.WishVoteScalarFieldEnum | Prisma.WishVoteScalarFieldEnum[]
 }
 

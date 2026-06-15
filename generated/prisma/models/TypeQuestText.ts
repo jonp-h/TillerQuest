@@ -171,7 +171,7 @@ export type TypeQuestTextGroupByOutputType = {
   _max: TypeQuestTextMaxAggregateOutputType | null
 }
 
-type GetTypeQuestTextGroupByPayload<T extends TypeQuestTextGroupByArgs> = Prisma.PrismaPromise<
+export type GetTypeQuestTextGroupByPayload<T extends TypeQuestTextGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TypeQuestTextGroupByOutputType, T['by']> &
       {
@@ -911,6 +911,11 @@ export type TypeQuestTextFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` TypeQuestTexts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TypeQuestTexts.
+   */
   distinct?: Prisma.TypeQuestTextScalarFieldEnum | Prisma.TypeQuestTextScalarFieldEnum[]
 }
 

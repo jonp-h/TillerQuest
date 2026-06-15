@@ -2,7 +2,7 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 
 export const getLastMana = [
   requireUserIdAndActive(),

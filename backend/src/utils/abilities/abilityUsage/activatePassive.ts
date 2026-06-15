@@ -1,4 +1,4 @@
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { PrismaTransaction } from "../../../types/prismaTransaction.js";
 import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
 import { getUsersMissingPassive } from "../abilityValidators.js";

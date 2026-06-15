@@ -11,8 +11,8 @@ import { Access } from "@tillerquest/prisma/browser";
 import {
   adminUpdateUserSchema,
   userIdParamSchema,
-} from "utils/validators/validationUtils.js";
-import { ErrorMessage } from "lib/error.js";
+} from "../../utils/validators/validationUtils.js";
+import { ErrorMessage } from "../../lib/error.js";
 
 interface AdminUpdateUserRequest extends AuthenticatedRequest {
   body: {

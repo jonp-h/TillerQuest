@@ -10,7 +10,7 @@ import {
   validateParams,
 } from "../../middleware/validationMiddleware.js";
 import { DiceRoll, exportFormats } from "@dice-roller/rpg-dice-roller";
-import { gameIdParamSchema } from "utils/validators/validationUtils.js";
+import { gameIdParamSchema } from "../../utils/validators/validationUtils.js";
 
 const rollBinaryJackDiceSchema = z.object({
   dice: z.enum(["d4", "d6", "d8", "d10", "d20"]),

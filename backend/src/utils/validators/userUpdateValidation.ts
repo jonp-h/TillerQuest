@@ -1,6 +1,6 @@
-import { db } from "lib/db.js";
+import { db } from "../../lib/db.js";
 import { Class, SchoolClass } from "@tillerquest/prisma/browser";
-import { escapeHtml } from "utils/validators/validationUtils.js";
+import { escapeHtml } from "../../utils/validators/validationUtils.js";
 
 interface UpdateUserProps {
   username: string;

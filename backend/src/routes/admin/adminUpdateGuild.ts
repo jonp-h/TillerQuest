@@ -2,16 +2,16 @@ import { Response } from "express";
 import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
-import { ErrorMessage } from "lib/error.js";
+import { ErrorMessage } from "../../lib/error.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+} from "../../middleware/validationMiddleware.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   escapeHtml,
   guildNameParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 import z from "zod";
 
 interface AdminUpdateGuildMembersRequest extends AuthenticatedRequest {

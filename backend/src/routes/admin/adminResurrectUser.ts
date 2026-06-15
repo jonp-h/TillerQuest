@@ -12,7 +12,7 @@ import { resurrectUser } from "../../utils/users/resurrectUser.js";
 import {
   resurrectUserSchema,
   userIdParamSchema,
-} from "utils/validators/validationUtils.js";
+} from "../../utils/validators/validationUtils.js";
 
 interface ResurrectUserRequest extends AuthenticatedRequest {
   params: {

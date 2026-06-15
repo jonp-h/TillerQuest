@@ -20,11 +20,11 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
 import api_key_leaderboardRoutes from "./routes/api_key_leaderboard.js";
 import rateLimit from "express-rate-limit";
-import { logger } from "lib/logger.js";
-import { requireAuth } from "middleware/authMiddleware.js";
-import { standardUserRateLimit } from "middleware/rateLimitMiddleware.js";
-import routes from "routes/routes.js";
-import { ErrorMessage } from "lib/error.js";
+import { logger } from "./lib/logger.js";
+import { requireAuth } from "./middleware/authMiddleware.js";
+import { standardUserRateLimit } from "./middleware/rateLimitMiddleware.js";
+import routes from "./routes/routes.js";
+import { ErrorMessage } from "./lib/error.js";
 import { join } from "path";
 
 const app = express();

@@ -3,7 +3,7 @@ import { db } from "../../lib/db.js";
 import { logger } from "../../lib/logger.js";
 import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
-import { validateQuery } from "middleware/validationMiddleware.js";
+import { validateQuery } from "../../middleware/validationMiddleware.js";
 import z from "zod";
 
 export const adminGetUsers = [

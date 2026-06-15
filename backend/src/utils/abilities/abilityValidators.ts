@@ -1,7 +1,7 @@
-import { logger } from "lib/logger.js";
-import { PrismaTransaction } from "types/prismaTransaction.js";
+import { logger } from "../../lib/logger.js";
+import { PrismaTransaction } from "../../types/prismaTransaction.js";
 import { getUserPassiveEffect } from "./getUserPassiveEffect.js";
-import { gemstonesOnLevelUp } from "gameSettings.js";
+import { gemstonesOnLevelUp } from "../../gameSettings.js";
 import { addLog } from "../logs/addLog.js";
 import { Class } from "@tillerquest/prisma/browser";
 

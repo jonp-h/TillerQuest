@@ -220,7 +220,7 @@ export type UserPassiveGroupByOutputType = {
   _max: UserPassiveMaxAggregateOutputType | null
 }
 
-type GetUserPassiveGroupByPayload<T extends UserPassiveGroupByArgs> = Prisma.PrismaPromise<
+export type GetUserPassiveGroupByPayload<T extends UserPassiveGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UserPassiveGroupByOutputType, T['by']> &
       {
@@ -1456,6 +1456,11 @@ export type UserPassiveFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` UserPassives.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of UserPassives.
+   */
   distinct?: Prisma.UserPassiveScalarFieldEnum | Prisma.UserPassiveScalarFieldEnum[]
 }
 

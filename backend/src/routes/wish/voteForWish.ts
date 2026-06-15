@@ -6,12 +6,12 @@ import { requireUserIdAndActive } from "../../middleware/authMiddleware.js";
 import {
   validateBody,
   validateParams,
-} from "middleware/validationMiddleware.js";
+} from "../../middleware/validationMiddleware.js";
 import {
   userIdParamSchema,
   voteForWishSchema,
-} from "utils/validators/validationUtils.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+} from "../../utils/validators/validationUtils.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 
 export const voteForWish = [
   requireUserIdAndActive(),

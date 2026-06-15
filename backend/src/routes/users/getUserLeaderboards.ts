@@ -1,11 +1,11 @@
 import { Response } from "express";
 import { logger } from "../../lib/logger.js";
 import { requireActiveUser } from "../../middleware/authMiddleware.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import {
   getVg1Leaderboard,
   getVg2Leaderboard,
-} from "utils/users/getLeaderboards.js";
+} from "../../utils/users/getLeaderboards.js";
 
 export const getUserLeaderboards = [
   requireActiveUser,
