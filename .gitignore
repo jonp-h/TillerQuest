@@ -167,5 +167,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/generated
+# Prisma
+/generated/**
+# Keep the package.json file in the generated prisma folder
+!/generated/prisma/package.json
