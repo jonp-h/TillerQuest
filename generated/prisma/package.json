@@ -5,6 +5,7 @@
   "type": "module",
   "main": "./client.ts",
   "types": "./client.ts",
+  "private": true,
   "exports": {
     ".": {
       "import": "./client.ts",

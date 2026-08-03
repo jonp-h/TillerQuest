@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:latest
     restart: always
-    container_name: postgres_container
+    container_name: tq_postgres_container
     environment:
       POSTGRES_DB: tillerquest
       POSTGRES_USER: ${POSTGRES_USER}
@@ -12,20 +12,20 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin_container
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - "${PGADMIN_PORT}:80"
-    depends_on:
-      - postgres
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: tq_pgadmin_container
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  #   ports:
+  #     - "${PGADMIN_PORT}:80"
+  #   depends_on:
+  #     - postgres
 
   pgbackups:
     image: prodrigestivill/postgres-backup-local
-    container_name: pgbackups_container
+    container_name: tq_pgbackups_container
     restart: always
     ports:
       - "8090:8080"

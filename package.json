@@ -13,33 +13,28 @@
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
     "prepare": "husky",
-    "dev": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run dev\"",
-    "start": "concurrently --names \"backend,frontend\" \"npm --workspace=backend run start\" \"npm --workspace=frontend run start\"",
-    "gen": "cd backend && npm run gen"
+    "dev": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run dev\"",
+    "start": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run start\"",
+    "gen": "cd backend && pnpm run gen"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.3.0",
-    "dotenv": "^17.2.3",
-    "pg": "^8.16.3"
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "dotenv": "^17.4.2",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
-    "@types/node": "^25.0.3",
-    "@types/pg": "^8.16.0",
-    "commitlint": "^20.2.0",
-    "concurrently": "^10.0.3",
-    "eslint": "^9.39.1",
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@types/node": "^25.9.5",
+    "@types/pg": "^8.20.2",
+    "commitlint": "^20.5.3",
+    "concurrently": "^10.0.4",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
-    "prisma": "^7.3.0"
-  },
-  "overrides": {
-    "uuid": "^14.0.0",
-    "mathjs": "^15.2.0",
-    "@hono/node-server": "^2.0.4"
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.6",
+    "prisma": "^7.9.1"
   }
 }

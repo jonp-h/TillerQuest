@@ -1,0 +1,30 @@
+packages:
+  - "frontend/**"
+  - "backend/**"
+  - "generated/prisma/**"
+
+allowBuilds:
+  "@prisma/engines": true
+  esbuild: true
+  prisma: true
+  sharp: set this to true or false
+  unrs-resolver: true
+
+minimumReleaseAge: 2880 # 48 hours
+
+minimumReleaseAgeExclude:
+  - postcss@8.5.10 || 8.5.12 || 8.5.18
+  - mathjs@15.2.0
+  - uuid@11.1.1
+  - sharp@0.35.0
+
+overrides:
+  mathjs@>=13.1.0 <15.2.0: ^15.2.0
+  mathjs@>=13.1.1 <15.2.0: ^15.2.0
+  postcss@<8.5.10: ^8.5.10
+  postcss@<=8.5.11: ^8.5.12
+  postcss@<=8.5.17: ^8.5.18
+  sharp@<0.35.0: ^0.35.0
+  uuid@<11.1.1: ^11.1.1
+
+# minimumReleaseAge: 1440 # 24 hours

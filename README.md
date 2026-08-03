@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Made_By-JonPH-blue" />
- 
+
 </p>
 
 <p align="center">
@@ -25,6 +25,7 @@
 
 ### This project uses:
 
+- [Pnpm](https://pnpm.io/) as package manager.
 - [TypeScript](https://www.typescriptlang.org/) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
@@ -37,72 +38,25 @@
 
 ## Setup instructions
 
-#### Installation
-
 ```bash
 # Clone this repository
 $ git clone
 
-# Go into the Project
+# Enter the project
 $ cd TillerQuest/
-
-# Install dependencies
-$ npm i
-
-# Enter the repository
-$ cd frontend/
-
-# Install dependencies
-$ npm i
-
-# Enter the repository
-$ cd ../backend/
-
-# Install dependencies
-$ npm i
-
 ```
 
-#### Setup database
+#### Setup database env
 
-- First complete the above instructions
 - Setup a local PostegreSQL instance with Docker in the backend [here](/backend/src/db/docker/).
 - In the docker folder:
 
-- Create an .env with the following:
-
-```bash
-# For the Postgres Database
-POSTGRES_USER=...
-POSTGRES_PASSWORD=...
-POSTGRES_PORT=...
-
-# Extra to use PGAdmin
-PGADMIN_DEFAULT_EMAIL=...
-PGADMIN_DEFAULT_PASSWORD=...
-PGADMIN_PORT=...
-POSTGRES_HOST=... # the default gateway for the docker postgres_container
-```
+- Create .env inside the frontend folder based on the .env.example - and fill in the values
 
 - Then start a postegresql instance with docker:
 
 ```bash
 $ docker-compose up -d
-```
-
-#### Seed database / Dummy data
-
-- You can fill the database with seed-data (dummy data) by entering the following commands in the backend/ folder
-
-```bash
-# go to the backend folder
-$ cd backend/
-
-# Add the database schema to the database
-$ npx prisma db push
-
-# Seed the database with dummy data
-$ npm run gen
 ```
 
 #### Setup root env
@@ -117,19 +71,43 @@ $ npm run gen
 
 - Create .env inside the backend folder based on the .env.example - and fill in the values
 
+#### Installation
+
+- Open a terminal in the root folder
+
+```bash
+# Install dependencies
+$ pnpm i
+```
+
+#### Seed database / Dummy data
+
+- You can fill the database with seed-data (dummy data) by entering the following commands in the backend/ folder
+
+- Open a terminal in the root folder
+
+```bash
+# Add the database schema to the database
+$ pnpx prisma db push
+
+# Seed the database with dummy data
+$ pnpm run gen
+```
+
 ### Start application
 
 - Open a terminal in the root folder
 
 ```bash
 # To start both frontend and backend in development mode
-$ npm run dev
+$ pnpm run dev
 ```
 
 - Open [localhost:3000](localhost:3000)
 
-- You can inspect the database with `npx prisma studio` in a new terminal
+- You can inspect the database with `pnpx prisma studio` in a new terminal in the root folder
   - If the mocking was successful the database should have example data
+
 - Create your own user by signing in with GitHub OAuth and creating a user. Example creation secret can be found in the db/seed files
 - Happy testing!
 
@@ -244,15 +222,43 @@ $ npm run dev
 TillerQuest is an application made for darkmode. Background and colors should therefore keep a black background and white text as a base in all pages and components. **Lightmode is not supported (and probably never will be)**.
 
 \*_NOTE: Contrast ratio pairings have sufficient contrast for use with normal text, large text and graphics._
-| Color | Hex | Contrast color | Contrast ratio | Accessibility |
-| ----------------- | -------------------------------------------------------------- | ----------- | ----------- | ------------- |
-| Primary | ![#6E40C9](https://placehold.co/15x15/6E40C9/6E40C9) #6E40C9 | #e2e2e2 |5:1 | WCAG AA |
-| Secondary | ![#C06EFF](https://placehold.co/15x15/C06EFF/C06EFF) #C06EFF | #0d1117 | 6.23:1 | WCAG AA |
-| Background | ![#0d1117](https://placehold.co/15x15/0d1117/0d1117) #0d1117 | #e2e2e2 | 14.61:1 | WCAG AAA |
-| Error | ![#FF3B43](https://placehold.co/15x15/FF3B43/FF3B43) #FF3B43 | #0d1117 | 5.37:1 | WCAG AA |
-| Success | ![#6EC348](https://placehold.co/15x15/6EC348/6EC348) #6EC348 | #0d1117 | 8.62:1 | WCAG AAA |
-| Info | ![#3DBCEA](https://placehold.co/15x15/3DBCEA/3DBCEA) #3DBCEA | #0d1117 | 8.63:1 | WCAG AAA |
-| Warning | ![#FFA726](https://placehold.co/15x15/FFA726/FFA726) #FFA726 | #0d1117 | 9.74:1 | WCAG AAA |
+
+| Color      | Hex                                                          | Contrast color | Contrast ratio | Accessibility |
+| ---------- | ------------------------------------------------------------ | -------------- | -------------- | ------------- |
+| Primary    | ![#6E40C9](https://placehold.co/15x15/6E40C9/6E40C9) #6E40C9 | #e2e2e2        | 5:1            | WCAG AA       |
+| Secondary  | ![#C06EFF](https://placehold.co/15x15/C06EFF/C06EFF) #C06EFF | #0d1117        | 6.23:1         | WCAG AA       |
+| Background | ![#0d1117](https://placehold.co/15x15/0d1117/0d1117) #0d1117 | #e2e2e2        | 14.61:1        | WCAG AAA      |
+| Error      | ![#FF3B43](https://placehold.co/15x15/FF3B43/FF3B43) #FF3B43 | #0d1117        | 5.37:1         | WCAG AA       |
+| Success    | ![#6EC348](https://placehold.co/15x15/6EC348/6EC348) #6EC348 | #0d1117        | 8.62:1         | WCAG AAA      |
+| Info       | ![#3DBCEA](https://placehold.co/15x15/3DBCEA/3DBCEA) #3DBCEA | #0d1117        | 8.63:1         | WCAG AAA      |
+| Warning    | ![#FFA726](https://placehold.co/15x15/FFA726/FFA726) #FFA726 | #0d1117        | 9.74:1         | WCAG AAA      |
+
+# Vulnerabilities
+
+To fix vulnerabilities;
+
+```bash
+
+# check for vulnerabilities
+$ pnpm audit
+
+# checks if any packages can be updated
+$ pnpm audit --fix:update
+
+# check if vulnerabilities persist
+$ pnpm audit
+
+# if they do, add override
+$ pnpm audit --fix:override
+
+# update packages
+$ pnpm update
+
+# check if any remaining vulnerabilities
+$ pnpm audit
+
+# be sure to periodically check/cleanup minimumReleaseAgeExclude and overrides in the pnpm-workspace.yaml
+```
 
 ## Credits
 

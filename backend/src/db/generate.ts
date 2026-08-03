@@ -15,7 +15,7 @@ import enemies from "./enemies.js";
 import settings from "./tillerquestSettings.js";
 import wordQuestWords from "./wordQuestWords.js";
 import wishes from "./wishes.js";
-import { db } from "lib/db.js";
+import { db } from "../lib/db.js";
 import apps from "./apps.js";
 
 async function main() {
