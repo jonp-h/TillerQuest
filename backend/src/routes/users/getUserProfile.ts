@@ -5,6 +5,7 @@ import { requireActiveUser } from "../../middleware/authMiddleware.js";
 import { validateParams } from "../../middleware/validationMiddleware.js";
 import { usernameParamSchema } from "../../utils/validators/validationUtils.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
+import { getXpProgress } from "../../utils/progression/xpProgression.js";
 
 export const getUserProfile = [
   requireActiveUser,
@@ -97,7 +98,9 @@ export const getUserProfile = [
         },
       });
 
-      res.json({ success: true, data: user });
+      const xpProgress = getXpProgress(user?.xp ?? 0);
+
+      res.json({ success: true, data: { ...user, xpProgress } });
     } catch (error) {
       logger.error("Error fetching user profile by username: " + error);
       res.status(500).json({

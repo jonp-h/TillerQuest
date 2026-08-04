@@ -31,7 +31,7 @@ export default function Footer() {
         and students at Tiller vgs
       </Typography>
       <Typography variant="subtitle2" color="textSecondary">
-        2025
+        2026
       </Typography>
     </div>
   );
