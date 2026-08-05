@@ -15,7 +15,8 @@
     "prepare": "husky",
     "dev": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run dev\"",
     "start": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run start\"",
-    "gen": "cd backend && pnpm run gen"
+    "gen": "cd backend && pnpm run gen",
+    "reset": "cd backend && pnpm run reset"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",

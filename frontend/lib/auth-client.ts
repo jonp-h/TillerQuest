@@ -11,13 +11,13 @@ export const authClient = createAuthClient({
       user: {
         username: {
           type: "string",
-          required: true,
+          required: false,
           unique: true,
           description: "Your username, used to identify you in the game.",
         },
         role: {
           type: "string",
-          required: true,
+          required: false,
           input: false,
           default: "NEW",
           description: "Your role in the game, used to determine permissions.",
@@ -25,9 +25,8 @@ export const authClient = createAuthClient({
         },
         class: {
           type: "string",
-          required: true,
+          required: false,
           input: false,
-          default: "DRUID",
           description: "Your class in the game, used to determine abilities.",
           enum: Class,
         },

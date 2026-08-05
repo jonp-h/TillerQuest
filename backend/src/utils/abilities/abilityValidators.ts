@@ -4,6 +4,7 @@ import { getUserPassiveEffect } from "./getUserPassiveEffect.js";
 import { gemstonesOnLevelUp } from "../../gameSettings.js";
 import { addLog } from "../logs/addLog.js";
 import { Class } from "@tillerquest/prisma/browser";
+import { applyXpDelta } from "../progression/xpProgression.js";
 
 export const healingValidator = async (
   db: PrismaTransaction,
@@ -254,10 +255,8 @@ export const experienceAndLevelValidator = async (
 
     // ---------------- handle negative XP ---------------------
     if (xp <= 0) {
-      const newXp = targetUser.xp + xp;
-      const newLevel = Math.floor(newXp / 1000);
-      const currentLevel = targetUser.level;
-      const levelDifference = newLevel - currentLevel;
+      const result = applyXpDelta(targetUser.xp, xp);
+      const levelDifference = result.levelDifference;
 
       let levelUpData = {};
       if (levelDifference < 0) {
@@ -272,7 +271,7 @@ export const experienceAndLevelValidator = async (
       await db.user.update({
         where: { id: userId },
         data: {
-          xp: { increment: xp },
+          xp: result.afterXp,
           ...levelUpData,
         },
       });
@@ -285,26 +284,19 @@ export const experienceAndLevelValidator = async (
     const xpToGive = Math.round(xp * (1 + xpMultipler));
 
     // Calculate the new XP and level
-    const newXp = targetUser.xp + xpToGive;
-    const currentLevel = targetUser.level;
-    const newLevel = Math.floor(newXp / 1000);
-    const levelDifference = newLevel - currentLevel;
-
-    let levelUpData = {};
-    if (levelDifference > 0) {
-      levelUpData = {
-        level: { increment: levelDifference },
-        gemstones: {
-          increment: gemstonesOnLevelUp * levelDifference,
-        },
-      };
-    }
+    const result = applyXpDelta(targetUser.xp, xpToGive);
+    const levelDifference = result.levelDifference;
 
     await db.user.update({
       where: { id: userId },
       data: {
-        xp: { increment: xpToGive },
-        ...levelUpData,
+        xp: result.afterXp,
+        ...(levelDifference !== 0
+          ? {
+              level: { increment: levelDifference },
+              gemstones: { increment: gemstonesOnLevelUp * levelDifference },
+            }
+          : {}),
       },
     });
 

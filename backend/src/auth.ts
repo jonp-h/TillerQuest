@@ -23,13 +23,13 @@ export const auth = betterAuth({
     additionalFields: {
       username: {
         type: "string",
-        required: true,
+        required: false,
         unique: true,
         description: "Your username, used to identify you in the game.",
       },
       role: {
         type: "string",
-        required: true,
+        required: false,
         input: false,
         default: "NEW",
         description: "Your role in the game, used to determine permissions.",
@@ -37,9 +37,8 @@ export const auth = betterAuth({
       },
       class: {
         type: "string",
-        required: true,
+        required: false,
         input: false,
-        default: "DRUID",
         description: "Your class in the game, used to determine abilities.",
         enum: Class,
       },

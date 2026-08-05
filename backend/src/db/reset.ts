@@ -1,8 +1,8 @@
 import { SchoolClass } from "@tillerquest/prisma/browser";
 import guilds from "./guilds.js";
 import { PrismaTransaction } from "../types/prismaTransaction.js";
-import { resetUserTurns } from "cronjobs.js";
-import { db } from "lib/db.js";
+import { resetUserTurns } from "../cronjobs.js";
+import { db } from "../lib/db.js";
 
 // Initialize Prisma Client
 
@@ -13,9 +13,13 @@ async function main() {
   1 - normal reset. Set all users to the INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
   2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set INACTIVE role or reset guilds.
   3 - single normal reset. Reset a single user to INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
-  4 - delete non-consenting VG2 users and archive guilds/users. Reset all VG2 users who has not consented to archiving
+  4 - delete non-consenting VG2 users and NEW users, as well as archive guilds/users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
   6 - reset user turns. Reset the turns for all users to their passives' turn value
+  7 - DELETE USER. Delete a single user from the database. This is irreversible and will delete all data associated with the user.
+
+  NOTE: During a summer-reset, you may want to run option 2 first, then 4, and lastly 1. This will ensure that all users have their shop items refunded, then all non-consenting VG2 users are deleted, and finally all remaining users are set to INACTIVE role.
+  Finally, go over first grade users and delete any non-continuing users individually with option 7.
   `);
 
   process.stdin.setEncoding("utf8");
@@ -71,7 +75,7 @@ async function main() {
         break;
       case "4":
         console.log(
-          "Are you sure you want to delete ALL non-consenting VG2 users? Type 'yes' to confirm:",
+          "Are you sure you want to delete ALL non-consenting VG2 users/NEW users? Type 'yes' to confirm:",
         );
         process.stdin.once("data", async (confirmation) => {
           if (confirmation.toString().trim().toLowerCase() === "yes") {
@@ -111,6 +115,23 @@ async function main() {
           process.stdin.pause(); // Stop listening for input after handling this case
         });
         break;
+      case "7":
+        console.log("Enter the username of the user you want to delete:");
+        process.stdin.once("data", async (username) => {
+          const trimmedUsername = username.toString().trim();
+          console.log(
+            `Are you sure you want to delete the user "${trimmedUsername}"? This action is irreversible. Type 'yes' to confirm:`,
+          );
+          process.stdin.once("data", async (confirmation) => {
+            if (confirmation.toString().trim().toLowerCase() === "yes") {
+              await deleteSingleUser(trimmedUsername);
+            } else {
+              console.log("Operation canceled.");
+            }
+            process.stdin.pause(); // Stop listening for input after handling this case
+          });
+        });
+        break;
     }
   });
 }
@@ -143,7 +164,7 @@ async function resetUsers() {
         },
         where: {
           role: {
-            notIn: ["ARCHIVED", "ADMIN"],
+            notIn: ["ARCHIVED", "ADMIN", "NEW"],
           },
         },
       });
@@ -333,12 +354,14 @@ async function softResetUserHandler(
       hpMax: 40,
       mana: Math.min(user.mana, 40),
       manaMax: 40,
+      diceColorset: null,
       gemstones: {
         increment: totalGemstoneCost,
       },
-      gold: {
-        increment: goldFromShopItems,
-      },
+      gold:
+        goldFromShopItems >= 2147483647
+          ? 2147483647
+          : { increment: goldFromShopItems }, // Prevent overflow error (max int for PostgreSQL is 2147483647)
       title: "Newborn",
       titleRarity: "Common",
       sessions: {
@@ -507,6 +530,21 @@ async function deleteAnalytics() {
       await tx.analytics.deleteMany({});
     });
     console.info("All analytics data has been deleted.");
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+}
+
+async function deleteSingleUser(username: string) {
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.user.delete({
+        where: {
+          username: username,
+        },
+      });
+    });
+    console.info("User with username " + username + " has been deleted.");
   } catch (error) {
     console.error("Error: ", error);
   }
