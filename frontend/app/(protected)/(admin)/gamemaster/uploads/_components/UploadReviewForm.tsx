@@ -113,11 +113,11 @@ export default function UploadReviewForm({
 
         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
           <Chip
-            label={`Uploaded by user: ${upload.uploader.username}`}
+            label={`Uploaded by user: ${upload.uploader?.username || "Unknown"}`}
             size="small"
           />
           <Chip
-            label={`Name: ${upload.uploader.name} ${upload.uploader.lastname}`}
+            label={`Name: ${upload.uploader?.name} ${upload.uploader?.lastname}`}
             size="small"
           />
           <Chip

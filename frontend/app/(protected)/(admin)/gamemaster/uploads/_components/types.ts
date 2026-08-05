@@ -10,7 +10,7 @@ export interface UploadReviewFormProps {
     username: string | null;
     name: string | null;
     lastname: string | null;
-  };
+  } | null;
   guild: {
     name: string;
     id: number;

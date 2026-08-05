@@ -9,7 +9,6 @@
     "generated/prisma"
   ],
   "scripts": {
-    "postinstall": "prisma generate",
     "lint": "eslint .",
     "commitlint": "commitlint --edit",
     "prepare": "husky",

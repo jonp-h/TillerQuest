@@ -311,7 +311,7 @@ async function resetUsersAndShopItems() {
       }
     });
     console.info(
-      "All users has had their gemstones, passives, shopitems and abilities reset. Users have not been set to the NEW role.",
+      "All users has had their gemstones, passives, shopitems and abilities reset. No roles have been changed.",
     );
   } catch (error) {
     console.error("Error: ", error);

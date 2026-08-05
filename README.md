@@ -76,6 +76,9 @@ $ docker-compose up -d
 - Open a terminal in the root folder
 
 ```bash
+# Generate prisma schema
+$ pnpm dlx prisma generate
+
 # Install dependencies
 $ pnpm i
 ```

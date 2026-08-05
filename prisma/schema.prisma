@@ -251,7 +251,7 @@ model Guild {
 
 model ImageUpload {
   id         String   @id @default(cuid())
-  uploadedBy String
+  uploadedBy String?
   guildName  String?
   filename   String
   fileHash   String? // SHA-256 hash for file integrity verification
@@ -263,8 +263,8 @@ model ImageUpload {
   reason     String?
 
   guild    Guild? @relation(fields: [guildName], references: [name], onUpdate: Cascade)
-  uploader User   @relation("ImageUploader", fields: [uploadedBy], references: [id], onUpdate: Cascade)
-  reviewer User?  @relation("ImageReviewer", fields: [reviewedBy], references: [id], onUpdate: Cascade)
+  uploader User?  @relation("ImageUploader", fields: [uploadedBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  reviewer User?  @relation("ImageReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   @@index([status])
 }
