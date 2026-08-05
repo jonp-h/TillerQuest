@@ -164,12 +164,18 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-3 w-3/4 lg:w-2/4 text-center">
             <div>
               <Typography variant="body2" color="orange">
-                XP: {user.data.xp} / {Math.ceil(user.data.xp / 1000) * 1000}
+                XP: {user.data.xp} /{" "}
+                {user.data.xpProgress.xpAtLevelStart +
+                  user.data.xpProgress.xpForNextLevel}
               </Typography>
               <LinearProgress
                 color="experience"
                 variant="determinate"
-                value={(user.data.xp % 1000) / 10}
+                value={
+                  (user.data.xpProgress.xpIntoCurrentLevel /
+                    user.data.xpProgress.xpForNextLevel) *
+                  100
+                }
               />
             </div>
             <div>

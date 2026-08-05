@@ -71,7 +71,13 @@ export type UserProfile = DateToString<
       };
     };
   }>
->;
+> & {
+  xpProgress: {
+    xpAtLevelStart: number;
+    xpIntoCurrentLevel: number;
+    xpForNextLevel: number;
+  };
+};
 
 /**
  * Guild members with relations
