@@ -1,4 +1,4 @@
-import { $Enums } from "@tillerquest/prisma/browser";
+import { $Enums, Prisma } from "@tillerquest/prisma/browser";
 
 export interface UserProfile {
   id: string;
@@ -44,3 +44,25 @@ export interface BaseUser {
   gemstones: number;
   guildName: string | null;
 }
+
+export type FullUser = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    username: true;
+    lastname: true;
+    hp: true;
+    hpMax: true;
+    mana: true;
+    manaMax: true;
+    image: true;
+    titleRarity: true;
+    title: true;
+    guild: {
+      select: {
+        guildLeader: true;
+        nextGuildLeader: true;
+      };
+    };
+  };
+}>;

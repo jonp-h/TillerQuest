@@ -5,12 +5,14 @@ import { requireAdmin } from "../../middleware/authMiddleware.js";
 import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { validateQuery } from "../../middleware/validationMiddleware.js";
 import z from "zod";
+import { SchoolClass } from "@tillerquest/prisma/browser";
 
 export const adminGetUsers = [
   requireAdmin,
   validateQuery(
     z.object({
       fields: z.enum(["basic", "admin", "full", "dead"]).optional(),
+      schoolClass: z.enum(SchoolClass).optional(),
     }),
   ),
   async (req: AuthenticatedRequest, res: Response) => {
@@ -28,6 +30,9 @@ export const adminGetUsers = [
             lastname: true,
             schoolClass: true,
           };
+          whereClause = {
+            schoolClass: req.query.schoolClass as SchoolClass | undefined,
+          };
           break;
         case "admin":
           select = {
@@ -40,7 +45,9 @@ export const adminGetUsers = [
             schoolClass: true,
             access: true,
           };
-          whereClause = undefined;
+          whereClause = {
+            schoolClass: req.query.schoolClass as SchoolClass | undefined,
+          };
           break;
         case "dead":
           select = {
@@ -52,10 +59,37 @@ export const adminGetUsers = [
             level: true,
           };
           whereClause = {
+            schoolClass: req.query.schoolClass as SchoolClass | undefined,
             hp: 0,
           };
           break;
         case "full":
+          select = {
+            id: true,
+            name: true,
+            username: true,
+            lastname: true,
+            hp: true,
+            hpMax: true,
+            mana: true,
+            manaMax: true,
+            image: true,
+            titleRarity: true,
+            title: true,
+            guild: {
+              select: {
+                guildLeader: true,
+                nextGuildLeader: true,
+              },
+            },
+          };
+          whereClause = {
+            role: {
+              notIn: ["NEW", "ARCHIVED", "ADMIN"], // only get active users. (inactive, users)
+            },
+            schoolClass: req.query.schoolClass as SchoolClass | undefined,
+          };
+          break;
         default:
           // Return all fields (full user objects)
           select = {
@@ -77,6 +111,7 @@ export const adminGetUsers = [
             role: {
               notIn: ["NEW", "ARCHIVED"], // only get active users. (inactive, admins, users)
             },
+            schoolClass: req.query.schoolClass as SchoolClass | undefined,
           };
           break;
       }
