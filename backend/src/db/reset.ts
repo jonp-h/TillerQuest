@@ -10,15 +10,15 @@ async function main() {
   console.log(`
   Please choose an option:
   DANGERZONE:
-  1 - normal reset. Set all users to the INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
-  2 - soft reset with shop items. Resets all abilities and passives, and refunds shop items. Does not set INACTIVE role or reset guilds.
+  1 - normal reset. Set all users to the INACTIVE role. Only Gemstone purchases, passives, abilities, and guilds are reset.
+  2 - soft reset with shop items. Typically done to fix a backend update. In general shop items should not be reset. This option will resets all abilities and passives, and refund all shop items for active users and admins. Does not set INACTIVE role or reset guilds.
   3 - single normal reset. Reset a single user to INACTIVE role. Only Gemstones, passives, abilities, and guilds are reset.
   4 - delete non-consenting VG2 users and NEW users, as well as archive guilds/users. Reset all VG2 users who has not consented to archiving
   5 - delete all analytics. Reset all analytics data
   6 - reset user turns. Reset the turns for all users to their passives' turn value
   7 - DELETE USER. Delete a single user from the database. This is irreversible and will delete all data associated with the user.
 
-  NOTE: During a summer-reset, you may want to run option 2 first, then 4, and lastly 1. This will ensure that all users have their shop items refunded, then all non-consenting VG2 users are deleted, and finally all remaining users are set to INACTIVE role.
+  NOTE: During a summer-reset, you may want to run option 4 first, and lastly 1. This will ensure that all VG2 users are deleted/archived, and all remaining users are set to INACTIVE role.
   Finally, go over first grade users and delete any non-continuing users individually with option 7.
   `);
 
@@ -276,6 +276,11 @@ async function normalResetUserHandler(
           userId: user.id,
         },
       },
+      inventory: {
+        deleteMany: {
+          currency: "GEMSTONES",
+        },
+      },
     },
   });
 }
@@ -284,10 +289,18 @@ async function resetUsersAndShopItems() {
   try {
     await db.$transaction(async (tx) => {
       const users = await tx.user.findMany({
+        where: {
+          NOT: {
+            role: {
+              in: ["ARCHIVED", "NEW"],
+            },
+          },
+        },
         select: {
           id: true,
           mana: true,
           hp: true,
+          gold: true,
           abilities: {
             select: {
               id: true,
@@ -301,6 +314,7 @@ async function resetUsersAndShopItems() {
           inventory: {
             select: {
               price: true,
+              currency: true,
             },
           },
         },
@@ -311,7 +325,7 @@ async function resetUsersAndShopItems() {
       }
     });
     console.info(
-      "All users has had their gemstones, passives, shopitems and abilities reset. No roles have been changed.",
+      "All active users have had their gemstones, passives, shopitems and abilities reset. No roles have been changed.",
     );
   } catch (error) {
     console.error("Error: ", error);
@@ -325,8 +339,10 @@ async function softResetUserHandler(
     id: string;
     hp: number;
     mana: number;
+    gold: number;
     inventory: {
       price: number;
+      currency: "GOLD" | "GEMSTONES";
     }[];
     abilities: {
       id: string;
@@ -341,10 +357,23 @@ async function softResetUserHandler(
     totalGemstoneCost += ability.ability.gemstoneCost;
   }
 
+  let gemstonesFromShopItems = 0;
   let goldFromShopItems = 0;
   for (const shopItem of user.inventory) {
+    if (shopItem.currency === "GEMSTONES") {
+      gemstonesFromShopItems += shopItem.price;
+      continue;
+    }
+
     goldFromShopItems += shopItem.price;
   }
+
+  const totalGemstoneRefund = totalGemstoneCost + gemstonesFromShopItems;
+  const MAX_POSTGRES_INT = 2147483647;
+  const safeGoldIncrement = Math.max(
+    0,
+    Math.min(goldFromShopItems, MAX_POSTGRES_INT - user.gold),
+  );
 
   await tx.user.update({
     where: { id: user.id },
@@ -356,12 +385,11 @@ async function softResetUserHandler(
       manaMax: 40,
       diceColorset: null,
       gemstones: {
-        increment: totalGemstoneCost,
+        increment: totalGemstoneRefund,
       },
-      gold:
-        goldFromShopItems >= 2147483647
-          ? 2147483647
-          : { increment: goldFromShopItems }, // Prevent overflow error (max int for PostgreSQL is 2147483647)
+      gold: {
+        increment: safeGoldIncrement,
+      },
       title: "Newborn",
       titleRarity: "Common",
       sessions: {
@@ -388,7 +416,7 @@ async function softResetUserHandler(
       logs: {
         create: {
           global: false,
-          message: `RESET: Your shopitems and abilities have been reset. You have been refunded ${totalGemstoneCost} gemstones and ${goldFromShopItems} gold.`,
+          message: `RESET: Your shopitems and abilities have been reset. You have been refunded ${totalGemstoneRefund} gemstones and ${safeGoldIncrement} gold.`,
         },
       },
     },
