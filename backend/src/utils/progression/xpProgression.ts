@@ -6,12 +6,11 @@ const toNonNegativeInt = (value: number) => {
 // XP needed to go from current level to the next level
 export const xpNeededForNextLevel = (level: number): number => {
   if (level < 10) return 400 + 80 * level; // 400 - 1200
-  if (level < 20) return 1200 + 100 * (level - 10); // 1200 - 2200
-  if (level < 30) return 2200 + 120 * (level - 20); // 2200 - 3400
-  return 3500;
+  if (level < 20) return 1300 + 100 * (level - 10); // 1300 - 2300
+  if (level < 30) return 2400 + 160 * (level - 20); // 2400 - 4000
+  return 4000;
 
   // Considered a more complex curve, but it was deemed too punishing:
-  // return 4000;
   // if (level < 40) return 3700 + 170 * (level - 30); // 3700 - 5400
   // return 5400 + 170 * (level - 40); // 5400 - 7100
 };

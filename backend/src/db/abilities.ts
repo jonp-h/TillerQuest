@@ -15,7 +15,8 @@ interface Ability {
     | "Arena"
     | "Dungeon"
     | "Cosmic";
-  type: // Abilities
+  type:
+    // Abilities
     | "Heal"
     | "XP"
     | "Mana"
@@ -64,7 +65,7 @@ interface Ability {
   description: string;
   duration: 60 | 180 | 240 | 480 | 960 | 1440 | 2880 | 7200 | null; // in minutes, or null for no duration. integer: x * 10 minutes
   icon: string;
-  gemstoneCost: 0 | 1 | 2 | 4;
+  gemstoneCost: 0 | 1 | 2 | 4 | 6;
   manaCost: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 12 | 15 | null;
   healthCost: 2 | 3 | 5 | 6 | 10 | 12 | 15 | null;
   xpGiven: 20 | 40 | 60 | 80 | 120 | 160 | 200 | 240 | 320 | 480 | null;
@@ -338,7 +339,7 @@ const trickery: Ability[] = [
       "You appeal to the game master, and plead for 48 hours extended time on a task. (You must contact a game master and get extended time confirmation in Teams to use this ability.) Postpone abilities do not stack.",
     duration: 2880, // 48 hours
     icon: "Superior-Postpone.png",
-    gemstoneCost: 4,
+    gemstoneCost: 6,
     manaCost: 15,
     healthCost: null,
     xpGiven: null,
@@ -725,17 +726,17 @@ const druid: Ability[] = [
       "Revives a target from death without side-effects. Must be done before a game master revives the target.",
     duration: null,
     icon: "Revive.png",
-    gemstoneCost: 4,
+    gemstoneCost: 6,
     manaCost: 15,
     healthCost: null,
-    xpGiven: 320,
+    xpGiven: 480,
     diceNotation: null,
     value: null,
     parentAbility: "Superior-Heal",
   },
-  // Base: 320 XP / 15 Mana = 21.3
+  // Base: 480 XP / 15 Mana = 32
   // No duration penalty
-  // Final: 21.3 efficiency
+  // Final: 32 efficiency
   {
     id: 64,
     name: "Thorns",
@@ -971,6 +972,24 @@ const warlock: Ability[] = [
     parentAbility: "Crimson-Shield",
   },
   {
+    id: 38,
+    name: "Vampiric-Aura",
+    category: "Warlock",
+    type: "Health",
+    target: "Others",
+    description:
+      "Your vampiric powers grant your guildmates 2 extra health every time they are healed.",
+    duration: 960, //16 hours
+    icon: "Vampiric-Aura.png",
+    gemstoneCost: 4,
+    manaCost: 3,
+    healthCost: null,
+    xpGiven: 120,
+    diceNotation: null,
+    value: 2,
+    parentAbility: "Crimson-Shield",
+  },
+  {
     id: 39,
     name: "Crimson-Bond",
     category: "Warlock",
@@ -1042,7 +1061,7 @@ const warlock: Ability[] = [
       "Lose 15 of your maximum health to grant 5 mana to a guild member.",
     duration: 180, // 3 hours
     icon: "Gift-of-Life.png",
-    gemstoneCost: 4,
+    gemstoneCost: 6,
     manaCost: null,
     healthCost: 15,
     xpGiven: 160,

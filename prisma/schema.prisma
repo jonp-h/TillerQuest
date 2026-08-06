@@ -322,8 +322,8 @@ model GuildEnemy {
   xp        Int
   gold      Int
 
-  enemy Enemy @relation(fields: [enemyId], references: [id])
-  guild Guild @relation(fields: [guildName], references: [name])
+  enemy Enemy @relation(fields: [enemyId], references: [id]) //TODO: add onDelete: Cascade, onUpdate: Cascade. then fix reset script option 1
+  guild Guild @relation(fields: [guildName], references: [name]) //TODO: add onDelete: Cascade, onUpdate: Cascade. then fix reset script option 1
 }
 
 // relational model to explicitly manage the M-N relationship between User and Ability

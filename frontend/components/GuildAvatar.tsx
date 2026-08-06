@@ -1,5 +1,5 @@
 import { Avatar } from "@mui/material";
-import { SxProps, Theme } from "@mui/system";
+import { SxProps, Theme } from "@mui/material";
 
 function GuildAvatar({
   guild,

@@ -84,6 +84,9 @@ async function main() {
       level: true,
       gemstones: true,
     },
+    orderBy: {
+      xp: "desc",
+    },
   });
 
   let changedLevels = 0;
@@ -121,12 +124,8 @@ async function main() {
     );
 
     // Never go below 0 gemstones. Could consider to allow negative gemstones, as refunds of purchases will fix the negative balance.
-    const gemstonesAfter = Math.max(
-      0,
-      toNonNegativeInt(user.gemstones) + proposedGemDelta,
-    );
-    const gemstoneDeltaApplied =
-      gemstonesAfter - toNonNegativeInt(user.gemstones);
+    const gemstonesAfter = user.gemstones + proposedGemDelta;
+    const gemstoneDeltaApplied = gemstonesAfter - user.gemstones;
 
     if (levelDelta !== 0) {
       changedLevels++;
@@ -154,13 +153,7 @@ async function main() {
     });
   }
 
-  console.table(
-    previewRows.filter(
-      (row) =>
-        (row.levelDelta !== 0 || row.gemstoneDeltaApplied !== 0) &&
-        row.role !== "NEW",
-    ),
-  );
+  console.table(previewRows.filter((row) => row.role !== "NEW"));
   console.log("Users scanned:", users.length);
   console.log("Users with level change:", changedLevels);
   console.log("Users with gemstone change:", changedGemstones);
