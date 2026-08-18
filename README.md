@@ -246,13 +246,13 @@ To fix vulnerabilities;
 $ pnpm audit
 
 # checks if any packages can be updated
-$ pnpm audit --fix:update
+$ pnpm audit --fix=update
 
 # check if vulnerabilities persist
 $ pnpm audit
 
 # if they do, add override
-$ pnpm audit --fix:override
+$ pnpm audit --fix=override
 
 # update packages
 $ pnpm update
