@@ -543,9 +543,21 @@ async function deleteNonConsentingVG2Users() {
           role: "NEW",
         },
       });
+
+      // Set all current users' school classes to null
+      await tx.user.updateMany({
+        where: {
+          role: {
+            in: ["USER", "INACTIVE"],
+          },
+        },
+        data: {
+          schoolClass: null,
+        },
+      });
     });
     console.info(
-      "All NEW users and all non-consenting VG2 users have been deleted. Consenting users and guilds have been archived.",
+      "All NEW users and all non-consenting VG2 users have been deleted. All users school classes have been set to null. Consenting users and guilds have been archived.",
     );
   } catch (error) {
     console.error("Error: ", error);
