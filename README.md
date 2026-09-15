@@ -26,6 +26,8 @@
 ### This project uses:
 
 - [Pnpm](https://pnpm.io/) as package manager.
+- [Nextjs](https://nextjs.org/) for frontend.
+- [Expressjs](https://expressjs.com/) for backend
 - [TypeScript](https://www.typescriptlang.org/) for type safety.
 - [Material UI](https://mui.com/material-ui/) for base components.
 - [Google's Material Icons](https://fonts.google.com/icons) for icons.
