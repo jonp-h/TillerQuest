@@ -51,50 +51,72 @@ export const activatePassive = async (
         },
       });
 
-      if (ability.type === "IncreaseHealth") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            hpMax: {
-              increment: ability.value ?? 0,
+      switch (ability.type) {
+        case "IncreaseHealth": {
+          await db.user.update({
+            where: {
+              id: targetUserId,
             },
-          },
-        });
-      } else if (ability.type === "IncreaseMana") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            manaMax: {
-              increment: ability.value ?? 0,
+            data: {
+              hpMax: {
+                increment: ability.value ?? 0,
+              },
             },
-          },
-        });
-      } else if (ability.type === "DecreaseHealth") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            hpMax: {
-              decrement: ability.healthCost ?? 0,
+          });
+          break;
+        }
+        case "IncreaseMana": {
+          await db.user.update({
+            where: {
+              id: targetUserId,
             },
-          },
-        });
-      } else if (ability.type === "DecreaseMana") {
-        await db.user.update({
-          where: {
-            id: targetUserId,
-          },
-          data: {
-            manaMax: {
-              decrement: ability.manaCost ?? 0,
+            data: {
+              manaMax: {
+                increment: ability.value ?? 0,
+              },
             },
-          },
-        });
+          });
+          break;
+        }
+        case "DecreaseHealth": {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              hpMax: {
+                decrement: ability.healthCost ?? 0,
+              },
+            },
+          });
+          break;
+        }
+        case "DecreaseMana": {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              manaMax: {
+                decrement: ability.manaCost ?? 0,
+              },
+            },
+          });
+          break;
+        }
+        case "TurnPassive": {
+          await db.user.update({
+            where: {
+              id: targetUserId,
+            },
+            data: {
+              turns: {
+                increment: ability.value ?? 0,
+              },
+            },
+          });
+          break;
+        }
       }
       // Log to the target user that they have received the passive ability, unless the target user is the casting user
       if (targetUserId !== castingUser.id) {
