@@ -24,10 +24,10 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.1",
     "file-type": "^21.3.4",
-    "multer": "^2.2.0",
+    "multer": "^2.3.0",
     "node-cron": "^4.6.0",
     "nodemon": "^3.1.14",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "winston": "^3.19.0",
     "zod": "^4.4.3"
   },

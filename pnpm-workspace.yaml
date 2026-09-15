@@ -16,14 +16,22 @@ minimumReleaseAgeExclude:
   - postcss@8.5.10 || 8.5.12 || 8.5.18
   - mathjs@15.2.0
   - uuid@11.1.1
-  - sharp@0.35.0
+  - sharp@0.35.0 || 0.35.4
   - nanoid@3.3.18
   - deepmerge-ts@8.0.0
+  - mysql2@3.22.0 || 3.23.1
+  - qs@6.15.4 || 6.16.0
+  - fast-uri@3.1.6
+  - next@16.3.3
+  - js-yaml@4.3.2
+  - multer@2.3.0
 
 overrides:
   deepmerge-ts@<8.0.0: ^8.0.0
   mathjs@>=13.1.0 <15.2.0: ^15.2.0
   mathjs@>=13.1.1 <15.2.0: ^15.2.0
+  mysql2@<3.22.0: ^3.22.0
+  mysql2@<=3.23.0: ^3.23.1
   postcss@<8.5.10: ^8.5.10
   postcss@<=8.5.11: ^8.5.12
   postcss@<=8.5.17: ^8.5.18
