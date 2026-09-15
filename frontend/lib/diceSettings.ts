@@ -85,7 +85,7 @@ export const colorsets: { [key: string]: diceColorset } = {
     texture: "metal",
     edge: "#FF7B00",
   },
-  Coin: {
+  Gold: {
     foreground: "#f6e27f",
     background: "#f6c928",
     // edge: "#b8860b",
