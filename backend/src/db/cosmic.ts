@@ -191,7 +191,7 @@ const cosmic: CosmicEvent[] = [
     id: 12,
     name: "Sacrificial-Lamb",
     description:
-      "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 100 XP.",
+      "You may sacrifice HP for XP today. For every 5 HP you sacrifice you gain 80 XP.",
     // icon: ".png"
     // presetDate: "",
     frequency: 20,

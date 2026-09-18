@@ -87,7 +87,7 @@ const health: Ability[] = [
     description:
       "A simple bandage to be used in an emergency by those without healing powers. Restores 1 health to a target.",
     duration: null,
-    icon: "Heal.png",
+    icon: "Bandage.png",
     gemstoneCost: 1,
     manaCost: 3,
     healthCost: null,
