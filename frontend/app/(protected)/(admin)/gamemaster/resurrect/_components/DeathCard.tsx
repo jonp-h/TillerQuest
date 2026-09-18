@@ -55,13 +55,32 @@ export default function DeathCard({ user }: { user: AdminDeadUser }) {
 
     if (result.ok) {
       // Display the roll result with animation
-      diceBox.roll(`1d6@${result.data.diceRoll}`).then(() => {
+      diceBox.roll(`1d12@${result.data.diceRoll}`).then(() => {
         setNumber(result.data.roll);
       });
     } else {
       toast.error(result.error);
     }
   };
+
+  const resurrectionEffects = [
+    [1, "Everything", "criticalMiss"],
+    [2, "Phone", "phone"],
+    [3, "Reduced XP", "xp"],
+    [4, "Pop-Quiz", "quiz"],
+    [5, "Hat", "hat"],
+    [6, "Clean the lab/hub", "clean"],
+    [7, "Lose 10% of your current coins", "goldLoss"],
+    [8, "Lose all your mana", "manaLoss"],
+    [9, "Mundane tasks", "tasks"],
+    [10, "Reduced mana", "mana"],
+    [
+      11,
+      "Move to the front of the classroom for the next theory lecture",
+      "frontOfClass",
+    ],
+    [12, "Freedom", "criticalHit"],
+  ] as const;
 
   return (
     <Card sx={{ display: "flex" }}>
@@ -105,74 +124,65 @@ export default function DeathCard({ user }: { user: AdminDeadUser }) {
               Level: {user.level}
             </Typography>
           </CardContent>
-          <div className="flex flex-col items-center p-4 gap-2">
-            <Button
-              variant="contained"
-              color="error"
-              endIcon={<Casino />}
-              onClick={() => rollDice()}
-              disabled={!isReady}
+          <Box sx={{ width: "min(100%, 38rem)", p: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="error"
+                endIcon={<Casino />}
+                onClick={() => rollDice()}
+                disabled={!isReady}
+              >
+                {!isReady ? "Prepare dice!" : "Roll Death Save"}
+              </Button>
+              <DialogButton
+                buttonText="Free Resurrection"
+                dialogTitle="Free Resurrection"
+                dialogContent="Are you sure you want to resurrect this user for free? This will not penalize the guild or user in any way."
+                agreeText="Resurrect"
+                disagreeText="Cancel"
+                buttonVariant="outlined"
+                dialogFunction={() => handleRessurect("free")}
+              />
+            </Box>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ display: "block", mt: 2 }}
             >
-              {!isReady ? "Prepare dice!" : "Roll Death Save"}
-            </Button>
-            <DialogButton
-              buttonText="Free Resurrection"
-              dialogTitle="Free Resurrection"
-              dialogContent="Are you sure you want to resurrect this user for free? This will not penalize the guild or user in any way."
-              agreeText="Resurrect"
-              disagreeText="Cancel"
-              buttonVariant="outlined"
-              dialogFunction={() => handleRessurect("free")}
-            />
-            <Button
-              variant="contained"
-              color={number === 1 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("criticalMiss")}
+              Choose a resurrection cost
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, minmax(0, 1fr))",
+                },
+                gap: 1,
+              }}
             >
-              1: Everything
-            </Button>
-            <Button
-              variant="contained"
-              color={number === 2 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("phone")}
-            >
-              2: Phone
-            </Button>
-            <Button
-              variant="contained"
-              color={number === 3 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("xp")}
-            >
-              3: Reduced XP
-            </Button>
-            <Button
-              variant="contained"
-              color={number === 4 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("quiz")}
-            >
-              4: Pop-Quiz
-            </Button>
-            <Button
-              variant="contained"
-              color={number === 5 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("hat")}
-            >
-              5: Hat
-            </Button>
-            <Button
-              variant="contained"
-              color={number === 6 ? "error" : "warning"}
-              endIcon={<ErrorOutline />}
-              onClick={() => handleRessurect("criticalHit")}
-            >
-              6: Freedom
-            </Button>
-          </div>
+              {resurrectionEffects.map(([roll, label, effect]) => (
+                <Button
+                  key={roll}
+                  fullWidth
+                  variant="contained"
+                  color={number === roll ? "error" : "warning"}
+                  // endIcon={<ErrorOutline />}
+                  onClick={() => handleRessurect(effect)}
+                  sx={{
+                    minHeight: 52,
+                    justifyContent: "space-between",
+                    textAlign: "left",
+                    lineHeight: 1.25,
+                  }}
+                >
+                  {roll}: {label}
+                </Button>
+              ))}
+            </Box>
+          </Box>
         </Box>
       </Paper>
     </Card>

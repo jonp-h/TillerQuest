@@ -9,10 +9,8 @@ import {
 } from "../../middleware/validationMiddleware.js";
 import { minResurrectionHP } from "../../gameSettings.js";
 import { resurrectUser } from "../../utils/users/resurrectUser.js";
-import {
-  resurrectUserSchema,
-  userIdParamSchema,
-} from "../../utils/validators/validationUtils.js";
+import { userIdParamSchema } from "../../utils/validators/validationUtils.js";
+import z from "zod";
 
 interface ResurrectUserRequest extends AuthenticatedRequest {
   params: {
@@ -26,9 +24,33 @@ interface ResurrectUserRequest extends AuthenticatedRequest {
       | "xp"
       | "hat"
       | "quiz"
+      | "clean"
+      | "goldLoss"
+      | "manaLoss"
+      | "tasks"
+      | "mana"
+      | "frontOfClass"
       | "criticalHit";
   };
 }
+
+export const resurrectUserSchema = z.object({
+  effect: z.enum([
+    "free",
+    "criticalMiss",
+    "phone",
+    "xp",
+    "hat",
+    "quiz",
+    "clean",
+    "goldLoss",
+    "manaLoss",
+    "tasks",
+    "mana",
+    "frontOfClass",
+    "criticalHit",
+  ]),
+});
 
 export const adminResurrectUser = [
   requireAdmin,
@@ -92,6 +114,12 @@ export const adminResurrectUser = [
               "Reduced-xp-gain",
               "Hat-of-shame",
               "Pop-quiz",
+              "Cleaning-duty",
+              "Gold-loss",
+              "Mana-loss",
+              "Mundane-tasks",
+              "Reduced-mana-gain",
+              "Front-of-class",
             ]);
             break;
           case "phone":
@@ -105,6 +133,24 @@ export const adminResurrectUser = [
             break;
           case "quiz":
             await resurrectUser(tx, userId, ["Pop-quiz"]);
+            break;
+          case "clean":
+            await resurrectUser(tx, userId, ["Cleaning-duty"]);
+            break;
+          case "goldLoss":
+            await resurrectUser(tx, userId, ["Gold-loss"]);
+            break;
+          case "manaLoss":
+            await resurrectUser(tx, userId, ["Mana-loss"]);
+            break;
+          case "tasks":
+            await resurrectUser(tx, userId, ["Mundane-tasks"]);
+            break;
+          case "mana":
+            await resurrectUser(tx, userId, ["Reduced-mana-gain"]);
+            break;
+          case "frontOfClass":
+            await resurrectUser(tx, userId, ["Front-of-class"]);
             break;
           case "criticalHit":
             await resurrectUser(tx, userId, []);

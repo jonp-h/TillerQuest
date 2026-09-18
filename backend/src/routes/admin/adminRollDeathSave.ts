@@ -8,7 +8,7 @@ export const adminRollDeathSave = [
   requireAdmin,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const roll = new DiceRoll("1d6");
+      const roll = new DiceRoll("1d12");
       // @ts-expect-error - the package's export function is not typed correctly
       const rollData = roll.export(exportFormats.OBJECT) as {
         output: string;

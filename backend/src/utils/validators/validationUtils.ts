@@ -137,18 +137,6 @@ export const abilityNameSchema = z.object({
     .max(100, "Ability name must be below 100 characters"),
 });
 
-export const resurrectUserSchema = z.object({
-  effect: z.enum([
-    "free",
-    "criticalMiss",
-    "phone",
-    "xp",
-    "hat",
-    "quiz",
-    "criticalHit",
-  ]),
-});
-
 export const adminReasonSchema = z.object({
   reason: z.string().max(40, "Reason must be below 40 characters"),
 });

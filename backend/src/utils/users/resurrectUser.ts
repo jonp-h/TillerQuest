@@ -73,27 +73,90 @@ export const resurrectUser = async (
   await Promise.all(
     // If the effect array is empty, none will be added
     effects.map(async (effect) => {
-      if (effect === "Reduced-xp-gain") {
-        await tx.userPassive.create({
-          data: {
-            userId: userId,
-            passiveName: effect,
-            icon: effect + ".png",
-            endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
-            effectType: "Experience",
-            value: -50,
-          },
-        });
-      } else {
-        await tx.userPassive.create({
-          data: {
-            userId: userId,
-            passiveName: effect,
-            icon: effect + ".png",
-            endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
-            effectType: "Deathsave",
-          },
-        });
+      switch (effect) {
+        case "Reduced-xp-gain": {
+          await tx.userPassive.create({
+            data: {
+              userId: userId,
+              passiveName: effect,
+              icon: effect + ".png",
+              endTime: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours from now
+              effectType: "Experience",
+              value: -25,
+            },
+          });
+          break;
+        }
+        case "Reduced-mana-gain": {
+          await tx.userPassive.create({
+            data: {
+              userId: userId,
+              passiveName: effect,
+              icon: effect + ".png",
+              endTime: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours from now
+              effectType: "DailyMana",
+              value: -2,
+            },
+          });
+          break;
+        }
+        case "Mana-loss": {
+          await tx.user.update({
+            where: {
+              id: userId,
+            },
+            data: {
+              mana: 0,
+            },
+          });
+          await tx.userPassive.create({
+            data: {
+              userId: userId,
+              passiveName: effect,
+              icon: effect + ".png",
+              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+              effectType: "Deathsave",
+            },
+          });
+          break;
+        }
+        case "Gold-loss": {
+          const userGold = await tx.user.findUnique({
+            where: { id: userId },
+            select: { gold: true },
+          });
+          await tx.user.update({
+            where: {
+              id: userId,
+            },
+            data: {
+              gold: {
+                decrement: userGold ? Math.floor(userGold.gold! * 0.1) : 0,
+              },
+            },
+          });
+          await tx.userPassive.create({
+            data: {
+              userId: userId,
+              passiveName: effect,
+              icon: effect + ".png",
+              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+              effectType: "Deathsave",
+            },
+          });
+          break;
+        }
+        default: {
+          await tx.userPassive.create({
+            data: {
+              userId: userId,
+              passiveName: effect,
+              icon: effect + ".png",
+              endTime: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
+              effectType: "Deathsave",
+            },
+          });
+        }
       }
       await addLog(
         tx,
