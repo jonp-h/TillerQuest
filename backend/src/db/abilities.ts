@@ -972,7 +972,7 @@ const warlock: Ability[] = [
     parentAbility: "Crimson-Shield",
   },
   {
-    id: 38,
+    id: 94,
     name: "Vampiric-Aura",
     category: "Warlock",
     type: "Health",
