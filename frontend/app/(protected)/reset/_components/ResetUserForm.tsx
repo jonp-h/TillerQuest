@@ -160,6 +160,33 @@ export default function ResetUserForm({ user }: { user: InactiveUser }) {
         ))}
       </RadioGroup>
       <Typography variant="h5">Choose Guild</Typography>
+      <Accordion elevation={3} sx={{ width: "40%" }}>
+        <AccordionSummary
+          expandIcon={<ArrowDownward />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+          <Typography component="span">Tips and tricks:</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography color="textPrimary">
+            Most guilds struggle without a Druid and Wizard, as Druids have
+            access to great healing abilities and Wizards have access to
+            abilities that grant more mana. <br />
+            <br /> Only one of each class may be in the same guild. Surviving in
+            a guild is easier if you have a balanced and larger team, so try to
+            join a guild with more members.
+            <br />
+            <br /> If you are the first to join a guild, you will be the initial
+            guild leader. Guild leaders rotate, between all members of the
+            guild.
+            <br />
+            <br />
+            Changing class and guild is possible after a few months, when the
+            system is reset.
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
       <ClassGuilds
         schoolClass={schoolClass}
         setGuildId={setGuildId}
