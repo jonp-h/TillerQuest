@@ -202,7 +202,7 @@ export default function GuideContent() {
       <Accordion id="guilds" sx={accordionSx}>
         <AccordionSummary expandIcon={<ArrowDownward />}>
           <div className="flex items-center gap-2">
-            <SectionIcon src="/abilities/Devilish-deal.png" />
+            <SectionIcon src="/abilities/Devilish-Deal.png" />
             <Typography variant="h6">Guilds</Typography>
           </div>
         </AccordionSummary>
@@ -313,7 +313,7 @@ export default function GuideContent() {
       <Accordion id="Cosmic Events" sx={accordionSx}>
         <AccordionSummary expandIcon={<ArrowDownward />}>
           <div className="flex items-center gap-2">
-            <SectionIcon src="/abilities/Cosmic-Events.png" />
+            <SectionIcon src="/abilities/Cosmic.png" />
             <Typography variant="h6">Cosmic Events</Typography>
           </div>
         </AccordionSummary>
