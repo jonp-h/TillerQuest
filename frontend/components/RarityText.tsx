@@ -16,7 +16,7 @@ function RarityText({
   children,
 }: {
   rarity: string | $Enums.Rarity;
-  width: "full" | "1/2";
+  width: "full" | "1/2" | "fit";
   className?: string;
   children: React.ReactNode;
 }) {
