@@ -7,7 +7,7 @@ import {
   validateBody,
   validateParams,
 } from "../../middleware/validationMiddleware.js";
-import { ErrorMessage } from "../../lib/error.js";
+import { ErrorMessage, GameAbortedError } from "../../lib/error.js";
 import { updateTypeQuestGame } from "../../utils/games/typeQuest.js";
 import { updateWordQuestGame } from "../../utils/games/wordQuest.js";
 import {
@@ -84,6 +84,19 @@ export const updateGame = [
         res.json({ success: true, data: { score, metadata } });
       });
     } catch (error) {
+      if (error instanceof GameAbortedError) {
+        // the transaction that detected the cheat has already rolled back,
+        // so persist the abort separately using the raw client
+        await db.game.update({
+          where: { id: error.gameId },
+          data: { status: "FINISHED", score: 0 },
+        });
+        res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
       if (error instanceof ErrorMessage) {
         res.status(400).json({
           success: false,

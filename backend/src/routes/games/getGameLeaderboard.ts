@@ -39,8 +39,29 @@ export const getGameLeaderboard = [
         distinct: ["userId"],
         take: 10,
       });
+      // internal anti-cheat tracking fields, not meant for display
+      const HIDDEN_METADATA_KEYS = [
+        "lastUpdateAt",
+        "speedHistory",
+        "lastCharIndex",
+      ];
 
-      res.json({ success: true, data: leaderboard });
+      res.json({
+        success: true,
+        data: leaderboard.map((entry) => ({
+          ...entry,
+          metadata:
+            entry.metadata !== null &&
+            typeof entry.metadata === "object" &&
+            !Array.isArray(entry.metadata)
+              ? Object.fromEntries(
+                  Object.entries(entry.metadata).filter(
+                    ([key]) => !HIDDEN_METADATA_KEYS.includes(key),
+                  ),
+                )
+              : entry.metadata,
+        })),
+      });
     } catch (error) {
       logger.error("Error fetching game leaderboard: " + error);
       res.status(500).json({
