@@ -59,11 +59,14 @@ export const selectAbility = async (
     const ability = await db.ability.findFirst({
       where: {
         name: abilityName,
+        users: { some: { userId } },
       },
     });
 
     if (!ability) {
-      throw new ErrorMessage("Ability not found");
+      throw new ErrorMessage(
+        "Ability not found, or not owned by the castinguser",
+      );
     }
 
     let uniqueTargetIds: string[] = [];
