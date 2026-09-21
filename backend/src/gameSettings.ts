@@ -29,3 +29,6 @@ export const rareRarity = 0.4; // 40%
 export const epicRarity = 0.2; // 20%
 export const legendaryRarity = 0.1; // 10%
 export const mythicRarity = 0.02; // 2%
+
+// Number of turns available in a BinaryJack game. Also change this in frontend
+export const binaryJackMaxTurns = 5;

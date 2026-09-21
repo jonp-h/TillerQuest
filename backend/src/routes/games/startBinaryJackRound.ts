@@ -6,6 +6,7 @@ import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { ErrorMessage } from "../../lib/error.js";
 import { validateParams } from "../../middleware/validationMiddleware.js";
 import { gameIdParamSchema } from "../../utils/validators/validationUtils.js";
+import { binaryJackMaxTurns } from "../../gameSettings.js";
 
 export const startBinaryJackRound = [
   requireActiveUser,
@@ -20,6 +21,27 @@ export const startBinaryJackRound = [
 
       if (!game) {
         throw new ErrorMessage("Invalid game session");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let metadata: any = game.metadata || {};
+      if (typeof metadata === "string") {
+        try {
+          metadata = JSON.parse(metadata);
+        } catch {
+          metadata = {};
+        }
+      }
+
+      // Each turn may only generate one round, preventing free re-rolls of dice/operation choices
+      const roundsGenerated = metadata.roundsGenerated || 0;
+      if (roundsGenerated >= binaryJackMaxTurns) {
+        throw new ErrorMessage("No more rounds can be generated");
+      }
+
+      // Rounds, rolls and operations must happen strictly in that order, never repeated
+      if (metadata.phase !== "ROUND") {
+        throw new ErrorMessage("A round has already been generated");
       }
 
       // Available dice types and operations
@@ -46,21 +68,12 @@ export const startBinaryJackRound = [
         selectedOperations.push(allOperations[index]),
       );
 
-      // Store the available choices in game metadata
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let metadata: any = game.metadata || {};
-      if (typeof metadata === "string") {
-        try {
-          metadata = JSON.parse(metadata);
-        } catch {
-          metadata = {};
-        }
-      }
-
       const updatedMetadata = {
         ...metadata,
         availableDice: selectedDice,
         availableOperations: selectedOperations,
+        roundsGenerated: roundsGenerated + 1,
+        phase: "ROLL",
       };
 
       await db.game.update({

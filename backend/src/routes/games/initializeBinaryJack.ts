@@ -13,8 +13,7 @@ import {
   initializeBinaryJackSchema,
 } from "../../utils/validators/validationUtils.js";
 import { addLog } from "../../utils/logs/addLog.js";
-
-const BINARY_JACK_MAX_TURNS = 6;
+import { binaryJackMaxTurns } from "../../gameSettings.js";
 
 export const initializeBinaryJack = [
   requireActiveUser,
@@ -73,9 +72,11 @@ export const initializeBinaryJack = [
           targetNumber,
           currentValue: 0,
           turns: 0,
-          maxTurns: BINARY_JACK_MAX_TURNS,
+          maxTurns: binaryJackMaxTurns,
           rolledValue: null,
           stake,
+          roundsGenerated: 0,
+          phase: "ROUND",
         };
 
         await tx.game.update({
@@ -93,7 +94,7 @@ export const initializeBinaryJack = [
           data: {
             targetNumber,
             currentValue: 0,
-            turnsRemaining: BINARY_JACK_MAX_TURNS,
+            turnsRemaining: binaryJackMaxTurns,
             stake,
           },
         });

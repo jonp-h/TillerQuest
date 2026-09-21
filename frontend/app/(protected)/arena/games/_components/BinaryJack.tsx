@@ -13,7 +13,7 @@ import {
 } from "./types";
 
 // Game configuration constants
-const MAX_TURNS = 6; // Change this value to adjust maximum rounds/turns
+const MAX_TURNS = 5; // Change this value to adjust maximum rounds/turns
 
 function BinaryJack({
   gameEnabled,

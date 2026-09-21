@@ -12,8 +12,7 @@ import {
   applyBinaryOperationSchema,
   gameIdParamSchema,
 } from "../../utils/validators/validationUtils.js";
-
-const BINARY_JACK_MAX_TURNS = 6;
+import { binaryJackMaxTurns } from "../../gameSettings.js";
 
 export const applyBinaryOperation = [
   requireActiveUser,
@@ -60,6 +59,13 @@ export const applyBinaryOperation = [
         throw new ErrorMessage("No rolled value found for this round");
       }
 
+      // Rounds, rolls and operations must happen strictly in that order, never repeated
+      if (metadata.phase !== "OPERATE") {
+        throw new ErrorMessage(
+          "You must roll the dice before applying an operation",
+        );
+      }
+
       // Validate operation against round's available operations
       if (!availableOperations.includes(operation)) {
         throw new ErrorMessage("Operation not available for this round");
@@ -97,6 +103,7 @@ export const applyBinaryOperation = [
         turns: (metadata.turns || 0) + 1,
         lastOperation: operation,
         rolledValue: null,
+        phase: "ROUND",
       };
 
       await db.game.update({
@@ -111,10 +118,7 @@ export const applyBinaryOperation = [
         data: {
           newValue,
           hitTarget: newValue === targetNumber,
-          turnsRemaining: Math.max(
-            0,
-            BINARY_JACK_MAX_TURNS - newMetadata.turns,
-          ),
+          turnsRemaining: Math.max(0, binaryJackMaxTurns - newMetadata.turns),
         },
       });
     } catch (error) {

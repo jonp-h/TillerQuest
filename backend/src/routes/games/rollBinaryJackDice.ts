@@ -53,6 +53,11 @@ export const rollBinaryJackDice = [
         throw new ErrorMessage("Die not available for this round");
       }
 
+      // Rounds, rolls and operations must happen strictly in that order, never repeated
+      if (metadata.phase !== "ROLL") {
+        throw new ErrorMessage("Dice have already been rolled this round");
+      }
+
       const roll = new DiceRoll(dice);
       // @ts-expect-error - the package's export function is not typed correctly
       const rolledValue = roll.export(exportFormats.OBJECT) as {
@@ -71,6 +76,7 @@ export const rollBinaryJackDice = [
           metadata: {
             ...metadata,
             rolledValue: rolledValue.total,
+            phase: "OPERATE",
           },
         },
       });
