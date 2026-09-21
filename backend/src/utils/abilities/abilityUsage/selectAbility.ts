@@ -66,6 +66,8 @@ export const selectAbility = async (
       throw new ErrorMessage("Ability not found");
     }
 
+    let uniqueTargetIds: string[] = [];
+
     switch (ability.target) {
       case "SingleTarget":
         if (targetIds.length !== 1) {
@@ -78,9 +80,44 @@ export const selectAbility = async (
             "You cannot target yourself with this ability",
           );
         }
+        uniqueTargetIds = targetIds;
         break;
 
+      case "Self":
+        if (targetIds.length !== 1 || targetIds[0] !== userId) {
+          throw new ErrorMessage(
+            "Self target abilities require exactly one target, which must be yourself",
+          );
+        }
+        uniqueTargetIds = targetIds;
+        break;
+
+      case "Others":
+        // Validate list of target users, and deduplicate the list to avoid using the ability on the same user multiple times
+        uniqueTargetIds = Array.from(new Set(targetIds));
+
+        if (uniqueTargetIds.length < 1) {
+          throw new ErrorMessage(
+            "Other target abilities require at least one target",
+          );
+        }
+        if (uniqueTargetIds.includes(userId)) {
+          throw new ErrorMessage(
+            "You cannot target yourself with this ability",
+          );
+        }
+        break;
+
+      // For "All" and "Multitarget" target type
       default:
+        // Validate list of target users, and deduplicate the list to avoid using the ability on the same user multiple times
+        uniqueTargetIds = Array.from(new Set(targetIds));
+
+        if (uniqueTargetIds.length < 1) {
+          throw new ErrorMessage(
+            "Multi target abilities require at least one target",
+          );
+        }
         break;
     }
 
@@ -141,33 +178,68 @@ export const selectAbility = async (
         // ---------------------------- Passive abilities ----------------------------
         // TODO: make passives default in switch case
         case "IncreaseHealth":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "IncreaseMana":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "DecreaseHealth":
           return await useDecreaseHealthAbility(
             tx,
             castingUser,
-            targetIds[0],
+            uniqueTargetIds[0],
             ability,
           );
 
         case "DailyMana": // gives daily mana to the target
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "ManaPassive": // gives extra mana to the target on every mana granting ability
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Health":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Experience":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "ArenaToken":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Trickery":
           // TODO: add evade category/tree
@@ -176,64 +248,159 @@ export const selectAbility = async (
           } else if (ability.name === "Twist-of-Fate") {
             return await useTwistOfFateAbility(tx, castingUser, ability);
           }
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Postpone":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "ManaShield":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "GoldPassive":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "TurnPassive":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Access":
-          return await useAccessAbility(tx, castingUser, targetIds, ability);
+          return await useAccessAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Crit":
-          return await useCritAbility(tx, castingUser, targetIds, ability);
+          return await useCritAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "VictoryGold":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "VictoryMana":
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Protection": // shields a target from damage
-          return await activatePassive(tx, castingUser, targetIds, ability);
+          return await activatePassive(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         // ---------------------------- Active abilities ----------------------------
 
         case "Heal": // heal the target
-          return await useHealAbility(tx, castingUser, targetIds, ability);
+          return await useHealAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Revive": // revive a dead target without negative consequences
-          return await useReviveAbility(tx, castingUser, targetIds, ability);
+          return await useReviveAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Mana": // give mana to the target
-          return await useManaAbility(tx, castingUser, targetIds, ability);
+          return await useManaAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Gold":
-          return await useGoldAbility(tx, castingUser, targetIds, ability);
+          return await useGoldAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Transfer": // transfer a resource from one player to another player
-          return await useTransferAbility(tx, castingUser, targetIds, ability);
+          return await useTransferAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Swap": // swap a resource between two players
-          return await useSwapAbility(tx, castingUser, targetIds[0], ability);
+          return await useSwapAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds[0],
+            ability,
+          );
 
         // TODO: validate to only target self?
         case "Trade": // converts a resource from one type to another
-          return await useTradeAbility(tx, castingUser, targetIds[0], ability);
+          return await useTradeAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds[0],
+            ability,
+          );
 
         case "Arena":
-          return await useArenaAbility(tx, castingUser, targetIds, ability);
+          return await useArenaAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "Turns":
-          return await useTurnsAbility(tx, castingUser, targetIds, ability);
+          return await useTurnsAbility(
+            tx,
+            castingUser,
+            uniqueTargetIds,
+            ability,
+          );
 
         case "XP":
           return await useXPAbility(tx, castingUser, ability);
@@ -242,7 +409,7 @@ export const selectAbility = async (
           return await useDungeonAttackAbility(
             tx,
             castingUser,
-            targetIds,
+            uniqueTargetIds,
             ability,
           );
 
