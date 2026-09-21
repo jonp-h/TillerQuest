@@ -1,4 +1,5 @@
 import { Ability, User } from "@tillerquest/prisma/browser";
+import { Prisma } from "@tillerquest/prisma";
 import { PrismaTransaction } from "../../../types/prismaTransaction.js";
 import { ApiResponse } from "../../../types/apiResponse.js";
 import { ErrorMessage } from "../../../lib/error.js";
@@ -16,10 +17,6 @@ export const useDungeonAttackAbility = async (
   targetIds: string[],
   ability: Ability,
 ): Promise<ApiResponse<{ message: string; diceRoll: string }>> => {
-  if (castingUser?.turns <= 0) {
-    throw new ErrorMessage("You don't have any turns left!");
-  }
-
   const enemies = await db.guildEnemy.findMany({
     where: {
       id: { in: targetIds },
@@ -36,10 +33,21 @@ export const useDungeonAttackAbility = async (
     throw new ErrorMessage("The enemy is already dead!");
   }
 
-  await db.user.update({
-    where: { id: castingUser.id },
-    data: { turns: { decrement: 1 } },
-  });
+  try {
+    // condition on turns in the where clause makes check-and-decrement atomic, preventing concurrent requests from going negative
+    await db.user.update({
+      where: { id: castingUser.id, turns: { gte: 1 } },
+      data: { turns: { decrement: 1 } },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      throw new ErrorMessage("You don't have any turns left!");
+    }
+    throw error;
+  }
 
   let message = "";
 

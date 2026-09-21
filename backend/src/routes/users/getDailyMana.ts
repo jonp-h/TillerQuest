@@ -7,6 +7,7 @@ import { AuthenticatedRequest } from "../../types/AuthenticatedRequest.js";
 import { dailyArenaTokenBase, dailyManaBase } from "../../gameSettings.js";
 import { manaValidator } from "../../utils/abilities/abilityValidators.js";
 import { addLog } from "../../utils/logs/addLog.js";
+import { Prisma } from "@tillerquest/prisma";
 
 export const getDailyMana = [
   requireUserIdAndActive(),
@@ -74,16 +75,28 @@ export const getDailyMana = [
       const arenaTokenValue = arenaTokens._sum?.value ?? 0;
       const totalArenaTokensToGive = arenaTokenValue + dailyArenaTokenBase;
 
-      await db.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          mana: { increment: manaValue },
-          arenaTokens: { increment: totalArenaTokensToGive },
-          lastMana: new Date(),
-        },
-      });
+      try {
+        // Check for race condition: if lastMana is already updated, this will throw P2025 and we can catch it to return an error
+        await db.user.update({
+          where: {
+            id: userId,
+            lastMana: { lt: new Date(new Date().setHours(0, 0, 0, 0)) },
+          },
+          data: {
+            mana: { increment: manaValue },
+            arenaTokens: { increment: totalArenaTokensToGive },
+            lastMana: new Date(),
+          },
+        });
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2025"
+        ) {
+          throw new ErrorMessage("You have already received daily mana");
+        }
+        throw error;
+      }
 
       await addLog(
         db,
