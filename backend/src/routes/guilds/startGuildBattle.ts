@@ -39,6 +39,16 @@ export const startGuildBattle = [
           throw new ErrorMessage("Only the guild leader can start a battle.");
         }
 
+        const existingEnemies = await tx.guildEnemy.count({
+          where: { guildName: guild.name, health: { gt: 0 } },
+        });
+
+        if (existingEnemies > 0) {
+          throw new ErrorMessage(
+            `Cannot start a new battle: ${existingEnemies} enemies still alive. Defeat them first!`,
+          );
+        }
+
         const totalEnemies = await tx.enemy.count();
         const randomOffset = Math.floor(Math.random() * totalEnemies);
 
