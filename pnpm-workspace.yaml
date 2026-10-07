@@ -16,15 +16,20 @@ minimumReleaseAgeExclude:
   - postcss@8.5.10 || 8.5.12 || 8.5.18
   - mathjs@15.2.0
   - uuid@11.1.1
-  - sharp@0.35.0 || 0.35.4
+  - sharp@0.35.0 || 0.35.4 || 0.35.5
   - nanoid@3.3.18
   - deepmerge-ts@8.0.0
   - mysql2@3.22.0 || 3.23.1
   - qs@6.15.4 || 6.16.0
-  - fast-uri@3.1.6
-  - next@16.3.3
+  - fast-uri@3.1.6 || 3.1.8
+  - next@16.3.3 || 16.3.6
   - js-yaml@4.3.2
-  - multer@2.3.0
+  - multer@2.3.0 || 2.4.0
+  - ip-address@10.5.1 || 10.7.1
+  - brace-expansion@1.1.19 || 1.1.20 || 1.1.21 || 5.0.10 || 5.0.11 || 5.0.12
+  - source-map-js@1.2.2
+  - proxy-addr@2.0.8
+  - shell-quote@1.11.0
 
 overrides:
   deepmerge-ts@<8.0.0: ^8.0.0
@@ -36,6 +41,9 @@ overrides:
   postcss@<=8.5.11: ^8.5.12
   postcss@<=8.5.17: ^8.5.18
   sharp@<0.35.0: ^0.35.0
+  sharp@<0.35.5: ^0.35.5
+  shell-quote@>=1.8.4 <1.11.0: ^1.11.0
+  source-map-js@>=1.0.0 <1.2.2: ^1.2.2
   uuid@<11.1.1: ^11.1.1
 
 # minimumReleaseAge: 1440 # 24 hours
