@@ -14,27 +14,28 @@
     "prepare": "husky",
     "dev": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run dev\"",
     "start": "concurrently --names \"backend,frontend\" \"pnpm --filter ./backend run start\" \"pnpm --filter ./frontend run start\"",
+    "build": "cd frontend && pnpm run build",
     "gen": "cd backend && pnpm run gen",
     "reset": "cd backend && pnpm run reset"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.9.1",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "dotenv": "^17.4.2",
-    "pg": "^8.23.0"
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
-    "@types/node": "^25.9.5",
-    "@types/pg": "^8.21.0",
+    "@types/node": "^25.9.9",
+    "@types/pg": "^8.23.1",
     "commitlint": "^20.5.3",
     "concurrently": "^10.0.5",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.9.6",
-    "prisma": "^7.9.1"
+    "prettier": "^3.9.9",
+    "prisma": "^7.10.0"
   }
 }
