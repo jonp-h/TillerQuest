@@ -37,7 +37,7 @@ async function ValhallaPage() {
         <div className="w-1/3">
           <Typography variant="body2" color="textSecondary" align="center">
             Current and past students who have chosen to forever remain in
-            Valhalla are honored here. These players achieved level 50 and
+            Valhalla are honored here. These players achieved level 35 and
             reached the pinnacle of greatness in TillerQuest. Their names will
             forever be remembered for generations to come.
           </Typography>

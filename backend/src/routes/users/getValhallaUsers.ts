@@ -20,7 +20,7 @@ export const getValhallaUsers = [
           //   },
           // },
           xp: {
-            gte: 50000,
+            gte: 76300,
           },
         },
         orderBy: { xp: "desc" },
